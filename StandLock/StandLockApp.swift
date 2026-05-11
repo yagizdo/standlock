@@ -14,8 +14,7 @@ struct StandLockApp: App {
         .menuBarExtraStyle(.window)
 
         Settings {
-            Text("Settings placeholder")
-                .frame(width: 520, height: 420)
+            SettingsView()
                 .environment(appCoordinator)
         }
     }
