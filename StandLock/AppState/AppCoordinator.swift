@@ -21,12 +21,21 @@ final class AppCoordinator {
     private var coordinator: BreakCoordinator?
     private let overlayController = OverlayWindowController()
     private var eventListenerTask: Task<Void, Never>?
+    private var loadedExercises: [Exercise] = []
 
     init() {
+        loadExercises()
         loadData()
         if !schedules.isEmpty {
             startCoordinator()
         }
+    }
+
+    private func loadExercises() {
+        guard let url = Bundle.main.url(forResource: "Exercises", withExtension: "json"),
+              let data = try? Data(contentsOf: url),
+              let decoded = try? JSONDecoder().decode([Exercise].self, from: data) else { return }
+        loadedExercises = decoded
     }
 
     // MARK: - Persistence
@@ -77,6 +86,7 @@ final class AppCoordinator {
             scheduler: scheduler, detector: detector, locker: overlayController
         )
         self.coordinator = breakCoordinator
+        breakCoordinator.exercises = loadedExercises
         breakCoordinator.start(with: schedules.filter(\.isEnabled), preferences: preferences)
 
         eventListenerTask = Task {

@@ -13,6 +13,7 @@ final class OverlayWindowController: LockPresenting, Observable {
     private var currentDuration: TimeInterval = 0
     private var currentExercise: Exercise?
     private var currentPreferences: AppPreferences?
+    private var currentStatistics: BreakStatistics?
 
     var onSkip: (() -> Void)?
     var onComplete: (() -> Void)?
@@ -22,7 +23,8 @@ final class OverlayWindowController: LockPresenting, Observable {
 
     func showOverlay(
         level: DisciplineLevel, duration: TimeInterval,
-        exercise: Exercise?, preferences: AppPreferences
+        exercise: Exercise?, preferences: AppPreferences,
+        statistics: BreakStatistics
     ) {
         dismissOverlay()
 
@@ -30,12 +32,14 @@ final class OverlayWindowController: LockPresenting, Observable {
         currentDuration = duration
         currentExercise = exercise
         currentPreferences = preferences
+        currentStatistics = statistics
 
         for screen in NSScreen.screens {
             let window = BreakOverlayWindow(screen: screen)
             let contentView = BreakContentView(
                 level: level, totalDuration: duration,
                 exercise: exercise, preferences: preferences,
+                statistics: statistics,
                 onSkip: { [weak self] in self?.handleSkip() },
                 onComplete: { [weak self] in self?.handleComplete() }
             )
@@ -100,11 +104,13 @@ final class OverlayWindowController: LockPresenting, Observable {
     private func handleScreenChange() {
         guard isShowing,
               let level = currentLevel,
-              let prefs = currentPreferences else { return }
+              let prefs = currentPreferences,
+              let stats = currentStatistics else { return }
         dismissOverlay()
         showOverlay(
             level: level, duration: currentDuration,
-            exercise: currentExercise, preferences: prefs
+            exercise: currentExercise, preferences: prefs,
+            statistics: stats
         )
     }
 }

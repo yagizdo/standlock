@@ -19,7 +19,7 @@ public final class BreakCoordinator: BreakCoordinating {
     private var currentBreak: BreakEvent?
     private var statistics: BreakStatistics = BreakStatistics()
     private var dailyBreakCounts: [UUID: Int] = [:]
-    private var exercises: [Exercise] = []
+    public var exercises: [Exercise] = []
 
     private let eventContinuation: AsyncStream<CoordinatorEvent>.Continuation
     public nonisolated let events: AsyncStream<CoordinatorEvent>
@@ -172,7 +172,8 @@ public final class BreakCoordinator: BreakCoordinating {
 
         eventContinuation.yield(.breakStarted(breakEvent))
         locker.showOverlay(level: effectiveLevel, duration: duration,
-                           exercise: exercise, preferences: preferences)
+                           exercise: exercise, preferences: preferences,
+                           statistics: statistics)
         startBreakCountdown(event: breakEvent, duration: duration, schedule: schedule)
     }
 

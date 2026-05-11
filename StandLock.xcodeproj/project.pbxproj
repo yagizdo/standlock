@@ -16,6 +16,8 @@
 		5AC2660FDBB66F4B523FC1E2 /* ScheduleEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94F9B9151DFEA710D1211B70 /* ScheduleEditorView.swift */; };
 		676678D8A09155A2AEEFA18C /* DisciplineLevelPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = A866831BDFD42E80353C80D8 /* DisciplineLevelPicker.swift */; };
 		6AF974084F51158A71D9EA47 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512EB234C46341A2816AAE12 /* SettingsView.swift */; };
+		6F9C00664AAD42633900A642 /* Exercises.json in Resources */ = {isa = PBXBuildFile; fileRef = 2063FDE70AFCC135664A8FD4 /* Exercises.json */; };
+		79FDD651CB844C16256BBC64 /* CountdownView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AA4370AAB123F9218436290 /* CountdownView.swift */; };
 		810D4C61C16893C7AA034095 /* BreakContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17E19773EB3047D0D427C1C2 /* BreakContentView.swift */; };
 		82BDAFFF1661ED2476DDCAD3 /* Detection in Frameworks */ = {isa = PBXBuildFile; productRef = F19E05A1FA932709D406DD8F /* Detection */; };
 		89532644D109DAC0E1C69BED /* PermissionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6382F8157622B1D11845645E /* PermissionsView.swift */; };
@@ -24,6 +26,7 @@
 		9D77F7B7F12048E4399B8B25 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD06AD45022B6D147E26C4A6 /* AppDelegate.swift */; };
 		AD18B90CCF07CB58B8312CDB /* Locking in Frameworks */ = {isa = PBXBuildFile; productRef = 3F23054B7AE15E61C38C884E /* Locking */; };
 		B0845F2F14770C95395FBA5F /* ScheduleFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14C3EDA84FE380ED1AF6CE8A /* ScheduleFormView.swift */; };
+		C25F6670F8F37360B72ADE72 /* ExerciseSuggestionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4A034A2D021925D3877B594 /* ExerciseSuggestionView.swift */; };
 		DABDEC6CA937B88679850A3E /* DetectionSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2E6E6102A1900D1FAB2A856 /* DetectionSettingsView.swift */; };
 		ED1A168BD55576065212E8ED /* OverlayWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4462E8D161113596647BD19E /* OverlayWindowController.swift */; };
 /* End PBXBuildFile section */
@@ -32,6 +35,8 @@
 		05CE8593F3F5EBFD2FD7DD08 /* StandLock.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StandLock.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		14C3EDA84FE380ED1AF6CE8A /* ScheduleFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleFormView.swift; sourceTree = "<group>"; };
 		17E19773EB3047D0D427C1C2 /* BreakContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakContentView.swift; sourceTree = "<group>"; };
+		1AA4370AAB123F9218436290 /* CountdownView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountdownView.swift; sourceTree = "<group>"; };
+		2063FDE70AFCC135664A8FD4 /* Exercises.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Exercises.json; sourceTree = "<group>"; };
 		42215A75B39382916D51D614 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		4462E8D161113596647BD19E /* OverlayWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayWindowController.swift; sourceTree = "<group>"; };
 		512EB234C46341A2816AAE12 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
@@ -47,6 +52,7 @@
 		DD06AD45022B6D147E26C4A6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E2436E0F3F20FE12F920ADE7 /* QuickActionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickActionsView.swift; sourceTree = "<group>"; };
 		E2E6E6102A1900D1FAB2A856 /* DetectionSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetectionSettingsView.swift; sourceTree = "<group>"; };
+		F4A034A2D021925D3877B594 /* ExerciseSuggestionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseSuggestionView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -65,11 +71,21 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1061C6E6685F14220CAF3DCC /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				2063FDE70AFCC135664A8FD4 /* Exercises.json */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 		2CA6E45A7258421539512D9F /* BreakScreen */ = {
 			isa = PBXGroup;
 			children = (
 				17E19773EB3047D0D427C1C2 /* BreakContentView.swift */,
 				C5BBDBF97CFAA5FF490CBD00 /* BreakOverlayWindow.swift */,
+				1AA4370AAB123F9218436290 /* CountdownView.swift */,
+				F4A034A2D021925D3877B594 /* ExerciseSuggestionView.swift */,
 			);
 			path = BreakScreen;
 			sourceTree = "<group>";
@@ -113,6 +129,7 @@
 				540564FDDCA36A0411155BC1 /* StandLock.entitlements */,
 				B1524D749BB78A875E5FD51F /* StandLockApp.swift */,
 				85FCDB623AA2D87A6776A720 /* AppState */,
+				1061C6E6685F14220CAF3DCC /* Resources */,
 				9D2396E1A8CA6F7756FE2E75 /* Views */,
 			);
 			path = StandLock;
@@ -161,6 +178,7 @@
 			buildConfigurationList = DD1F99586E0796836A921B06 /* Build configuration list for PBXNativeTarget "StandLock" */;
 			buildPhases = (
 				4D339253DB07A7FC15C65CCF /* Sources */,
+				969567B477F7F4C57B73E035 /* Resources */,
 				904958FBDA50D72D0D76A68B /* Frameworks */,
 			);
 			buildRules = (
@@ -212,6 +230,17 @@
 		};
 /* End PBXProject section */
 
+/* Begin PBXResourcesBuildPhase section */
+		969567B477F7F4C57B73E035 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6F9C00664AAD42633900A642 /* Exercises.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		4D339253DB07A7FC15C65CCF /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -221,8 +250,10 @@
 				9D77F7B7F12048E4399B8B25 /* AppDelegate.swift in Sources */,
 				810D4C61C16893C7AA034095 /* BreakContentView.swift in Sources */,
 				44D9EB3E27CF114DDF7E3735 /* BreakOverlayWindow.swift in Sources */,
+				79FDD651CB844C16256BBC64 /* CountdownView.swift in Sources */,
 				DABDEC6CA937B88679850A3E /* DetectionSettingsView.swift in Sources */,
 				676678D8A09155A2AEEFA18C /* DisciplineLevelPicker.swift in Sources */,
+				C25F6670F8F37360B72ADE72 /* ExerciseSuggestionView.swift in Sources */,
 				1CCAA6FDBBB854DCBC1968EA /* MenuBarView.swift in Sources */,
 				ED1A168BD55576065212E8ED /* OverlayWindowController.swift in Sources */,
 				89532644D109DAC0E1C69BED /* PermissionsView.swift in Sources */,

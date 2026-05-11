@@ -29,7 +29,8 @@ final class MockLocker: LockPresenting, @unchecked Sendable {
     var isShowing = false
 
     func showOverlay(level: DisciplineLevel, duration: TimeInterval,
-                     exercise: Exercise?, preferences: AppPreferences) {
+                     exercise: Exercise?, preferences: AppPreferences,
+                     statistics: BreakStatistics) {
         showOverlayCalled = true
         lastLevel = level
         lastDuration = duration

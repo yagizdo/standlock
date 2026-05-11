@@ -1,0 +1,152 @@
+[
+  {
+    "id": "A1B2C3D4-E5F6-4A7B-8C9D-0E1F2A3B4C01",
+    "title": "Toe Touch Stretch",
+    "description": "Stand up and slowly bend forward to touch your toes. Hold for 10 seconds, then slowly rise back up.",
+    "durationSeconds": 15
+  },
+  {
+    "id": "A1B2C3D4-E5F6-4A7B-8C9D-0E1F2A3B4C02",
+    "title": "Shoulder Rolls",
+    "description": "Roll your shoulders forward 10 times, then backward 10 times. Keep movements slow and controlled.",
+    "durationSeconds": 20
+  },
+  {
+    "id": "A1B2C3D4-E5F6-4A7B-8C9D-0E1F2A3B4C03",
+    "title": "Window Gaze",
+    "description": "Walk to the window and look at something far away for 20 seconds. This helps relax your eye muscles.",
+    "durationSeconds": 20
+  },
+  {
+    "id": "A1B2C3D4-E5F6-4A7B-8C9D-0E1F2A3B4C04",
+    "title": "Overhead Stretch",
+    "description": "Raise both arms overhead, interlace your fingers, and stretch upward. Hold for 15 seconds.",
+    "durationSeconds": 15
+  },
+  {
+    "id": "A1B2C3D4-E5F6-4A7B-8C9D-0E1F2A3B4C05",
+    "title": "Side Stretch",
+    "description": "Raise one arm overhead and lean to the opposite side. Hold for 10 seconds, then switch sides.",
+    "durationSeconds": 20
+  },
+  {
+    "id": "A1B2C3D4-E5F6-4A7B-8C9D-0E1F2A3B4C06",
+    "title": "Neck Circles",
+    "description": "Slowly rotate your head in a circle, 5 times clockwise and 5 times counterclockwise.",
+    "durationSeconds": 20
+  },
+  {
+    "id": "A1B2C3D4-E5F6-4A7B-8C9D-0E1F2A3B4C07",
+    "title": "Quad Stretch",
+    "description": "Stand on one leg, grab your opposite foot behind you, and pull your heel toward your glute. Hold 15 seconds each side.",
+    "durationSeconds": 30
+  },
+  {
+    "id": "A1B2C3D4-E5F6-4A7B-8C9D-0E1F2A3B4C08",
+    "title": "Wrist Rotations",
+    "description": "Extend your arms and rotate your wrists in circles, 10 times in each direction.",
+    "durationSeconds": 15
+  },
+  {
+    "id": "A1B2C3D4-E5F6-4A7B-8C9D-0E1F2A3B4C09",
+    "title": "Walk Around the Room",
+    "description": "Take a short walk around your room or office. Move your legs and get your blood flowing.",
+    "durationSeconds": 30
+  },
+  {
+    "id": "A1B2C3D4-E5F6-4A7B-8C9D-0E1F2A3B4C0A",
+    "title": "Deep Breathing",
+    "description": "Take 5 deep breaths: inhale for 4 seconds, hold for 4 seconds, exhale for 4 seconds.",
+    "durationSeconds": 30
+  },
+  {
+    "id": "A1B2C3D4-E5F6-4A7B-8C9D-0E1F2A3B4C0B",
+    "title": "Calf Raises",
+    "description": "Stand and slowly rise onto your toes, then lower back down. Repeat 15 times.",
+    "durationSeconds": 20
+  },
+  {
+    "id": "A1B2C3D4-E5F6-4A7B-8C9D-0E1F2A3B4C0C",
+    "title": "Shoulder Shrugs",
+    "description": "Raise your shoulders up toward your ears, hold for 3 seconds, then release. Repeat 10 times.",
+    "durationSeconds": 15
+  },
+  {
+    "id": "A1B2C3D4-E5F6-4A7B-8C9D-0E1F2A3B4C0D",
+    "title": "Eye Rest",
+    "description": "Close your eyes gently and relax. Let your eye muscles rest completely for 20 seconds.",
+    "durationSeconds": 20
+  },
+  {
+    "id": "A1B2C3D4-E5F6-4A7B-8C9D-0E1F2A3B4C0E",
+    "title": "Standing Squats",
+    "description": "Do 10 slow bodyweight squats. Keep your back straight and knees behind your toes.",
+    "durationSeconds": 30
+  },
+  {
+    "id": "A1B2C3D4-E5F6-4A7B-8C9D-0E1F2A3B4C0F",
+    "title": "Finger Stretches",
+    "description": "Spread your fingers wide, hold for 5 seconds, then make a fist. Repeat 8 times.",
+    "durationSeconds": 15
+  },
+  {
+    "id": "A1B2C3D4-E5F6-4A7B-8C9D-0E1F2A3B4C10",
+    "title": "Hamstring Stretch",
+    "description": "Place one foot on a low surface, keep your leg straight, and lean forward. Hold 15 seconds each side.",
+    "durationSeconds": 30
+  },
+  {
+    "id": "A1B2C3D4-E5F6-4A7B-8C9D-0E1F2A3B4C11",
+    "title": "Posture Check",
+    "description": "Stand against a wall with your head, shoulders, and hips touching it. Hold this posture for 15 seconds.",
+    "durationSeconds": 15
+  },
+  {
+    "id": "A1B2C3D4-E5F6-4A7B-8C9D-0E1F2A3B4C12",
+    "title": "Water Break",
+    "description": "Walk to the kitchen and drink a full glass of water. Staying hydrated improves focus.",
+    "durationSeconds": 30
+  },
+  {
+    "id": "A1B2C3D4-E5F6-4A7B-8C9D-0E1F2A3B4C13",
+    "title": "Arm Circles",
+    "description": "Extend your arms to the sides and make small circles, gradually increasing size. 10 forward, 10 backward.",
+    "durationSeconds": 20
+  },
+  {
+    "id": "A1B2C3D4-E5F6-4A7B-8C9D-0E1F2A3B4C14",
+    "title": "Box Breathing",
+    "description": "Breathe in for 4 seconds, hold for 4 seconds, breathe out for 4 seconds, hold for 4 seconds. Repeat 3 times.",
+    "durationSeconds": 30
+  },
+  {
+    "id": "A1B2C3D4-E5F6-4A7B-8C9D-0E1F2A3B4C15",
+    "title": "Chest Opener",
+    "description": "Clasp your hands behind your back, straighten your arms, and lift them slightly while opening your chest.",
+    "durationSeconds": 15
+  },
+  {
+    "id": "A1B2C3D4-E5F6-4A7B-8C9D-0E1F2A3B4C16",
+    "title": "Take the Stairs",
+    "description": "If stairs are nearby, walk up and down one flight. A quick burst of activity boosts energy.",
+    "durationSeconds": 30
+  },
+  {
+    "id": "A1B2C3D4-E5F6-4A7B-8C9D-0E1F2A3B4C17",
+    "title": "20-20-20 Rule",
+    "description": "Look at something 20 feet away for 20 seconds. This reduces digital eye strain significantly.",
+    "durationSeconds": 20
+  },
+  {
+    "id": "A1B2C3D4-E5F6-4A7B-8C9D-0E1F2A3B4C18",
+    "title": "Hip Circles",
+    "description": "Place your hands on your hips and rotate them in wide circles. 10 clockwise, 10 counterclockwise.",
+    "durationSeconds": 20
+  },
+  {
+    "id": "A1B2C3D4-E5F6-4A7B-8C9D-0E1F2A3B4C19",
+    "title": "Spinal Twist",
+    "description": "Sit or stand, place one hand on the opposite knee, and gently twist your torso. Hold 10 seconds each side.",
+    "durationSeconds": 20
+  }
+]
