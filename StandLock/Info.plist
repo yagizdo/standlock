@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>LSUIElement</key>
+	<true/>
+	<key>NSCalendarsFullAccessUsageDescription</key>
+	<string>StandLock reads your calendar to defer breaks during meetings.</string>
+	<key>NSHumanReadableCopyright</key>
+	<string>Copyright © 2026 StandLock</string>
+</dict>
+</plist>

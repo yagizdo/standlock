@@ -1,0 +1,53 @@
+# Xcode
+build/
+DerivedData/
+*.xcodeproj/project.xcworkspace/xcuserdata/
+*.xcodeproj/xcuserdata/
+*.xcworkspace/xcuserdata/
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+*.xccheckout
+*.moved-aside
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Swift Package Manager
+.build/
+.swiftpm/
+Packages/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Signing (NEVER commit)
+*.p12
+*.cer
+*.mobileprovision
+*.provisionprofile
+ExportOptions.plist
+
+# IDE
+.idea/
+*.swp
+*.swo
+*~
+.vscode/
+
+# Personal configs
+*.xcuserstate
+IDEWorkspaceChecks.plist
+
+# Archives
+*.xcarchive
+
+# Environment / secrets
+.env
+.env.*
+secrets/

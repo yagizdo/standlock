@@ -1,0 +1,44 @@
+name: StandLock
+options:
+  bundleIdPrefix: com.standlock
+  deploymentTarget:
+    macOS: "15.0"
+  xcodeVersion: "16.0"
+  createIntermediateGroups: true
+  defaultConfig: Debug
+
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    MACOSX_DEPLOYMENT_TARGET: "15.0"
+    ENABLE_HARDENED_RUNTIME: YES
+
+packages:
+  StandLockKit:
+    path: StandLockKit
+
+targets:
+  StandLock:
+    type: application
+    platform: macOS
+    sources:
+      - path: StandLock
+    settings:
+      base:
+        INFOPLIST_FILE: StandLock/Info.plist
+        CODE_SIGN_ENTITLEMENTS: StandLock/StandLock.entitlements
+        PRODUCT_BUNDLE_IDENTIFIER: com.standlock.app
+        PRODUCT_NAME: StandLock
+        SWIFT_STRICT_CONCURRENCY: complete
+        ENABLE_USER_SCRIPT_SANDBOXING: NO
+    dependencies:
+      - package: StandLockKit
+        product: StandLockCore
+      - package: StandLockKit
+        product: Scheduling
+      - package: StandLockKit
+        product: Detection
+      - package: StandLockKit
+        product: Locking
+      - package: StandLockKit
+        product: Coordination
