@@ -8,19 +8,25 @@
 
 /* Begin PBXBuildFile section */
 		2CD0D3C3CF795626E50A5EAA /* StandLockApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1524D749BB78A875E5FD51F /* StandLockApp.swift */; };
+		44D9EB3E27CF114DDF7E3735 /* BreakOverlayWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5BBDBF97CFAA5FF490CBD00 /* BreakOverlayWindow.swift */; };
 		4F9FCDEAA10641DE215D0663 /* StandLockCore in Frameworks */ = {isa = PBXBuildFile; productRef = 72A6FAE1CB69E8D0DE33B641 /* StandLockCore */; };
+		810D4C61C16893C7AA034095 /* BreakContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17E19773EB3047D0D427C1C2 /* BreakContentView.swift */; };
 		82BDAFFF1661ED2476DDCAD3 /* Detection in Frameworks */ = {isa = PBXBuildFile; productRef = F19E05A1FA932709D406DD8F /* Detection */; };
 		90D5E71A0446AFE3673A03EA /* Scheduling in Frameworks */ = {isa = PBXBuildFile; productRef = 316964B56B03AC1F35947883 /* Scheduling */; };
 		918E275316F96D0940D30FE1 /* Coordination in Frameworks */ = {isa = PBXBuildFile; productRef = B92CC5F67D1B761AB8B497AF /* Coordination */; };
 		9D77F7B7F12048E4399B8B25 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD06AD45022B6D147E26C4A6 /* AppDelegate.swift */; };
 		AD18B90CCF07CB58B8312CDB /* Locking in Frameworks */ = {isa = PBXBuildFile; productRef = 3F23054B7AE15E61C38C884E /* Locking */; };
+		ED1A168BD55576065212E8ED /* OverlayWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4462E8D161113596647BD19E /* OverlayWindowController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		05CE8593F3F5EBFD2FD7DD08 /* StandLock.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StandLock.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		17E19773EB3047D0D427C1C2 /* BreakContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakContentView.swift; sourceTree = "<group>"; };
 		42215A75B39382916D51D614 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		4462E8D161113596647BD19E /* OverlayWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayWindowController.swift; sourceTree = "<group>"; };
 		540564FDDCA36A0411155BC1 /* StandLock.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = StandLock.entitlements; sourceTree = "<group>"; };
 		B1524D749BB78A875E5FD51F /* StandLockApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StandLockApp.swift; sourceTree = "<group>"; };
+		C5BBDBF97CFAA5FF490CBD00 /* BreakOverlayWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakOverlayWindow.swift; sourceTree = "<group>"; };
 		DC6421DB3A1D7F3131B3B7F4 /* StandLockKit */ = {isa = PBXFileReference; lastKnownFileType = folder; name = StandLockKit; path = StandLockKit; sourceTree = SOURCE_ROOT; };
 		DD06AD45022B6D147E26C4A6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -41,6 +47,23 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2CA6E45A7258421539512D9F /* BreakScreen */ = {
+			isa = PBXGroup;
+			children = (
+				17E19773EB3047D0D427C1C2 /* BreakContentView.swift */,
+				C5BBDBF97CFAA5FF490CBD00 /* BreakOverlayWindow.swift */,
+			);
+			path = BreakScreen;
+			sourceTree = "<group>";
+		};
+		85FCDB623AA2D87A6776A720 /* AppState */ = {
+			isa = PBXGroup;
+			children = (
+				4462E8D161113596647BD19E /* OverlayWindowController.swift */,
+			);
+			path = AppState;
+			sourceTree = "<group>";
+		};
 		907B89335B2C9A1ECDB2617C = {
 			isa = PBXGroup;
 			children = (
@@ -57,6 +80,7 @@
 				42215A75B39382916D51D614 /* Info.plist */,
 				540564FDDCA36A0411155BC1 /* StandLock.entitlements */,
 				B1524D749BB78A875E5FD51F /* StandLockApp.swift */,
+				85FCDB623AA2D87A6776A720 /* AppState */,
 				9D2396E1A8CA6F7756FE2E75 /* Views */,
 			);
 			path = StandLock;
@@ -65,6 +89,7 @@
 		9D2396E1A8CA6F7756FE2E75 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				2CA6E45A7258421539512D9F /* BreakScreen */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -150,6 +175,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				9D77F7B7F12048E4399B8B25 /* AppDelegate.swift in Sources */,
+				810D4C61C16893C7AA034095 /* BreakContentView.swift in Sources */,
+				44D9EB3E27CF114DDF7E3735 /* BreakOverlayWindow.swift in Sources */,
+				ED1A168BD55576065212E8ED /* OverlayWindowController.swift in Sources */,
 				2CD0D3C3CF795626E50A5EAA /* StandLockApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
