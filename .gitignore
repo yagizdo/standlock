@@ -51,3 +51,6 @@ IDEWorkspaceChecks.plist
 .env
 .env.*
 secrets/
+
+# Progress tracking (local only)
+progress.md
