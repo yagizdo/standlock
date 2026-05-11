@@ -1,0 +1,373 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		2CD0D3C3CF795626E50A5EAA /* StandLockApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1524D749BB78A875E5FD51F /* StandLockApp.swift */; };
+		4F9FCDEAA10641DE215D0663 /* StandLockCore in Frameworks */ = {isa = PBXBuildFile; productRef = 72A6FAE1CB69E8D0DE33B641 /* StandLockCore */; };
+		82BDAFFF1661ED2476DDCAD3 /* Detection in Frameworks */ = {isa = PBXBuildFile; productRef = F19E05A1FA932709D406DD8F /* Detection */; };
+		90D5E71A0446AFE3673A03EA /* Scheduling in Frameworks */ = {isa = PBXBuildFile; productRef = 316964B56B03AC1F35947883 /* Scheduling */; };
+		918E275316F96D0940D30FE1 /* Coordination in Frameworks */ = {isa = PBXBuildFile; productRef = B92CC5F67D1B761AB8B497AF /* Coordination */; };
+		9D77F7B7F12048E4399B8B25 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD06AD45022B6D147E26C4A6 /* AppDelegate.swift */; };
+		AD18B90CCF07CB58B8312CDB /* Locking in Frameworks */ = {isa = PBXBuildFile; productRef = 3F23054B7AE15E61C38C884E /* Locking */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		05CE8593F3F5EBFD2FD7DD08 /* StandLock.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StandLock.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		42215A75B39382916D51D614 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		540564FDDCA36A0411155BC1 /* StandLock.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = StandLock.entitlements; sourceTree = "<group>"; };
+		B1524D749BB78A875E5FD51F /* StandLockApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StandLockApp.swift; sourceTree = "<group>"; };
+		DC6421DB3A1D7F3131B3B7F4 /* StandLockKit */ = {isa = PBXFileReference; lastKnownFileType = folder; name = StandLockKit; path = StandLockKit; sourceTree = SOURCE_ROOT; };
+		DD06AD45022B6D147E26C4A6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		904958FBDA50D72D0D76A68B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4F9FCDEAA10641DE215D0663 /* StandLockCore in Frameworks */,
+				90D5E71A0446AFE3673A03EA /* Scheduling in Frameworks */,
+				82BDAFFF1661ED2476DDCAD3 /* Detection in Frameworks */,
+				AD18B90CCF07CB58B8312CDB /* Locking in Frameworks */,
+				918E275316F96D0940D30FE1 /* Coordination in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		907B89335B2C9A1ECDB2617C = {
+			isa = PBXGroup;
+			children = (
+				F7BF333DCA8F5AAD680D9E9F /* Packages */,
+				95F63B4A7C6B184D86062873 /* StandLock */,
+				D36891D20EB0A9697C01CD27 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		95F63B4A7C6B184D86062873 /* StandLock */ = {
+			isa = PBXGroup;
+			children = (
+				DD06AD45022B6D147E26C4A6 /* AppDelegate.swift */,
+				42215A75B39382916D51D614 /* Info.plist */,
+				540564FDDCA36A0411155BC1 /* StandLock.entitlements */,
+				B1524D749BB78A875E5FD51F /* StandLockApp.swift */,
+				9D2396E1A8CA6F7756FE2E75 /* Views */,
+			);
+			path = StandLock;
+			sourceTree = "<group>";
+		};
+		9D2396E1A8CA6F7756FE2E75 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		D36891D20EB0A9697C01CD27 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				05CE8593F3F5EBFD2FD7DD08 /* StandLock.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F7BF333DCA8F5AAD680D9E9F /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				DC6421DB3A1D7F3131B3B7F4 /* StandLockKit */,
+			);
+			name = Packages;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		9FBF36FA4615F6B575D81462 /* StandLock */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DD1F99586E0796836A921B06 /* Build configuration list for PBXNativeTarget "StandLock" */;
+			buildPhases = (
+				4D339253DB07A7FC15C65CCF /* Sources */,
+				904958FBDA50D72D0D76A68B /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = StandLock;
+			packageProductDependencies = (
+				72A6FAE1CB69E8D0DE33B641 /* StandLockCore */,
+				316964B56B03AC1F35947883 /* Scheduling */,
+				F19E05A1FA932709D406DD8F /* Detection */,
+				3F23054B7AE15E61C38C884E /* Locking */,
+				B92CC5F67D1B761AB8B497AF /* Coordination */,
+			);
+			productName = StandLock;
+			productReference = 05CE8593F3F5EBFD2FD7DD08 /* StandLock.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		E9B5362AD6A287CE18B497FB /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+				};
+			};
+			buildConfigurationList = 83C1266D2B74DBC2480B2B2D /* Build configuration list for PBXProject "StandLock" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 907B89335B2C9A1ECDB2617C;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				F7857F37B5CD44E44B013353 /* XCLocalSwiftPackageReference "StandLockKit" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = D36891D20EB0A9697C01CD27 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				9FBF36FA4615F6B575D81462 /* StandLock */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		4D339253DB07A7FC15C65CCF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9D77F7B7F12048E4399B8B25 /* AppDelegate.swift in Sources */,
+				2CD0D3C3CF795626E50A5EAA /* StandLockApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		24E7C22FA25D7BF0111E50A7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = StandLock/StandLock.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				INFOPLIST_FILE = StandLock/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.standlock.app;
+				PRODUCT_NAME = StandLock;
+				SDKROOT = macosx;
+				SWIFT_STRICT_CONCURRENCY = complete;
+			};
+			name = Release;
+		};
+		3C3BFC828EAE81A230208DC6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = StandLock/StandLock.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				INFOPLIST_FILE = StandLock/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.standlock.app;
+				PRODUCT_NAME = StandLock;
+				SDKROOT = macosx;
+				SWIFT_STRICT_CONCURRENCY = complete;
+			};
+			name = Debug;
+		};
+		9AB410E184DA5F21E3D1A3F3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+		B29304891A6D900E33BFEEE3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		83C1266D2B74DBC2480B2B2D /* Build configuration list for PBXProject "StandLock" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B29304891A6D900E33BFEEE3 /* Debug */,
+				9AB410E184DA5F21E3D1A3F3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		DD1F99586E0796836A921B06 /* Build configuration list for PBXNativeTarget "StandLock" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3C3BFC828EAE81A230208DC6 /* Debug */,
+				24E7C22FA25D7BF0111E50A7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		F7857F37B5CD44E44B013353 /* XCLocalSwiftPackageReference "StandLockKit" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = StandLockKit;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		316964B56B03AC1F35947883 /* Scheduling */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Scheduling;
+		};
+		3F23054B7AE15E61C38C884E /* Locking */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Locking;
+		};
+		72A6FAE1CB69E8D0DE33B641 /* StandLockCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = StandLockCore;
+		};
+		B92CC5F67D1B761AB8B497AF /* Coordination */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Coordination;
+		};
+		F19E05A1FA932709D406DD8F /* Detection */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Detection;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = E9B5362AD6A287CE18B497FB /* Project object */;
+}
