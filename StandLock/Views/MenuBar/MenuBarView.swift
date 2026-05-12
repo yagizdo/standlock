@@ -117,8 +117,8 @@ struct MenuBarView: View {
 
     private var bottomActions: some View {
         VStack(alignment: .leading, spacing: 4) {
-            Button("Settings...") {
-                NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
+            SettingsLink {
+                Text("Settings...")
             }
             Button("Quit StandLock") {
                 NSApp.terminate(nil)

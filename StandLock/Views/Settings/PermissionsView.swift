@@ -6,6 +6,7 @@ struct PermissionsView: View {
     @State private var inputMonitoringGranted = false
     @State private var accessibilityGranted = false
     @State private var calendarStatus: EKAuthorizationStatus = .notDetermined
+    @State private var pollTimer: Timer?
 
     var body: some View {
         Form {
@@ -18,12 +19,11 @@ struct PermissionsView: View {
             Section("Recommended") {
                 PermissionRow(
                     title: "Input Monitoring",
-                    description: "Detect keyboard activity for idle detection and escape combo. A system dialog will appear.",
+                    description: "Detect keyboard activity for idle detection and escape combo. You'll need to enable it in System Settings.",
                     systemImage: "keyboard",
                     status: inputMonitoringGranted ? .granted : .notGranted,
                     action: {
                         CGRequestListenEventAccess()
-                        refreshStatus()
                     }
                 )
             }
@@ -36,7 +36,6 @@ struct PermissionsView: View {
                     status: accessibilityGranted ? .granted : .notGranted,
                     action: {
                         requestAccessibilityPermission()
-                        refreshStatus()
                     }
                 )
 
@@ -47,15 +46,23 @@ struct PermissionsView: View {
                     status: calendarPermissionStatus,
                     action: {
                         Task {
-                            _ = try? await EKEventStore().requestFullAccessToEvents()
-                            await MainActor.run { refreshStatus() }
+                            let granted = (try? await EKEventStore().requestFullAccessToEvents()) ?? false
+                            await MainActor.run {
+                                calendarStatus = granted ? .fullAccess : .denied
+                            }
                         }
                     }
                 )
             }
         }
         .formStyle(.grouped)
-        .onAppear { refreshStatus() }
+        .onAppear {
+            refreshStatus()
+            startPolling()
+        }
+        .onDisappear {
+            stopPolling()
+        }
     }
 
     private var calendarPermissionStatus: PermissionStatus {
@@ -70,6 +77,19 @@ struct PermissionsView: View {
         inputMonitoringGranted = CGPreflightListenEventAccess()
         accessibilityGranted = AXIsProcessTrusted()
         calendarStatus = EKEventStore.authorizationStatus(for: .event)
+    }
+
+    private func startPolling() {
+        pollTimer = Timer.scheduledTimer(withTimeInterval: 2, repeats: true) { _ in
+            Task { @MainActor in
+                refreshStatus()
+            }
+        }
+    }
+
+    private func stopPolling() {
+        pollTimer?.invalidate()
+        pollTimer = nil
     }
 
     private func requestAccessibilityPermission() {
