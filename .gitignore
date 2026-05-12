@@ -54,3 +54,9 @@ secrets/
 
 # Progress tracking (local only)
 progress.md
+
+# AI
+.claude/plans
+.claude/handovers
+.claude/reports
+docs/
