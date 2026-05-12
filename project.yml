@@ -16,6 +16,9 @@ settings:
 packages:
   StandLockKit:
     path: StandLockKit
+  Sparkle:
+    url: https://github.com/sparkle-project/Sparkle
+    from: "2.7.0"
 
 targets:
   StandLock:
@@ -42,3 +45,5 @@ targets:
         product: Locking
       - package: StandLockKit
         product: Coordination
+      - package: Sparkle
+        product: Sparkle

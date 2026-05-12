@@ -8,5 +8,11 @@
 	<string>StandLock reads your calendar to defer breaks during meetings.</string>
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright © 2026 StandLock</string>
+	<key>SUFeedURL</key>
+	<string>https://github.com/yagizdo/standlock/releases/latest/download/appcast.xml</string>
+	<key>SUPublicEDKey</key>
+	<string>REPLACE_WITH_REAL_KEY</string>
+	<key>SUEnableAutomaticChecks</key>
+	<true/>
 </dict>
 </plist>
