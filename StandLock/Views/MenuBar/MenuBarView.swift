@@ -3,6 +3,7 @@ import StandLockCore
 
 struct MenuBarView: View {
     @Environment(AppCoordinator.self) private var coordinator
+    @Environment(\.openWindow) private var openWindow
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -18,6 +19,11 @@ struct MenuBarView: View {
         }
         .padding(12)
         .frame(width: 280)
+        .task {
+            if !coordinator.hasCompletedOnboarding {
+                openWindow(id: "onboarding")
+            }
+        }
     }
 
     // MARK: - Header

@@ -1,12 +1,7 @@
 import SwiftUI
-import EventKit
-import ApplicationServices
 
 struct PermissionsView: View {
-    @State private var inputMonitoringGranted = false
-    @State private var accessibilityGranted = false
-    @State private var calendarStatus: EKAuthorizationStatus = .notDetermined
-    @State private var pollTimer: Timer?
+    @State private var checker = PermissionChecker()
 
     var body: some View {
         Form {
@@ -21,9 +16,9 @@ struct PermissionsView: View {
                     title: "Input Monitoring",
                     description: "Detect keyboard activity for idle detection and escape combo. You'll need to enable it in System Settings.",
                     systemImage: "keyboard",
-                    status: inputMonitoringGranted ? .granted : .notGranted,
+                    status: checker.inputMonitoringGranted ? .granted : .notGranted,
                     action: {
-                        CGRequestListenEventAccess()
+                        checker.requestInputMonitoring()
                     }
                 )
             }
@@ -33,9 +28,9 @@ struct PermissionsView: View {
                     title: "Accessibility",
                     description: "Enables Strict mode to fully block keyboard and mouse input. Requires manual toggle in System Settings.",
                     systemImage: "hand.raised.circle",
-                    status: accessibilityGranted ? .granted : .notGranted,
+                    status: checker.accessibilityGranted ? .granted : .notGranted,
                     action: {
-                        requestAccessibilityPermission()
+                        checker.requestAccessibility()
                     }
                 )
 
@@ -43,66 +38,24 @@ struct PermissionsView: View {
                     title: "Calendar Access",
                     description: "Read your calendar to defer breaks during meetings.",
                     systemImage: "calendar",
-                    status: calendarPermissionStatus,
+                    status: checker.calendarPermissionStatus,
                     action: {
-                        Task {
-                            let granted = (try? await EKEventStore().requestFullAccessToEvents()) ?? false
-                            await MainActor.run {
-                                calendarStatus = granted ? .fullAccess : .denied
-                            }
-                        }
+                        checker.requestCalendar()
                     }
                 )
             }
         }
         .formStyle(.grouped)
         .onAppear {
-            refreshStatus()
-            startPolling()
+            checker.startPolling()
         }
         .onDisappear {
-            stopPolling()
+            checker.stopPolling()
         }
-    }
-
-    private var calendarPermissionStatus: PermissionStatus {
-        switch calendarStatus {
-        case .fullAccess: .granted
-        case .denied, .restricted: .denied
-        default: .notGranted
-        }
-    }
-
-    private func refreshStatus() {
-        inputMonitoringGranted = CGPreflightListenEventAccess()
-        accessibilityGranted = AXIsProcessTrusted()
-        calendarStatus = EKEventStore.authorizationStatus(for: .event)
-    }
-
-    private func startPolling() {
-        pollTimer = Timer.scheduledTimer(withTimeInterval: 2, repeats: true) { _ in
-            Task { @MainActor in
-                refreshStatus()
-            }
-        }
-    }
-
-    private func stopPolling() {
-        pollTimer?.invalidate()
-        pollTimer = nil
-    }
-
-    private func requestAccessibilityPermission() {
-        let options = ["AXTrustedCheckOptionPrompt": true] as CFDictionary
-        AXIsProcessTrustedWithOptions(options)
     }
 }
 
-private enum PermissionStatus {
-    case granted, notGranted, denied
-}
-
-private struct PermissionRow: View {
+struct PermissionRow: View {
     let title: String
     let description: String
     let systemImage: String

@@ -189,4 +189,16 @@ final class AppCoordinator {
         hasCompletedOnboarding = true
         UserDefaults.standard.set(true, forKey: "hasCompletedOnboarding")
     }
+
+    func createDefaultSchedule() {
+        let defaultSchedule = Schedule(
+            name: "Work Hours",
+            days: .weekdays,
+            windows: [TimeWindow(startHour: 9, startMinute: 0, endHour: 17, endMinute: 0)],
+            breakInterval: 45 * 60,
+            breakDuration: 5 * 60,
+            disciplineLevel: .gentle
+        )
+        addSchedule(defaultSchedule)
+    }
 }
