@@ -18,7 +18,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let delegate = SparkleDelegate()
         sparkleDelegate = delegate
         updaterController = SPUStandardUpdaterController(
-            startingUpdater: true,
+            startingUpdater: false,
             updaterDelegate: delegate,
             userDriverDelegate: nil
         )

@@ -13,6 +13,6 @@
 	<key>SUPublicEDKey</key>
 	<string>REPLACE_WITH_REAL_KEY</string>
 	<key>SUEnableAutomaticChecks</key>
-	<true/>
+	<false/>
 </dict>
 </plist>

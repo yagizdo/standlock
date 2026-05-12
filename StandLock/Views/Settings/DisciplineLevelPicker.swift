@@ -32,9 +32,9 @@ private struct LevelCard: View {
                 .font(.caption2)
                 .foregroundStyle(isSelected ? .white.opacity(0.8) : .secondary)
                 .multilineTextAlignment(.center)
-                .lineLimit(2)
+                .lineLimit(3)
         }
-        .frame(maxWidth: .infinity)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .padding(.vertical, 10)
         .padding(.horizontal, 6)
         .background(
@@ -45,6 +45,7 @@ private struct LevelCard: View {
             RoundedRectangle(cornerRadius: 10)
                 .stroke(isSelected ? accentColor : Color.secondary.opacity(0.3), lineWidth: isSelected ? 2 : 1)
         )
+        .contentShape(RoundedRectangle(cornerRadius: 10))
     }
 
     private var iconName: String {
