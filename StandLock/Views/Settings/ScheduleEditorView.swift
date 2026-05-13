@@ -3,8 +3,7 @@ import StandLockCore
 
 struct ScheduleEditorView: View {
     @Environment(AppCoordinator.self) private var coordinator
-    @State private var editingSchedule: Schedule?
-    @State private var showingForm = false
+    @State private var sheetMode: SheetMode?
 
     var body: some View {
         VStack(spacing: 0) {
@@ -19,26 +18,26 @@ struct ScheduleEditorView: View {
             HStack {
                 Spacer()
                 Button {
-                    editingSchedule = nil
-                    showingForm = true
+                    sheetMode = .add
                 } label: {
                     Label("Add Schedule", systemImage: "plus")
                 }
                 .padding(12)
             }
         }
-        .sheet(isPresented: $showingForm) {
+        .sheet(item: $sheetMode) { mode in
             ScheduleFormView(
-                schedule: editingSchedule,
+                schedule: mode.schedule,
                 onSave: { schedule in
-                    if editingSchedule != nil {
-                        coordinator.updateSchedule(schedule)
-                    } else {
+                    switch mode {
+                    case .add:
                         coordinator.addSchedule(schedule)
+                    case .edit:
+                        coordinator.updateSchedule(schedule)
                     }
-                    showingForm = false
+                    sheetMode = nil
                 },
-                onCancel: { showingForm = false }
+                onCancel: { sheetMode = nil }
             )
         }
     }
@@ -70,8 +69,7 @@ struct ScheduleEditorView: View {
                         coordinator.updateSchedule(updated)
                     },
                     onEdit: {
-                        editingSchedule = schedule
-                        showingForm = true
+                        sheetMode = .edit(schedule)
                     }
                 )
             }
@@ -80,6 +78,25 @@ struct ScheduleEditorView: View {
                     coordinator.deleteSchedule(coordinator.schedules[index])
                 }
             }
+        }
+    }
+}
+
+private enum SheetMode: Identifiable {
+    case add
+    case edit(Schedule)
+
+    var id: String {
+        switch self {
+        case .add: "add"
+        case .edit(let schedule): schedule.id.uuidString
+        }
+    }
+
+    var schedule: Schedule? {
+        switch self {
+        case .add: nil
+        case .edit(let schedule): schedule
         }
     }
 }
@@ -121,7 +138,7 @@ private struct ScheduleRow: View {
             Button {
                 onEdit()
             } label: {
-                Image(systemName: "pencil")
+                Image(systemName: "pencil.circle.fill")
                     .foregroundStyle(.secondary)
             }
             .buttonStyle(.plain)
