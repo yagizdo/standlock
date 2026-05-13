@@ -320,7 +320,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.standlock.app;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yagizdokumaci.standlock;
 				PRODUCT_NAME = StandLock;
 				SDKROOT = macosx;
 				SWIFT_STRICT_CONCURRENCY = complete;
@@ -339,7 +339,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.standlock.app;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yagizdokumaci.standlock;
 				PRODUCT_NAME = StandLock;
 				SDKROOT = macosx;
 				SWIFT_STRICT_CONCURRENCY = complete;

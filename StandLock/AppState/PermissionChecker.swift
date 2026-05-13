@@ -3,7 +3,7 @@ import EventKit
 import ApplicationServices
 
 enum PermissionStatus {
-    case granted, notGranted, denied
+    case granted, notGranted, denied, needsRestart
 }
 
 enum PermissionType {
@@ -11,14 +11,25 @@ enum PermissionType {
     case inputMonitoring
     case calendar
 
-    var settingsURL: URL? {
+    var settingsURLs: [URL] {
         switch self {
         case .accessibility:
-            URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility")
+            [
+                "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility",
+                "x-apple.systempreferences:com.apple.settings.PrivacySecurity.extension?Privacy_Accessibility",
+                "x-apple.systempreferences:com.apple.preference.security?Privacy",
+            ].compactMap { URL(string: $0) }
         case .inputMonitoring:
-            URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_ListenEvent")
+            [
+                "x-apple.systempreferences:com.apple.preference.security?Privacy_ListenEvent",
+                "x-apple.systempreferences:com.apple.settings.PrivacySecurity.extension?Privacy_ListenEvent",
+                "x-apple.systempreferences:com.apple.preference.security?Privacy",
+            ].compactMap { URL(string: $0) }
         case .calendar:
-            URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Calendars")
+            [
+                "x-apple.systempreferences:com.apple.preference.security?Privacy_Calendars",
+                "x-apple.systempreferences:com.apple.preference.security?Privacy",
+            ].compactMap { URL(string: $0) }
         }
     }
 }
@@ -26,16 +37,86 @@ enum PermissionType {
 @Observable
 @MainActor
 final class PermissionChecker {
-    var inputMonitoringGranted = false
-    var accessibilityGranted = false
-    var calendarStatus: EKAuthorizationStatus = .notDetermined
+    var inputMonitoringGranted: Bool
+    var accessibilityGranted: Bool
+    var calendarStatus: EKAuthorizationStatus
+    var inputMonitoringProbeSucceeded = false
+    var calendarNeedsRestart = false
+
+    private let eventStore = EKEventStore()
+
+    init() {
+        inputMonitoringGranted = CGPreflightListenEventAccess()
+        accessibilityGranted = AXIsProcessTrusted()
+        calendarStatus = EKEventStore.authorizationStatus(for: .event)
+    }
+
+    var accessibilityStatus: PermissionStatus {
+        accessibilityGranted ? .granted : .notGranted
+    }
+
+    var inputMonitoringStatus: PermissionStatus {
+        guard inputMonitoringGranted else { return .notGranted }
+        guard inputMonitoringProbeSucceeded else { return .needsRestart }
+        return .granted
+    }
 
     var calendarPermissionStatus: PermissionStatus {
         switch calendarStatus {
         case .fullAccess: .granted
         case .denied, .restricted: .denied
-        default: .notGranted
+        default: calendarNeedsRestart ? .needsRestart : .notGranted
         }
+    }
+
+    private var lastProbeTime: Date = .distantPast
+    private let probeInterval: TimeInterval = 10
+
+    private func probeInputMonitoringAccess() -> Bool {
+        let eventMask: CGEventMask = 1 << CGEventType.keyDown.rawValue
+        guard let tap = CGEvent.tapCreate(
+            tap: .cgSessionEventTap,
+            place: .headInsertEventTap,
+            options: .listenOnly,
+            eventsOfInterest: eventMask,
+            callback: { _, _, event, _ in Unmanaged.passRetained(event) },
+            userInfo: nil
+        ) else { return false }
+        CGEvent.tapEnable(tap: tap, enable: false)
+        return true
+    }
+
+    struct PermissionTransitions {
+        var accessibilityBecameGranted = false
+        var inputMonitoringBecameGranted = false
+        var calendarBecameGranted = false
+        var hasAnyTransition: Bool {
+            accessibilityBecameGranted || inputMonitoringBecameGranted || calendarBecameGranted
+        }
+    }
+
+    private func refreshStatusAndDetectTransitions() -> PermissionTransitions {
+        let prevAX = accessibilityGranted
+        let prevIM = inputMonitoringGranted
+        let prevCal = calendarStatus
+
+        refreshStatus()
+
+        var transitions = PermissionTransitions()
+        transitions.accessibilityBecameGranted = !prevAX && accessibilityGranted
+        transitions.inputMonitoringBecameGranted = !prevIM && inputMonitoringGranted
+        transitions.calendarBecameGranted = prevCal != .fullAccess && calendarStatus == .fullAccess
+        return transitions
+    }
+
+    private func updateInputMonitoringProbe() {
+        guard inputMonitoringGranted else {
+            inputMonitoringProbeSucceeded = false
+            return
+        }
+        guard Date().timeIntervalSince(lastProbeTime) >= probeInterval else { return }
+        lastProbeTime = Date()
+        inputMonitoringProbeSucceeded = probeInputMonitoringAccess()
     }
 
     func refreshStatus() {
@@ -46,53 +127,120 @@ final class PermissionChecker {
 
     func pollContinuously() async {
         refreshStatus()
+        updateInputMonitoringProbe()
 
         let activationTask = Task { @MainActor [weak self] in
             for await _ in NotificationCenter.default.notifications(
                 named: NSApplication.didBecomeActiveNotification
             ) {
-                self?.refreshStatus()
+                guard let self else { return }
+                let transitions = self.refreshStatusAndDetectTransitions()
+                self.updateInputMonitoringProbe()
+                self.handleTransitions(transitions)
             }
         }
 
         defer { activationTask.cancel() }
 
         while !Task.isCancelled {
-            try? await Task.sleep(for: .seconds(5))
-            refreshStatus()
+            try? await Task.sleep(for: .seconds(2))
+            let transitions = refreshStatusAndDetectTransitions()
+            updateInputMonitoringProbe()
+            handleTransitions(transitions)
+        }
+    }
+
+    private func handleTransitions(_ transitions: PermissionTransitions) {
+        if transitions.accessibilityBecameGranted {
+            if !AXIsProcessTrusted() {
+                showRestartAlertIfNeeded(for: "Accessibility")
+            }
+        }
+
+        if transitions.inputMonitoringBecameGranted {
+            if !probeInputMonitoringAccess() {
+                showRestartAlertIfNeeded(for: "Input Monitoring")
+            } else {
+                inputMonitoringProbeSucceeded = true
+            }
+        }
+
+        if transitions.calendarBecameGranted {
+            if calendarStatus != .fullAccess {
+                calendarNeedsRestart = true
+            }
+        }
+    }
+
+    private var hasShownRestartAlert = false
+
+    func relaunchApp() {
+        let task = Process()
+        task.executableURL = URL(fileURLWithPath: "/usr/bin/open")
+        task.arguments = ["-n", Bundle.main.bundlePath]
+        try? task.run()
+        NSApp.terminate(nil)
+    }
+
+    private func showRestartAlertIfNeeded(for permissionName: String) {
+        guard !hasShownRestartAlert else { return }
+        hasShownRestartAlert = true
+
+        let alert = NSAlert()
+        alert.messageText = "\(permissionName) Permission Granted"
+        alert.informativeText = "StandLock needs to restart to apply this permission."
+        alert.addButton(withTitle: "Restart Now")
+        alert.addButton(withTitle: "Later")
+        alert.alertStyle = .informational
+
+        if alert.runModal() == .alertFirstButtonReturn {
+            relaunchApp()
         }
     }
 
     private func openSystemSettings(for permission: PermissionType) {
-        if let url = permission.settingsURL {
-            NSWorkspace.shared.open(url)
+        for url in permission.settingsURLs {
+            if NSWorkspace.shared.open(url) { return }
         }
     }
 
     func requestAccessibility() {
         let key = "AXTrustedCheckOptionPrompt" as CFString
         let options = [key: true] as CFDictionary
-        let trusted = AXIsProcessTrustedWithOptions(options)
-        if !trusted {
-            openSystemSettings(for: .accessibility)
+        if AXIsProcessTrustedWithOptions(options) {
+            refreshStatus()
+            return
         }
+        openSystemSettings(for: .accessibility)
+        pollAfterSettingsOpened()
     }
 
     func requestInputMonitoring() {
-        let granted = CGRequestListenEventAccess()
-        if !granted {
-            openSystemSettings(for: .inputMonitoring)
+        if CGRequestListenEventAccess() {
+            refreshStatus()
+            return
         }
+        openSystemSettings(for: .inputMonitoring)
+        pollAfterSettingsOpened()
     }
 
     func requestCalendar() {
         Task {
-            let store = EKEventStore()
-            let granted = (try? await store.requestFullAccessToEvents()) ?? false
-            if !granted {
+            let granted = (try? await eventStore.requestFullAccessToEvents()) ?? false
+            refreshStatus()
+            if !granted && calendarStatus != .fullAccess {
                 openSystemSettings(for: .calendar)
+                pollAfterSettingsOpened()
             }
-            calendarStatus = EKEventStore.authorizationStatus(for: .event)
+        }
+    }
+
+    private func pollAfterSettingsOpened() {
+        Task {
+            for _ in 0..<30 {
+                try? await Task.sleep(for: .seconds(1))
+                refreshStatus()
+            }
         }
     }
 }
