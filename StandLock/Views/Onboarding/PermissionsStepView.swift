@@ -57,8 +57,7 @@ struct PermissionsStepView: View {
         }
         .padding(24)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .onAppear { checker.startPolling() }
-        .onDisappear { checker.stopPolling() }
+        .task { await checker.pollContinuously() }
     }
 
     private func permissionCard(
