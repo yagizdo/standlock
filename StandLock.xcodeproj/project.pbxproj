@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		09F7858EAC29160F684A60DD /* GeneralSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05EBBE0E51300DF74842F753 /* GeneralSettingsView.swift */; };
 		18504F805D34BF50C5E6729A /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 109FDEA57D0C0F3D6F9C1809 /* Sparkle */; };
 		1CCAA6FDBBB854DCBC1968EA /* MenuBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A2D12AD9D89928096A633C /* MenuBarView.swift */; };
 		21816E071409DEA5FC6A0BCE /* PermissionChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE0E2C708B760F809144B756 /* PermissionChecker.swift */; };
@@ -40,6 +41,7 @@
 
 /* Begin PBXFileReference section */
 		05CE8593F3F5EBFD2FD7DD08 /* StandLock.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StandLock.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		05EBBE0E51300DF74842F753 /* GeneralSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralSettingsView.swift; sourceTree = "<group>"; };
 		14C3EDA84FE380ED1AF6CE8A /* ScheduleFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleFormView.swift; sourceTree = "<group>"; };
 		17E19773EB3047D0D427C1C2 /* BreakContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakContentView.swift; sourceTree = "<group>"; };
 		1AA4370AAB123F9218436290 /* CountdownView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountdownView.swift; sourceTree = "<group>"; };
@@ -110,6 +112,7 @@
 				4CD0B4059D699DF8BDF99889 /* AboutView.swift */,
 				E2E6E6102A1900D1FAB2A856 /* DetectionSettingsView.swift */,
 				A866831BDFD42E80353C80D8 /* DisciplineLevelPicker.swift */,
+				05EBBE0E51300DF74842F753 /* GeneralSettingsView.swift */,
 				6382F8157622B1D11845645E /* PermissionsView.swift */,
 				94F9B9151DFEA710D1211B70 /* ScheduleEditorView.swift */,
 				14C3EDA84FE380ED1AF6CE8A /* ScheduleFormView.swift */,
@@ -285,6 +288,7 @@
 				DABDEC6CA937B88679850A3E /* DetectionSettingsView.swift in Sources */,
 				676678D8A09155A2AEEFA18C /* DisciplineLevelPicker.swift in Sources */,
 				C25F6670F8F37360B72ADE72 /* ExerciseSuggestionView.swift in Sources */,
+				09F7858EAC29160F684A60DD /* GeneralSettingsView.swift in Sources */,
 				1CCAA6FDBBB854DCBC1968EA /* MenuBarView.swift in Sources */,
 				FBB74759FC16BB2E5F728128 /* OnboardingView.swift in Sources */,
 				ED1A168BD55576065212E8ED /* OverlayWindowController.swift in Sources */,

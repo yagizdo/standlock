@@ -17,9 +17,8 @@ struct PermissionsView: View {
                     description: "Detect keyboard activity for idle detection and escape combo. You'll need to enable it in System Settings.",
                     systemImage: "keyboard",
                     status: checker.inputMonitoringGranted ? .granted : .notGranted,
-                    action: {
-                        checker.requestInputMonitoring()
-                    }
+                    settingsURL: PermissionType.inputMonitoring.settingsURL,
+                    action: { checker.requestInputMonitoring() }
                 )
             }
 
@@ -29,9 +28,8 @@ struct PermissionsView: View {
                     description: "Enables Strict mode to fully block keyboard and mouse input. Requires manual toggle in System Settings.",
                     systemImage: "hand.raised.circle",
                     status: checker.accessibilityGranted ? .granted : .notGranted,
-                    action: {
-                        checker.requestAccessibility()
-                    }
+                    settingsURL: PermissionType.accessibility.settingsURL,
+                    action: { checker.requestAccessibility() }
                 )
 
                 PermissionRow(
@@ -39,19 +37,13 @@ struct PermissionsView: View {
                     description: "Read your calendar to defer breaks during meetings.",
                     systemImage: "calendar",
                     status: checker.calendarPermissionStatus,
-                    action: {
-                        checker.requestCalendar()
-                    }
+                    settingsURL: PermissionType.calendar.settingsURL,
+                    action: { checker.requestCalendar() }
                 )
             }
         }
         .formStyle(.grouped)
-        .onAppear {
-            checker.startPolling()
-        }
-        .onDisappear {
-            checker.stopPolling()
-        }
+        .task { await checker.pollContinuously() }
     }
 }
 
@@ -60,6 +52,7 @@ struct PermissionRow: View {
     let description: String
     let systemImage: String
     let status: PermissionStatus
+    let settingsURL: URL?
     let action: () -> Void
 
     var body: some View {
@@ -123,7 +116,7 @@ struct PermissionRow: View {
     }
 
     private func openSystemSettings() {
-        if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy") {
+        if let url = settingsURL {
             NSWorkspace.shared.open(url)
         }
     }

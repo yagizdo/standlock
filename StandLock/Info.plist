@@ -4,6 +4,8 @@
 <dict>
 	<key>LSUIElement</key>
 	<true/>
+	<key>NSAccessibilityUsageDescription</key>
+	<string>StandLock uses accessibility to block keyboard and mouse input during breaks in Strict mode.</string>
 	<key>NSCalendarsFullAccessUsageDescription</key>
 	<string>StandLock reads your calendar to defer breaks during meetings.</string>
 	<key>NSHumanReadableCopyright</key>
