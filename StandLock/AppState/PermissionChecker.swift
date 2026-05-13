@@ -79,10 +79,11 @@ final class PermissionChecker {
             place: .headInsertEventTap,
             options: .listenOnly,
             eventsOfInterest: eventMask,
-            callback: { _, _, event, _ in Unmanaged.passRetained(event) },
+            callback: { _, _, event, _ in Unmanaged.passUnretained(event) },
             userInfo: nil
         ) else { return false }
         CGEvent.tapEnable(tap: tap, enable: false)
+        CFMachPortInvalidate(tap)
         return true
     }
 
@@ -90,9 +91,6 @@ final class PermissionChecker {
         var accessibilityBecameGranted = false
         var inputMonitoringBecameGranted = false
         var calendarBecameGranted = false
-        var hasAnyTransition: Bool {
-            accessibilityBecameGranted || inputMonitoringBecameGranted || calendarBecameGranted
-        }
     }
 
     private func refreshStatusAndDetectTransitions() -> PermissionTransitions {
@@ -166,25 +164,31 @@ final class PermissionChecker {
         }
 
         if transitions.calendarBecameGranted {
-            if calendarStatus != .fullAccess {
-                calendarNeedsRestart = true
-            }
+            calendarNeedsRestart = true
         }
     }
 
-    private var hasShownRestartAlert = false
+    private var shownRestartAlerts: Set<String> = []
 
     func relaunchApp() {
         let task = Process()
         task.executableURL = URL(fileURLWithPath: "/usr/bin/open")
         task.arguments = ["-n", Bundle.main.bundlePath]
-        try? task.run()
-        NSApp.terminate(nil)
+        do {
+            try task.run()
+            NSApp.terminate(nil)
+        } catch {
+            let alert = NSAlert()
+            alert.messageText = "Restart Failed"
+            alert.informativeText = "Could not relaunch StandLock. Please reopen the app manually."
+            alert.alertStyle = .warning
+            alert.runModal()
+        }
     }
 
     private func showRestartAlertIfNeeded(for permissionName: String) {
-        guard !hasShownRestartAlert else { return }
-        hasShownRestartAlert = true
+        guard !shownRestartAlerts.contains(permissionName) else { return }
+        shownRestartAlerts.insert(permissionName)
 
         let alert = NSAlert()
         alert.messageText = "\(permissionName) Permission Granted"
@@ -235,10 +239,14 @@ final class PermissionChecker {
         }
     }
 
+    private var settingsPollingTask: Task<Void, Never>?
+
     private func pollAfterSettingsOpened() {
-        Task {
+        settingsPollingTask?.cancel()
+        settingsPollingTask = Task {
             for _ in 0..<30 {
                 try? await Task.sleep(for: .seconds(1))
+                if Task.isCancelled { return }
                 refreshStatus()
             }
         }
