@@ -220,6 +220,9 @@ final class PermissionChecker {
     }
 
     func requestInputMonitoring() {
+        // Attempt a tap so the system registers the app in Input Monitoring list
+        _ = probeInputMonitoringAccess()
+
         if CGRequestListenEventAccess() {
             refreshStatus()
             return
