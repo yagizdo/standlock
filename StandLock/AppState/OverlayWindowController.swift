@@ -7,6 +7,7 @@ import Locking
 final class OverlayWindowController: LockPresenting, Observable {
     private var overlayWindows: [BreakOverlayWindow] = []
     private var eventTapController: EventTapController?
+    private var screenObserver: NSObjectProtocol?
     private(set) var isShowing: Bool = false
 
     private var currentLevel: DisciplineLevel?
@@ -58,6 +59,10 @@ final class OverlayWindowController: LockPresenting, Observable {
     }
 
     func dismissOverlay() {
+        if let observer = screenObserver {
+            NotificationCenter.default.removeObserver(observer)
+            screenObserver = nil
+        }
         eventTapController?.stop()
         eventTapController = nil
         for window in overlayWindows {
@@ -93,7 +98,7 @@ final class OverlayWindowController: LockPresenting, Observable {
     }
 
     private func observeScreenChanges() {
-        NotificationCenter.default.addObserver(
+        screenObserver = NotificationCenter.default.addObserver(
             forName: NSApplication.didChangeScreenParametersNotification,
             object: nil, queue: .main
         ) { [weak self] _ in
