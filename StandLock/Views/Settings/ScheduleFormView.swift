@@ -153,14 +153,30 @@ struct ScheduleFormView: View {
                     Text("Break every")
                         .font(.caption)
                         .foregroundStyle(.secondary)
-                    Stepper("\(breakIntervalMinutes) min", value: $breakIntervalMinutes, in: 5...180, step: 5)
+                    HStack(spacing: 4) {
+                        TextField("", value: $breakIntervalMinutes, format: .number)
+                            .textFieldStyle(.roundedBorder)
+                            .frame(width: 50)
+                        Stepper("", value: $breakIntervalMinutes, in: 1...180, step: 5)
+                            .labelsHidden()
+                        Text("min")
+                            .foregroundStyle(.secondary)
+                    }
                 }
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Break duration")
                         .font(.caption)
                         .foregroundStyle(.secondary)
-                    Stepper("\(breakDurationMinutes) min", value: $breakDurationMinutes, in: 1...60)
+                    HStack(spacing: 4) {
+                        TextField("", value: $breakDurationMinutes, format: .number)
+                            .textFieldStyle(.roundedBorder)
+                            .frame(width: 50)
+                        Stepper("", value: $breakDurationMinutes, in: 1...60, step: 1)
+                            .labelsHidden()
+                        Text("min")
+                            .foregroundStyle(.secondary)
+                    }
                 }
             }
         }
