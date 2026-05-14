@@ -8,6 +8,8 @@ final class OverlayWindowController: LockPresenting, Observable {
     private var overlayWindows: [BreakOverlayWindow] = []
     private var eventTapController: EventTapController?
     private var screenObserver: NSObjectProtocol?
+    private var deactivationObserver: NSObjectProtocol?
+    private var focusTimer: Timer?
     private(set) var isShowing: Bool = false
 
     private var currentLevel: DisciplineLevel?
@@ -35,6 +37,8 @@ final class OverlayWindowController: LockPresenting, Observable {
         currentPreferences = preferences
         currentStatistics = statistics
 
+        NSApp.setActivationPolicy(.regular)
+
         for screen in NSScreen.screens {
             let window = BreakOverlayWindow(screen: screen)
             let contentView = BreakContentView(
@@ -55,6 +59,12 @@ final class OverlayWindowController: LockPresenting, Observable {
             startEventTap(preferences: preferences)
         }
 
+        forceFocus()
+
+        if level == .firm || level == .strict {
+            startFocusEnforcer()
+        }
+
         observeScreenChanges()
     }
 
@@ -65,6 +75,12 @@ final class OverlayWindowController: LockPresenting, Observable {
             NotificationCenter.default.removeObserver(observer)
             screenObserver = nil
         }
+        if let observer = deactivationObserver {
+            NotificationCenter.default.removeObserver(observer)
+            deactivationObserver = nil
+        }
+        focusTimer?.invalidate()
+        focusTimer = nil
         eventTapController?.stop()
         eventTapController = nil
 
@@ -76,6 +92,8 @@ final class OverlayWindowController: LockPresenting, Observable {
             window.contentView = nil
             window.orderOut(nil)
         }
+
+        NSApp.setActivationPolicy(.accessory)
     }
 
     private func startEventTap(preferences: AppPreferences) {
@@ -101,6 +119,19 @@ final class OverlayWindowController: LockPresenting, Observable {
     private func handleEscape() {
         dismissOverlay()
         onEscape?()
+    }
+
+    private func forceFocus() {
+        NSApp.activate()
+        overlayWindows.first?.orderFrontRegardless()
+        overlayWindows.first?.makeKeyAndOrderFront(nil)
+    }
+
+    private func startFocusEnforcer() {
+        focusTimer = Timer.scheduledTimer(withTimeInterval: 0.3, repeats: true) { [weak self] _ in
+            guard let self, self.isShowing else { return }
+            self.forceFocus()
+        }
     }
 
     private func observeScreenChanges() {

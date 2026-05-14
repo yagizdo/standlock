@@ -113,6 +113,7 @@ private struct ScheduleRow: View {
                 set: { onToggle($0) }
             ))
             .toggleStyle(.switch)
+            .tint(.green)
             .labelsHidden()
 
             VStack(alignment: .leading, spacing: 2) {

@@ -17,11 +17,13 @@ struct StandLockApp: App {
         Settings {
             SettingsView()
                 .environment(appCoordinator)
+                .onAppear { NSApp.activate() }
         }
 
         Window("Welcome to StandLock", id: "onboarding") {
             OnboardingView()
                 .environment(appCoordinator)
+                .onAppear { NSApp.activate() }
         }
         .windowStyle(.hiddenTitleBar)
         .defaultSize(width: 480, height: 520)
