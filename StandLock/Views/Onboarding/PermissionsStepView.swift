@@ -21,16 +21,18 @@ struct PermissionsStepView: View {
                     icon: "keyboard",
                     name: "Input Monitoring",
                     description: "Detect keyboard activity for idle detection and escape combo.",
-                    status: checker.inputMonitoringGranted ? .granted : .notGranted,
-                    action: { checker.requestInputMonitoring() }
+                    status: checker.inputMonitoringStatus,
+                    action: { checker.requestInputMonitoring() },
+                    restartAction: { checker.relaunchApp() }
                 )
 
                 permissionCard(
                     icon: "figure.stand",
                     name: "Accessibility",
                     description: "Enables Strict mode to fully block input during breaks.",
-                    status: checker.accessibilityGranted ? .granted : .notGranted,
-                    action: { checker.requestAccessibility() }
+                    status: checker.accessibilityStatus,
+                    action: { checker.requestAccessibility() },
+                    restartAction: { checker.relaunchApp() }
                 )
 
                 permissionCard(
@@ -39,7 +41,8 @@ struct PermissionsStepView: View {
                     description: "Defer breaks during calendar events.",
                     status: checker.calendarPermissionStatus,
                     isOptional: true,
-                    action: { checker.requestCalendar() }
+                    action: { checker.requestCalendar() },
+                    restartAction: { checker.relaunchApp() }
                 )
             }
             .padding(.horizontal)
@@ -66,7 +69,8 @@ struct PermissionsStepView: View {
         description: String,
         status: PermissionStatus,
         isOptional: Bool = false,
-        action: @escaping () -> Void
+        action: @escaping () -> Void,
+        restartAction: @escaping () -> Void
     ) -> some View {
         HStack(spacing: 12) {
             Image(systemName: icon)
@@ -87,7 +91,10 @@ struct PermissionsStepView: View {
 
             Spacer()
 
-            if status != .granted {
+            if status == .needsRestart {
+                Button("Restart") { restartAction() }
+                    .controlSize(.small)
+            } else if status != .granted {
                 Button("Grant") { action() }
                     .controlSize(.small)
             }
@@ -117,6 +124,10 @@ struct PermissionsStepView: View {
             Image(systemName: "xmark.circle.fill")
                 .foregroundStyle(.red)
                 .font(.caption)
+        case .needsRestart:
+            Image(systemName: "arrow.clockwise.circle.fill")
+                .foregroundStyle(.orange)
+                .font(.caption)
         }
     }
 
@@ -125,6 +136,7 @@ struct PermissionsStepView: View {
         case .granted: .green
         case .notGranted: .secondary
         case .denied: .red
+        case .needsRestart: .orange
         }
     }
 }
