@@ -59,17 +59,23 @@ final class OverlayWindowController: LockPresenting, Observable {
     }
 
     func dismissOverlay() {
+        guard isShowing else { return }
+
         if let observer = screenObserver {
             NotificationCenter.default.removeObserver(observer)
             screenObserver = nil
         }
         eventTapController?.stop()
         eventTapController = nil
-        for window in overlayWindows {
-            window.close()
-        }
+
+        let windows = overlayWindows
         overlayWindows.removeAll()
         isShowing = false
+
+        for window in windows {
+            window.contentView = nil
+            window.orderOut(nil)
+        }
     }
 
     private func startEventTap(preferences: AppPreferences) {
