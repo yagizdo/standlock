@@ -309,6 +309,123 @@ struct BreakCoordinatorTests {
     }
 
     @Test @MainActor
+    func skipActiveBreakDismissesAndResetsStreak() async {
+        let scheduler = MockScheduler()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        let detector = MockDetector()
+        let locker = MockLocker()
+
+        let coordinator = BreakCoordinator(scheduler: scheduler, detector: detector, locker: locker)
+        let schedule = makeSchedule(breakDuration: 5)
+
+        var skippedEvents: [BreakEvent] = []
+        var lastStats: BreakStatistics?
+        let listener = Task {
+            for await event in coordinator.events {
+                if case .breakSkipped(let e) = event { skippedEvents.append(e) }
+                if case .statisticsUpdated(let s) = event { lastStats = s }
+            }
+        }
+
+        coordinator.start(with: [schedule], preferences: AppPreferences())
+        try? await Task.sleep(for: .milliseconds(300))
+
+        #expect(locker.showOverlayCalled)
+
+        coordinator.skipActiveBreak()
+        try? await Task.sleep(for: .milliseconds(100))
+
+        #expect(locker.dismissOverlayCalled)
+        #expect(skippedEvents.count == 1)
+        if case .skipped = skippedEvents.first?.outcome {} else {
+            Issue.record("Expected outcome .skipped")
+        }
+        #expect(lastStats?.breaksSkipped == 1)
+        #expect(lastStats?.currentStreak == 0)
+
+        coordinator.stop()
+        listener.cancel()
+    }
+
+    @Test @MainActor
+    func escapeActiveBreakDismissesAndIncrementsEscapeCount() async {
+        let scheduler = MockScheduler()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        let detector = MockDetector()
+        let locker = MockLocker()
+
+        let coordinator = BreakCoordinator(scheduler: scheduler, detector: detector, locker: locker)
+        let schedule = makeSchedule(breakDuration: 5)
+
+        var escapedEvents: [BreakEvent] = []
+        var lastStats: BreakStatistics?
+        let listener = Task {
+            for await event in coordinator.events {
+                if case .breakEscaped(let e) = event { escapedEvents.append(e) }
+                if case .statisticsUpdated(let s) = event { lastStats = s }
+            }
+        }
+
+        coordinator.start(with: [schedule], preferences: AppPreferences())
+        try? await Task.sleep(for: .milliseconds(300))
+
+        #expect(locker.showOverlayCalled)
+
+        coordinator.escapeActiveBreak()
+        try? await Task.sleep(for: .milliseconds(100))
+
+        #expect(locker.dismissOverlayCalled)
+        #expect(escapedEvents.count == 1)
+        if case .escaped = escapedEvents.first?.outcome {} else {
+            Issue.record("Expected outcome .escaped")
+        }
+        #expect(lastStats?.breaksEscaped == 1)
+        #expect(lastStats?.weeklyEscapeCount == 1)
+
+        coordinator.stop()
+        listener.cancel()
+    }
+
+    @Test @MainActor
+    func completeActiveBreakDismissesAndIncrementsStreak() async {
+        let scheduler = MockScheduler()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        let detector = MockDetector()
+        let locker = MockLocker()
+
+        let coordinator = BreakCoordinator(scheduler: scheduler, detector: detector, locker: locker)
+        let schedule = makeSchedule(breakDuration: 5)
+
+        var completedEvents: [BreakEvent] = []
+        var lastStats: BreakStatistics?
+        let listener = Task {
+            for await event in coordinator.events {
+                if case .breakCompleted(let e) = event { completedEvents.append(e) }
+                if case .statisticsUpdated(let s) = event { lastStats = s }
+            }
+        }
+
+        coordinator.start(with: [schedule], preferences: AppPreferences())
+        try? await Task.sleep(for: .milliseconds(300))
+
+        #expect(locker.showOverlayCalled)
+
+        coordinator.completeActiveBreak()
+        try? await Task.sleep(for: .milliseconds(100))
+
+        #expect(locker.dismissOverlayCalled)
+        #expect(completedEvents.count == 1)
+        if case .completed = completedEvents.first?.outcome {} else {
+            Issue.record("Expected outcome .completed")
+        }
+        #expect(lastStats?.breaksCompleted == 1)
+        #expect(lastStats?.currentStreak == 1)
+
+        coordinator.stop()
+        listener.cancel()
+    }
+
+    @Test @MainActor
     func dailyBreakCapRespected() async {
         let scheduler = MockScheduler()
         scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)

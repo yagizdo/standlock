@@ -13,7 +13,6 @@ struct BreakContentView: View {
     @State private var remainingSeconds: TimeInterval
     @State private var skipDelayRemaining: TimeInterval
     @State private var typedPhrase: String = ""
-    private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
     init(
         level: DisciplineLevel, totalDuration: TimeInterval,
@@ -60,14 +59,17 @@ struct BreakContentView: View {
             }
             .padding(.horizontal, 40)
         }
-        .onReceive(timer) { _ in
-            guard remainingSeconds > 0 else { return }
-            remainingSeconds -= 1
-            if level == .firm && skipDelayRemaining > 0 {
-                skipDelayRemaining -= 1
-            }
-            if remainingSeconds <= 0 {
-                onComplete()
+        .task {
+            while !Task.isCancelled && remainingSeconds > 0 {
+                try? await Task.sleep(for: .seconds(1))
+                guard !Task.isCancelled else { break }
+                remainingSeconds -= 1
+                if level == .firm && skipDelayRemaining > 0 {
+                    skipDelayRemaining -= 1
+                }
+                if remainingSeconds <= 0 {
+                    onComplete()
+                }
             }
         }
     }

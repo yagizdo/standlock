@@ -87,6 +87,17 @@ final class AppCoordinator {
         )
         self.coordinator = breakCoordinator
         breakCoordinator.exercises = loadedExercises
+
+        overlayController.onSkip = { [weak breakCoordinator] in
+            breakCoordinator?.skipActiveBreak()
+        }
+        overlayController.onComplete = { [weak breakCoordinator] in
+            breakCoordinator?.completeActiveBreak()
+        }
+        overlayController.onEscape = { [weak breakCoordinator] in
+            breakCoordinator?.escapeActiveBreak()
+        }
+
         breakCoordinator.start(with: schedules.filter(\.isEnabled), preferences: preferences)
 
         eventListenerTask = Task {
@@ -101,6 +112,9 @@ final class AppCoordinator {
         eventListenerTask = nil
         coordinator?.stop()
         coordinator = nil
+        overlayController.onSkip = nil
+        overlayController.onComplete = nil
+        overlayController.onEscape = nil
     }
 
     private func restartCoordinator() {

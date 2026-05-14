@@ -17,6 +17,7 @@ public final class BreakCoordinator: BreakCoordinating {
     private var breakCountdownTimer: Task<Void, Never>?
     private var isPaused: Bool = false
     private var currentBreak: BreakEvent?
+    private var currentSchedule: Schedule?
     private var statistics: BreakStatistics = BreakStatistics()
     private var dailyBreakCounts: [UUID: Int] = [:]
     public var exercises: [Exercise] = []
@@ -52,6 +53,7 @@ public final class BreakCoordinator: BreakCoordinating {
         breakCountdownTimer = nil
         if locker.isShowing { locker.dismissOverlay() }
         currentBreak = nil
+        currentSchedule = nil
     }
 
     public func pause(for duration: TimeInterval) {
@@ -80,6 +82,43 @@ public final class BreakCoordinator: BreakCoordinating {
         statistics.currentStreak = 0
         eventContinuation.yield(.statisticsUpdated(statistics))
         scheduleNextBreak()
+    }
+
+    public func skipActiveBreak() {
+        breakCountdownTimer?.cancel()
+        breakCountdownTimer = nil
+        guard var event = currentBreak else { return }
+        event.outcome = .skipped
+        locker.dismissOverlay()
+        statistics.breaksSkipped += 1
+        statistics.currentStreak = 0
+        eventContinuation.yield(.breakSkipped(event))
+        eventContinuation.yield(.statisticsUpdated(statistics))
+        currentBreak = nil
+        currentSchedule = nil
+        scheduleNextBreak()
+    }
+
+    public func escapeActiveBreak() {
+        breakCountdownTimer?.cancel()
+        breakCountdownTimer = nil
+        guard var event = currentBreak else { return }
+        event.outcome = .escaped
+        locker.dismissOverlay()
+        statistics.breaksEscaped += 1
+        statistics.weeklyEscapeCount += 1
+        eventContinuation.yield(.breakEscaped(event))
+        eventContinuation.yield(.statisticsUpdated(statistics))
+        currentBreak = nil
+        currentSchedule = nil
+        scheduleNextBreak()
+    }
+
+    public func completeActiveBreak() {
+        breakCountdownTimer?.cancel()
+        breakCountdownTimer = nil
+        guard let event = currentBreak, let schedule = currentSchedule else { return }
+        completeBreak(event: event, schedule: schedule)
     }
 
     public func changeDisciplineLevel(_ level: DisciplineLevel) {
@@ -168,6 +207,7 @@ public final class BreakCoordinator: BreakCoordinating {
             level: effectiveLevel, scheduleId: schedule.id
         )
         currentBreak = breakEvent
+        currentSchedule = schedule
         dailyBreakCounts[schedule.id, default: 0] += 1
 
         eventContinuation.yield(.breakStarted(breakEvent))
@@ -221,6 +261,7 @@ public final class BreakCoordinator: BreakCoordinating {
         eventContinuation.yield(.breakCompleted(completed))
         eventContinuation.yield(.statisticsUpdated(statistics))
         currentBreak = nil
+        currentSchedule = nil
         scheduleNextBreak()
     }
 }
