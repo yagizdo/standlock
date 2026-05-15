@@ -17,7 +17,18 @@ struct StandLockApp: App {
         Settings {
             SettingsView()
                 .environment(appCoordinator)
-                .onAppear { NSApp.activate() }
+                .onAppear {
+                    NSApp.setActivationPolicy(.regular)
+                    NSApp.activate()
+                }
+                .onDisappear {
+                    let hasVisibleWindows = NSApp.windows.contains { window in
+                        window.isVisible && !(window is NSPanel)
+                    }
+                    if !hasVisibleWindows {
+                        NSApp.setActivationPolicy(.accessory)
+                    }
+                }
         }
 
         Window("Welcome to StandLock", id: "onboarding") {

@@ -4,6 +4,7 @@ import StandLockCore
 struct MenuBarView: View {
     @Environment(AppCoordinator.self) private var coordinator
     @Environment(\.openWindow) private var openWindow
+    @Environment(\.openSettings) private var openSettings
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -126,8 +127,10 @@ struct MenuBarView: View {
 
     private var bottomActions: some View {
         VStack(alignment: .leading, spacing: 4) {
-            SettingsLink {
-                Text("Settings...")
+            Button("Settings...") {
+                openSettings()
+                NSApp.setActivationPolicy(.regular)
+                NSApp.activate()
             }
             Button("Quit StandLock") {
                 NSApp.terminate(nil)
