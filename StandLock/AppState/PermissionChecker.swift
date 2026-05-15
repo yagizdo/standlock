@@ -209,9 +209,7 @@ final class PermissionChecker {
     }
 
     func requestAccessibility() {
-        let key = "AXTrustedCheckOptionPrompt" as CFString
-        let options = [key: true] as CFDictionary
-        if AXIsProcessTrustedWithOptions(options) {
+        if AXIsProcessTrusted() {
             refreshStatus()
             return
         }
@@ -220,10 +218,9 @@ final class PermissionChecker {
     }
 
     func requestInputMonitoring() {
-        // Attempt a tap so the system registers the app in Input Monitoring list
         _ = probeInputMonitoringAccess()
 
-        if CGRequestListenEventAccess() {
+        if CGPreflightListenEventAccess() {
             refreshStatus()
             return
         }
