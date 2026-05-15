@@ -8,7 +8,6 @@ final class OverlayWindowController: LockPresenting, Observable {
     private var overlayWindows: [BreakOverlayWindow] = []
     private var eventTapController: EventTapController?
     private var screenObserver: NSObjectProtocol?
-    private var deactivationObserver: NSObjectProtocol?
     private var focusTimer: Timer?
     private(set) var isShowing: Bool = false
 
@@ -75,10 +74,6 @@ final class OverlayWindowController: LockPresenting, Observable {
             NotificationCenter.default.removeObserver(observer)
             screenObserver = nil
         }
-        if let observer = deactivationObserver {
-            NotificationCenter.default.removeObserver(observer)
-            deactivationObserver = nil
-        }
         focusTimer?.invalidate()
         focusTimer = nil
         eventTapController?.stop()
@@ -93,7 +88,13 @@ final class OverlayWindowController: LockPresenting, Observable {
             window.orderOut(nil)
         }
 
-        NSApp.setActivationPolicy(.accessory)
+        let hasOtherVisibleWindows = NSApp.windows.contains { window in
+            window.isVisible && !(window is BreakOverlayWindow)
+        }
+
+        if !hasOtherVisibleWindows {
+            NSApp.setActivationPolicy(.accessory)
+        }
     }
 
     private func startEventTap(preferences: AppPreferences) {
@@ -129,8 +130,10 @@ final class OverlayWindowController: LockPresenting, Observable {
 
     private func startFocusEnforcer() {
         focusTimer = Timer.scheduledTimer(withTimeInterval: 0.3, repeats: true) { [weak self] _ in
-            guard let self, self.isShowing else { return }
-            self.forceFocus()
+            MainActor.assumeIsolated {
+                guard let self, self.isShowing else { return }
+                self.forceFocus()
+            }
         }
     }
 
