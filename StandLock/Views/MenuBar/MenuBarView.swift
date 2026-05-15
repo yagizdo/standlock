@@ -22,6 +22,9 @@ struct MenuBarView: View {
         .task {
             if !coordinator.hasCompletedOnboarding {
                 openWindow(id: "onboarding")
+                DispatchQueue.main.async {
+                    NSApp.activate()
+                }
             }
         }
     }

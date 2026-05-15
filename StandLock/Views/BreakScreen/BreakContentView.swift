@@ -33,7 +33,7 @@ struct BreakContentView: View {
 
     var body: some View {
         ZStack {
-            Color.black.opacity(0.92)
+            Color.black.opacity(0.97)
                 .ignoresSafeArea()
 
             VStack(spacing: 28) {
@@ -46,11 +46,15 @@ struct BreakContentView: View {
                     totalDuration: totalDuration
                 )
 
-                if let exercise {
-                    ExerciseSuggestionView(exercise: exercise)
+                Group {
+                    if let exercise {
+                        ExerciseSuggestionView(exercise: exercise)
+                    }
                 }
+                .frame(minHeight: 60)
 
                 skipControls
+                    .frame(minHeight: 80)
 
                 Spacer()
 
@@ -121,32 +125,42 @@ struct BreakContentView: View {
                     .font(.callout)
                     .foregroundStyle(.white.opacity(0.5))
             } else if statistics.breaksSkipped < preferences.firmDailySkipLimit {
-                VStack(spacing: 8) {
-                    HStack(spacing: 8) {
-                        TextField("", text: $typedPhrase, prompt: Text(preferences.firmEscapePhrase).foregroundStyle(.white.opacity(0.3)))
-                            .textFieldStyle(.plain)
-                            .font(.callout)
-                            .foregroundStyle(.white)
-                            .padding(8)
-                            .background(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .fill(.white.opacity(0.08))
-                            )
-                            .frame(maxWidth: 360)
+                VStack(spacing: 10) {
+                    Text(preferences.firmEscapePhrase)
+                        .font(.callout)
+                        .foregroundStyle(.white.opacity(0.4))
 
-                        if typedPhrase.lowercased() == preferences.firmEscapePhrase.lowercased() {
+                    TextField("", text: $typedPhrase)
+                        .textFieldStyle(.plain)
+                        .font(.callout)
+                        .foregroundStyle(.white)
+                        .multilineTextAlignment(.center)
+                        .padding(8)
+                        .background(
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(.white.opacity(0.08))
+                        )
+                        .frame(maxWidth: 300)
+
+                    Group {
+                        if phraseMatches {
                             Button(action: onSkip) {
                                 Text("Skip")
                                     .font(.callout)
                                     .fontWeight(.medium)
-                                    .padding(.horizontal, 16)
-                                    .padding(.vertical, 8)
+                                    .frame(maxWidth: 300)
+                                    .padding(.vertical, 10)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .fill(.white.opacity(0.15))
+                                    )
+                                    .contentShape(RoundedRectangle(cornerRadius: 8))
                             }
                             .buttonStyle(.plain)
-                            .background(Capsule().fill(.white.opacity(0.15)))
                             .foregroundStyle(.white)
                         }
                     }
+                    .frame(height: 40)
 
                     Text("Type the phrase above to skip")
                         .font(.caption)
@@ -208,6 +222,10 @@ struct BreakContentView: View {
     }
 
     // MARK: - Helpers
+
+    private var phraseMatches: Bool {
+        typedPhrase.lowercased() == preferences.firmEscapePhrase.lowercased()
+    }
 
     private var levelColor: Color {
         switch level {

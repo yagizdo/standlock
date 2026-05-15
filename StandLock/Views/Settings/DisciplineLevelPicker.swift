@@ -1,22 +1,47 @@
+import AppKit
 import SwiftUI
 import StandLockCore
 
 struct DisciplineLevelPicker: View {
     @Binding var selection: DisciplineLevel
+    @State private var checker = PermissionChecker()
+    @State private var showPermissionAlert = false
 
     var body: some View {
         HStack(spacing: 12) {
             ForEach(DisciplineLevel.allCases, id: \.self) { level in
-                LevelCard(level: level, isSelected: selection == level)
-                    .onTapGesture { selection = level }
+                LevelCard(
+                    level: level,
+                    isSelected: selection == level,
+                    isDisabled: level == .strict && !checker.accessibilityGranted
+                )
+                .onTapGesture {
+                    if level == .strict && !checker.accessibilityGranted {
+                        showPermissionAlert = true
+                    } else {
+                        selection = level
+                    }
+                }
             }
         }
+        .alert("Accessibility Permission Required", isPresented: $showPermissionAlert) {
+            Button("Open System Settings") {
+                for url in PermissionType.accessibility.settingsURLs {
+                    if NSWorkspace.shared.open(url) { break }
+                }
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Strict mode requires Accessibility permission to block input during breaks.")
+        }
+        .task { await checker.pollContinuously() }
     }
 }
 
 private struct LevelCard: View {
     let level: DisciplineLevel
     let isSelected: Bool
+    var isDisabled: Bool = false
 
     var body: some View {
         VStack(spacing: 6) {
@@ -46,6 +71,7 @@ private struct LevelCard: View {
                 .stroke(isSelected ? accentColor : Color.secondary.opacity(0.3), lineWidth: isSelected ? 2 : 1)
         )
         .contentShape(RoundedRectangle(cornerRadius: 10))
+        .opacity(isDisabled ? 0.5 : 1)
     }
 
     private var iconName: String {
