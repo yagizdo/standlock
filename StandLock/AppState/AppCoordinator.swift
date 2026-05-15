@@ -119,6 +119,8 @@ final class AppCoordinator {
 
     private func restartCoordinator() {
         stopCoordinator()
+        isPaused = false
+        pausedUntil = nil
         if !schedules.filter(\.isEnabled).isEmpty {
             startCoordinator()
         }
@@ -190,7 +192,13 @@ final class AppCoordinator {
     }
 
     func resumeSchedule() {
-        coordinator?.resume()
+        isPaused = false
+        pausedUntil = nil
+        if let coordinator {
+            coordinator.resume()
+        } else if !schedules.filter(\.isEnabled).isEmpty {
+            startCoordinator()
+        }
     }
 
     func changeDisciplineLevel(_ level: DisciplineLevel) {
