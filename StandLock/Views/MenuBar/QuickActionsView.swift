@@ -4,6 +4,10 @@ import StandLockCore
 struct QuickActionsView: View {
     @Environment(AppCoordinator.self) private var coordinator
 
+    private var activeSchedule: Schedule? {
+        coordinator.schedules.first(where: \.isEnabled)
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             if coordinator.isPaused {
@@ -30,28 +34,35 @@ struct QuickActionsView: View {
                 .disabled(coordinator.schedules.isEmpty)
             }
 
-            Divider()
-
-            levelPicker
+            if let schedule = activeSchedule {
+                Divider()
+                scheduleInfo(schedule)
+            }
         }
     }
 
-    private var levelPicker: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text("Discipline Level")
-                .font(.caption)
-                .foregroundStyle(.secondary)
-
-            Picker("Level", selection: Binding(
-                get: { coordinator.currentLevel },
-                set: { coordinator.changeDisciplineLevel($0) }
-            )) {
-                ForEach(DisciplineLevel.allCases, id: \.self) { level in
-                    Text(level.displayName).tag(level)
-                }
+    private func scheduleInfo(_ schedule: Schedule) -> some View {
+        HStack {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(schedule.name)
+                    .font(.caption)
+                    .fontWeight(.medium)
+                    .lineLimit(1)
+                Text(schedule.disciplineLevel.displayName)
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
             }
-            .pickerStyle(.segmented)
-            .labelsHidden()
+            Spacer()
+            Text(levelIcon(schedule.disciplineLevel))
+                .font(.caption)
+        }
+    }
+
+    private func levelIcon(_ level: DisciplineLevel) -> String {
+        switch level {
+        case .gentle: "🟢"
+        case .firm: "🟡"
+        case .strict: "🔴"
         }
     }
 }
