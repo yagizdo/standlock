@@ -197,7 +197,10 @@ public final class BreakCoordinator: BreakCoordinating {
 
         var effectiveLevel = schedule.disciplineLevel
         if let reduction = shouldReduce(context: context) {
+            print("[StandLock] shouldReduce: \(schedule.disciplineLevel) → \(reduction) (cam=\(context.cameraActive) mic=\(context.microphoneActive) focus=\(context.focusModeActive))")
             effectiveLevel = reduction
+        } else {
+            print("[StandLock] triggerBreak: level=\(effectiveLevel) (no reduction)")
         }
 
         let duration = currentBreakDuration(for: schedule)
