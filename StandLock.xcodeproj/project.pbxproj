@@ -21,8 +21,15 @@
 		6AF974084F51158A71D9EA47 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512EB234C46341A2816AAE12 /* SettingsView.swift */; };
 		6F9C00664AAD42633900A642 /* Exercises.json in Resources */ = {isa = PBXBuildFile; fileRef = 2063FDE70AFCC135664A8FD4 /* Exercises.json */; };
 		742A80C38BAB206209CC4213 /* WelcomeStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B387012391C6BC0360436B50 /* WelcomeStepView.swift */; };
-		79FDD651CB844C16256BBC64 /* CountdownView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AA4370AAB123F9218436290 /* CountdownView.swift */; };
-		810D4C61C16893C7AA034095 /* BreakContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17E19773EB3047D0D427C1C2 /* BreakContentView.swift */; };
+		7A0B1C2D3E4F5A6B7C8D9E0F /* ActionArea.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B5C /* ActionArea.swift */; };
+		7B1C2D3E4F5A6B7C8D9E0F1A /* BreakPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C3D4E5F6071829A3B4C5D6 /* BreakPalette.swift */; };
+		7C2D3E4F5A6B7C8D9E0F1A2B /* BreakTypography.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3D4E5F60718293AB4C5D6E7 /* BreakTypography.swift */; };
+		7D3E4F5A6B7C8D9E0F1A2B3C /* ExerciseBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4E5F6071829A3B4C5D6E7F8 /* ExerciseBlock.swift */; };
+		7E4F5A6B7C8D9E0F1A2B3C4D /* LevelPill.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5F60718293AB4C5D6E7F809 /* LevelPill.swift */; };
+		7F5A6B7C8D9E0F1A2B3C4D5E /* ManuscriptBreakView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6071829A3B4C5D6E7F8091A /* ManuscriptBreakView.swift */; };
+		806B7C8D9E0F1A2B3C4D5E6F /* StatsFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 071829A3B4C5D6E7F8091A2B /* StatsFooter.swift */; };
+		817C8D9E0F1A2B3C4D5E6F7A /* TimerNumerals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1829A3B4C5D6E7F8091A2B3C /* TimerNumerals.swift */; };
+		828D9E0F1A2B3C4D5E6F7A8B /* WordmarkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29A3B4C5D6E7F8091A2B3C4D /* WordmarkView.swift */; };
 		82BDAFFF1661ED2476DDCAD3 /* Detection in Frameworks */ = {isa = PBXBuildFile; productRef = F19E05A1FA932709D406DD8F /* Detection */; };
 		89532644D109DAC0E1C69BED /* PermissionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6382F8157622B1D11845645E /* PermissionsView.swift */; };
 		897387E26C50A633291C6545 /* QuickSetupStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7259326030030D8F49258219 /* QuickSetupStepView.swift */; };
@@ -32,7 +39,6 @@
 		9D77F7B7F12048E4399B8B25 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD06AD45022B6D147E26C4A6 /* AppDelegate.swift */; };
 		AD18B90CCF07CB58B8312CDB /* Locking in Frameworks */ = {isa = PBXBuildFile; productRef = 3F23054B7AE15E61C38C884E /* Locking */; };
 		B0845F2F14770C95395FBA5F /* ScheduleFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14C3EDA84FE380ED1AF6CE8A /* ScheduleFormView.swift */; };
-		C25F6670F8F37360B72ADE72 /* ExerciseSuggestionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4A034A2D021925D3877B594 /* ExerciseSuggestionView.swift */; };
 		D439305E99C8EADDE7F0DE89 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CD0B4059D699DF8BDF99889 /* AboutView.swift */; };
 		DABDEC6CA937B88679850A3E /* DetectionSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2E6E6102A1900D1FAB2A856 /* DetectionSettingsView.swift */; };
 		ED1A168BD55576065212E8ED /* OverlayWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4462E8D161113596647BD19E /* OverlayWindowController.swift */; };
@@ -43,8 +49,15 @@
 		05CE8593F3F5EBFD2FD7DD08 /* StandLock.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StandLock.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		05EBBE0E51300DF74842F753 /* GeneralSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralSettingsView.swift; sourceTree = "<group>"; };
 		14C3EDA84FE380ED1AF6CE8A /* ScheduleFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleFormView.swift; sourceTree = "<group>"; };
-		17E19773EB3047D0D427C1C2 /* BreakContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakContentView.swift; sourceTree = "<group>"; };
-		1AA4370AAB123F9218436290 /* CountdownView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountdownView.swift; sourceTree = "<group>"; };
+		071829A3B4C5D6E7F8091A2B /* StatsFooter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsFooter.swift; sourceTree = "<group>"; };
+		1829A3B4C5D6E7F8091A2B3C /* TimerNumerals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerNumerals.swift; sourceTree = "<group>"; };
+		29A3B4C5D6E7F8091A2B3C4D /* WordmarkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordmarkView.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4B5C /* ActionArea.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionArea.swift; sourceTree = "<group>"; };
+		B2C3D4E5F6071829A3B4C5D6 /* BreakPalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakPalette.swift; sourceTree = "<group>"; };
+		C3D4E5F60718293AB4C5D6E7 /* BreakTypography.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakTypography.swift; sourceTree = "<group>"; };
+		D4E5F6071829A3B4C5D6E7F8 /* ExerciseBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseBlock.swift; sourceTree = "<group>"; };
+		E5F60718293AB4C5D6E7F809 /* LevelPill.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelPill.swift; sourceTree = "<group>"; };
+		F6071829A3B4C5D6E7F8091A /* ManuscriptBreakView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManuscriptBreakView.swift; sourceTree = "<group>"; };
 		2063FDE70AFCC135664A8FD4 /* Exercises.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Exercises.json; sourceTree = "<group>"; };
 		42215A75B39382916D51D614 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		4462E8D161113596647BD19E /* OverlayWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayWindowController.swift; sourceTree = "<group>"; };
@@ -66,7 +79,6 @@
 		E1F5AA3BD882ECB78BB3099D /* PermissionsStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionsStepView.swift; sourceTree = "<group>"; };
 		E2436E0F3F20FE12F920ADE7 /* QuickActionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickActionsView.swift; sourceTree = "<group>"; };
 		E2E6E6102A1900D1FAB2A856 /* DetectionSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetectionSettingsView.swift; sourceTree = "<group>"; };
-		F4A034A2D021925D3877B594 /* ExerciseSuggestionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseSuggestionView.swift; sourceTree = "<group>"; };
 		FE0E2C708B760F809144B756 /* PermissionChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionChecker.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -98,10 +110,16 @@
 		2CA6E45A7258421539512D9F /* BreakScreen */ = {
 			isa = PBXGroup;
 			children = (
-				17E19773EB3047D0D427C1C2 /* BreakContentView.swift */,
+				A1B2C3D4E5F60718293A4B5C /* ActionArea.swift */,
+				B2C3D4E5F6071829A3B4C5D6 /* BreakPalette.swift */,
 				C5BBDBF97CFAA5FF490CBD00 /* BreakOverlayWindow.swift */,
-				1AA4370AAB123F9218436290 /* CountdownView.swift */,
-				F4A034A2D021925D3877B594 /* ExerciseSuggestionView.swift */,
+				C3D4E5F60718293AB4C5D6E7 /* BreakTypography.swift */,
+				D4E5F6071829A3B4C5D6E7F8 /* ExerciseBlock.swift */,
+				E5F60718293AB4C5D6E7F809 /* LevelPill.swift */,
+				F6071829A3B4C5D6E7F8091A /* ManuscriptBreakView.swift */,
+				071829A3B4C5D6E7F8091A2B /* StatsFooter.swift */,
+				1829A3B4C5D6E7F8091A2B3C /* TimerNumerals.swift */,
+				29A3B4C5D6E7F8091A2B3C4D /* WordmarkView.swift */,
 			);
 			path = BreakScreen;
 			sourceTree = "<group>";
@@ -282,12 +300,18 @@
 				D439305E99C8EADDE7F0DE89 /* AboutView.swift in Sources */,
 				4FCB9EE133A8300CC965E687 /* AppCoordinator.swift in Sources */,
 				9D77F7B7F12048E4399B8B25 /* AppDelegate.swift in Sources */,
-				810D4C61C16893C7AA034095 /* BreakContentView.swift in Sources */,
+				7A0B1C2D3E4F5A6B7C8D9E0F /* ActionArea.swift in Sources */,
+				7B1C2D3E4F5A6B7C8D9E0F1A /* BreakPalette.swift in Sources */,
 				44D9EB3E27CF114DDF7E3735 /* BreakOverlayWindow.swift in Sources */,
-				79FDD651CB844C16256BBC64 /* CountdownView.swift in Sources */,
+				7C2D3E4F5A6B7C8D9E0F1A2B /* BreakTypography.swift in Sources */,
 				DABDEC6CA937B88679850A3E /* DetectionSettingsView.swift in Sources */,
 				676678D8A09155A2AEEFA18C /* DisciplineLevelPicker.swift in Sources */,
-				C25F6670F8F37360B72ADE72 /* ExerciseSuggestionView.swift in Sources */,
+				7D3E4F5A6B7C8D9E0F1A2B3C /* ExerciseBlock.swift in Sources */,
+				7E4F5A6B7C8D9E0F1A2B3C4D /* LevelPill.swift in Sources */,
+				7F5A6B7C8D9E0F1A2B3C4D5E /* ManuscriptBreakView.swift in Sources */,
+				806B7C8D9E0F1A2B3C4D5E6F /* StatsFooter.swift in Sources */,
+				817C8D9E0F1A2B3C4D5E6F7A /* TimerNumerals.swift in Sources */,
+				828D9E0F1A2B3C4D5E6F7A8B /* WordmarkView.swift in Sources */,
 				09F7858EAC29160F684A60DD /* GeneralSettingsView.swift in Sources */,
 				1CCAA6FDBBB854DCBC1968EA /* MenuBarView.swift in Sources */,
 				FBB74759FC16BB2E5F728128 /* OnboardingView.swift in Sources */,
