@@ -12,11 +12,12 @@ final class BreakOverlayWindow: NSWindow {
         )
         level = .screenSaver
         collectionBehavior = [.canJoinAllSpaces, .stationary, .ignoresCycle]
-        isOpaque = false
-        backgroundColor = .clear
+        isOpaque = true
+        backgroundColor = .white
         hasShadow = false
         isMovable = false
         hidesOnDeactivate = false
+        appearance = NSAppearance(named: .aqua)
     }
 
     override var canBecomeKey: Bool { true }
