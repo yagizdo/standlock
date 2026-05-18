@@ -39,8 +39,6 @@ final class OverlayWindowController: LockPresenting, Observable {
         NSApp.setActivationPolicy(.regular)
 
         let palette = BreakPalette.for(level)
-        print("[StandLock] showOverlay level=\(level) palette paper=\(palette.paper)")
-
         for screen in NSScreen.screens {
             let window = BreakOverlayWindow(screen: screen)
             window.backgroundColor = NSColor(palette.paper)

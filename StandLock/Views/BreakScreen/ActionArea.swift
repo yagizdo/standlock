@@ -16,7 +16,7 @@ struct ActionArea: View {
             FirmActionView(palette: palette, preferences: preferences,
                           statistics: statistics, onDismiss: onDismiss)
         case .strict:
-            StrictActionView(palette: palette, statistics: statistics)
+            StrictActionView(palette: palette, preferences: preferences, statistics: statistics)
         }
     }
 }
@@ -69,20 +69,25 @@ private struct FirmActionView: View {
     }
 
     var body: some View {
-        VStack(spacing: 16) {
-            if limitReached {
-                Text("Daily skip limit reached")
-                    .font(BreakTypography.label(size: 12, weight: .medium))
-                    .foregroundStyle(palette.inkFaint)
-            } else {
-                promptLine
-                phraseField
+        if !limitReached && preferences.firmEscapePhrase
+            .trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            GentleActionView(palette: palette, onDismiss: onDismiss)
+        } else {
+            VStack(spacing: 16) {
+                if limitReached {
+                    Text("Daily skip limit reached")
+                        .font(BreakTypography.label(size: 12, weight: .medium))
+                        .foregroundStyle(palette.inkFaint)
+                } else {
+                    promptLine
+                    phraseField
+                }
             }
+            .onChange(of: phraseMatches) { _, matches in
+                if matches { onDismiss() }
+            }
+            .onAppear { isFieldFocused = true }
         }
-        .onChange(of: phraseMatches) { _, matches in
-            if matches { onDismiss() }
-        }
-        .onAppear { isFieldFocused = true }
     }
 
     private var promptLine: some View {
@@ -126,6 +131,7 @@ private struct FirmActionView: View {
 
 private struct StrictActionView: View {
     let palette: BreakPalette
+    let preferences: AppPreferences
     let statistics: BreakStatistics
 
     var body: some View {
@@ -137,7 +143,7 @@ private struct StrictActionView: View {
                 keycap("⌃")
                 keycap("⌥")
                 keycap("⌘")
-                Text("for ten seconds to exit.")
+                Text("for \(Int(preferences.strictEscapeHoldDuration)) seconds to exit.")
                     .font(BreakTypography.label(size: 13))
                     .foregroundStyle(palette.inkSoft)
             }
