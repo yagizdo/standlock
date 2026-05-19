@@ -223,12 +223,17 @@ jobs:
 
       # ── Release ──
 
+      - name: Extract release notes from CHANGELOG
+        run: |
+          awk '/^## StandLock v'"${VERSION}"'/{found=1} found&&/^## /&&!/^## StandLock v'"${VERSION}"'/{exit} found{print}' \
+            CHANGELOG.md > "$RUNNER_TEMP/release-notes.md"
+
       - name: Create GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          if [ -f .github/release-notes.md ]; then
-            NOTES_ARGS=(--notes-file .github/release-notes.md)
+          if [ -s "$RUNNER_TEMP/release-notes.md" ]; then
+            NOTES_ARGS=(--notes-file "$RUNNER_TEMP/release-notes.md")
           else
             NOTES_ARGS=(--generate-notes)
           fi
