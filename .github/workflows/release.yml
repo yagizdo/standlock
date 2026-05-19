@@ -23,6 +23,11 @@ jobs:
       - name: Extract version from tag
         run: echo "VERSION=${GITHUB_REF_NAME#v}" >> "$GITHUB_ENV"
 
+      - name: Extract build number from Info.plist
+        run: |
+          BUILD_NUM=$(/usr/libexec/PlistBuddy -c "Print CFBundleVersion" StandLock/Info.plist)
+          echo "BUILD_NUMBER=${BUILD_NUM}" >> "$GITHUB_ENV"
+
       # ── Signing & Notarization Setup ──
 
       - name: Setup keychain and import certificate
@@ -84,7 +89,7 @@ jobs:
             -archivePath "$RUNNER_TEMP/StandLock.xcarchive" \
             -derivedDataPath "$RUNNER_TEMP/DerivedData" \
             MARKETING_VERSION="$VERSION" \
-            CURRENT_PROJECT_VERSION="${{ github.run_number }}" \
+            CURRENT_PROJECT_VERSION="${BUILD_NUMBER}" \
             CODE_SIGN_IDENTITY="Developer ID Application" \
             CODE_SIGN_STYLE="Manual" \
             DEVELOPMENT_TEAM="$TEAM_ID"
@@ -199,8 +204,6 @@ jobs:
           fi
           FILE_LENGTH=$(stat -f%z "StandLock-${VERSION}.zip")
           PUB_DATE=$(date "+%a, %d %b %Y %H:%M:%S %z")
-          BUILD_NUMBER=${{ github.run_number }}
-
           cat > appcast.xml <<APPCAST
           <?xml version="1.0" encoding="utf-8"?>
           <rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle">
