@@ -1,5 +1,8 @@
 # StandLock
 
+[![Version](https://img.shields.io/badge/version-0.1.0-blue)](https://github.com/yagizdo/StandLock/releases)
+[![Release](https://github.com/yagizdo/standlock/actions/workflows/release.yml/badge.svg)](https://github.com/yagizdo/standlock/actions/workflows/release.yml)
+
 A macOS menu bar app that reminds you to stand up and move. It sits quietly in your menu bar, tracks your schedules, and puts a full-screen overlay when it's time for a break. You pick how strict it should be: skip freely, type a phrase to dismiss, or lock your input entirely until the break is over.
 
 ## Why
