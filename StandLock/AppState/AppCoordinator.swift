@@ -127,6 +127,10 @@ final class AppCoordinator {
         pausedUntil = nil
         if !schedules.filter(\.isEnabled).isEmpty {
             startCoordinator()
+        } else {
+            nextBreakTime = nil
+            breakScheduledAt = nil
+            breakProgress = 0
         }
     }
 
@@ -202,6 +206,9 @@ final class AppCoordinator {
     func resumeSchedule() {
         isPaused = false
         pausedUntil = nil
+        breakProgress = 0
+        breakScheduledAt = nil
+        nextBreakTime = nil
         if let coordinator {
             coordinator.resume()
         } else if !schedules.filter(\.isEnabled).isEmpty {
@@ -226,14 +233,12 @@ final class AppCoordinator {
     }
 
     private func recalculateProgress() {
-        if isBreakActive { breakProgress = 1.0; return }
         if isPaused { return }
-        guard let scheduledAt = breakScheduledAt,
-              let nextBreak = nextBreakTime else { breakProgress = 0; return }
-        let total = nextBreak.timeIntervalSince(scheduledAt)
-        guard total > 0 else { breakProgress = 0; return }
-        let elapsed = Date().timeIntervalSince(scheduledAt)
-        breakProgress = min(1.0, max(0.0, elapsed / total))
+        breakProgress = calculateBreakProgress(
+            scheduledAt: breakScheduledAt,
+            nextBreak: nextBreakTime,
+            isBreakActive: isBreakActive
+        )
     }
 
     // MARK: - Onboarding

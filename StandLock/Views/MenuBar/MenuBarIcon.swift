@@ -1,4 +1,5 @@
 import AppKit
+import StandLockCore
 
 enum MenuBarIcon {
     static func make(progress: Double) -> NSImage {
@@ -20,16 +21,17 @@ enum MenuBarIcon {
             circle.lineWidth = strokeWidth
             circle.stroke()
 
-            let clamped = min(1.0, max(0.0, progress))
-            guard clamped > 0.005 else { return true }
-
-            if clamped >= 0.995 {
+            switch ProgressDisplayBranch(progress: progress) {
+            case .empty:
+                break
+            case .full:
                 let fillRect = CGRect(
                     x: center.x - fillRadius, y: center.y - fillRadius,
                     width: fillRadius * 2, height: fillRadius * 2
                 )
                 NSBezierPath(ovalIn: fillRect).fill()
-            } else {
+            case .partial:
+                let clamped = min(1.0, max(0.0, progress))
                 let startAngle: CGFloat = 90
                 let endAngle = 90 - 360 * clamped
                 let sector = NSBezierPath()
