@@ -30,6 +30,11 @@ struct StandLockApp: App {
                     }
                 }
         }
+        .commands {
+            CommandGroup(after: .appInfo) {
+                CheckForUpdatesView(updater: appDelegate.updaterController.updater)
+            }
+        }
 
         Window("Welcome to StandLock", id: "onboarding") {
             OnboardingView()

@@ -1,11 +1,8 @@
 import SwiftUI
-import Combine
 @preconcurrency import Sparkle
 
 struct AboutView: View {
     @NSApplicationDelegateAdaptor private var appDelegate: AppDelegate
-    @State private var canCheckForUpdates = false
-    @AppStorage("updateChannel") private var updateChannel = "stable"
 
     private var version: String {
         Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
@@ -36,34 +33,8 @@ struct AboutView: View {
                 .padding(.horizontal, 40)
 
             VStack(alignment: .leading, spacing: 12) {
-                if let updater = appDelegate.updaterController?.updater {
-                    Toggle("Automatic Updates", isOn: Binding(
-                        get: { updater.automaticallyChecksForUpdates },
-                        set: { updater.automaticallyChecksForUpdates = $0 }
-                    ))
-                }
-
-                HStack {
-                    Text("Update Channel")
-                    Spacer()
-                    Picker("", selection: $updateChannel) {
-                        Text("Stable").tag("stable")
-                        Text("Beta").tag("beta")
-                    }
-                    .pickerStyle(.segmented)
-                    .frame(width: 160)
-                }
-
-                Text(updateChannel == "beta"
-                     ? "Receive early access builds that may contain bugs."
-                     : "Receive only stable, tested releases.")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-
-                Button("Check for Updates…") {
-                    appDelegate.updaterController?.checkForUpdates(nil)
-                }
-                .disabled(!canCheckForUpdates)
+                UpdaterSettingsView(updater: appDelegate.updaterController.updater)
+                CheckForUpdatesView(updater: appDelegate.updaterController.updater)
             }
             .padding(.horizontal, 40)
 
@@ -80,11 +51,5 @@ struct AboutView: View {
             Spacer()
         }
         .frame(maxWidth: .infinity)
-        .onReceive(
-            appDelegate.updaterController?.updater.publisher(for: \.canCheckForUpdates).eraseToAnyPublisher()
-            ?? Just(false).eraseToAnyPublisher()
-        ) { value in
-            canCheckForUpdates = value
-        }
     }
 }
