@@ -25,7 +25,7 @@
 	<key>SUFeedURL</key>
 	<string>https://github.com/yagizdo/standlock/releases/latest/download/appcast.xml</string>
 	<key>SUPublicEDKey</key>
-	<string>REPLACE_WITH_REAL_KEY</string>
+	<string>AyV5SSQBNYZD2ICrwMmDk4fM5PZwG7Wu4BcNQkHawDo=</string>
 	<key>SUEnableAutomaticChecks</key>
 	<false/>
 </dict>
