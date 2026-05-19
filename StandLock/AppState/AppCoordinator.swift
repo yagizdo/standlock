@@ -8,6 +8,7 @@ import Detection
 @MainActor
 final class AppCoordinator {
     var nextBreakTime: Date?
+    private(set) var breakScheduledAt: Date?
     var isBreakActive: Bool = false
     var currentBreakRemaining: TimeInterval = 0
     var currentLevel: DisciplineLevel = .gentle
@@ -17,15 +18,18 @@ final class AppCoordinator {
     var schedules: [Schedule] = []
     var preferences: AppPreferences = AppPreferences()
     var hasCompletedOnboarding: Bool = false
+    private(set) var breakProgress: Double = 0
 
     private var coordinator: BreakCoordinator?
     private let overlayController = OverlayWindowController()
     private var eventListenerTask: Task<Void, Never>?
+    private var progressTimer: Task<Void, Never>?
     private var loadedExercises: [Exercise] = []
 
     init() {
         loadExercises()
         loadData()
+        startProgressTimer()
         if !schedules.isEmpty {
             startCoordinator()
         }
@@ -123,6 +127,10 @@ final class AppCoordinator {
         pausedUntil = nil
         if !schedules.filter(\.isEnabled).isEmpty {
             startCoordinator()
+        } else {
+            nextBreakTime = nil
+            breakScheduledAt = nil
+            breakProgress = 0
         }
     }
 
@@ -132,15 +140,19 @@ final class AppCoordinator {
         switch event {
         case .nextBreakScheduled(let date):
             nextBreakTime = date
+            breakScheduledAt = Date()
+            recalculateProgress()
 
         case .breakStarted(let e):
             isBreakActive = true
             currentBreakRemaining = e.duration
             currentLevel = e.level
+            breakProgress = 1.0
 
         case .breakCompleted, .breakSkipped, .breakEscaped:
             isBreakActive = false
             currentBreakRemaining = 0
+            breakProgress = 0
 
         case .breakDeferred:
             break
@@ -194,6 +206,9 @@ final class AppCoordinator {
     func resumeSchedule() {
         isPaused = false
         pausedUntil = nil
+        breakProgress = 0
+        breakScheduledAt = nil
+        nextBreakTime = nil
         if let coordinator {
             coordinator.resume()
         } else if !schedules.filter(\.isEnabled).isEmpty {
@@ -203,6 +218,27 @@ final class AppCoordinator {
 
     func changeDisciplineLevel(_ level: DisciplineLevel) {
         coordinator?.changeDisciplineLevel(level)
+    }
+
+    // MARK: - Break Progress
+
+    private func startProgressTimer() {
+        progressTimer = Task {
+            while !Task.isCancelled {
+                try? await Task.sleep(for: .seconds(10))
+                guard !Task.isCancelled else { break }
+                recalculateProgress()
+            }
+        }
+    }
+
+    private func recalculateProgress() {
+        if isPaused { return }
+        breakProgress = calculateBreakProgress(
+            scheduledAt: breakScheduledAt,
+            nextBreak: nextBreakTime,
+            isBreakActive: isBreakActive
+        )
     }
 
     // MARK: - Onboarding

@@ -8,9 +8,11 @@ struct StandLockApp: App {
     @Environment(\.openWindow) private var openWindow
 
     var body: some Scene {
-        MenuBarExtra("StandLock", systemImage: "lock.circle") {
+        MenuBarExtra {
             MenuBarView()
                 .environment(appCoordinator)
+        } label: {
+            Image(nsImage: MenuBarIcon.make(progress: appCoordinator.breakProgress))
         }
         .menuBarExtraStyle(.window)
 
@@ -29,6 +31,11 @@ struct StandLockApp: App {
                         NSApp.setActivationPolicy(.accessory)
                     }
                 }
+        }
+        .commands {
+            CommandGroup(after: .appInfo) {
+                CheckForUpdatesView(updater: appDelegate.updaterController.updater)
+            }
         }
 
         Window("Welcome to StandLock", id: "onboarding") {
