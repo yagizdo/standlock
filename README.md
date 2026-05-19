@@ -2,6 +2,9 @@
 
 [![Version](https://img.shields.io/badge/version-0.1.0-blue)](https://github.com/yagizdo/StandLock/releases)
 [![Release](https://github.com/yagizdo/standlock/actions/workflows/release.yml/badge.svg)](https://github.com/yagizdo/standlock/actions/workflows/release.yml)
+[![macOS 15+](https://img.shields.io/badge/macOS-15%2B-brightgreen)](https://github.com/yagizdo/StandLock/releases/latest)
+[![Homebrew](https://img.shields.io/badge/brew-yagizdo%2Ftap%2Fstandlock-orange)](https://github.com/yagizdo/homebrew-tap)
+[![License: MIT](https://img.shields.io/badge/license-MIT-purple)](LICENSE)
 
 A macOS menu bar app that reminds you to stand up and move. It sits quietly in your menu bar, tracks your schedules, and puts a full-screen overlay when it's time for a break. You pick how strict it should be: skip freely, type a phrase to dismiss, or lock your input entirely until the break is over.
 
@@ -37,12 +40,34 @@ Most break reminder apps show a notification you can swipe away in half a second
 - Exercise suggestions during breaks (stretches, water breaks, squats)
 - Streak and completion statistics in the menu bar
 
-## Requirements
+## Install
 
-- macOS 15.0 or later
-- Accessibility permission (required for Strict mode input blocking)
-- Input Monitoring permission (recommended)
-- Calendar access (optional, for meeting detection)
+### Requirements
+
+- macOS 15+ (Sequoia)
+
+### GitHub Releases
+
+Download: <https://github.com/yagizdo/StandLock/releases/latest>
+
+### Homebrew
+
+```bash
+brew install --cask yagizdo/tap/standlock
+```
+
+## macOS Permissions
+
+StandLock requests only the permissions it needs, and only when you use a feature that requires them.
+
+| Permission | Why |
+|------------|-----|
+| **Accessibility** | Required for Strict mode. Blocks keyboard and mouse input during breaks by installing a system-level event tap. Without this, Strict mode cannot enforce breaks. |
+| **Input Monitoring** | Recommended alongside Accessibility. Lets StandLock detect idle time accurately so it won't interrupt you right after you've already been away from the keyboard. |
+| **Calendar** | Optional. Reads your calendar events to automatically defer breaks during meetings. Never modifies your calendar. |
+| **Camera & Microphone** | Not accessed directly. StandLock checks whether another app is using the camera or mic to detect active meetings and defer breaks accordingly. |
+
+You can revoke any permission at any time in **System Settings > Privacy & Security**. StandLock will fall back gracefully: Strict mode becomes unavailable without Accessibility, idle detection becomes less accurate without Input Monitoring, and meeting detection is skipped without Calendar access.
 
 ## Building from Source
 
@@ -54,21 +79,6 @@ open StandLock.xcodeproj
 
 Build and run the `StandLock` scheme in Xcode. The app lives in your menu bar.
 
-## Architecture
-
-StandLock is built with SwiftUI and AppKit, organized as a modular Swift Package:
-
-```
-StandLockKit/
-├── StandLockCore    # Shared models, protocols, and types
-├── Scheduling       # Schedule evaluation and repetition tracking
-├── Detection        # Camera, mic, screen sharing, calendar, idle, focus mode
-├── Coordination     # Break lifecycle orchestration
-└── Locking          # Event tap controller and escape detection
-```
-
-The main app target (`StandLock/`) contains the UI layer: menu bar popover, settings, onboarding, and the break overlay window.
-
 ## License
 
-[MIT](LICENSE)
+MIT · Yilmaz Yagiz Dokumaci ([yagizdo](https://x.com/yagizdo))
