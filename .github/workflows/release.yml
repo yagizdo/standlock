@@ -266,5 +266,6 @@ jobs:
           git add Casks/standlock.rb
           if ! git diff --cached --quiet; then
             git commit -m "chore: update standlock to ${VERSION}"
+            git pull --rebase
             git push
           fi
