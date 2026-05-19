@@ -48,6 +48,11 @@ jobs:
           IDENTITY=$(security find-identity -v "$KEYCHAIN_PATH" \
             | grep "Developer ID Application" | head -1 \
             | sed 's/.*"\(.*\)"/\1/')
+          if [ -z "$IDENTITY" ]; then
+            echo "::error::No 'Developer ID Application' identity found in keychain. Check that DEVELOPER_ID_CERT_P12 contains a valid Developer ID certificate."
+            security find-identity -v "$KEYCHAIN_PATH"
+            exit 1
+          fi
           echo "SIGNING_IDENTITY=$IDENTITY" >> "$GITHUB_ENV"
 
       - name: Setup notarization credentials
