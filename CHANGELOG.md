@@ -1,5 +1,12 @@
 # Changelog
 
+## StandLock v0.1.2
+
+**Bug Fixes**
+- Use Info.plist build number for release versioning instead of CI run number (acabeb3)
+
+**Full Changelog:** https://github.com/yagizdo/StandLock/compare/v0.1.1...v0.1.2
+
 ## StandLock v0.1.1
 
 **Bug Fixes**
