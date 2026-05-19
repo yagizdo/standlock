@@ -36,7 +36,7 @@ Most break reminder apps show a notification you can swipe away in half a second
 
 ## Requirements
 
-- macOS 14.0 or later
+- macOS 15.0 or later
 - Accessibility permission (required for Strict mode input blocking)
 - Input Monitoring permission (recommended)
 - Calendar access (optional, for meeting detection)
