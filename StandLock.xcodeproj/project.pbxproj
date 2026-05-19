@@ -7,29 +7,26 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		009F1339F2742632532208AA /* SoftwareUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 303422D10B9C319038D63E32 /* SoftwareUpdate.swift */; };
+		0961DAEECC3F5E489E40FBC0 /* WordmarkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85C5398AE9D97E6B58618468 /* WordmarkView.swift */; };
 		09F7858EAC29160F684A60DD /* GeneralSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05EBBE0E51300DF74842F753 /* GeneralSettingsView.swift */; };
 		18504F805D34BF50C5E6729A /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 109FDEA57D0C0F3D6F9C1809 /* Sparkle */; };
 		1CCAA6FDBBB854DCBC1968EA /* MenuBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A2D12AD9D89928096A633C /* MenuBarView.swift */; };
 		21816E071409DEA5FC6A0BCE /* PermissionChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE0E2C708B760F809144B756 /* PermissionChecker.swift */; };
+		2200215D71D0CABD7DD45E92 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 94B7BAAC1837524EF3DD6B90 /* Assets.xcassets */; };
 		2CD0D3C3CF795626E50A5EAA /* StandLockApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1524D749BB78A875E5FD51F /* StandLockApp.swift */; };
 		44D9EB3E27CF114DDF7E3735 /* BreakOverlayWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5BBDBF97CFAA5FF490CBD00 /* BreakOverlayWindow.swift */; };
 		4A537C55B992DF62814F9857 /* QuickActionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2436E0F3F20FE12F920ADE7 /* QuickActionsView.swift */; };
 		4F9FCDEAA10641DE215D0663 /* StandLockCore in Frameworks */ = {isa = PBXBuildFile; productRef = 72A6FAE1CB69E8D0DE33B641 /* StandLockCore */; };
 		4FCB9EE133A8300CC965E687 /* AppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A81F2ED91290AD26CB5B672E /* AppCoordinator.swift */; };
+		51FC83BD2349C694BF8C11DD /* TimerNumerals.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEAF9C8AFAF33310B45445B2 /* TimerNumerals.swift */; };
 		5AC2660FDBB66F4B523FC1E2 /* ScheduleEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94F9B9151DFEA710D1211B70 /* ScheduleEditorView.swift */; };
 		676678D8A09155A2AEEFA18C /* DisciplineLevelPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = A866831BDFD42E80353C80D8 /* DisciplineLevelPicker.swift */; };
 		6AF974084F51158A71D9EA47 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512EB234C46341A2816AAE12 /* SettingsView.swift */; };
 		6F9C00664AAD42633900A642 /* Exercises.json in Resources */ = {isa = PBXBuildFile; fileRef = 2063FDE70AFCC135664A8FD4 /* Exercises.json */; };
+		726D144CA2B3B5AF4D4503AE /* LevelPill.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF6724F4176D1F398DF9A697 /* LevelPill.swift */; };
 		742A80C38BAB206209CC4213 /* WelcomeStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B387012391C6BC0360436B50 /* WelcomeStepView.swift */; };
-		7A0B1C2D3E4F5A6B7C8D9E0F /* ActionArea.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B5C /* ActionArea.swift */; };
-		7B1C2D3E4F5A6B7C8D9E0F1A /* BreakPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C3D4E5F6071829A3B4C5D6 /* BreakPalette.swift */; };
-		7C2D3E4F5A6B7C8D9E0F1A2B /* BreakTypography.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3D4E5F60718293AB4C5D6E7 /* BreakTypography.swift */; };
-		7D3E4F5A6B7C8D9E0F1A2B3C /* ExerciseBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4E5F6071829A3B4C5D6E7F8 /* ExerciseBlock.swift */; };
-		7E4F5A6B7C8D9E0F1A2B3C4D /* LevelPill.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5F60718293AB4C5D6E7F809 /* LevelPill.swift */; };
-		7F5A6B7C8D9E0F1A2B3C4D5E /* ManuscriptBreakView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6071829A3B4C5D6E7F8091A /* ManuscriptBreakView.swift */; };
-		806B7C8D9E0F1A2B3C4D5E6F /* StatsFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 071829A3B4C5D6E7F8091A2B /* StatsFooter.swift */; };
-		817C8D9E0F1A2B3C4D5E6F7A /* TimerNumerals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1829A3B4C5D6E7F8091A2B3C /* TimerNumerals.swift */; };
-		828D9E0F1A2B3C4D5E6F7A8B /* WordmarkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29A3B4C5D6E7F8091A2B3C4D /* WordmarkView.swift */; };
+		75E31F36751D55F051D6FF34 /* ExerciseBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 434445F0717D4FC94E284CB8 /* ExerciseBlock.swift */; };
 		82BDAFFF1661ED2476DDCAD3 /* Detection in Frameworks */ = {isa = PBXBuildFile; productRef = F19E05A1FA932709D406DD8F /* Detection */; };
 		89532644D109DAC0E1C69BED /* PermissionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6382F8157622B1D11845645E /* PermissionsView.swift */; };
 		897387E26C50A633291C6545 /* QuickSetupStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7259326030030D8F49258219 /* QuickSetupStepView.swift */; };
@@ -37,30 +34,28 @@
 		918E275316F96D0940D30FE1 /* Coordination in Frameworks */ = {isa = PBXBuildFile; productRef = B92CC5F67D1B761AB8B497AF /* Coordination */; };
 		939B26A31A39AED7A89760CE /* PermissionsStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F5AA3BD882ECB78BB3099D /* PermissionsStepView.swift */; };
 		9D77F7B7F12048E4399B8B25 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD06AD45022B6D147E26C4A6 /* AppDelegate.swift */; };
+		AB84ADC15C8263AFD995E8B5 /* BreakTypography.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99FB6FBBABD55844628B8DA3 /* BreakTypography.swift */; };
 		AD18B90CCF07CB58B8312CDB /* Locking in Frameworks */ = {isa = PBXBuildFile; productRef = 3F23054B7AE15E61C38C884E /* Locking */; };
 		B0845F2F14770C95395FBA5F /* ScheduleFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14C3EDA84FE380ED1AF6CE8A /* ScheduleFormView.swift */; };
 		D439305E99C8EADDE7F0DE89 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CD0B4059D699DF8BDF99889 /* AboutView.swift */; };
+		D588F2EB46E9B8124422C5EE /* StatsFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43B1BE95A60D5294C770AEDE /* StatsFooter.swift */; };
+		D751E70A3ADA8406061C5A90 /* ManuscriptBreakView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99BB0E055C4BD25865AD3EE1 /* ManuscriptBreakView.swift */; };
 		DABDEC6CA937B88679850A3E /* DetectionSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2E6E6102A1900D1FAB2A856 /* DetectionSettingsView.swift */; };
-		F1A2B3C4D5E6F7A8B9C0D1E2 /* SoftwareUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A2B3C4D5E6F7A8B9C0D1E3 /* SoftwareUpdate.swift */; };
+		E390B98931E7EE42E14FF2BD /* ActionArea.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5A68046037D0CAAE70C0F88 /* ActionArea.swift */; };
 		ED1A168BD55576065212E8ED /* OverlayWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4462E8D161113596647BD19E /* OverlayWindowController.swift */; };
 		FBB74759FC16BB2E5F728128 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A85E4C082C8E3C5083ABAEB /* OnboardingView.swift */; };
+		FF4C7AAB3CFF56C574A3EAA2 /* BreakPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C3B7E68FDF3C989BA50F367 /* BreakPalette.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		05CE8593F3F5EBFD2FD7DD08 /* StandLock.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StandLock.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		05EBBE0E51300DF74842F753 /* GeneralSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralSettingsView.swift; sourceTree = "<group>"; };
 		14C3EDA84FE380ED1AF6CE8A /* ScheduleFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleFormView.swift; sourceTree = "<group>"; };
-		071829A3B4C5D6E7F8091A2B /* StatsFooter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsFooter.swift; sourceTree = "<group>"; };
-		1829A3B4C5D6E7F8091A2B3C /* TimerNumerals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerNumerals.swift; sourceTree = "<group>"; };
-		29A3B4C5D6E7F8091A2B3C4D /* WordmarkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordmarkView.swift; sourceTree = "<group>"; };
-		A1B2C3D4E5F60718293A4B5C /* ActionArea.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionArea.swift; sourceTree = "<group>"; };
-		B2C3D4E5F6071829A3B4C5D6 /* BreakPalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakPalette.swift; sourceTree = "<group>"; };
-		C3D4E5F60718293AB4C5D6E7 /* BreakTypography.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakTypography.swift; sourceTree = "<group>"; };
-		D4E5F6071829A3B4C5D6E7F8 /* ExerciseBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseBlock.swift; sourceTree = "<group>"; };
-		E5F60718293AB4C5D6E7F809 /* LevelPill.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelPill.swift; sourceTree = "<group>"; };
-		F6071829A3B4C5D6E7F8091A /* ManuscriptBreakView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManuscriptBreakView.swift; sourceTree = "<group>"; };
 		2063FDE70AFCC135664A8FD4 /* Exercises.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Exercises.json; sourceTree = "<group>"; };
+		303422D10B9C319038D63E32 /* SoftwareUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoftwareUpdate.swift; sourceTree = "<group>"; };
 		42215A75B39382916D51D614 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		434445F0717D4FC94E284CB8 /* ExerciseBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseBlock.swift; sourceTree = "<group>"; };
+		43B1BE95A60D5294C770AEDE /* StatsFooter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsFooter.swift; sourceTree = "<group>"; };
 		4462E8D161113596647BD19E /* OverlayWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayWindowController.swift; sourceTree = "<group>"; };
 		4CD0B4059D699DF8BDF99889 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 		512EB234C46341A2816AAE12 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
@@ -69,18 +64,25 @@
 		6382F8157622B1D11845645E /* PermissionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionsView.swift; sourceTree = "<group>"; };
 		7259326030030D8F49258219 /* QuickSetupStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickSetupStepView.swift; sourceTree = "<group>"; };
 		7A85E4C082C8E3C5083ABAEB /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		85C5398AE9D97E6B58618468 /* WordmarkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordmarkView.swift; sourceTree = "<group>"; };
+		94B7BAAC1837524EF3DD6B90 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		94F9B9151DFEA710D1211B70 /* ScheduleEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleEditorView.swift; sourceTree = "<group>"; };
+		99BB0E055C4BD25865AD3EE1 /* ManuscriptBreakView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManuscriptBreakView.swift; sourceTree = "<group>"; };
+		99FB6FBBABD55844628B8DA3 /* BreakTypography.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakTypography.swift; sourceTree = "<group>"; };
+		9C3B7E68FDF3C989BA50F367 /* BreakPalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakPalette.swift; sourceTree = "<group>"; };
 		A81F2ED91290AD26CB5B672E /* AppCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
 		A866831BDFD42E80353C80D8 /* DisciplineLevelPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisciplineLevelPicker.swift; sourceTree = "<group>"; };
+		AF6724F4176D1F398DF9A697 /* LevelPill.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelPill.swift; sourceTree = "<group>"; };
 		B1524D749BB78A875E5FD51F /* StandLockApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StandLockApp.swift; sourceTree = "<group>"; };
 		B387012391C6BC0360436B50 /* WelcomeStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeStepView.swift; sourceTree = "<group>"; };
 		C5BBDBF97CFAA5FF490CBD00 /* BreakOverlayWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakOverlayWindow.swift; sourceTree = "<group>"; };
 		DC6421DB3A1D7F3131B3B7F4 /* StandLockKit */ = {isa = PBXFileReference; lastKnownFileType = folder; name = StandLockKit; path = StandLockKit; sourceTree = SOURCE_ROOT; };
 		DD06AD45022B6D147E26C4A6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		DEAF9C8AFAF33310B45445B2 /* TimerNumerals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerNumerals.swift; sourceTree = "<group>"; };
 		E1F5AA3BD882ECB78BB3099D /* PermissionsStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionsStepView.swift; sourceTree = "<group>"; };
 		E2436E0F3F20FE12F920ADE7 /* QuickActionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickActionsView.swift; sourceTree = "<group>"; };
 		E2E6E6102A1900D1FAB2A856 /* DetectionSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetectionSettingsView.swift; sourceTree = "<group>"; };
-		F1A2B3C4D5E6F7A8B9C0D1E3 /* SoftwareUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoftwareUpdate.swift; sourceTree = "<group>"; };
+		E5A68046037D0CAAE70C0F88 /* ActionArea.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionArea.swift; sourceTree = "<group>"; };
 		FE0E2C708B760F809144B756 /* PermissionChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionChecker.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -112,16 +114,16 @@
 		2CA6E45A7258421539512D9F /* BreakScreen */ = {
 			isa = PBXGroup;
 			children = (
-				A1B2C3D4E5F60718293A4B5C /* ActionArea.swift */,
-				B2C3D4E5F6071829A3B4C5D6 /* BreakPalette.swift */,
+				E5A68046037D0CAAE70C0F88 /* ActionArea.swift */,
 				C5BBDBF97CFAA5FF490CBD00 /* BreakOverlayWindow.swift */,
-				C3D4E5F60718293AB4C5D6E7 /* BreakTypography.swift */,
-				D4E5F6071829A3B4C5D6E7F8 /* ExerciseBlock.swift */,
-				E5F60718293AB4C5D6E7F809 /* LevelPill.swift */,
-				F6071829A3B4C5D6E7F8091A /* ManuscriptBreakView.swift */,
-				071829A3B4C5D6E7F8091A2B /* StatsFooter.swift */,
-				1829A3B4C5D6E7F8091A2B3C /* TimerNumerals.swift */,
-				29A3B4C5D6E7F8091A2B3C4D /* WordmarkView.swift */,
+				9C3B7E68FDF3C989BA50F367 /* BreakPalette.swift */,
+				99FB6FBBABD55844628B8DA3 /* BreakTypography.swift */,
+				434445F0717D4FC94E284CB8 /* ExerciseBlock.swift */,
+				AF6724F4176D1F398DF9A697 /* LevelPill.swift */,
+				99BB0E055C4BD25865AD3EE1 /* ManuscriptBreakView.swift */,
+				43B1BE95A60D5294C770AEDE /* StatsFooter.swift */,
+				DEAF9C8AFAF33310B45445B2 /* TimerNumerals.swift */,
+				85C5398AE9D97E6B58618468 /* WordmarkView.swift */,
 			);
 			path = BreakScreen;
 			sourceTree = "<group>";
@@ -137,7 +139,7 @@
 				94F9B9151DFEA710D1211B70 /* ScheduleEditorView.swift */,
 				14C3EDA84FE380ED1AF6CE8A /* ScheduleFormView.swift */,
 				512EB234C46341A2816AAE12 /* SettingsView.swift */,
-				F1A2B3C4D5E6F7A8B9C0D1E3 /* SoftwareUpdate.swift */,
+				303422D10B9C319038D63E32 /* SoftwareUpdate.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -165,6 +167,7 @@
 			isa = PBXGroup;
 			children = (
 				DD06AD45022B6D147E26C4A6 /* AppDelegate.swift */,
+				94B7BAAC1837524EF3DD6B90 /* Assets.xcassets */,
 				42215A75B39382916D51D614 /* Info.plist */,
 				540564FDDCA36A0411155BC1 /* StandLock.entitlements */,
 				B1524D749BB78A875E5FD51F /* StandLockApp.swift */,
@@ -259,6 +262,9 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1600;
 				TargetAttributes = {
+					9FBF36FA4615F6B575D81462 = {
+						DevelopmentTeam = F475N5N7V6;
+					};
 				};
 			};
 			buildConfigurationList = 83C1266D2B74DBC2480B2B2D /* Build configuration list for PBXProject "StandLock" */;
@@ -289,6 +295,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2200215D71D0CABD7DD45E92 /* Assets.xcassets in Resources */,
 				6F9C00664AAD42633900A642 /* Exercises.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -301,21 +308,18 @@
 			buildActionMask = 2147483647;
 			files = (
 				D439305E99C8EADDE7F0DE89 /* AboutView.swift in Sources */,
+				E390B98931E7EE42E14FF2BD /* ActionArea.swift in Sources */,
 				4FCB9EE133A8300CC965E687 /* AppCoordinator.swift in Sources */,
 				9D77F7B7F12048E4399B8B25 /* AppDelegate.swift in Sources */,
-				7A0B1C2D3E4F5A6B7C8D9E0F /* ActionArea.swift in Sources */,
-				7B1C2D3E4F5A6B7C8D9E0F1A /* BreakPalette.swift in Sources */,
 				44D9EB3E27CF114DDF7E3735 /* BreakOverlayWindow.swift in Sources */,
-				7C2D3E4F5A6B7C8D9E0F1A2B /* BreakTypography.swift in Sources */,
+				FF4C7AAB3CFF56C574A3EAA2 /* BreakPalette.swift in Sources */,
+				AB84ADC15C8263AFD995E8B5 /* BreakTypography.swift in Sources */,
 				DABDEC6CA937B88679850A3E /* DetectionSettingsView.swift in Sources */,
 				676678D8A09155A2AEEFA18C /* DisciplineLevelPicker.swift in Sources */,
-				7D3E4F5A6B7C8D9E0F1A2B3C /* ExerciseBlock.swift in Sources */,
-				7E4F5A6B7C8D9E0F1A2B3C4D /* LevelPill.swift in Sources */,
-				7F5A6B7C8D9E0F1A2B3C4D5E /* ManuscriptBreakView.swift in Sources */,
-				806B7C8D9E0F1A2B3C4D5E6F /* StatsFooter.swift in Sources */,
-				817C8D9E0F1A2B3C4D5E6F7A /* TimerNumerals.swift in Sources */,
-				828D9E0F1A2B3C4D5E6F7A8B /* WordmarkView.swift in Sources */,
+				75E31F36751D55F051D6FF34 /* ExerciseBlock.swift in Sources */,
 				09F7858EAC29160F684A60DD /* GeneralSettingsView.swift in Sources */,
+				726D144CA2B3B5AF4D4503AE /* LevelPill.swift in Sources */,
+				D751E70A3ADA8406061C5A90 /* ManuscriptBreakView.swift in Sources */,
 				1CCAA6FDBBB854DCBC1968EA /* MenuBarView.swift in Sources */,
 				FBB74759FC16BB2E5F728128 /* OnboardingView.swift in Sources */,
 				ED1A168BD55576065212E8ED /* OverlayWindowController.swift in Sources */,
@@ -327,9 +331,12 @@
 				5AC2660FDBB66F4B523FC1E2 /* ScheduleEditorView.swift in Sources */,
 				B0845F2F14770C95395FBA5F /* ScheduleFormView.swift in Sources */,
 				6AF974084F51158A71D9EA47 /* SettingsView.swift in Sources */,
+				009F1339F2742632532208AA /* SoftwareUpdate.swift in Sources */,
 				2CD0D3C3CF795626E50A5EAA /* StandLockApp.swift in Sources */,
-				F1A2B3C4D5E6F7A8B9C0D1E2 /* SoftwareUpdate.swift in Sources */,
+				D588F2EB46E9B8124422C5EE /* StatsFooter.swift in Sources */,
+				51FC83BD2349C694BF8C11DD /* TimerNumerals.swift in Sources */,
 				742A80C38BAB206209CC4213 /* WelcomeStepView.swift in Sources */,
+				0961DAEECC3F5E489E40FBC0 /* WordmarkView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -341,9 +348,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = StandLock/StandLock.entitlements;
-				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = F475N5N7V6;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				INFOPLIST_FILE = StandLock/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -362,9 +367,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = StandLock/StandLock.entitlements;
-				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = F475N5N7V6;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				INFOPLIST_FILE = StandLock/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -413,6 +416,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = F475N5N7V6;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -470,6 +474,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = F475N5N7V6;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
