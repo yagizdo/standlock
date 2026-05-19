@@ -1,0 +1,270 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+env:
+  SCHEME: StandLock
+  TEAM_ID: F475N5N7V6
+
+jobs:
+  release:
+    runs-on: macos-15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Extract version from tag
+        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> "$GITHUB_ENV"
+
+      # ── Signing & Notarization Setup ──
+
+      - name: Setup keychain and import certificate
+        env:
+          P12_BASE64: ${{ secrets.DEVELOPER_ID_CERT_P12 }}
+          P12_PASSWORD: ${{ secrets.DEVELOPER_ID_CERT_PASSWORD }}
+        run: |
+          set -euo pipefail
+          CERT_PATH="$RUNNER_TEMP/certificate.p12"
+          KEYCHAIN_PATH="$RUNNER_TEMP/build.keychain-db"
+          KEYCHAIN_PASS=$(openssl rand -base64 24)
+
+          echo "$P12_BASE64" | base64 --decode > "$CERT_PATH"
+
+          security create-keychain -p "$KEYCHAIN_PASS" "$KEYCHAIN_PATH"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
+          security unlock-keychain -p "$KEYCHAIN_PASS" "$KEYCHAIN_PATH"
+          security import "$CERT_PATH" -k "$KEYCHAIN_PATH" -P "$P12_PASSWORD" \
+            -T /usr/bin/codesign -T /usr/bin/security
+          security list-keychains -d user -s "$KEYCHAIN_PATH" login.keychain-db
+          security set-key-partition-list -S apple-tool:,apple: -s -k "$KEYCHAIN_PASS" "$KEYCHAIN_PATH"
+
+          IDENTITY=$(security find-identity -v "$KEYCHAIN_PATH" \
+            | grep "Developer ID Application" | head -1 \
+            | sed 's/.*"\(.*\)"/\1/')
+          echo "SIGNING_IDENTITY=$IDENTITY" >> "$GITHUB_ENV"
+
+      - name: Setup notarization credentials
+        env:
+          P8_KEY: ${{ secrets.APP_STORE_CONNECT_KEY_P8 }}
+          KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+        run: |
+          set -euo pipefail
+          P8_PATH="$RUNNER_TEMP/api-key.p8"
+          echo "$P8_KEY" > "$P8_PATH"
+          xcrun notarytool store-credentials "ci-notary" \
+            --key "$P8_PATH" --key-id "$KEY_ID" --issuer "$ISSUER_ID"
+
+      # ── Build ──
+
+      - name: Resolve SPM dependencies
+        run: |
+          xcodebuild -resolvePackageDependencies \
+            -project StandLock.xcodeproj -scheme "$SCHEME" \
+            -derivedDataPath "$RUNNER_TEMP/DerivedData"
+
+      - name: Archive
+        run: |
+          xcodebuild archive \
+            -project StandLock.xcodeproj \
+            -scheme "$SCHEME" \
+            -configuration Release \
+            -archivePath "$RUNNER_TEMP/StandLock.xcarchive" \
+            -derivedDataPath "$RUNNER_TEMP/DerivedData" \
+            MARKETING_VERSION="$VERSION" \
+            CURRENT_PROJECT_VERSION="${{ github.run_number }}" \
+            CODE_SIGN_IDENTITY="Developer ID Application" \
+            CODE_SIGN_STYLE="Manual" \
+            DEVELOPMENT_TEAM="$TEAM_ID"
+
+      - name: Export archive
+        run: |
+          cat > "$RUNNER_TEMP/export-options.plist" <<'PLIST'
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+            "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>method</key>
+            <string>developer-id</string>
+            <key>teamID</key>
+            <string>F475N5N7V6</string>
+            <key>signingStyle</key>
+            <string>manual</string>
+            <key>signingCertificate</key>
+            <string>Developer ID Application</string>
+          </dict>
+          </plist>
+          PLIST
+
+          xcodebuild -exportArchive \
+            -archivePath "$RUNNER_TEMP/StandLock.xcarchive" \
+            -exportPath "$RUNNER_TEMP/export" \
+            -exportOptionsPlist "$RUNNER_TEMP/export-options.plist"
+
+      # ── Sign & Notarize ──
+
+      - name: Fix Sparkle framework symlinks
+        run: |
+          set -euo pipefail
+          FW="${RUNNER_TEMP:?}/export/StandLock.app/Contents/Frameworks/Sparkle.framework"
+          for item in Sparkle Autoupdate Resources XPCServices Updater.app; do
+            if [ -e "$FW/$item" ] && [ ! -L "$FW/$item" ]; then
+              rm -rf "${FW:?}/$item"
+              ln -s "Versions/Current/$item" "$FW/$item"
+            fi
+          done
+
+      - name: Re-sign app and frameworks
+        run: |
+          set -euo pipefail
+          APP="$RUNNER_TEMP/export/StandLock.app"
+          FW="$APP/Contents/Frameworks/Sparkle.framework"
+
+          codesign --force --timestamp --options runtime \
+            --sign "$SIGNING_IDENTITY" "$FW/Versions/B/XPCServices/Downloader.xpc"
+          codesign --force --timestamp --options runtime \
+            --sign "$SIGNING_IDENTITY" "$FW/Versions/B/XPCServices/Installer.xpc"
+          codesign --force --timestamp --options runtime \
+            --sign "$SIGNING_IDENTITY" "$FW/Versions/B/Updater.app"
+          codesign --force --timestamp --options runtime \
+            --sign "$SIGNING_IDENTITY" "$FW/Versions/B/Autoupdate"
+          codesign --force --timestamp --options runtime \
+            --sign "$SIGNING_IDENTITY" "$FW"
+          codesign --force --timestamp --options runtime \
+            --sign "$SIGNING_IDENTITY" "$APP"
+
+      - name: Notarize
+        run: |
+          set -euo pipefail
+          ditto -c -k --keepParent --rsrc --sequesterRsrc \
+            "$RUNNER_TEMP/export/StandLock.app" "$RUNNER_TEMP/StandLock-notarize.zip"
+          xcrun notarytool submit "$RUNNER_TEMP/StandLock-notarize.zip" \
+            --keychain-profile "ci-notary" --wait
+
+      - name: Staple notarization ticket
+        run: |
+          xcrun stapler staple "$RUNNER_TEMP/export/StandLock.app"
+          xattr -cr "$RUNNER_TEMP/export/StandLock.app"
+
+      # ── Package ──
+
+      - name: Create release ZIP and checksum
+        run: |
+          set -euo pipefail
+          ditto -c -k --keepParent --rsrc --sequesterRsrc \
+            "$RUNNER_TEMP/export/StandLock.app" "StandLock-${VERSION}.zip"
+          shasum -a 256 "StandLock-${VERSION}.zip" > "StandLock-${VERSION}.zip.sha256"
+          SHA256_VALUE=$(awk '{print $1}' "StandLock-${VERSION}.zip.sha256")
+          echo "SHA256=${SHA256_VALUE}" >> "$GITHUB_ENV"
+
+      - name: Generate Sparkle appcast
+        env:
+          SPARKLE_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
+        run: |
+          set -euo pipefail
+
+          # Download Sparkle tools matching the project's SPM dependency
+          SPARKLE_VERSION=$(jq -r '.pins[] | select(.identity == "sparkle") | .state.version' \
+            StandLock.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved)
+          curl -sL -o "$RUNNER_TEMP/Sparkle.tar.xz" \
+            "https://github.com/sparkle-project/Sparkle/releases/download/${SPARKLE_VERSION}/Sparkle-${SPARKLE_VERSION}.tar.xz"
+          mkdir -p "$RUNNER_TEMP/sparkle"
+          tar xf "$RUNNER_TEMP/Sparkle.tar.xz" -C "$RUNNER_TEMP/sparkle"
+
+          SIGN_UPDATE="$RUNNER_TEMP/sparkle/bin/sign_update"
+          chmod +x "$SIGN_UPDATE"
+
+          KEY_FILE="$RUNNER_TEMP/sparkle-key"
+          echo "$SPARKLE_PRIVATE_KEY" > "$KEY_FILE"
+
+          SIGN_OUTPUT=$("$SIGN_UPDATE" "StandLock-${VERSION}.zip" --ed-key-file "$KEY_FILE")
+          ED_SIGNATURE=$(echo "$SIGN_OUTPUT" | sed -n 's/.*sparkle:edSignature="\([^"]*\)".*/\1/p')
+          FILE_LENGTH=$(stat -f%z "StandLock-${VERSION}.zip")
+          PUB_DATE=$(date "+%a, %d %b %Y %H:%M:%S %z")
+          BUILD_NUMBER=${{ github.run_number }}
+
+          cat > appcast.xml <<APPCAST
+          <?xml version="1.0" encoding="utf-8"?>
+          <rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle">
+            <channel>
+              <title>StandLock</title>
+              <item>
+                <title>Version ${VERSION}</title>
+                <sparkle:version>${BUILD_NUMBER}</sparkle:version>
+                <sparkle:shortVersionString>${VERSION}</sparkle:shortVersionString>
+                <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+                <pubDate>${PUB_DATE}</pubDate>
+                <enclosure url="https://github.com/yagizdo/StandLock/releases/download/v${VERSION}/StandLock-${VERSION}.zip"
+                           sparkle:edSignature="${ED_SIGNATURE}"
+                           length="${FILE_LENGTH}"
+                           type="application/octet-stream" />
+              </item>
+            </channel>
+          </rss>
+          APPCAST
+
+      # ── Release ──
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "v${VERSION}" \
+            --title "StandLock v${VERSION}" \
+            --generate-notes \
+            "StandLock-${VERSION}.zip" \
+            "StandLock-${VERSION}.zip.sha256" \
+            appcast.xml
+
+      - name: Update Homebrew cask
+        env:
+          TAP_TOKEN: ${{ secrets.TAP_GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -z "$TAP_TOKEN" ]; then
+            echo "TAP_GITHUB_TOKEN not set, skipping Homebrew cask update"
+            exit 0
+          fi
+          git clone "https://x-access-token:${TAP_TOKEN}@github.com/yagizdo/homebrew-tap.git" \
+            "$RUNNER_TEMP/homebrew-tap"
+          mkdir -p "$RUNNER_TEMP/homebrew-tap/Casks"
+
+          cat > "$RUNNER_TEMP/homebrew-tap/Casks/standlock.rb" <<RUBY
+          cask "standlock" do
+            version "${VERSION}"
+            sha256 "${SHA256}"
+
+            url "https://github.com/yagizdo/StandLock/releases/download/v#{version}/StandLock-#{version}.zip",
+                verified: "github.com/yagizdo/StandLock/"
+            name "StandLock"
+            desc "Stand reminder and break screen for macOS"
+            homepage "https://github.com/yagizdo/StandLock"
+
+            depends_on macos: ">= :sequoia"
+
+            app "StandLock.app"
+
+            zap trash: [
+              "~/Library/Application Support/StandLock",
+              "~/Library/Preferences/com.yagizdokumaci.standlock.plist",
+              "~/Library/Caches/com.yagizdokumaci.standlock",
+            ]
+          end
+          RUBY
+
+          cd "$RUNNER_TEMP/homebrew-tap"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add Casks/standlock.rb
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: update standlock to ${VERSION}"
+            git push
+          fi
