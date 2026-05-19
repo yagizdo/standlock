@@ -8,6 +8,7 @@ import Detection
 @MainActor
 final class AppCoordinator {
     var nextBreakTime: Date?
+    private(set) var breakScheduledAt: Date?
     var isBreakActive: Bool = false
     var currentBreakRemaining: TimeInterval = 0
     var currentLevel: DisciplineLevel = .gentle
@@ -17,15 +18,18 @@ final class AppCoordinator {
     var schedules: [Schedule] = []
     var preferences: AppPreferences = AppPreferences()
     var hasCompletedOnboarding: Bool = false
+    private(set) var breakProgress: Double = 0
 
     private var coordinator: BreakCoordinator?
     private let overlayController = OverlayWindowController()
     private var eventListenerTask: Task<Void, Never>?
+    private var progressTimer: Task<Void, Never>?
     private var loadedExercises: [Exercise] = []
 
     init() {
         loadExercises()
         loadData()
+        startProgressTimer()
         if !schedules.isEmpty {
             startCoordinator()
         }
@@ -132,15 +136,19 @@ final class AppCoordinator {
         switch event {
         case .nextBreakScheduled(let date):
             nextBreakTime = date
+            breakScheduledAt = Date()
+            recalculateProgress()
 
         case .breakStarted(let e):
             isBreakActive = true
             currentBreakRemaining = e.duration
             currentLevel = e.level
+            breakProgress = 1.0
 
         case .breakCompleted, .breakSkipped, .breakEscaped:
             isBreakActive = false
             currentBreakRemaining = 0
+            breakProgress = 0
 
         case .breakDeferred:
             break
@@ -203,6 +211,29 @@ final class AppCoordinator {
 
     func changeDisciplineLevel(_ level: DisciplineLevel) {
         coordinator?.changeDisciplineLevel(level)
+    }
+
+    // MARK: - Break Progress
+
+    private func startProgressTimer() {
+        progressTimer = Task {
+            while !Task.isCancelled {
+                try? await Task.sleep(for: .seconds(10))
+                guard !Task.isCancelled else { break }
+                recalculateProgress()
+            }
+        }
+    }
+
+    private func recalculateProgress() {
+        if isBreakActive { breakProgress = 1.0; return }
+        if isPaused { return }
+        guard let scheduledAt = breakScheduledAt,
+              let nextBreak = nextBreakTime else { breakProgress = 0; return }
+        let total = nextBreak.timeIntervalSince(scheduledAt)
+        guard total > 0 else { breakProgress = 0; return }
+        let elapsed = Date().timeIntervalSince(scheduledAt)
+        breakProgress = min(1.0, max(0.0, elapsed / total))
     }
 
     // MARK: - Onboarding
