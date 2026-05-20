@@ -1,5 +1,22 @@
 # Changelog
 
+## StandLock v0.1.4
+
+**Features**
+- Pause and resume system media during breaks (4d6d938)
+
+**Bug Fixes**
+- Show deferral reason in menu bar instead of stale countdown (ccb84ba)
+- Propagate preference changes to a running break coordinator (6f5cec8)
+- Prevent Dock icon from appearing when opening settings (72c21a1)
+- Resume media on timer auto-complete and add backward-compatible preference decoding (b2889e4)
+
+**Improvements**
+- Switch Gentle and Firm break palettes to London Sands tones (94446c4)
+- Add tests for preference propagation through the coordinator (b423ecd)
+
+**Full Changelog:** https://github.com/yagizdo/StandLock/compare/v0.1.3...v0.1.4
+
 ## StandLock v0.1.3
 
 **Features**
