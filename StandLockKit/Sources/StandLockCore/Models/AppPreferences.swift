@@ -51,6 +51,35 @@ public struct AppPreferences: Codable, Sendable, Equatable {
         self.resumeMediaAfterBreak = resumeMediaAfterBreak
         self.resetIntervalOnSkip = resetIntervalOnSkip
     }
+
+    private enum CodingKeys: String, CodingKey {
+        case firmSkipDelay, firmEscapePhrase, firmDailySkipLimit
+        case strictEscapeHoldDuration
+        case cameraDetection, microphoneDetection
+        case calendarDetectionEnabled, calendarLookAheadMinutes
+        case screenSharingDetectionEnabled
+        case focusModeDetection, idleDetectionEnabled
+        case pauseMediaDuringBreak, resumeMediaAfterBreak
+        case resetIntervalOnSkip
+    }
+
+    public init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        firmSkipDelay = try c.decodeIfPresent(TimeInterval.self, forKey: .firmSkipDelay) ?? 10
+        firmEscapePhrase = try c.decodeIfPresent(String.self, forKey: .firmEscapePhrase) ?? "I choose to skip this break"
+        firmDailySkipLimit = try c.decodeIfPresent(Int.self, forKey: .firmDailySkipLimit) ?? 5
+        strictEscapeHoldDuration = try c.decodeIfPresent(TimeInterval.self, forKey: .strictEscapeHoldDuration) ?? 10
+        cameraDetection = try c.decodeIfPresent(DetectionBehavior.self, forKey: .cameraDetection) ?? .deferBreak
+        microphoneDetection = try c.decodeIfPresent(DetectionBehavior.self, forKey: .microphoneDetection) ?? .deferBreak
+        calendarDetectionEnabled = try c.decodeIfPresent(Bool.self, forKey: .calendarDetectionEnabled) ?? true
+        calendarLookAheadMinutes = try c.decodeIfPresent(Int.self, forKey: .calendarLookAheadMinutes) ?? 5
+        screenSharingDetectionEnabled = try c.decodeIfPresent(Bool.self, forKey: .screenSharingDetectionEnabled) ?? true
+        focusModeDetection = try c.decodeIfPresent(DetectionBehavior.self, forKey: .focusModeDetection) ?? .deferBreak
+        idleDetectionEnabled = try c.decodeIfPresent(Bool.self, forKey: .idleDetectionEnabled) ?? true
+        pauseMediaDuringBreak = try c.decodeIfPresent(Bool.self, forKey: .pauseMediaDuringBreak) ?? true
+        resumeMediaAfterBreak = try c.decodeIfPresent(Bool.self, forKey: .resumeMediaAfterBreak) ?? false
+        resetIntervalOnSkip = try c.decodeIfPresent(Bool.self, forKey: .resetIntervalOnSkip) ?? true
+    }
 }
 
 public enum DetectionBehavior: String, Codable, Sendable, CaseIterable {

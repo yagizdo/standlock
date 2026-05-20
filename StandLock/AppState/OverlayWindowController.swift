@@ -76,6 +76,7 @@ final class OverlayWindowController: LockPresenting, Observable {
 
     func dismissOverlay() {
         guard isShowing else { return }
+        endBreakMedia()
 
         if let observer = screenObserver {
             NotificationCenter.default.removeObserver(observer)
@@ -115,19 +116,16 @@ final class OverlayWindowController: LockPresenting, Observable {
     }
 
     private func handleSkip() {
-        endBreakMedia()
         dismissOverlay()
         onSkip?()
     }
 
     private func handleComplete() {
-        endBreakMedia()
         dismissOverlay()
         onComplete?()
     }
 
     private func handleEscape() {
-        endBreakMedia()
         dismissOverlay()
         onEscape?()
     }

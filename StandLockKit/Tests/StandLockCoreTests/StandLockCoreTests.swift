@@ -132,6 +132,8 @@ struct ScheduleModelTests {
             screenSharingDetectionEnabled: false,
             focusModeDetection: .ignore,
             idleDetectionEnabled: false,
+            pauseMediaDuringBreak: false,
+            resumeMediaAfterBreak: true,
             resetIntervalOnSkip: false
         )
         let data = try JSONEncoder().encode(prefs)
@@ -141,6 +143,31 @@ struct ScheduleModelTests {
         #expect(decoded.cameraDetection == .reduceToGentle)
         #expect(decoded.microphoneDetection == .ignore)
         #expect(!decoded.calendarDetectionEnabled)
+        #expect(!decoded.pauseMediaDuringBreak)
+        #expect(decoded.resumeMediaAfterBreak)
         #expect(!decoded.resetIntervalOnSkip)
+    }
+
+    @Test func appPreferencesBackwardCompatibility() throws {
+        let json = """
+        {
+            "firmSkipDelay": 20,
+            "firmEscapePhrase": "skip",
+            "firmDailySkipLimit": 3,
+            "strictEscapeHoldDuration": 10,
+            "cameraDetection": "deferBreak",
+            "microphoneDetection": "deferBreak",
+            "calendarDetectionEnabled": true,
+            "calendarLookAheadMinutes": 5,
+            "screenSharingDetectionEnabled": true,
+            "focusModeDetection": "deferBreak",
+            "idleDetectionEnabled": true,
+            "resetIntervalOnSkip": true
+        }
+        """.data(using: .utf8)!
+        let decoded = try JSONDecoder().decode(AppPreferences.self, from: json)
+        #expect(decoded.firmSkipDelay == 20)
+        #expect(decoded.pauseMediaDuringBreak == true)
+        #expect(decoded.resumeMediaAfterBreak == false)
     }
 }

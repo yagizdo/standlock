@@ -1,10 +1,11 @@
 import Foundation
 
+@MainActor
 final class MediaController {
     private var didPause = false
     private let sendCommand: (@convention(c) (UInt32, AnyObject?) -> Bool)?
 
-    init() {
+    nonisolated init() {
         guard let handle = dlopen(
             "/System/Library/PrivateFrameworks/MediaRemote.framework/MediaRemote",
             RTLD_NOW

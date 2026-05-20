@@ -426,6 +426,32 @@ struct BreakCoordinatorTests {
     }
 
     @Test @MainActor
+    func updatePreferencesApplied() async {
+        let scheduler = MockScheduler()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(60)
+        let detector = MockDetector()
+        let locker = MockLocker()
+
+        let coordinator = BreakCoordinator(scheduler: scheduler, detector: detector, locker: locker)
+        let schedule = makeSchedule()
+        let initial = AppPreferences()
+        coordinator.start(with: [schedule], preferences: initial)
+
+        var updated = AppPreferences()
+        updated.firmSkipDelay = 30
+        updated.pauseMediaDuringBreak = false
+        coordinator.updatePreferences(updated)
+
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        coordinator.stop()
+        coordinator.start(with: [schedule], preferences: updated)
+        try? await Task.sleep(for: .milliseconds(300))
+
+        #expect(locker.showOverlayCalled)
+        coordinator.stop()
+    }
+
+    @Test @MainActor
     func dailyBreakCapRespected() async {
         let scheduler = MockScheduler()
         scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
