@@ -8,31 +8,31 @@ struct OnboardingView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            TabView(selection: $currentStep) {
-                WelcomeStepView {
-                    withAnimation { currentStep = 1 }
-                }
-                .tag(0)
-
-                PermissionsStepView {
-                    withAnimation { currentStep = 2 }
-                }
-                .tag(1)
-
-                QuickSetupStepView(
-                    onCreateDefault: {
-                        appCoordinator.createDefaultSchedule()
-                        appCoordinator.completeOnboarding()
-                        dismiss()
-                    },
-                    onSkip: {
-                        appCoordinator.completeOnboarding()
-                        dismiss()
+            Group {
+                switch currentStep {
+                case 0:
+                    WelcomeStepView {
+                        withAnimation { currentStep = 1 }
                     }
-                )
-                .tag(2)
+                case 1:
+                    PermissionsStepView {
+                        withAnimation { currentStep = 2 }
+                    }
+                default:
+                    QuickSetupStepView(
+                        onCreateDefault: {
+                            appCoordinator.createDefaultSchedule()
+                            appCoordinator.completeOnboarding()
+                            dismiss()
+                        },
+                        onSkip: {
+                            appCoordinator.completeOnboarding()
+                            dismiss()
+                        }
+                    )
+                }
             }
-            .tabViewStyle(.automatic)
+            .transition(.push(from: .trailing))
 
             pageIndicator
                 .padding(.bottom, 16)
@@ -42,11 +42,12 @@ struct OnboardingView: View {
     }
 
     private var pageIndicator: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: 6) {
             ForEach(0..<3, id: \.self) { index in
-                Circle()
-                    .fill(index == currentStep ? Color.accentColor : Color.secondary.opacity(0.3))
-                    .frame(width: 8, height: 8)
+                Capsule()
+                    .fill(index == currentStep ? Color.accentColor : Color.secondary.opacity(0.25))
+                    .frame(width: index == currentStep ? 24 : 8, height: 8)
+                    .animation(.spring(duration: 0.35), value: currentStep)
             }
         }
     }

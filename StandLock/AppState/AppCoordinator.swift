@@ -4,6 +4,22 @@ import StandLockCore
 import Scheduling
 import Detection
 
+@MainActor
+private final class OnboardingWindowCloseDelegate: NSObject, NSWindowDelegate {
+    private let onClose: () -> Void
+
+    init(onClose: @escaping () -> Void) {
+        self.onClose = onClose
+    }
+
+    nonisolated func windowShouldClose(_ sender: NSWindow) -> Bool {
+        MainActor.assumeIsolated {
+            onClose()
+        }
+        return false
+    }
+}
+
 @Observable
 @MainActor
 final class AppCoordinator {
@@ -25,6 +41,8 @@ final class AppCoordinator {
     private var eventListenerTask: Task<Void, Never>?
     private var progressTimer: Task<Void, Never>?
     private var loadedExercises: [Exercise] = []
+    private var onboardingWindow: NSWindow?
+    private var onboardingWindowDelegate: OnboardingWindowCloseDelegate?
 
     init() {
         loadExercises()
@@ -32,6 +50,12 @@ final class AppCoordinator {
         startProgressTimer()
         if !schedules.isEmpty {
             startCoordinator()
+        }
+        if !hasCompletedOnboarding {
+            Task { @MainActor in
+                try? await Task.sleep(for: .seconds(0.5))
+                self.showOnboardingIfNeeded()
+            }
         }
     }
 
@@ -243,9 +267,52 @@ final class AppCoordinator {
 
     // MARK: - Onboarding
 
+    func showOnboardingIfNeeded() {
+        guard !hasCompletedOnboarding, onboardingWindow == nil else { return }
+
+        let window = NSWindow(
+            contentRect: NSRect(x: 0, y: 0, width: 480, height: 520),
+            styleMask: [.titled, .closable, .fullSizeContentView],
+            backing: .buffered,
+            defer: false
+        )
+        window.titlebarAppearsTransparent = true
+        window.titleVisibility = .hidden
+        window.isReleasedWhenClosed = false
+        window.contentView = NSHostingView(
+            rootView: OnboardingView().environment(self)
+        )
+        window.center()
+
+        let delegate = OnboardingWindowCloseDelegate { [weak self] in
+            self?.dismissOnboardingWindow()
+        }
+        window.delegate = delegate
+        onboardingWindowDelegate = delegate
+        onboardingWindow = window
+
+        window.makeKeyAndOrderFront(nil)
+        NSApp.setActivationPolicy(.regular)
+        NSApp.activate()
+    }
+
     func completeOnboarding() {
         hasCompletedOnboarding = true
         UserDefaults.standard.set(true, forKey: "hasCompletedOnboarding")
+        dismissOnboardingWindow()
+    }
+
+    private func dismissOnboardingWindow() {
+        guard let window = onboardingWindow else { return }
+        window.contentView = nil
+        window.orderOut(nil)
+        onboardingWindow = nil
+        onboardingWindowDelegate = nil
+
+        let hasOtherVisible = NSApp.windows.contains { $0.isVisible && !($0 is NSPanel) }
+        if !hasOtherVisible {
+            NSApp.setActivationPolicy(.accessory)
+        }
     }
 
     func createDefaultSchedule() {

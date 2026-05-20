@@ -5,7 +5,6 @@ import StandLockCore
 struct StandLockApp: App {
     @NSApplicationDelegateAdaptor private var appDelegate: AppDelegate
     @State private var appCoordinator = AppCoordinator()
-    @Environment(\.openWindow) private var openWindow
 
     var body: some Scene {
         MenuBarExtra {
@@ -37,14 +36,5 @@ struct StandLockApp: App {
                 CheckForUpdatesView(updater: appDelegate.updaterController.updater)
             }
         }
-
-        Window("Welcome to StandLock", id: "onboarding") {
-            OnboardingView()
-                .environment(appCoordinator)
-                .onAppear { NSApp.activate() }
-        }
-        .windowStyle(.hiddenTitleBar)
-        .defaultSize(width: 480, height: 520)
-        .windowResizability(.contentSize)
     }
 }

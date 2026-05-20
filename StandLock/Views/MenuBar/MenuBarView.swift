@@ -3,7 +3,6 @@ import StandLockCore
 
 struct MenuBarView: View {
     @Environment(AppCoordinator.self) private var coordinator
-    @Environment(\.openWindow) private var openWindow
     @Environment(\.openSettings) private var openSettings
 
     var body: some View {
@@ -20,14 +19,6 @@ struct MenuBarView: View {
         }
         .padding(12)
         .frame(width: 280)
-        .task {
-            if !coordinator.hasCompletedOnboarding {
-                openWindow(id: "onboarding")
-                DispatchQueue.main.async {
-                    NSApp.activate()
-                }
-            }
-        }
     }
 
     // MARK: - Header
