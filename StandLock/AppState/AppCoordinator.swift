@@ -97,6 +97,7 @@ final class AppCoordinator {
     func savePreferences() {
         guard let data = try? JSONEncoder().encode(preferences) else { return }
         UserDefaults.standard.set(data, forKey: "preferences")
+        coordinator?.updatePreferences(preferences)
     }
 
     func saveStatistics() {

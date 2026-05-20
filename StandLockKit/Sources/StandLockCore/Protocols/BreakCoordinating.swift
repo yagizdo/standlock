@@ -20,4 +20,5 @@ public protocol BreakCoordinating: Sendable {
     @MainActor func resume()
     @MainActor func skipNextBreak()
     @MainActor func changeDisciplineLevel(_ level: DisciplineLevel)
+    @MainActor func updatePreferences(_ preferences: AppPreferences)
 }
