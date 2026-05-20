@@ -29,6 +29,7 @@ final class AppCoordinator {
     var currentBreakRemaining: TimeInterval = 0
     var currentLevel: DisciplineLevel = .gentle
     var todayStats: BreakStatistics = BreakStatistics()
+    var deferralReason: DeferralReason?
     var isPaused: Bool = false
     var pausedUntil: Date?
     var schedules: [Schedule] = []
@@ -163,11 +164,13 @@ final class AppCoordinator {
     private func handleEvent(_ event: CoordinatorEvent) {
         switch event {
         case .nextBreakScheduled(let date):
+            deferralReason = nil
             nextBreakTime = date
             breakScheduledAt = Date()
             recalculateProgress()
 
         case .breakStarted(let e):
+            deferralReason = nil
             isBreakActive = true
             currentBreakRemaining = e.duration
             currentLevel = e.level
@@ -178,8 +181,8 @@ final class AppCoordinator {
             currentBreakRemaining = 0
             breakProgress = 0
 
-        case .breakDeferred:
-            break
+        case .breakDeferred(let reason, _):
+            deferralReason = reason
 
         case .schedulePaused(let until):
             isPaused = true
