@@ -9,6 +9,7 @@ final class OverlayWindowController: LockPresenting, Observable {
     private var eventTapController: EventTapController?
     private var screenObserver: NSObjectProtocol?
     private var focusTimer: Timer?
+    private let mediaController = MediaController()
     private(set) var isShowing: Bool = false
 
     private var currentLevel: DisciplineLevel?
@@ -67,10 +68,15 @@ final class OverlayWindowController: LockPresenting, Observable {
         }
 
         observeScreenChanges()
+
+        if preferences.pauseMediaDuringBreak {
+            mediaController.pause()
+        }
     }
 
     func dismissOverlay() {
         guard isShowing else { return }
+        endBreakMedia()
 
         if let observer = screenObserver {
             NotificationCenter.default.removeObserver(observer)
@@ -122,6 +128,14 @@ final class OverlayWindowController: LockPresenting, Observable {
     private func handleEscape() {
         dismissOverlay()
         onEscape?()
+    }
+
+    private func endBreakMedia() {
+        if currentPreferences?.resumeMediaAfterBreak == true {
+            mediaController.resumeIfPaused()
+        } else {
+            mediaController.reset()
+        }
     }
 
     private func forceFocus() {

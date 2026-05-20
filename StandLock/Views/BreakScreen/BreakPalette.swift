@@ -18,21 +18,21 @@ struct BreakPalette {
     }
 
     static let gentle = BreakPalette(
-        paper: Color(hex: 0xE0F9E7),
-        paperEdge: Color(hex: 0xC6F1D3),
-        ink: Color(hex: 0x0F1F14),
-        inkSoft: Color(hex: 0x3B4D41),
-        inkFaint: Color(hex: 0x7D8A81),
-        accent: Color(hex: 0x00793D)
+        paper: Color(hex: 0xE7ECF1),
+        paperEdge: Color(hex: 0xD0D9E2),
+        ink: Color(hex: 0x141B24),
+        inkSoft: Color(hex: 0x3C4858),
+        inkFaint: Color(hex: 0x7B8896),
+        accent: Color(hex: 0x5B7D9E)
     )
 
     static let firm = BreakPalette(
-        paper: Color(hex: 0xFFEAE2),
-        paperEdge: Color(hex: 0xFFD7CA),
-        ink: Color(hex: 0x271511),
-        inkSoft: Color(hex: 0x57423D),
-        inkFaint: Color(hex: 0x92827E),
-        accent: Color(hex: 0xA33E25)
+        paper: Color(hex: 0xDDDCE9),
+        paperEdge: Color(hex: 0xC0BFCF),
+        ink: Color(hex: 0x181622),
+        inkSoft: Color(hex: 0x443F58),
+        inkFaint: Color(hex: 0x807B91),
+        accent: Color(hex: 0x6E6993)
     )
 
     static let strict = BreakPalette(

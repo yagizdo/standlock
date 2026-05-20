@@ -26,6 +26,7 @@ final class MockLocker: LockPresenting, @unchecked Sendable {
     var dismissOverlayCalled = false
     var lastLevel: DisciplineLevel?
     var lastDuration: TimeInterval?
+    var lastPreferences: AppPreferences?
     var isShowing = false
 
     func showOverlay(level: DisciplineLevel, duration: TimeInterval,
@@ -34,6 +35,7 @@ final class MockLocker: LockPresenting, @unchecked Sendable {
         showOverlayCalled = true
         lastLevel = level
         lastDuration = duration
+        lastPreferences = preferences
         isShowing = true
     }
 
@@ -423,6 +425,34 @@ struct BreakCoordinatorTests {
 
         coordinator.stop()
         listener.cancel()
+    }
+
+    @Test @MainActor
+    func updatePreferencesApplied() async {
+        let scheduler = MockScheduler()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(60)
+        let detector = MockDetector()
+        let locker = MockLocker()
+
+        let coordinator = BreakCoordinator(scheduler: scheduler, detector: detector, locker: locker)
+        let schedule = makeSchedule()
+        let initial = AppPreferences()
+        coordinator.start(with: [schedule], preferences: initial)
+
+        var updated = AppPreferences()
+        updated.firmSkipDelay = 30
+        updated.pauseMediaDuringBreak = false
+        coordinator.updatePreferences(updated)
+
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        coordinator.stop()
+        coordinator.start(with: [schedule], preferences: updated)
+        try? await Task.sleep(for: .milliseconds(300))
+
+        #expect(locker.showOverlayCalled)
+        #expect(locker.lastPreferences?.firmSkipDelay == 30)
+        #expect(locker.lastPreferences?.pauseMediaDuringBreak == false)
+        coordinator.stop()
     }
 
     @Test @MainActor

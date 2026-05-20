@@ -57,6 +57,15 @@ struct MenuBarView: View {
             }
             .font(.caption)
             .foregroundStyle(.secondary)
+        } else if let reason = coordinator.deferralReason {
+            VStack(alignment: .leading, spacing: 2) {
+                Label("Break waiting", systemImage: "pause.circle")
+                    .font(.caption)
+                    .foregroundStyle(.orange)
+                Text(reason.displayName)
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+            }
         } else if let nextBreak = coordinator.nextBreakTime {
             Label {
                 Text("Next break \(nextBreak, style: .relative)")
@@ -120,7 +129,6 @@ struct MenuBarView: View {
         VStack(alignment: .leading, spacing: 4) {
             Button("Settings...") {
                 openSettings()
-                NSApp.setActivationPolicy(.regular)
                 NSApp.activate()
             }
             Button("Quit StandLock") {

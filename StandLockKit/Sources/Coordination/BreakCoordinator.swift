@@ -127,6 +127,10 @@ public final class BreakCoordinator: BreakCoordinating {
         }
     }
 
+    public func updatePreferences(_ preferences: AppPreferences) {
+        self.preferences = preferences
+    }
+
     // MARK: - Private
 
     private func scheduleNextBreak() {
