@@ -1,5 +1,17 @@
 # Changelog
 
+## StandLock v0.1.3
+
+**Features**
+- Custom delete confirmation dialog for schedules (8090abf)
+
+**Improvements**
+- Replace SwiftUI Window scene with programmatic NSWindow for onboarding (8213e6d)
+- Update app icon (f5cd559)
+- Extract inline CI workflow scripts into standalone files (28cc859)
+
+**Full Changelog:** https://github.com/yagizdo/StandLock/compare/v0.1.2...v0.1.3
+
 ## StandLock v0.1.2
 
 **Bug Fixes**
