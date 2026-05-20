@@ -44,6 +44,7 @@
 		DABDEC6CA937B88679850A3E /* DetectionSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2E6E6102A1900D1FAB2A856 /* DetectionSettingsView.swift */; };
 		E390B98931E7EE42E14FF2BD /* ActionArea.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5A68046037D0CAAE70C0F88 /* ActionArea.swift */; };
 		ED1A168BD55576065212E8ED /* OverlayWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4462E8D161113596647BD19E /* OverlayWindowController.swift */; };
+		F1A2B3C4D5E6F7081920A1B2 /* MediaController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A2B3C4D5E6F7081920A1B3 /* MediaController.swift */; };
 		FBB74759FC16BB2E5F728128 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A85E4C082C8E3C5083ABAEB /* OnboardingView.swift */; };
 		FF4C7AAB3CFF56C574A3EAA2 /* BreakPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C3B7E68FDF3C989BA50F367 /* BreakPalette.swift */; };
 /* End PBXBuildFile section */
@@ -58,6 +59,7 @@
 		434445F0717D4FC94E284CB8 /* ExerciseBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseBlock.swift; sourceTree = "<group>"; };
 		43B1BE95A60D5294C770AEDE /* StatsFooter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsFooter.swift; sourceTree = "<group>"; };
 		4462E8D161113596647BD19E /* OverlayWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayWindowController.swift; sourceTree = "<group>"; };
+		F1A2B3C4D5E6F7081920A1B3 /* MediaController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaController.swift; sourceTree = "<group>"; };
 		4CD0B4059D699DF8BDF99889 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 		512EB234C46341A2816AAE12 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		52A2D12AD9D89928096A633C /* MenuBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarView.swift; sourceTree = "<group>"; };
@@ -150,6 +152,7 @@
 			isa = PBXGroup;
 			children = (
 				A81F2ED91290AD26CB5B672E /* AppCoordinator.swift */,
+				F1A2B3C4D5E6F7081920A1B3 /* MediaController.swift */,
 				4462E8D161113596647BD19E /* OverlayWindowController.swift */,
 				FE0E2C708B760F809144B756 /* PermissionChecker.swift */,
 			);
@@ -323,6 +326,7 @@
 				09F7858EAC29160F684A60DD /* GeneralSettingsView.swift in Sources */,
 				726D144CA2B3B5AF4D4503AE /* LevelPill.swift in Sources */,
 				D751E70A3ADA8406061C5A90 /* ManuscriptBreakView.swift in Sources */,
+				F1A2B3C4D5E6F7081920A1B2 /* MediaController.swift in Sources */,
 				D4E5F6A7B8C9D0E1F2A3B4C6 /* MenuBarIcon.swift in Sources */,
 				1CCAA6FDBBB854DCBC1968EA /* MenuBarView.swift in Sources */,
 				FBB74759FC16BB2E5F728128 /* OnboardingView.swift in Sources */,

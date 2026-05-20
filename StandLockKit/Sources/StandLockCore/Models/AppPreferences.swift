@@ -15,6 +15,9 @@ public struct AppPreferences: Codable, Sendable, Equatable {
     public var focusModeDetection: DetectionBehavior
     public var idleDetectionEnabled: Bool
 
+    public var pauseMediaDuringBreak: Bool
+    public var resumeMediaAfterBreak: Bool
+
     public var resetIntervalOnSkip: Bool
 
     public init(
@@ -29,6 +32,8 @@ public struct AppPreferences: Codable, Sendable, Equatable {
         screenSharingDetectionEnabled: Bool = true,
         focusModeDetection: DetectionBehavior = .deferBreak,
         idleDetectionEnabled: Bool = true,
+        pauseMediaDuringBreak: Bool = true,
+        resumeMediaAfterBreak: Bool = false,
         resetIntervalOnSkip: Bool = true
     ) {
         self.firmSkipDelay = firmSkipDelay
@@ -42,6 +47,8 @@ public struct AppPreferences: Codable, Sendable, Equatable {
         self.screenSharingDetectionEnabled = screenSharingDetectionEnabled
         self.focusModeDetection = focusModeDetection
         self.idleDetectionEnabled = idleDetectionEnabled
+        self.pauseMediaDuringBreak = pauseMediaDuringBreak
+        self.resumeMediaAfterBreak = resumeMediaAfterBreak
         self.resetIntervalOnSkip = resetIntervalOnSkip
     }
 }
