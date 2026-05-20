@@ -129,7 +129,6 @@ struct MenuBarView: View {
         VStack(alignment: .leading, spacing: 4) {
             Button("Settings...") {
                 openSettings()
-                NSApp.setActivationPolicy(.regular)
                 NSApp.activate()
             }
             Button("Quit StandLock") {
