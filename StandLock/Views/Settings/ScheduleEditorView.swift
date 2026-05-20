@@ -70,6 +70,9 @@ struct ScheduleEditorView: View {
                     },
                     onEdit: {
                         sheetMode = .edit(schedule)
+                    },
+                    onDelete: {
+                        coordinator.deleteSchedule(schedule)
                     }
                 )
             }
@@ -105,6 +108,8 @@ private struct ScheduleRow: View {
     let schedule: Schedule
     let onToggle: (Bool) -> Void
     let onEdit: () -> Void
+    let onDelete: () -> Void
+    @State private var showDeleteConfirmation = false
 
     var body: some View {
         HStack(spacing: 12) {
@@ -136,13 +141,35 @@ private struct ScheduleRow: View {
 
             levelBadge
 
-            Button {
-                onEdit()
+            Menu {
+                Button {
+                    onEdit()
+                } label: {
+                    Label("Edit", systemImage: "pencil")
+                }
+
+                Divider()
+
+                Button(role: .destructive) {
+                    showDeleteConfirmation = true
+                } label: {
+                    Label("Delete", systemImage: "trash")
+                }
             } label: {
-                Image(systemName: "pencil.circle.fill")
+                Image(systemName: "ellipsis.circle.fill")
                     .foregroundStyle(.secondary)
             }
             .buttonStyle(.plain)
+            .sheet(isPresented: $showDeleteConfirmation) {
+                DeleteConfirmationView(
+                    scheduleName: schedule.name,
+                    onCancel: { showDeleteConfirmation = false },
+                    onDelete: {
+                        showDeleteConfirmation = false
+                        onDelete()
+                    }
+                )
+            }
         }
         .padding(.vertical, 4)
     }
@@ -182,5 +209,55 @@ private struct ScheduleRow: View {
         case .firm: .orange
         case .strict: .red
         }
+    }
+}
+
+private struct DeleteConfirmationView: View {
+    let scheduleName: String
+    let onCancel: () -> Void
+    let onDelete: () -> Void
+
+    var body: some View {
+        VStack(spacing: 16) {
+            Image(nsImage: NSApp.applicationIconImage)
+                .resizable()
+                .frame(width: 64, height: 64)
+
+            Text("Delete Schedule")
+                .font(.headline)
+
+            Text("Are you sure you want to delete \"\(scheduleName)\"?")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+
+            HStack(spacing: 12) {
+                Button {
+                    onCancel()
+                } label: {
+                    Text("Cancel")
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 6)
+                }
+                .buttonStyle(.bordered)
+                .keyboardShortcut(.cancelAction)
+
+                Button {
+                    onDelete()
+                } label: {
+                    Text("Delete")
+                        .foregroundStyle(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 6)
+                        .background(
+                            Color(red: 0.85, green: 0.33, blue: 0.33),
+                            in: RoundedRectangle(cornerRadius: 6)
+                        )
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(24)
+        .frame(width: 260)
     }
 }
