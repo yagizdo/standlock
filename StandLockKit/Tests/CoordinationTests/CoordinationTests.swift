@@ -26,6 +26,7 @@ final class MockLocker: LockPresenting, @unchecked Sendable {
     var dismissOverlayCalled = false
     var lastLevel: DisciplineLevel?
     var lastDuration: TimeInterval?
+    var lastPreferences: AppPreferences?
     var isShowing = false
 
     func showOverlay(level: DisciplineLevel, duration: TimeInterval,
@@ -34,6 +35,7 @@ final class MockLocker: LockPresenting, @unchecked Sendable {
         showOverlayCalled = true
         lastLevel = level
         lastDuration = duration
+        lastPreferences = preferences
         isShowing = true
     }
 
@@ -448,6 +450,8 @@ struct BreakCoordinatorTests {
         try? await Task.sleep(for: .milliseconds(300))
 
         #expect(locker.showOverlayCalled)
+        #expect(locker.lastPreferences?.firmSkipDelay == 30)
+        #expect(locker.lastPreferences?.pauseMediaDuringBreak == false)
         coordinator.stop()
     }
 
