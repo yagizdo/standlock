@@ -126,7 +126,12 @@ struct DetectionSettingsView: View {
             } header: {
                 Text("Progressive Friction")
             } footer: {
-                Text("Each skipped break makes the next skip harder. Resets when you complete a break.")
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Each skipped break makes the next skip harder. Resets when you complete a break.")
+                    if coordinator.preferences.firmEscalationEnabled {
+                        Text("Firm escalation is active — daily skip limit is replaced by escalating friction.")
+                    }
+                }
             }
         }
         .formStyle(.grouped)

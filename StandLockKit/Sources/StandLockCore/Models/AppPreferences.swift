@@ -24,6 +24,15 @@ public struct AppPreferences: Codable, Sendable, Equatable {
     public var firmEscalationEnabled: Bool
     public var strictEscalationEnabled: Bool
 
+    public static func tierMultiplier(for tier: Int) -> Double {
+        switch tier {
+        case 0: 1.0
+        case 1: 1.5
+        case 2: 2.0
+        default: 2.5
+        }
+    }
+
     public func escalationEnabled(for level: DisciplineLevel) -> Bool {
         switch level {
         case .gentle: gentleEscalationEnabled

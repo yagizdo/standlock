@@ -108,12 +108,7 @@ final class OverlayWindowController: LockPresenting, Observable {
     }
 
     private static func tierMultiplier(_ tier: Int) -> Double {
-        switch tier {
-        case 0: 1.0
-        case 1: 1.5
-        case 2: 2.0
-        default: 2.5
-        }
+        AppPreferences.tierMultiplier(for: tier)
     }
 
     private func startEventTap(preferences: AppPreferences) {

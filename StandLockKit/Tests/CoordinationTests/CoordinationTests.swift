@@ -8,9 +8,12 @@ import Foundation
 
 final class MockScheduler: SchedulingEngine, @unchecked Sendable {
     var nextBreakTimeToReturn: Date?
+    var nextBreakTimes: [UUID: Date] = [:]
     var breakDurationToReturn: TimeInterval = 300
 
-    func nextBreakTime(for schedule: Schedule, after date: Date) -> Date? { nextBreakTimeToReturn }
+    func nextBreakTime(for schedule: Schedule, after date: Date) -> Date? {
+        nextBreakTimes[schedule.id] ?? nextBreakTimeToReturn
+    }
     func breakDuration(for schedule: Schedule, breakIndex: Int) -> TimeInterval { breakDurationToReturn }
     func isWithinActiveWindow(_ schedule: Schedule, at date: Date) -> Bool { true }
 }
@@ -557,6 +560,34 @@ struct BreakCoordinatorTests {
     }
 
     @Test @MainActor
+    func escapeIncrementsEscalationTier() async {
+        let scheduler = MockScheduler()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        let detector = MockDetector()
+        let locker = MockLocker()
+
+        let coordinator = BreakCoordinator(scheduler: scheduler, detector: detector, locker: locker)
+        let prefs = AppPreferences(strictEscalationEnabled: true)
+        let schedule = makeSchedule(level: .strict, breakDuration: 5)
+
+        coordinator.start(with: [schedule], preferences: prefs)
+        try? await Task.sleep(for: .milliseconds(300))
+        #expect(locker.lastEscalationTier == 0)
+
+        coordinator.escapeActiveBreak()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        try? await Task.sleep(for: .milliseconds(300))
+        #expect(locker.lastEscalationTier == 1)
+
+        coordinator.escapeActiveBreak()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        try? await Task.sleep(for: .milliseconds(300))
+        #expect(locker.lastEscalationTier == 2)
+
+        coordinator.stop()
+    }
+
+    @Test @MainActor
     func tierPerSchedule() async {
         let scheduler = MockScheduler()
         let detector = MockDetector()
@@ -567,18 +598,19 @@ struct BreakCoordinatorTests {
         let scheduleA = makeSchedule(level: .gentle)
         let scheduleB = makeSchedule(level: .gentle)
 
-        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        scheduler.nextBreakTimes[scheduleA.id] = Date().addingTimeInterval(0.05)
+        scheduler.nextBreakTimes[scheduleB.id] = Date().addingTimeInterval(100)
         coordinator.start(with: [scheduleA, scheduleB], preferences: prefs)
         try? await Task.sleep(for: .milliseconds(300))
 
+        #expect(locker.lastEscalationTier == 0)
+
+        scheduler.nextBreakTimes[scheduleA.id] = Date().addingTimeInterval(100)
+        scheduler.nextBreakTimes[scheduleB.id] = Date().addingTimeInterval(0.05)
         coordinator.skipActiveBreak()
-        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
         try? await Task.sleep(for: .milliseconds(300))
 
-        // The second break could be for either schedule, but tier tracking is per-schedule
-        // so at least one schedule should still be at tier 0 when triggered
-        let tier = locker.lastEscalationTier
-        #expect(tier != nil)
+        #expect(locker.lastEscalationTier == 0)
 
         coordinator.stop()
     }

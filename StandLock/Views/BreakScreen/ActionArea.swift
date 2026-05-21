@@ -49,10 +49,10 @@ private struct GentleActionView: View {
     var body: some View {
         Group {
             if escalationTier == 0 {
-                immediateSkipButton
+                skipButton(animated: false)
             } else if showSkipAction {
                 switch escalationTier {
-                case 1: delayedSkipButton
+                case 1: skipButton(animated: true)
                 case 2: holdToSkipButton
                 default: typeToSkipField
                 }
@@ -84,7 +84,7 @@ private struct GentleActionView: View {
             .animation(.default, value: countdown)
     }
 
-    private var immediateSkipButton: some View {
+    private func skipButton(animated: Bool) -> some View {
         Button(action: onDismiss) {
             VStack(spacing: 4) {
                 Text("Skip this break \u{2192}")
@@ -97,25 +97,7 @@ private struct GentleActionView: View {
             .fixedSize()
         }
         .buttonStyle(.plain)
-        .onLongPressGesture(minimumDuration: .infinity, pressing: { pressing in
-            isPressed = pressing
-        }, perform: {})
-    }
-
-    private var delayedSkipButton: some View {
-        Button(action: onDismiss) {
-            VStack(spacing: 4) {
-                Text("Skip this break \u{2192}")
-                    .font(BreakTypography.label(size: 14, weight: .medium))
-                    .foregroundStyle(palette.ink.opacity(isPressed ? 0.7 : 1))
-                Rectangle()
-                    .fill(palette.ink.opacity(isPressed ? 0.7 : 1))
-                    .frame(height: 1)
-            }
-            .fixedSize()
-        }
-        .buttonStyle(.plain)
-        .transition(.opacity)
+        .transition(animated ? .opacity : .identity)
         .onLongPressGesture(minimumDuration: .infinity, pressing: { pressing in
             isPressed = pressing
         }, perform: {})
@@ -234,12 +216,7 @@ private struct FirmActionView: View {
     }
 
     private var tierMultiplier: Double {
-        switch escalationTier {
-        case 0: 1.0
-        case 1: 1.5
-        case 2: 2.0
-        default: 2.5
-        }
+        AppPreferences.tierMultiplier(for: escalationTier)
     }
 
     private var effectiveDelay: Int {
@@ -348,13 +325,7 @@ private struct StrictActionView: View {
     let escalationTier: Int
 
     private var effectiveHoldDuration: TimeInterval {
-        let multiplier: Double = switch escalationTier {
-        case 0: 1.0
-        case 1: 1.5
-        case 2: 2.0
-        default: 2.5
-        }
-        return preferences.strictEscapeHoldDuration * multiplier
+        preferences.strictEscapeHoldDuration * AppPreferences.tierMultiplier(for: escalationTier)
     }
 
     var body: some View {

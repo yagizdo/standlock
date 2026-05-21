@@ -109,6 +109,9 @@ public final class BreakCoordinator: BreakCoordinating {
         breakCountdownTimer = nil
         guard var event = currentBreak else { return }
         event.outcome = .escaped
+        if let scheduleID = currentBreak?.scheduleId {
+            escalationTiers[scheduleID, default: 0] = min(escalationTiers[scheduleID, default: 0] + 1, 3)
+        }
         locker.dismissOverlay()
         statistics.breaksEscaped += 1
         statistics.weeklyEscapeCount += 1
@@ -191,6 +194,7 @@ public final class BreakCoordinator: BreakCoordinating {
                     repetitionTrackers[schedule.id] = tracker
                 }
                 dailyBreakCounts[schedule.id, default: 0] += 1
+                escalationTiers[schedule.id] = 0
                 eventContinuation.yield(.breakCompleted(idleEvent))
                 eventContinuation.yield(.statisticsUpdated(statistics))
                 scheduleNextBreak()
