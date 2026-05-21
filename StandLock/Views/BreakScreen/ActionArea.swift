@@ -200,7 +200,7 @@ private struct FirmActionView: View {
     @FocusState private var isFieldFocused: Bool
 
     private var limitReached: Bool {
-        guard !preferences.firmEscalationEnabled else { return false }
+        guard !preferences.escalationEnabled(for: .firm) else { return false }
         return statistics.breaksSkipped >= preferences.firmDailySkipLimit
     }
 

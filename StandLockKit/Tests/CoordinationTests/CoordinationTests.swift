@@ -470,7 +470,7 @@ struct BreakCoordinatorTests {
         let locker = MockLocker()
 
         let coordinator = BreakCoordinator(scheduler: scheduler, detector: detector, locker: locker)
-        let prefs = AppPreferences(gentleEscalationEnabled: true)
+        let prefs = AppPreferences(escalationLevel: .gentle)
         let schedule = makeSchedule(level: .gentle)
 
         coordinator.start(with: [schedule], preferences: prefs)
@@ -509,7 +509,7 @@ struct BreakCoordinatorTests {
         let locker = MockLocker()
 
         let coordinator = BreakCoordinator(scheduler: scheduler, detector: detector, locker: locker)
-        let prefs = AppPreferences(gentleEscalationEnabled: true)
+        let prefs = AppPreferences(escalationLevel: .gentle)
         let schedule = makeSchedule(level: .gentle, breakDuration: 5)
 
         coordinator.start(with: [schedule], preferences: prefs)
@@ -540,7 +540,7 @@ struct BreakCoordinatorTests {
         let locker = MockLocker()
 
         let coordinator = BreakCoordinator(scheduler: scheduler, detector: detector, locker: locker)
-        let prefs = AppPreferences(gentleEscalationEnabled: false)
+        let prefs = AppPreferences(escalationLevel: .off)
         let schedule = makeSchedule(level: .gentle)
 
         coordinator.start(with: [schedule], preferences: prefs)
@@ -567,7 +567,7 @@ struct BreakCoordinatorTests {
         let locker = MockLocker()
 
         let coordinator = BreakCoordinator(scheduler: scheduler, detector: detector, locker: locker)
-        let prefs = AppPreferences(strictEscalationEnabled: true)
+        let prefs = AppPreferences(escalationLevel: .strict)
         let schedule = makeSchedule(level: .strict, breakDuration: 5)
 
         coordinator.start(with: [schedule], preferences: prefs)
@@ -594,7 +594,7 @@ struct BreakCoordinatorTests {
         let locker = MockLocker()
 
         let coordinator = BreakCoordinator(scheduler: scheduler, detector: detector, locker: locker)
-        let prefs = AppPreferences(gentleEscalationEnabled: true)
+        let prefs = AppPreferences(escalationLevel: .gentle)
         let scheduleA = makeSchedule(level: .gentle)
         let scheduleB = makeSchedule(level: .gentle)
 
@@ -623,7 +623,7 @@ struct BreakCoordinatorTests {
         let locker = MockLocker()
 
         let coordinator = BreakCoordinator(scheduler: scheduler, detector: detector, locker: locker)
-        let prefs = AppPreferences(gentleEscalationEnabled: true)
+        let prefs = AppPreferences(escalationLevel: .gentle)
         let schedule = makeSchedule(level: .gentle)
 
         coordinator.start(with: [schedule], preferences: prefs)

@@ -169,21 +169,25 @@ struct ScheduleModelTests {
         #expect(decoded.firmSkipDelay == 20)
         #expect(decoded.pauseMediaDuringBreak == true)
         #expect(decoded.resumeMediaAfterBreak == false)
-        #expect(decoded.gentleEscalationEnabled == false)
-        #expect(decoded.firmEscalationEnabled == false)
-        #expect(decoded.strictEscalationEnabled == false)
+        #expect(decoded.escalationLevel == .off)
     }
 
     @Test func escalationPreferencesRoundTrip() throws {
-        let prefs = AppPreferences(
-            gentleEscalationEnabled: true,
-            firmEscalationEnabled: true,
-            strictEscalationEnabled: false
-        )
+        let prefs = AppPreferences(escalationLevel: .firm)
         let data = try JSONEncoder().encode(prefs)
         let decoded = try JSONDecoder().decode(AppPreferences.self, from: data)
-        #expect(decoded.gentleEscalationEnabled == true)
-        #expect(decoded.firmEscalationEnabled == true)
-        #expect(decoded.strictEscalationEnabled == false)
+        #expect(decoded.escalationLevel == .firm)
+    }
+
+    @Test func escalationLegacyBoolMigration() throws {
+        let json = """
+        {
+            "gentleEscalationEnabled": true,
+            "firmEscalationEnabled": true,
+            "strictEscalationEnabled": false
+        }
+        """.data(using: .utf8)!
+        let decoded = try JSONDecoder().decode(AppPreferences.self, from: json)
+        #expect(decoded.escalationLevel == .firm)
     }
 }
