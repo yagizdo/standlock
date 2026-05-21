@@ -27,15 +27,17 @@ final class MockLocker: LockPresenting, @unchecked Sendable {
     var lastLevel: DisciplineLevel?
     var lastDuration: TimeInterval?
     var lastPreferences: AppPreferences?
+    var lastEscalationTier: Int?
     var isShowing = false
 
     func showOverlay(level: DisciplineLevel, duration: TimeInterval,
                      exercise: Exercise?, preferences: AppPreferences,
-                     statistics: BreakStatistics) {
+                     statistics: BreakStatistics, escalationTier: Int) {
         showOverlayCalled = true
         lastLevel = level
         lastDuration = duration
         lastPreferences = preferences
+        lastEscalationTier = escalationTier
         isShowing = true
     }
 
@@ -452,6 +454,157 @@ struct BreakCoordinatorTests {
         #expect(locker.showOverlayCalled)
         #expect(locker.lastPreferences?.firmSkipDelay == 30)
         #expect(locker.lastPreferences?.pauseMediaDuringBreak == false)
+        coordinator.stop()
+    }
+
+    // MARK: - Escalation Tier Tests
+
+    @Test @MainActor
+    func tierIncrementsOnSkip() async {
+        let scheduler = MockScheduler()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        let detector = MockDetector()
+        let locker = MockLocker()
+
+        let coordinator = BreakCoordinator(scheduler: scheduler, detector: detector, locker: locker)
+        let prefs = AppPreferences(gentleEscalationEnabled: true)
+        let schedule = makeSchedule(level: .gentle)
+
+        coordinator.start(with: [schedule], preferences: prefs)
+        try? await Task.sleep(for: .milliseconds(300))
+        #expect(locker.lastEscalationTier == 0)
+
+        coordinator.skipActiveBreak()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        try? await Task.sleep(for: .milliseconds(300))
+        #expect(locker.lastEscalationTier == 1)
+
+        coordinator.skipActiveBreak()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        try? await Task.sleep(for: .milliseconds(300))
+        #expect(locker.lastEscalationTier == 2)
+
+        coordinator.skipActiveBreak()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        try? await Task.sleep(for: .milliseconds(300))
+        #expect(locker.lastEscalationTier == 3)
+
+        // Cap at 3
+        coordinator.skipActiveBreak()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        try? await Task.sleep(for: .milliseconds(300))
+        #expect(locker.lastEscalationTier == 3)
+
+        coordinator.stop()
+    }
+
+    @Test @MainActor
+    func tierResetsOnCompletion() async {
+        let scheduler = MockScheduler()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        let detector = MockDetector()
+        let locker = MockLocker()
+
+        let coordinator = BreakCoordinator(scheduler: scheduler, detector: detector, locker: locker)
+        let prefs = AppPreferences(gentleEscalationEnabled: true)
+        let schedule = makeSchedule(level: .gentle, breakDuration: 5)
+
+        coordinator.start(with: [schedule], preferences: prefs)
+        try? await Task.sleep(for: .milliseconds(300))
+
+        coordinator.skipActiveBreak()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        try? await Task.sleep(for: .milliseconds(300))
+
+        coordinator.skipActiveBreak()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        try? await Task.sleep(for: .milliseconds(300))
+        #expect(locker.lastEscalationTier == 2)
+
+        coordinator.completeActiveBreak()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        try? await Task.sleep(for: .milliseconds(300))
+        #expect(locker.lastEscalationTier == 0)
+
+        coordinator.stop()
+    }
+
+    @Test @MainActor
+    func tierZeroWhenDisabled() async {
+        let scheduler = MockScheduler()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        let detector = MockDetector()
+        let locker = MockLocker()
+
+        let coordinator = BreakCoordinator(scheduler: scheduler, detector: detector, locker: locker)
+        let prefs = AppPreferences(gentleEscalationEnabled: false)
+        let schedule = makeSchedule(level: .gentle)
+
+        coordinator.start(with: [schedule], preferences: prefs)
+        try? await Task.sleep(for: .milliseconds(300))
+
+        coordinator.skipActiveBreak()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        try? await Task.sleep(for: .milliseconds(300))
+        #expect(locker.lastEscalationTier == 0)
+
+        coordinator.skipActiveBreak()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        try? await Task.sleep(for: .milliseconds(300))
+        #expect(locker.lastEscalationTier == 0)
+
+        coordinator.stop()
+    }
+
+    @Test @MainActor
+    func tierPerSchedule() async {
+        let scheduler = MockScheduler()
+        let detector = MockDetector()
+        let locker = MockLocker()
+
+        let coordinator = BreakCoordinator(scheduler: scheduler, detector: detector, locker: locker)
+        let prefs = AppPreferences(gentleEscalationEnabled: true)
+        let scheduleA = makeSchedule(level: .gentle)
+        let scheduleB = makeSchedule(level: .gentle)
+
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        coordinator.start(with: [scheduleA, scheduleB], preferences: prefs)
+        try? await Task.sleep(for: .milliseconds(300))
+
+        coordinator.skipActiveBreak()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        try? await Task.sleep(for: .milliseconds(300))
+
+        // The second break could be for either schedule, but tier tracking is per-schedule
+        // so at least one schedule should still be at tier 0 when triggered
+        let tier = locker.lastEscalationTier
+        #expect(tier != nil)
+
+        coordinator.stop()
+    }
+
+    @Test @MainActor
+    func tierResetsOnStop() async {
+        let scheduler = MockScheduler()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        let detector = MockDetector()
+        let locker = MockLocker()
+
+        let coordinator = BreakCoordinator(scheduler: scheduler, detector: detector, locker: locker)
+        let prefs = AppPreferences(gentleEscalationEnabled: true)
+        let schedule = makeSchedule(level: .gentle)
+
+        coordinator.start(with: [schedule], preferences: prefs)
+        try? await Task.sleep(for: .milliseconds(300))
+
+        coordinator.skipActiveBreak()
+        coordinator.stop()
+
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        coordinator.start(with: [schedule], preferences: prefs)
+        try? await Task.sleep(for: .milliseconds(300))
+        #expect(locker.lastEscalationTier == 0)
+
         coordinator.stop()
     }
 

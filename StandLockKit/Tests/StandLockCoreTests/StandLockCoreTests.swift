@@ -169,5 +169,21 @@ struct ScheduleModelTests {
         #expect(decoded.firmSkipDelay == 20)
         #expect(decoded.pauseMediaDuringBreak == true)
         #expect(decoded.resumeMediaAfterBreak == false)
+        #expect(decoded.gentleEscalationEnabled == false)
+        #expect(decoded.firmEscalationEnabled == false)
+        #expect(decoded.strictEscalationEnabled == false)
+    }
+
+    @Test func escalationPreferencesRoundTrip() throws {
+        let prefs = AppPreferences(
+            gentleEscalationEnabled: true,
+            firmEscalationEnabled: true,
+            strictEscalationEnabled: false
+        )
+        let data = try JSONEncoder().encode(prefs)
+        let decoded = try JSONDecoder().decode(AppPreferences.self, from: data)
+        #expect(decoded.gentleEscalationEnabled == true)
+        #expect(decoded.firmEscalationEnabled == true)
+        #expect(decoded.strictEscalationEnabled == false)
     }
 }

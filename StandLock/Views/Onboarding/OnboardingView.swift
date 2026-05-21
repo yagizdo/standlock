@@ -20,7 +20,13 @@ struct OnboardingView: View {
                     }
                 default:
                     QuickSetupStepView(
-                        onCreateDefault: {
+                        onCreateDefault: { escalationEnabled in
+                            if escalationEnabled {
+                                appCoordinator.preferences.gentleEscalationEnabled = true
+                                appCoordinator.preferences.firmEscalationEnabled = true
+                                appCoordinator.preferences.strictEscalationEnabled = true
+                                appCoordinator.savePreferences()
+                            }
                             appCoordinator.createDefaultSchedule()
                             appCoordinator.completeOnboarding()
                             dismiss()

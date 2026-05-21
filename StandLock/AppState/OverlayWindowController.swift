@@ -17,6 +17,7 @@ final class OverlayWindowController: LockPresenting, Observable {
     private var currentExercise: Exercise?
     private var currentPreferences: AppPreferences?
     private var currentStatistics: BreakStatistics?
+    private var currentEscalationTier: Int = 0
 
     var onSkip: (() -> Void)?
     var onComplete: (() -> Void)?
@@ -27,7 +28,7 @@ final class OverlayWindowController: LockPresenting, Observable {
     func showOverlay(
         level: DisciplineLevel, duration: TimeInterval,
         exercise: Exercise?, preferences: AppPreferences,
-        statistics: BreakStatistics
+        statistics: BreakStatistics, escalationTier: Int = 0
     ) {
         dismissOverlay()
 
@@ -36,6 +37,7 @@ final class OverlayWindowController: LockPresenting, Observable {
         currentExercise = exercise
         currentPreferences = preferences
         currentStatistics = statistics
+        currentEscalationTier = escalationTier
 
         NSApp.setActivationPolicy(.regular)
 
@@ -46,7 +48,7 @@ final class OverlayWindowController: LockPresenting, Observable {
             let contentView = ManuscriptBreakView(
                 level: level, totalDuration: duration,
                 exercise: exercise, preferences: preferences,
-                statistics: statistics,
+                statistics: statistics, escalationTier: escalationTier,
                 onSkip: { [weak self] in self?.handleSkip() },
                 onComplete: { [weak self] in self?.handleComplete() }
             )
@@ -105,9 +107,19 @@ final class OverlayWindowController: LockPresenting, Observable {
         }
     }
 
+    private static func tierMultiplier(_ tier: Int) -> Double {
+        switch tier {
+        case 0: 1.0
+        case 1: 1.5
+        case 2: 2.0
+        default: 2.5
+        }
+    }
+
     private func startEventTap(preferences: AppPreferences) {
+        let effectiveHold = preferences.strictEscapeHoldDuration * Self.tierMultiplier(currentEscalationTier)
         eventTapController = EventTapController(
-            escapeHoldDuration: preferences.strictEscapeHoldDuration,
+            escapeHoldDuration: effectiveHold,
             onEscapeTriggered: { [weak self] in
                 Task { @MainActor in self?.handleEscape() }
             }
@@ -167,11 +179,12 @@ final class OverlayWindowController: LockPresenting, Observable {
               let level = currentLevel,
               let prefs = currentPreferences,
               let stats = currentStatistics else { return }
+        let tier = currentEscalationTier
         dismissOverlay()
         showOverlay(
             level: level, duration: currentDuration,
             exercise: currentExercise, preferences: prefs,
-            statistics: stats
+            statistics: stats, escalationTier: tier
         )
     }
 }
