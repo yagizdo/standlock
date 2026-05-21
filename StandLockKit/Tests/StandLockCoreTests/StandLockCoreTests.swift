@@ -190,4 +190,14 @@ struct ScheduleModelTests {
         let decoded = try JSONDecoder().decode(AppPreferences.self, from: json)
         #expect(decoded.escalationLevel == .firm)
     }
+
+    @Test func escalationUnrecognizedRawValueFallsBackToOff() throws {
+        let json = """
+        {
+            "escalationLevel": 99
+        }
+        """.data(using: .utf8)!
+        let decoded = try JSONDecoder().decode(AppPreferences.self, from: json)
+        #expect(decoded.escalationLevel == .off)
+    }
 }

@@ -105,8 +105,11 @@ public struct AppPreferences: Codable, Sendable, Equatable {
         pauseMediaDuringBreak = try c.decodeIfPresent(Bool.self, forKey: .pauseMediaDuringBreak) ?? true
         resumeMediaAfterBreak = try c.decodeIfPresent(Bool.self, forKey: .resumeMediaAfterBreak) ?? false
         resetIntervalOnSkip = try c.decodeIfPresent(Bool.self, forKey: .resetIntervalOnSkip) ?? true
-        if let level = try c.decodeIfPresent(EscalationLevel.self, forKey: .escalationLevel) {
+        if let rawLevel = try c.decodeIfPresent(Int.self, forKey: .escalationLevel),
+           let level = EscalationLevel(rawValue: rawLevel) {
             escalationLevel = level
+        } else if c.contains(.escalationLevel) {
+            escalationLevel = .off
         } else {
             let legacy = try decoder.container(keyedBy: LegacyKeys.self)
             let gentle = try legacy.decodeIfPresent(Bool.self, forKey: .gentleEscalationEnabled) ?? false
