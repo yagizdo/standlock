@@ -114,22 +114,37 @@ struct DetectionSettingsView: View {
             }
 
             Section {
-                Toggle(isOn: $coordinator.preferences.gentleEscalationEnabled) {
-                    Text("Gentle")
+                Toggle(isOn: Binding(
+                    get: { coordinator.preferences.escalationLevel != .off },
+                    set: { coordinator.preferences.escalationLevel = $0 ? .gentle : .off }
+                )) {
+                    Label {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Progressive Friction")
+                            Text("Escalate friction on repeated skips")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    } icon: {
+                        Image(systemName: "chart.bar.fill")
+                    }
                 }
-                Toggle(isOn: $coordinator.preferences.firmEscalationEnabled) {
-                    Text("Firm")
+
+                if coordinator.preferences.escalationLevel != .off {
+                    Picker("Maximum Level", selection: $coordinator.preferences.escalationLevel) {
+                        Text("Gentle").tag(EscalationLevel.gentle)
+                        Text("Firm").tag(EscalationLevel.firm)
+                        Text("Strict").tag(EscalationLevel.strict)
+                    }
+                    .padding(.leading, 24)
                 }
-                Toggle(isOn: $coordinator.preferences.strictEscalationEnabled) {
-                    Text("Strict")
-                }
-            } header: {
-                Text("Progressive Friction")
             } footer: {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Each skipped break makes the next skip harder. Resets when you complete a break.")
-                    if coordinator.preferences.firmEscalationEnabled {
-                        Text("Firm escalation is active — daily skip limit is replaced by escalating friction.")
+                if coordinator.preferences.escalationLevel != .off {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Each skipped break makes the next skip harder. Resets when you complete a break.")
+                        if coordinator.preferences.escalationLevel >= .firm {
+                            Text("Firm escalation is active — daily skip limit is replaced by escalating friction.")
+                        }
                     }
                 }
             }

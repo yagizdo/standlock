@@ -20,9 +20,7 @@ public struct AppPreferences: Codable, Sendable, Equatable {
 
     public var resetIntervalOnSkip: Bool
 
-    public var gentleEscalationEnabled: Bool
-    public var firmEscalationEnabled: Bool
-    public var strictEscalationEnabled: Bool
+    public var escalationLevel: EscalationLevel
 
     public static func tierMultiplier(for tier: Int) -> Double {
         switch tier {
@@ -35,9 +33,9 @@ public struct AppPreferences: Codable, Sendable, Equatable {
 
     public func escalationEnabled(for level: DisciplineLevel) -> Bool {
         switch level {
-        case .gentle: gentleEscalationEnabled
-        case .firm: firmEscalationEnabled
-        case .strict: strictEscalationEnabled
+        case .gentle: escalationLevel >= .gentle
+        case .firm: escalationLevel >= .firm
+        case .strict: escalationLevel >= .strict
         }
     }
 
@@ -56,9 +54,7 @@ public struct AppPreferences: Codable, Sendable, Equatable {
         pauseMediaDuringBreak: Bool = true,
         resumeMediaAfterBreak: Bool = false,
         resetIntervalOnSkip: Bool = true,
-        gentleEscalationEnabled: Bool = false,
-        firmEscalationEnabled: Bool = false,
-        strictEscalationEnabled: Bool = false
+        escalationLevel: EscalationLevel = .off
     ) {
         self.firmSkipDelay = firmSkipDelay
         self.firmEscapePhrase = firmEscapePhrase
@@ -74,9 +70,7 @@ public struct AppPreferences: Codable, Sendable, Equatable {
         self.pauseMediaDuringBreak = pauseMediaDuringBreak
         self.resumeMediaAfterBreak = resumeMediaAfterBreak
         self.resetIntervalOnSkip = resetIntervalOnSkip
-        self.gentleEscalationEnabled = gentleEscalationEnabled
-        self.firmEscalationEnabled = firmEscalationEnabled
-        self.strictEscalationEnabled = strictEscalationEnabled
+        self.escalationLevel = escalationLevel
     }
 
     private enum CodingKeys: String, CodingKey {
@@ -88,6 +82,10 @@ public struct AppPreferences: Codable, Sendable, Equatable {
         case focusModeDetection, idleDetectionEnabled
         case pauseMediaDuringBreak, resumeMediaAfterBreak
         case resetIntervalOnSkip
+        case escalationLevel
+    }
+
+    private enum LegacyKeys: String, CodingKey {
         case gentleEscalationEnabled, firmEscalationEnabled, strictEscalationEnabled
     }
 
@@ -107,9 +105,21 @@ public struct AppPreferences: Codable, Sendable, Equatable {
         pauseMediaDuringBreak = try c.decodeIfPresent(Bool.self, forKey: .pauseMediaDuringBreak) ?? true
         resumeMediaAfterBreak = try c.decodeIfPresent(Bool.self, forKey: .resumeMediaAfterBreak) ?? false
         resetIntervalOnSkip = try c.decodeIfPresent(Bool.self, forKey: .resetIntervalOnSkip) ?? true
-        gentleEscalationEnabled = try c.decodeIfPresent(Bool.self, forKey: .gentleEscalationEnabled) ?? false
-        firmEscalationEnabled = try c.decodeIfPresent(Bool.self, forKey: .firmEscalationEnabled) ?? false
-        strictEscalationEnabled = try c.decodeIfPresent(Bool.self, forKey: .strictEscalationEnabled) ?? false
+        if let rawLevel = try c.decodeIfPresent(Int.self, forKey: .escalationLevel),
+           let level = EscalationLevel(rawValue: rawLevel) {
+            escalationLevel = level
+        } else if c.contains(.escalationLevel) {
+            escalationLevel = .off
+        } else {
+            let legacy = try decoder.container(keyedBy: LegacyKeys.self)
+            let gentle = try legacy.decodeIfPresent(Bool.self, forKey: .gentleEscalationEnabled) ?? false
+            let firm = try legacy.decodeIfPresent(Bool.self, forKey: .firmEscalationEnabled) ?? false
+            let strict = try legacy.decodeIfPresent(Bool.self, forKey: .strictEscalationEnabled) ?? false
+            if strict { escalationLevel = .strict }
+            else if firm { escalationLevel = .firm }
+            else if gentle { escalationLevel = .gentle }
+            else { escalationLevel = .off }
+        }
     }
 }
 
