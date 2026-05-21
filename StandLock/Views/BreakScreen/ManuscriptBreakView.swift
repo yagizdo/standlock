@@ -7,6 +7,7 @@ struct ManuscriptBreakView: View {
     let exercise: Exercise?
     let preferences: AppPreferences
     let statistics: BreakStatistics
+    let escalationTier: Int
     let onSkip: () -> Void
     let onComplete: () -> Void
 
@@ -16,12 +17,14 @@ struct ManuscriptBreakView: View {
 
     init(level: DisciplineLevel, totalDuration: TimeInterval, exercise: Exercise?,
          preferences: AppPreferences, statistics: BreakStatistics,
+         escalationTier: Int = 0,
          onSkip: @escaping () -> Void, onComplete: @escaping () -> Void) {
         self.level = level
         self.totalDuration = totalDuration
         self.exercise = exercise
         self.preferences = preferences
         self.statistics = statistics
+        self.escalationTier = escalationTier
         self.onSkip = onSkip
         self.onComplete = onComplete
         self._remainingSeconds = State(initialValue: totalDuration)
@@ -57,6 +60,7 @@ struct ManuscriptBreakView: View {
                         ActionArea(
                             level: level, palette: palette,
                             preferences: preferences, statistics: statistics,
+                            escalationTier: escalationTier,
                             onDismiss: onSkip
                         )
                     }

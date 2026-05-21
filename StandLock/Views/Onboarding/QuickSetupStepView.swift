@@ -1,8 +1,10 @@
 import SwiftUI
 
 struct QuickSetupStepView: View {
-    var onCreateDefault: () -> Void
+    var onCreateDefault: (_ escalationEnabled: Bool) -> Void
     var onSkip: () -> Void
+
+    @State private var escalationEnabled = false
 
     var body: some View {
         VStack(spacing: 24) {
@@ -34,11 +36,22 @@ struct QuickSetupStepView: View {
             .padding(16)
             .background(.quaternary.opacity(0.5), in: RoundedRectangle(cornerRadius: 10))
 
+            Toggle(isOn: $escalationEnabled) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Progressive friction")
+                        .font(.subheadline.weight(.medium))
+                    Text("Each time you skip, the next break is harder to dismiss")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .padding(.horizontal, 20)
+
             Spacer()
 
             VStack(spacing: 10) {
                 Button("Use Default Schedule") {
-                    onCreateDefault()
+                    onCreateDefault(escalationEnabled)
                 }
                 .buttonStyle(.borderedProminent)
                 .controlSize(.large)

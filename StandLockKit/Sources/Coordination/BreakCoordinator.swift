@@ -20,6 +20,7 @@ public final class BreakCoordinator: BreakCoordinating {
     private var currentSchedule: Schedule?
     private var statistics: BreakStatistics = BreakStatistics()
     private var dailyBreakCounts: [UUID: Int] = [:]
+    private var escalationTiers: [UUID: Int] = [:]
     public var exercises: [Exercise] = []
 
     private let eventContinuation: AsyncStream<CoordinatorEvent>.Continuation
@@ -54,6 +55,7 @@ public final class BreakCoordinator: BreakCoordinating {
         if locker.isShowing { locker.dismissOverlay() }
         currentBreak = nil
         currentSchedule = nil
+        escalationTiers.removeAll()
     }
 
     public func pause(for duration: TimeInterval) {
@@ -89,6 +91,9 @@ public final class BreakCoordinator: BreakCoordinating {
         breakCountdownTimer = nil
         guard var event = currentBreak else { return }
         event.outcome = .skipped
+        if let scheduleID = currentBreak?.scheduleId {
+            escalationTiers[scheduleID, default: 0] = min(escalationTiers[scheduleID, default: 0] + 1, 3)
+        }
         locker.dismissOverlay()
         statistics.breaksSkipped += 1
         statistics.currentStreak = 0
@@ -104,6 +109,9 @@ public final class BreakCoordinator: BreakCoordinating {
         breakCountdownTimer = nil
         guard var event = currentBreak else { return }
         event.outcome = .escaped
+        if let scheduleID = currentBreak?.scheduleId {
+            escalationTiers[scheduleID, default: 0] = min(escalationTiers[scheduleID, default: 0] + 1, 3)
+        }
         locker.dismissOverlay()
         statistics.breaksEscaped += 1
         statistics.weeklyEscapeCount += 1
@@ -129,6 +137,13 @@ public final class BreakCoordinator: BreakCoordinating {
 
     public func updatePreferences(_ preferences: AppPreferences) {
         self.preferences = preferences
+    }
+
+    // MARK: - Escalation
+
+    private func currentTier(for scheduleID: UUID, level: DisciplineLevel) -> Int {
+        guard preferences.escalationEnabled(for: level) else { return 0 }
+        return min(escalationTiers[scheduleID, default: 0], 3)
     }
 
     // MARK: - Private
@@ -179,6 +194,7 @@ public final class BreakCoordinator: BreakCoordinating {
                     repetitionTrackers[schedule.id] = tracker
                 }
                 dailyBreakCounts[schedule.id, default: 0] += 1
+                escalationTiers[schedule.id] = 0
                 eventContinuation.yield(.breakCompleted(idleEvent))
                 eventContinuation.yield(.statisticsUpdated(statistics))
                 scheduleNextBreak()
@@ -206,6 +222,7 @@ public final class BreakCoordinator: BreakCoordinating {
 
         let duration = currentBreakDuration(for: schedule)
         let exercise = exercises.randomElement()
+        let tier = currentTier(for: schedule.id, level: effectiveLevel)
         let breakEvent = BreakEvent(
             scheduledAt: Date(), duration: duration,
             level: effectiveLevel, scheduleId: schedule.id
@@ -217,7 +234,7 @@ public final class BreakCoordinator: BreakCoordinating {
         eventContinuation.yield(.breakStarted(breakEvent))
         locker.showOverlay(level: effectiveLevel, duration: duration,
                            exercise: exercise, preferences: preferences,
-                           statistics: statistics)
+                           statistics: statistics, escalationTier: tier)
         startBreakCountdown(event: breakEvent, duration: duration, schedule: schedule)
     }
 
@@ -255,6 +272,7 @@ public final class BreakCoordinator: BreakCoordinating {
     private func completeBreak(event: BreakEvent, schedule: Schedule) {
         var completed = event
         completed.outcome = .completed
+        escalationTiers[schedule.id] = 0
         locker.dismissOverlay()
         statistics.breaksCompleted += 1
         statistics.currentStreak += 1

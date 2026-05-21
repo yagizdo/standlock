@@ -20,6 +20,27 @@ public struct AppPreferences: Codable, Sendable, Equatable {
 
     public var resetIntervalOnSkip: Bool
 
+    public var gentleEscalationEnabled: Bool
+    public var firmEscalationEnabled: Bool
+    public var strictEscalationEnabled: Bool
+
+    public static func tierMultiplier(for tier: Int) -> Double {
+        switch tier {
+        case 0: 1.0
+        case 1: 1.5
+        case 2: 2.0
+        default: 2.5
+        }
+    }
+
+    public func escalationEnabled(for level: DisciplineLevel) -> Bool {
+        switch level {
+        case .gentle: gentleEscalationEnabled
+        case .firm: firmEscalationEnabled
+        case .strict: strictEscalationEnabled
+        }
+    }
+
     public init(
         firmSkipDelay: TimeInterval = 10,
         firmEscapePhrase: String = "I choose to skip this break",
@@ -34,7 +55,10 @@ public struct AppPreferences: Codable, Sendable, Equatable {
         idleDetectionEnabled: Bool = true,
         pauseMediaDuringBreak: Bool = true,
         resumeMediaAfterBreak: Bool = false,
-        resetIntervalOnSkip: Bool = true
+        resetIntervalOnSkip: Bool = true,
+        gentleEscalationEnabled: Bool = false,
+        firmEscalationEnabled: Bool = false,
+        strictEscalationEnabled: Bool = false
     ) {
         self.firmSkipDelay = firmSkipDelay
         self.firmEscapePhrase = firmEscapePhrase
@@ -50,6 +74,9 @@ public struct AppPreferences: Codable, Sendable, Equatable {
         self.pauseMediaDuringBreak = pauseMediaDuringBreak
         self.resumeMediaAfterBreak = resumeMediaAfterBreak
         self.resetIntervalOnSkip = resetIntervalOnSkip
+        self.gentleEscalationEnabled = gentleEscalationEnabled
+        self.firmEscalationEnabled = firmEscalationEnabled
+        self.strictEscalationEnabled = strictEscalationEnabled
     }
 
     private enum CodingKeys: String, CodingKey {
@@ -61,6 +88,7 @@ public struct AppPreferences: Codable, Sendable, Equatable {
         case focusModeDetection, idleDetectionEnabled
         case pauseMediaDuringBreak, resumeMediaAfterBreak
         case resetIntervalOnSkip
+        case gentleEscalationEnabled, firmEscalationEnabled, strictEscalationEnabled
     }
 
     public init(from decoder: Decoder) throws {
@@ -79,6 +107,9 @@ public struct AppPreferences: Codable, Sendable, Equatable {
         pauseMediaDuringBreak = try c.decodeIfPresent(Bool.self, forKey: .pauseMediaDuringBreak) ?? true
         resumeMediaAfterBreak = try c.decodeIfPresent(Bool.self, forKey: .resumeMediaAfterBreak) ?? false
         resetIntervalOnSkip = try c.decodeIfPresent(Bool.self, forKey: .resetIntervalOnSkip) ?? true
+        gentleEscalationEnabled = try c.decodeIfPresent(Bool.self, forKey: .gentleEscalationEnabled) ?? false
+        firmEscalationEnabled = try c.decodeIfPresent(Bool.self, forKey: .firmEscalationEnabled) ?? false
+        strictEscalationEnabled = try c.decodeIfPresent(Bool.self, forKey: .strictEscalationEnabled) ?? false
     }
 }
 

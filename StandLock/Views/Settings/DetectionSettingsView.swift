@@ -112,6 +112,27 @@ struct DetectionSettingsView: View {
                     }
                 }
             }
+
+            Section {
+                Toggle(isOn: $coordinator.preferences.gentleEscalationEnabled) {
+                    Text("Gentle")
+                }
+                Toggle(isOn: $coordinator.preferences.firmEscalationEnabled) {
+                    Text("Firm")
+                }
+                Toggle(isOn: $coordinator.preferences.strictEscalationEnabled) {
+                    Text("Strict")
+                }
+            } header: {
+                Text("Progressive Friction")
+            } footer: {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Each skipped break makes the next skip harder. Resets when you complete a break.")
+                    if coordinator.preferences.firmEscalationEnabled {
+                        Text("Firm escalation is active — daily skip limit is replaced by escalating friction.")
+                    }
+                }
+            }
         }
         .formStyle(.grouped)
         .onChange(of: coordinator.preferences) { _, _ in
