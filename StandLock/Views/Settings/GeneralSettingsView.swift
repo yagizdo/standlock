@@ -9,15 +9,22 @@ struct GeneralSettingsView: View {
     var body: some View {
         Form {
             Section {
-                Toggle("Launch at Startup", isOn: $launchAtStartup)
-                    .onChange(of: launchAtStartup) { newValue in
-                        guard !isUpdating else { return }
-                        setLaunchAtStartup(newValue)
+                Toggle(isOn: $launchAtStartup) {
+                    Label {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Launch at Startup")
+                            Text("Open StandLock when you log in")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    } icon: {
+                        Image(systemName: "laptopcomputer")
                     }
-
-                Text("Automatically open StandLock when you log in")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                }
+                .onChange(of: launchAtStartup) { newValue in
+                    guard !isUpdating else { return }
+                    setLaunchAtStartup(newValue)
+                }
 
                 if let errorMessage {
                     Text(errorMessage)
