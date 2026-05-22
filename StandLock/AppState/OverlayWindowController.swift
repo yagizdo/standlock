@@ -4,7 +4,7 @@ import StandLockCore
 import Locking
 
 @MainActor
-final class OverlayWindowController: LockPresenting, Observable {
+final class OverlayWindowController: LockPresenting {
     private var overlayWindows: [BreakOverlayWindow] = []
     private var eventTapController: EventTapController?
     private var screenObserver: NSObjectProtocol?

@@ -130,7 +130,7 @@ struct MenuBarView: View {
                 SettingsButton()
             } else {
                 Button("Settings...") {
-                    NSApp.sendAction(Selector(("showPreferencesWindow:")), to: nil, from: nil)
+                    NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
                     NSApp.activate(ignoringOtherApps: true)
                 }
             }

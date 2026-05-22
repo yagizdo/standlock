@@ -25,14 +25,16 @@ public final class CalendarDetector: @unchecked Sendable {
         }
     }
 
-    public func hasActiveEvent(at date: Date = Date()) -> Bool {
-        let hasAccess: Bool
+    public static func isAuthorized(_ status: EKAuthorizationStatus) -> Bool {
         if #available(macOS 14, *) {
-            hasAccess = authorizationStatus == .fullAccess
+            return status == .fullAccess
         } else {
-            hasAccess = authorizationStatus == .authorized
+            return status == .authorized
         }
-        guard hasAccess else { return false }
+    }
+
+    public func hasActiveEvent(at date: Date = Date()) -> Bool {
+        guard Self.isAuthorized(authorizationStatus) else { return false }
         let end = date.addingTimeInterval(TimeInterval(lookAheadMinutes * 60))
         let predicate = eventStore.predicateForEvents(withStart: date, end: end, calendars: nil)
         let events = eventStore.events(matching: predicate)

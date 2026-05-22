@@ -1,6 +1,7 @@
 import SwiftUI
 import EventKit
 import ApplicationServices
+import Detection
 
 enum PermissionStatus {
     case granted, notGranted, denied, needsRestart
@@ -61,18 +62,10 @@ final class PermissionChecker: ObservableObject {
     }
 
     var calendarPermissionStatus: PermissionStatus {
-        if #available(macOS 14, *) {
-            switch calendarStatus {
-            case .fullAccess: return .granted
-            case .denied, .restricted: return .denied
-            default: return calendarNeedsRestart ? .needsRestart : .notGranted
-            }
-        } else {
-            switch calendarStatus {
-            case .authorized: return .granted
-            case .denied, .restricted: return .denied
-            default: return calendarNeedsRestart ? .needsRestart : .notGranted
-            }
+        if CalendarDetector.isAuthorized(calendarStatus) { return .granted }
+        switch calendarStatus {
+        case .denied, .restricted: return .denied
+        default: return calendarNeedsRestart ? .needsRestart : .notGranted
         }
     }
 
@@ -110,11 +103,9 @@ final class PermissionChecker: ObservableObject {
         var transitions = PermissionTransitions()
         transitions.accessibilityBecameGranted = !prevAX && accessibilityGranted
         transitions.inputMonitoringBecameGranted = !prevIM && inputMonitoringGranted
-        if #available(macOS 14, *) {
-            transitions.calendarBecameGranted = prevCal != .fullAccess && calendarStatus == .fullAccess
-        } else {
-            transitions.calendarBecameGranted = prevCal != .authorized && calendarStatus == .authorized
-        }
+        transitions.calendarBecameGranted =
+            !CalendarDetector.isAuthorized(prevCal) &&
+            CalendarDetector.isAuthorized(calendarStatus)
         return transitions
     }
 
@@ -179,7 +170,7 @@ final class PermissionChecker: ObservableObject {
         }
     }
 
-    private var shownRestartAlerts: Set<String> = []
+    @MainActor private static var shownRestartAlerts: Set<String> = []
 
     func relaunchApp() {
         let task = Process()
@@ -198,8 +189,8 @@ final class PermissionChecker: ObservableObject {
     }
 
     private func showRestartAlertIfNeeded(for permissionName: String) {
-        guard !shownRestartAlerts.contains(permissionName) else { return }
-        shownRestartAlerts.insert(permissionName)
+        guard !Self.shownRestartAlerts.contains(permissionName) else { return }
+        Self.shownRestartAlerts.insert(permissionName)
 
         let alert = NSAlert()
         alert.messageText = "\(permissionName) Permission Granted"
@@ -239,21 +230,19 @@ final class PermissionChecker: ObservableObject {
         pollAfterSettingsOpened()
     }
 
+    private func requestCalendarAccess() async -> Bool {
+        if #available(macOS 14, *) {
+            return (try? await eventStore.requestFullAccessToEvents()) ?? false
+        } else {
+            return (try? await eventStore.requestAccess(to: .event)) ?? false
+        }
+    }
+
     func requestCalendar() {
         Task {
-            let granted: Bool
-            if #available(macOS 14, *) {
-                granted = (try? await eventStore.requestFullAccessToEvents()) ?? false
-            } else {
-                granted = (try? await eventStore.requestAccess(to: .event)) ?? false
-            }
+            let granted = await requestCalendarAccess()
             refreshStatus()
-            let hasAccess: Bool
-            if #available(macOS 14, *) {
-                hasAccess = calendarStatus == .fullAccess
-            } else {
-                hasAccess = calendarStatus == .authorized
-            }
+            let hasAccess = CalendarDetector.isAuthorized(calendarStatus)
             if !granted && !hasAccess {
                 openSystemSettings(for: .calendar)
                 pollAfterSettingsOpened()

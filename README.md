@@ -76,10 +76,20 @@ You can revoke any permission at any time in **System Settings > Privacy & Secur
 ```bash
 git clone https://github.com/yagizdo/StandLock.git
 cd StandLock
+xcodegen generate   # required after pulling -- regenerates StandLock.xcodeproj from project.yml
 open StandLock.xcodeproj
 ```
 
 Build and run the `StandLock` scheme in Xcode. The app lives in your menu bar.
+
+### Deployment Target
+
+The minimum macOS version is declared in two source-of-truth files:
+
+- `project.yml` -- app target (Xcode project is regenerated from this with `xcodegen generate`)
+- `StandLockKit/Package.swift` -- Swift package (separate platform list)
+
+When raising or lowering the deployment target, update both files and run `xcodegen generate` to refresh `StandLock.xcodeproj`. Direct edits to `StandLock.xcodeproj/project.pbxproj` are overwritten on the next regeneration.
 
 ## License
 
