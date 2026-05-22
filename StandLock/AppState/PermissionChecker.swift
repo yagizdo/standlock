@@ -1,6 +1,7 @@
 import SwiftUI
 import EventKit
 import ApplicationServices
+import Detection
 
 enum PermissionStatus {
     case granted, notGranted, denied, needsRestart
@@ -34,14 +35,13 @@ enum PermissionType {
     }
 }
 
-@Observable
 @MainActor
-final class PermissionChecker {
-    var inputMonitoringGranted: Bool
-    var accessibilityGranted: Bool
-    var calendarStatus: EKAuthorizationStatus
-    var inputMonitoringProbeSucceeded = false
-    var calendarNeedsRestart = false
+final class PermissionChecker: ObservableObject {
+    @Published var inputMonitoringGranted: Bool
+    @Published var accessibilityGranted: Bool
+    @Published var calendarStatus: EKAuthorizationStatus
+    @Published var inputMonitoringProbeSucceeded = false
+    @Published var calendarNeedsRestart = false
 
     private let eventStore = EKEventStore()
 
@@ -62,10 +62,10 @@ final class PermissionChecker {
     }
 
     var calendarPermissionStatus: PermissionStatus {
+        if CalendarDetector.isAuthorized(calendarStatus) { return .granted }
         switch calendarStatus {
-        case .fullAccess: .granted
-        case .denied, .restricted: .denied
-        default: calendarNeedsRestart ? .needsRestart : .notGranted
+        case .denied, .restricted: return .denied
+        default: return calendarNeedsRestart ? .needsRestart : .notGranted
         }
     }
 
@@ -103,7 +103,9 @@ final class PermissionChecker {
         var transitions = PermissionTransitions()
         transitions.accessibilityBecameGranted = !prevAX && accessibilityGranted
         transitions.inputMonitoringBecameGranted = !prevIM && inputMonitoringGranted
-        transitions.calendarBecameGranted = prevCal != .fullAccess && calendarStatus == .fullAccess
+        transitions.calendarBecameGranted =
+            !CalendarDetector.isAuthorized(prevCal) &&
+            CalendarDetector.isAuthorized(calendarStatus)
         return transitions
     }
 
@@ -168,7 +170,7 @@ final class PermissionChecker {
         }
     }
 
-    private var shownRestartAlerts: Set<String> = []
+    @MainActor private static var shownRestartAlerts: Set<String> = []
 
     func relaunchApp() {
         let task = Process()
@@ -187,8 +189,8 @@ final class PermissionChecker {
     }
 
     private func showRestartAlertIfNeeded(for permissionName: String) {
-        guard !shownRestartAlerts.contains(permissionName) else { return }
-        shownRestartAlerts.insert(permissionName)
+        guard !Self.shownRestartAlerts.contains(permissionName) else { return }
+        Self.shownRestartAlerts.insert(permissionName)
 
         let alert = NSAlert()
         alert.messageText = "\(permissionName) Permission Granted"
@@ -228,11 +230,20 @@ final class PermissionChecker {
         pollAfterSettingsOpened()
     }
 
+    private func requestCalendarAccess() async -> Bool {
+        if #available(macOS 14, *) {
+            return (try? await eventStore.requestFullAccessToEvents()) ?? false
+        } else {
+            return (try? await eventStore.requestAccess(to: .event)) ?? false
+        }
+    }
+
     func requestCalendar() {
         Task {
-            let granted = (try? await eventStore.requestFullAccessToEvents()) ?? false
+            let granted = await requestCalendarAccess()
             refreshStatus()
-            if !granted && calendarStatus != .fullAccess {
+            let hasAccess = CalendarDetector.isAuthorized(calendarStatus)
+            if !granted && !hasAccess {
                 openSystemSettings(for: .calendar)
                 pollAfterSettingsOpened()
             }

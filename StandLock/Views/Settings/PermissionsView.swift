@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct PermissionsView: View {
-    @State private var checker = PermissionChecker()
+    @StateObject private var checker = PermissionChecker()
 
     var body: some View {
         Form {

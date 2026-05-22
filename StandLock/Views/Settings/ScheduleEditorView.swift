@@ -2,7 +2,7 @@ import SwiftUI
 import StandLockCore
 
 struct ScheduleEditorView: View {
-    @Environment(AppCoordinator.self) private var coordinator
+    @EnvironmentObject private var coordinator: AppCoordinator
     @State private var sheetMode: SheetMode?
 
     var body: some View {

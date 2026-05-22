@@ -20,22 +20,21 @@ private final class OnboardingWindowCloseDelegate: NSObject, NSWindowDelegate {
     }
 }
 
-@Observable
 @MainActor
-final class AppCoordinator {
-    var nextBreakTime: Date?
-    private(set) var breakScheduledAt: Date?
-    var isBreakActive: Bool = false
-    var currentBreakRemaining: TimeInterval = 0
-    var currentLevel: DisciplineLevel = .gentle
-    var todayStats: BreakStatistics = BreakStatistics()
-    var deferralReason: DeferralReason?
-    var isPaused: Bool = false
-    var pausedUntil: Date?
-    var schedules: [Schedule] = []
-    var preferences: AppPreferences = AppPreferences()
-    var hasCompletedOnboarding: Bool = false
-    private(set) var breakProgress: Double = 0
+final class AppCoordinator: ObservableObject {
+    @Published var nextBreakTime: Date?
+    @Published private(set) var breakScheduledAt: Date?
+    @Published var isBreakActive: Bool = false
+    @Published var currentBreakRemaining: TimeInterval = 0
+    @Published var currentLevel: DisciplineLevel = .gentle
+    @Published var todayStats: BreakStatistics = BreakStatistics()
+    @Published var deferralReason: DeferralReason?
+    @Published var isPaused: Bool = false
+    @Published var pausedUntil: Date?
+    @Published var schedules: [Schedule] = []
+    @Published var preferences: AppPreferences = AppPreferences()
+    @Published var hasCompletedOnboarding: Bool = false
+    @Published private(set) var breakProgress: Double = 0
 
     private var coordinator: BreakCoordinator?
     private let overlayController = OverlayWindowController()
@@ -284,7 +283,7 @@ final class AppCoordinator {
         window.titleVisibility = .hidden
         window.isReleasedWhenClosed = false
         window.contentView = NSHostingView(
-            rootView: OnboardingView().environment(self)
+            rootView: OnboardingView().environmentObject(self)
         )
         window.center()
 
@@ -297,7 +296,7 @@ final class AppCoordinator {
 
         window.makeKeyAndOrderFront(nil)
         NSApp.setActivationPolicy(.regular)
-        NSApp.activate()
+        NSApp.activate(ignoringOtherApps: true)
     }
 
     func completeOnboarding() {

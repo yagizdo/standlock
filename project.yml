@@ -2,7 +2,7 @@ name: StandLock
 options:
   bundleIdPrefix: com.yagizdokumaci
   deploymentTarget:
-    macOS: "15.0"
+    macOS: "13.0"
   xcodeVersion: "16.0"
   createIntermediateGroups: true
   defaultConfig: Debug
@@ -10,7 +10,7 @@ options:
 settings:
   base:
     SWIFT_VERSION: "6.0"
-    MACOSX_DEPLOYMENT_TARGET: "15.0"
+    MACOSX_DEPLOYMENT_TARGET: "13.0"
     ENABLE_HARDENED_RUNTIME: YES
     DEVELOPMENT_TEAM: F475N5N7V6
 

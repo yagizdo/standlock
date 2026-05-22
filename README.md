@@ -2,7 +2,7 @@
 
 [![Version](https://img.shields.io/badge/version-0.1.4-blue)](https://github.com/yagizdo/StandLock/releases)
 [![Release](https://github.com/yagizdo/standlock/actions/workflows/release.yml/badge.svg)](https://github.com/yagizdo/standlock/actions/workflows/release.yml)
-[![macOS 15+](https://img.shields.io/badge/macOS-15%2B-brightgreen)](https://github.com/yagizdo/StandLock/releases/latest)
+[![macOS 13+](https://img.shields.io/badge/macOS-13%2B-brightgreen)](https://github.com/yagizdo/StandLock/releases/latest)
 [![Homebrew](https://img.shields.io/badge/brew-yagizdo%2Ftap%2Fstandlock-orange)](https://github.com/yagizdo/homebrew-tap)
 [![License: MIT](https://img.shields.io/badge/license-MIT-purple)](LICENSE)
 [![Website](https://img.shields.io/badge/website-standlock.app-blue)](https://standlock.app)
@@ -46,7 +46,7 @@ Most break reminder apps show a notification you can swipe away in half a second
 
 ### Requirements
 
-- macOS 15+ (Sequoia)
+- macOS 13+ (Ventura)
 
 ### GitHub Releases
 
@@ -76,10 +76,20 @@ You can revoke any permission at any time in **System Settings > Privacy & Secur
 ```bash
 git clone https://github.com/yagizdo/StandLock.git
 cd StandLock
+xcodegen generate   # required after pulling -- regenerates StandLock.xcodeproj from project.yml
 open StandLock.xcodeproj
 ```
 
 Build and run the `StandLock` scheme in Xcode. The app lives in your menu bar.
+
+### Deployment Target
+
+The minimum macOS version is declared in two source-of-truth files:
+
+- `project.yml` -- app target (Xcode project is regenerated from this with `xcodegen generate`)
+- `StandLockKit/Package.swift` -- Swift package (separate platform list)
+
+When raising or lowering the deployment target, update both files and run `xcodegen generate` to refresh `StandLock.xcodeproj`. Direct edits to `StandLock.xcodeproj/project.pbxproj` are overwritten on the next regeneration.
 
 ## License
 

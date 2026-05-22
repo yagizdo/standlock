@@ -2,7 +2,7 @@ import SwiftUI
 import StandLockCore
 
 struct QuickActionsView: View {
-    @Environment(AppCoordinator.self) private var coordinator
+    @EnvironmentObject private var coordinator: AppCoordinator
 
     private var activeSchedule: Schedule? {
         coordinator.schedules.first(where: \.isEnabled)

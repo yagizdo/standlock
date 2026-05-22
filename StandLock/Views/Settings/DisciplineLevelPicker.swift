@@ -4,7 +4,7 @@ import StandLockCore
 
 struct DisciplineLevelPicker: View {
     @Binding var selection: DisciplineLevel
-    @State private var checker = PermissionChecker()
+    @StateObject private var checker = PermissionChecker()
     @State private var showPermissionAlert = false
 
     var body: some View {

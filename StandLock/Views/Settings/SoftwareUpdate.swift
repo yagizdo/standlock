@@ -23,7 +23,7 @@ struct UpdaterSettingsView: View {
 
     var body: some View {
         Toggle("Automatic Updates", isOn: $automaticallyChecksForUpdates)
-            .onChange(of: automaticallyChecksForUpdates) { _, newValue in
+            .onChange(of: automaticallyChecksForUpdates) { newValue in
                 updater.automaticallyChecksForUpdates = newValue
             }
     }

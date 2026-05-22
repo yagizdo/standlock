@@ -3,7 +3,7 @@ import PackageDescription
 
 let package = Package(
     name: "StandLockKit",
-    platforms: [.macOS(.v15)],
+    platforms: [.macOS(.v13)],
     products: [
         .library(name: "StandLockCore", targets: ["StandLockCore"]),
         .library(name: "Scheduling", targets: ["Scheduling"]),

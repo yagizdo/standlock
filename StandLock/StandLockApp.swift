@@ -4,12 +4,12 @@ import StandLockCore
 @main
 struct StandLockApp: App {
     @NSApplicationDelegateAdaptor private var appDelegate: AppDelegate
-    @State private var appCoordinator = AppCoordinator()
+    @StateObject private var appCoordinator = AppCoordinator()
 
     var body: some Scene {
         MenuBarExtra {
             MenuBarView()
-                .environment(appCoordinator)
+                .environmentObject(appCoordinator)
         } label: {
             Image(nsImage: MenuBarIcon.make(progress: appCoordinator.breakProgress))
         }
@@ -17,7 +17,7 @@ struct StandLockApp: App {
 
         Settings {
             SettingsView()
-                .environment(appCoordinator)
+                .environmentObject(appCoordinator)
         }
         .commands {
             CommandGroup(after: .appInfo) {
