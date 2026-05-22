@@ -17,4 +17,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
     }
+
+    func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
+        let hasActiveOverlay = sender.windows.contains { $0 is BreakOverlayWindow && $0.isVisible }
+        return hasActiveOverlay ? .terminateCancel : .terminateNow
+    }
 }

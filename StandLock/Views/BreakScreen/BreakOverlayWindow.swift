@@ -7,8 +7,7 @@ final class BreakOverlayWindow: NSWindow {
             contentRect: screen.frame,
             styleMask: [.borderless, .fullSizeContentView],
             backing: .buffered,
-            defer: false,
-            screen: screen
+            defer: false
         )
         level = .screenSaver
         collectionBehavior = [.canJoinAllSpaces, .stationary, .ignoresCycle]

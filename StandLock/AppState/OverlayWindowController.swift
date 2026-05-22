@@ -64,10 +64,7 @@ final class OverlayWindowController: LockPresenting {
         }
 
         forceFocus()
-
-        if level == .firm || level == .strict {
-            startFocusEnforcer()
-        }
+        startFocusEnforcer()
 
         observeScreenChanges()
 
