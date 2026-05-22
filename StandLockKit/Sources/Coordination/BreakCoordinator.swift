@@ -14,7 +14,6 @@ public final class BreakCoordinator: BreakCoordinating {
     private var preferences: AppPreferences = AppPreferences()
     private var repetitionTrackers: [UUID: RepetitionTracker] = [:]
     private var breakTimer: Task<Void, Never>?
-    private var breakCountdownTimer: Task<Void, Never>?
     private var isPaused: Bool = false
     private var currentBreak: BreakEvent?
     private var currentSchedule: Schedule?
@@ -49,9 +48,7 @@ public final class BreakCoordinator: BreakCoordinating {
 
     public func stop() {
         breakTimer?.cancel()
-        breakCountdownTimer?.cancel()
         breakTimer = nil
-        breakCountdownTimer = nil
         if locker.isShowing { locker.dismissOverlay() }
         currentBreak = nil
         currentSchedule = nil
@@ -87,8 +84,6 @@ public final class BreakCoordinator: BreakCoordinating {
     }
 
     public func skipActiveBreak() {
-        breakCountdownTimer?.cancel()
-        breakCountdownTimer = nil
         guard var event = currentBreak else { return }
         event.outcome = .skipped
         if let scheduleID = currentBreak?.scheduleId {
@@ -105,8 +100,6 @@ public final class BreakCoordinator: BreakCoordinating {
     }
 
     public func escapeActiveBreak() {
-        breakCountdownTimer?.cancel()
-        breakCountdownTimer = nil
         guard var event = currentBreak else { return }
         event.outcome = .escaped
         if let scheduleID = currentBreak?.scheduleId {
@@ -123,8 +116,6 @@ public final class BreakCoordinator: BreakCoordinating {
     }
 
     public func completeActiveBreak() {
-        breakCountdownTimer?.cancel()
-        breakCountdownTimer = nil
         guard let event = currentBreak, let schedule = currentSchedule else { return }
         completeBreak(event: event, schedule: schedule)
     }
@@ -170,15 +161,24 @@ public final class BreakCoordinator: BreakCoordinating {
 
         breakTimer = Task {
             let delay = target.date.timeIntervalSince(Date())
-            if delay > 0 { try? await Task.sleep(for: .seconds(delay)) }
+            let leadTime: TimeInterval = 3
+            let earlyDelay = max(0, delay - leadTime)
+            if earlyDelay > 0 { try? await Task.sleep(for: .seconds(earlyDelay)) }
             guard !Task.isCancelled else { return }
-            await triggerBreak(for: target.schedule)
+            let context = await self.detector.currentContext()
+            let remaining = target.date.timeIntervalSince(Date())
+            if remaining > 0 { try? await Task.sleep(for: .seconds(remaining)) }
+            guard !Task.isCancelled else { return }
+            await self.triggerBreak(for: target.schedule, context: context)
         }
     }
 
     private func triggerBreak(for schedule: Schedule) async {
         let context = await detector.currentContext()
+        await triggerBreak(for: schedule, context: context)
+    }
 
+    private func triggerBreak(for schedule: Schedule, context: DetectionContext) async {
         if preferences.idleDetectionEnabled {
             let breakDuration = currentBreakDuration(for: schedule)
             if context.idleDuration >= breakDuration {
@@ -235,7 +235,6 @@ public final class BreakCoordinator: BreakCoordinating {
         locker.showOverlay(level: effectiveLevel, duration: duration,
                            exercise: exercise, preferences: preferences,
                            statistics: statistics, escalationTier: tier)
-        startBreakCountdown(event: breakEvent, duration: duration, schedule: schedule)
     }
 
     private func currentBreakDuration(for schedule: Schedule) -> TimeInterval {
@@ -259,14 +258,6 @@ public final class BreakCoordinator: BreakCoordinating {
         if context.microphoneActive && preferences.microphoneDetection == .reduceToGentle { return .gentle }
         if context.focusModeActive && preferences.focusModeDetection == .reduceToGentle { return .gentle }
         return nil
-    }
-
-    private func startBreakCountdown(event: BreakEvent, duration: TimeInterval, schedule: Schedule) {
-        breakCountdownTimer = Task {
-            try? await Task.sleep(for: .seconds(duration))
-            guard !Task.isCancelled else { return }
-            completeBreak(event: event, schedule: schedule)
-        }
     }
 
     private func completeBreak(event: BreakEvent, schedule: Schedule) {

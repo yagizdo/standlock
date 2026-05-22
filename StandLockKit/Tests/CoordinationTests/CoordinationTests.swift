@@ -163,14 +163,14 @@ struct BreakCoordinatorTests {
     }
 
     @Test @MainActor
-    func breakCompletedAfterDuration() async {
+    func breakCompletedViaOverlay() async {
         let scheduler = MockScheduler()
         scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
         let detector = MockDetector()
         let locker = MockLocker()
 
         let coordinator = BreakCoordinator(scheduler: scheduler, detector: detector, locker: locker)
-        let schedule = makeSchedule(breakDuration: 0.2)
+        let schedule = makeSchedule(breakDuration: 5)
 
         var completedEvents: [CoordinatorEvent] = []
         let listener = Task {
@@ -180,7 +180,12 @@ struct BreakCoordinatorTests {
         }
 
         coordinator.start(with: [schedule], preferences: AppPreferences())
-        try? await Task.sleep(for: .milliseconds(600))
+        try? await Task.sleep(for: .milliseconds(300))
+
+        #expect(locker.showOverlayCalled)
+
+        coordinator.completeActiveBreak()
+        try? await Task.sleep(for: .milliseconds(100))
 
         #expect(!completedEvents.isEmpty)
         #expect(locker.dismissOverlayCalled)
@@ -266,7 +271,7 @@ struct BreakCoordinatorTests {
         let locker = MockLocker()
 
         let coordinator = BreakCoordinator(scheduler: scheduler, detector: detector, locker: locker)
-        let schedule = makeSchedule(breakDuration: 0.15)
+        let schedule = makeSchedule(breakDuration: 5)
 
         var lastStats: BreakStatistics?
         let listener = Task {
@@ -276,7 +281,12 @@ struct BreakCoordinatorTests {
         }
 
         coordinator.start(with: [schedule], preferences: AppPreferences())
-        try? await Task.sleep(for: .milliseconds(500))
+        try? await Task.sleep(for: .milliseconds(300))
+
+        #expect(locker.showOverlayCalled)
+
+        coordinator.completeActiveBreak()
+        try? await Task.sleep(for: .milliseconds(100))
 
         #expect(lastStats != nil)
         #expect(lastStats?.breaksCompleted ?? 0 >= 1)
