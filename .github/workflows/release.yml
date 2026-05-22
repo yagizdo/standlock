@@ -95,7 +95,7 @@ jobs:
             -exportPath "$RUNNER_TEMP/export" \
             -exportOptionsPlist "$RUNNER_TEMP/export-options.plist"
 
-      # ── Sign & Notarize ──
+      # ── Sign ──
 
       - name: Fix Sparkle framework symlinks
         run: scripts/fix-sparkle-symlinks.sh
@@ -103,13 +103,30 @@ jobs:
       - name: Re-sign app and frameworks
         run: scripts/resign-app.sh
 
-      - name: Notarize and staple
+      # ── Notarize & Package ──
+
+      - name: Notarize app bundle
+        run: |
+          ditto -c -k --keepParent --rsrc --sequesterRsrc \
+            "$RUNNER_TEMP/export/StandLock.app" "$RUNNER_TEMP/StandLock-notarize.zip"
+          xcrun notarytool submit "$RUNNER_TEMP/StandLock-notarize.zip" \
+            --keychain-profile "ci-notary" --wait
+          xcrun stapler staple "$RUNNER_TEMP/export/StandLock.app"
+
+      - name: Install create-dmg
+        run: brew install create-dmg
+
+      - name: Create release DMG
+        run: scripts/create-release-dmg.sh
+
+      - name: Notarize and staple DMG
         run: scripts/notarize.sh
 
-      # ── Package ──
-
-      - name: Create release ZIP and checksum
-        run: scripts/create-release-zip.sh
+      - name: Create DMG checksum
+        run: |
+          shasum -a 256 "StandLock-${VERSION}.dmg" > "StandLock-${VERSION}.dmg.sha256"
+          SHA256_VALUE=$(awk '{print $1}' "StandLock-${VERSION}.dmg.sha256")
+          echo "SHA256=${SHA256_VALUE}" >> "$GITHUB_ENV"
 
       - name: Generate Sparkle appcast
         env:
@@ -135,8 +152,8 @@ jobs:
           gh release create "v${VERSION}" \
             --title "StandLock v${VERSION}" \
             "${NOTES_ARGS[@]}" \
-            "StandLock-${VERSION}.zip" \
-            "StandLock-${VERSION}.zip.sha256" \
+            "StandLock-${VERSION}.dmg" \
+            "StandLock-${VERSION}.dmg.sha256" \
             appcast.xml
 
       - name: Update Homebrew cask

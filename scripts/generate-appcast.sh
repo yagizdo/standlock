@@ -14,14 +14,14 @@ chmod +x "$SIGN_UPDATE"
 KEY_FILE="$RUNNER_TEMP/sparkle-key"
 echo "$SPARKLE_PRIVATE_KEY" > "$KEY_FILE"
 
-SIGN_OUTPUT=$("$SIGN_UPDATE" "StandLock-${VERSION}.zip" --ed-key-file "$KEY_FILE")
+SIGN_OUTPUT=$("$SIGN_UPDATE" "StandLock-${VERSION}.dmg" --ed-key-file "$KEY_FILE")
 ED_SIGNATURE=$(echo "$SIGN_OUTPUT" | sed -n 's/.*sparkle:edSignature="\([^"]*\)".*/\1/p')
 if [ -z "$ED_SIGNATURE" ]; then
   echo "::error::sign_update did not produce an edSignature. Raw output:"
   echo "$SIGN_OUTPUT"
   exit 1
 fi
-FILE_LENGTH=$(stat -f%z "StandLock-${VERSION}.zip")
+FILE_LENGTH=$(stat -f%z "StandLock-${VERSION}.dmg")
 PUB_DATE=$(date "+%a, %d %b %Y %H:%M:%S %z")
 
 cat > appcast.xml <<APPCAST
@@ -35,7 +35,7 @@ cat > appcast.xml <<APPCAST
       <sparkle:shortVersionString>${VERSION}</sparkle:shortVersionString>
       <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
       <pubDate>${PUB_DATE}</pubDate>
-      <enclosure url="https://github.com/yagizdo/StandLock/releases/download/v${VERSION}/StandLock-${VERSION}.zip"
+      <enclosure url="https://github.com/yagizdo/StandLock/releases/download/v${VERSION}/StandLock-${VERSION}.dmg"
                  sparkle:edSignature="${ED_SIGNATURE}"
                  length="${FILE_LENGTH}"
                  type="application/octet-stream" />
