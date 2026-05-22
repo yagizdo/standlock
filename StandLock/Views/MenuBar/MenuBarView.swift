@@ -141,7 +141,7 @@ struct MenuBarView: View {
                 Circle()
                     .fill(.green)
                     .frame(width: 6, height: 6)
-                Text("v\(updateObserver.availableVersion ?? "?") available")
+                Text(updateObserver.availableVersion.map { "v\($0) available" } ?? "Update available")
                     .font(.caption)
                     .foregroundStyle(.green)
                 Spacer()
@@ -162,10 +162,11 @@ struct MenuBarView: View {
     private var bottomActions: some View {
         VStack(alignment: .leading, spacing: 2) {
             if #available(macOS 14, *) {
-                SettingsRowButton(tab: nil, coordinator: coordinator)
-                SettingsRowButton(tab: .about, coordinator: coordinator)
+                SettingsRowButton(tab: .general)
+                SettingsRowButton(tab: .about)
             } else {
                 Button {
+                    coordinator.selectedSettingsTab = .general
                     openSettingsLegacy()
                 } label: {
                     settingsLabel
@@ -199,68 +200,51 @@ struct MenuBarView: View {
         }
     }
 
-    private var settingsLabel: some View {
-        HStack(spacing: 8) {
-            Image(systemName: "gearshape")
-                .frame(width: 18)
-                .foregroundStyle(.secondary)
-            Text("Settings...")
-            Spacer()
-            Text("\u{2318},")
-                .font(.caption)
-                .foregroundStyle(.tertiary)
-        }
-    }
-
-    private var aboutLabel: some View {
-        HStack(spacing: 8) {
-            Image(systemName: "info.circle")
-                .frame(width: 18)
-                .foregroundStyle(.secondary)
-            Text("About StandLock")
-            Spacer()
-        }
-    }
-
     private func openSettingsLegacy() {
         NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
         NSApp.activate(ignoringOtherApps: true)
     }
 }
 
+private var settingsLabel: some View {
+    HStack(spacing: 8) {
+        Image(systemName: "gearshape")
+            .frame(width: 18)
+            .foregroundStyle(.secondary)
+        Text("Settings...")
+        Spacer()
+        Text("\u{2318},")
+            .font(.caption)
+            .foregroundStyle(.tertiary)
+    }
+}
+
+private var aboutLabel: some View {
+    HStack(spacing: 8) {
+        Image(systemName: "info.circle")
+            .frame(width: 18)
+            .foregroundStyle(.secondary)
+        Text("About StandLock")
+        Spacer()
+    }
+}
+
 @available(macOS 14, *)
 private struct SettingsRowButton: View {
     @Environment(\.openSettings) private var openSettings
-    let tab: AppCoordinator.SettingsTab?
-    let coordinator: AppCoordinator
+    @EnvironmentObject private var coordinator: AppCoordinator
+    let tab: AppCoordinator.SettingsTab
 
     var body: some View {
         Button {
-            if let tab {
-                coordinator.selectedSettingsTab = tab
-            }
+            coordinator.selectedSettingsTab = tab
             openSettings()
             NSApp.activate(ignoringOtherApps: true)
         } label: {
             if tab == .about {
-                HStack(spacing: 8) {
-                    Image(systemName: "info.circle")
-                        .frame(width: 18)
-                        .foregroundStyle(.secondary)
-                    Text("About StandLock")
-                    Spacer()
-                }
+                aboutLabel
             } else {
-                HStack(spacing: 8) {
-                    Image(systemName: "gearshape")
-                        .frame(width: 18)
-                        .foregroundStyle(.secondary)
-                    Text("Settings...")
-                    Spacer()
-                    Text("\u{2318},")
-                        .font(.caption)
-                        .foregroundStyle(.tertiary)
-                }
+                settingsLabel
             }
         }
         .buttonStyle(MenuBarRowStyle())
