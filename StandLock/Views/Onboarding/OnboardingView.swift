@@ -2,7 +2,7 @@ import SwiftUI
 import StandLockCore
 
 struct OnboardingView: View {
-    @Environment(AppCoordinator.self) private var appCoordinator
+    @EnvironmentObject private var appCoordinator: AppCoordinator
     @Environment(\.dismiss) private var dismiss
     @State private var currentStep = 0
 

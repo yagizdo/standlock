@@ -2,8 +2,7 @@ import SwiftUI
 import StandLockCore
 
 struct MenuBarView: View {
-    @Environment(AppCoordinator.self) private var coordinator
-    @Environment(\.openSettings) private var openSettings
+    @EnvironmentObject private var coordinator: AppCoordinator
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -127,13 +126,29 @@ struct MenuBarView: View {
 
     private var bottomActions: some View {
         VStack(alignment: .leading, spacing: 4) {
-            Button("Settings...") {
-                openSettings()
-                NSApp.activate()
+            if #available(macOS 14, *) {
+                SettingsButton()
+            } else {
+                Button("Settings...") {
+                    NSApp.sendAction(Selector(("showPreferencesWindow:")), to: nil, from: nil)
+                    NSApp.activate(ignoringOtherApps: true)
+                }
             }
             Button("Quit StandLock") {
                 NSApp.terminate(nil)
             }
+        }
+    }
+}
+
+@available(macOS 14, *)
+private struct SettingsButton: View {
+    @Environment(\.openSettings) private var openSettings
+
+    var body: some View {
+        Button("Settings...") {
+            openSettings()
+            NSApp.activate(ignoringOtherApps: true)
         }
     }
 }

@@ -2,10 +2,9 @@ import SwiftUI
 import StandLockCore
 
 struct DetectionSettingsView: View {
-    @Environment(AppCoordinator.self) private var coordinator
+    @EnvironmentObject private var coordinator: AppCoordinator
 
     var body: some View {
-        @Bindable var coordinator = coordinator
         Form {
             Section("Video & Audio") {
                 detectionRow(
@@ -150,7 +149,7 @@ struct DetectionSettingsView: View {
             }
         }
         .formStyle(.grouped)
-        .onChange(of: coordinator.preferences) { _, _ in
+        .onChange(of: coordinator.preferences) { _ in
             coordinator.savePreferences()
         }
     }

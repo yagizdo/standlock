@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct PermissionsStepView: View {
-    @State private var checker = PermissionChecker()
+    @StateObject private var checker = PermissionChecker()
     var onContinue: () -> Void
 
     var body: some View {
