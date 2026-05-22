@@ -34,14 +34,13 @@ enum PermissionType {
     }
 }
 
-@Observable
 @MainActor
-final class PermissionChecker {
-    var inputMonitoringGranted: Bool
-    var accessibilityGranted: Bool
-    var calendarStatus: EKAuthorizationStatus
-    var inputMonitoringProbeSucceeded = false
-    var calendarNeedsRestart = false
+final class PermissionChecker: ObservableObject {
+    @Published var inputMonitoringGranted: Bool
+    @Published var accessibilityGranted: Bool
+    @Published var calendarStatus: EKAuthorizationStatus
+    @Published var inputMonitoringProbeSucceeded = false
+    @Published var calendarNeedsRestart = false
 
     private let eventStore = EKEventStore()
 
@@ -62,10 +61,18 @@ final class PermissionChecker {
     }
 
     var calendarPermissionStatus: PermissionStatus {
-        switch calendarStatus {
-        case .fullAccess: .granted
-        case .denied, .restricted: .denied
-        default: calendarNeedsRestart ? .needsRestart : .notGranted
+        if #available(macOS 14, *) {
+            switch calendarStatus {
+            case .fullAccess: return .granted
+            case .denied, .restricted: return .denied
+            default: return calendarNeedsRestart ? .needsRestart : .notGranted
+            }
+        } else {
+            switch calendarStatus {
+            case .authorized: return .granted
+            case .denied, .restricted: return .denied
+            default: return calendarNeedsRestart ? .needsRestart : .notGranted
+            }
         }
     }
 
@@ -103,7 +110,11 @@ final class PermissionChecker {
         var transitions = PermissionTransitions()
         transitions.accessibilityBecameGranted = !prevAX && accessibilityGranted
         transitions.inputMonitoringBecameGranted = !prevIM && inputMonitoringGranted
-        transitions.calendarBecameGranted = prevCal != .fullAccess && calendarStatus == .fullAccess
+        if #available(macOS 14, *) {
+            transitions.calendarBecameGranted = prevCal != .fullAccess && calendarStatus == .fullAccess
+        } else {
+            transitions.calendarBecameGranted = prevCal != .authorized && calendarStatus == .authorized
+        }
         return transitions
     }
 
@@ -230,9 +241,20 @@ final class PermissionChecker {
 
     func requestCalendar() {
         Task {
-            let granted = (try? await eventStore.requestFullAccessToEvents()) ?? false
+            let granted: Bool
+            if #available(macOS 14, *) {
+                granted = (try? await eventStore.requestFullAccessToEvents()) ?? false
+            } else {
+                granted = (try? await eventStore.requestAccess(to: .event)) ?? false
+            }
             refreshStatus()
-            if !granted && calendarStatus != .fullAccess {
+            let hasAccess: Bool
+            if #available(macOS 14, *) {
+                hasAccess = calendarStatus == .fullAccess
+            } else {
+                hasAccess = calendarStatus == .authorized
+            }
+            if !granted && !hasAccess {
                 openSystemSettings(for: .calendar)
                 pollAfterSettingsOpened()
             }
