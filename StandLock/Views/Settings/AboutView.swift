@@ -34,23 +34,19 @@ struct AboutView: View {
                 .font(.callout)
                 .foregroundStyle(.secondary)
 
-            Divider()
-                .padding(.horizontal, 80)
-
             VStack(alignment: .leading, spacing: 8) {
                 UpdaterSettingsView(updater: appDelegate.updaterController.updater)
                 CheckForUpdatesView(updater: appDelegate.updaterController.updater)
             }
             .padding(.horizontal, 40)
-
-            Divider()
-                .padding(.horizontal, 80)
+            .padding(12)
+            .background(.quaternary.opacity(0.5), in: RoundedRectangle(cornerRadius: 8))
 
             VStack(spacing: 4) {
                 Text("Made by Yağız")
-                    .font(.callout)
+                    .font(.footnote)
                 Link("GitHub", destination: URL(string: "https://github.com/yagizdo/StandLock")!)
-                    .font(.callout)
+                    .font(.footnote)
             }
         }
         .padding(.top, 12)

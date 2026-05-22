@@ -6,12 +6,6 @@ struct PermissionsView: View {
     var body: some View {
         Form {
             Section {
-                Text("StandLock needs certain permissions to function properly. Grant the ones that match your usage.")
-                    .font(.callout)
-                    .foregroundStyle(.secondary)
-            }
-
-            Section("Recommended") {
                 PermissionRow(
                     title: "Input Monitoring",
                     description: "Detect keyboard activity for idle detection and escape combo. You'll need to enable it in System Settings.",
@@ -21,6 +15,15 @@ struct PermissionsView: View {
                     action: { checker.requestInputMonitoring() },
                     restartAction: { checker.relaunchApp() }
                 )
+            } header: {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Grant permissions that match your usage.")
+                        .textCase(nil)
+                        .font(.callout)
+                        .foregroundStyle(.secondary)
+                        .padding(.bottom, 4)
+                    Text("Recommended")
+                }
             }
 
             Section("Optional") {

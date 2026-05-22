@@ -66,7 +66,7 @@ struct DetectionSettingsView: View {
                 )
             }
 
-            Section("Media") {
+            Section("Media & Idle") {
                 Toggle(isOn: $coordinator.preferences.pauseMediaDuringBreak) {
                     Label {
                         VStack(alignment: .leading, spacing: 2) {
@@ -95,9 +95,7 @@ struct DetectionSettingsView: View {
                     }
                     .padding(.leading, 24)
                 }
-            }
 
-            Section("Idle Recognition") {
                 Toggle(isOn: $coordinator.preferences.idleDetectionEnabled) {
                     Label {
                         VStack(alignment: .leading, spacing: 2) {
@@ -120,7 +118,7 @@ struct DetectionSettingsView: View {
                     Label {
                         VStack(alignment: .leading, spacing: 2) {
                             Text("Progressive Friction")
-                            Text("Escalate friction on repeated skips")
+                            Text("Makes each skipped break harder to dismiss")
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                         }
@@ -130,21 +128,23 @@ struct DetectionSettingsView: View {
                 }
 
                 if coordinator.preferences.escalationLevel != .off {
-                    Picker("Maximum Level", selection: $coordinator.preferences.escalationLevel) {
+                    Picker("Level", selection: $coordinator.preferences.escalationLevel) {
                         Text("Gentle").tag(EscalationLevel.gentle)
                         Text("Firm").tag(EscalationLevel.firm)
                         Text("Strict").tag(EscalationLevel.strict)
                     }
+                    .pickerStyle(.segmented)
+                    .labelsHidden()
                     .padding(.leading, 24)
+
+                    escalationPathView
+                        .padding(.leading, 24)
                 }
+            } header: {
+                Text("Behavior")
             } footer: {
                 if coordinator.preferences.escalationLevel != .off {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Each skipped break makes the next skip harder. Resets when you complete a break.")
-                        if coordinator.preferences.escalationLevel >= .firm {
-                            Text("Firm escalation is active — daily skip limit is replaced by escalating friction.")
-                        }
-                    }
+                    Text("Taking a break resets the progression.")
                 }
             }
         }
@@ -152,6 +152,42 @@ struct DetectionSettingsView: View {
         .onChange(of: coordinator.preferences) { _ in
             coordinator.savePreferences()
         }
+    }
+
+    @ViewBuilder
+    private var escalationPathView: some View {
+        let selected = coordinator.preferences.escalationLevel
+        VStack(alignment: .leading, spacing: 6) {
+            Text("Each skip advances to the next stage:")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+
+            HStack(spacing: 6) {
+                stagePill("Delay", active: selected >= .gentle)
+                stageArrow(active: selected >= .firm)
+                stagePill("Phrase", active: selected >= .firm)
+                stageArrow(active: selected >= .strict)
+                stagePill("Key hold", active: selected >= .strict)
+            }
+        }
+    }
+
+    private func stagePill(_ label: String, active: Bool) -> some View {
+        Text(label)
+            .font(.caption2.weight(.medium))
+            .padding(.horizontal, 8)
+            .padding(.vertical, 3)
+            .background(
+                RoundedRectangle(cornerRadius: 4)
+                    .fill(active ? Color.accentColor.opacity(0.15) : Color.secondary.opacity(0.08))
+            )
+            .foregroundStyle(active ? Color.accentColor : Color.secondary.opacity(0.3))
+    }
+
+    private func stageArrow(active: Bool) -> some View {
+        Image(systemName: "chevron.right")
+            .font(.system(size: 8, weight: .semibold))
+            .foregroundStyle(active ? .secondary : Color.secondary.opacity(0.3))
     }
 
     private func detectionRow(

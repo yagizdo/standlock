@@ -46,7 +46,7 @@ struct ScheduleEditorView: View {
         VStack(spacing: 12) {
             Spacer()
             Image(systemName: "calendar.badge.plus")
-                .font(.system(size: 40))
+                .font(.system(size: 36))
                 .foregroundStyle(.secondary)
             Text("No Schedules")
                 .font(.headline)
@@ -242,19 +242,14 @@ private struct DeleteConfirmationView: View {
                 .buttonStyle(.bordered)
                 .keyboardShortcut(.cancelAction)
 
-                Button {
+                Button(role: .destructive) {
                     onDelete()
                 } label: {
                     Text("Delete")
-                        .foregroundStyle(.white)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 6)
-                        .background(
-                            Color(red: 0.85, green: 0.33, blue: 0.33),
-                            in: RoundedRectangle(cornerRadius: 6)
-                        )
                 }
-                .buttonStyle(.plain)
+                .controlSize(.large)
             }
         }
         .padding(24)
