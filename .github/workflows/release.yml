@@ -103,7 +103,15 @@ jobs:
       - name: Re-sign app and frameworks
         run: scripts/resign-app.sh
 
-      # ── Package ──
+      # ── Notarize & Package ──
+
+      - name: Notarize app bundle
+        run: |
+          ditto -c -k --keepParent --rsrc --sequesterRsrc \
+            "$RUNNER_TEMP/export/StandLock.app" "$RUNNER_TEMP/StandLock-notarize.zip"
+          xcrun notarytool submit "$RUNNER_TEMP/StandLock-notarize.zip" \
+            --keychain-profile "ci-notary" --wait
+          xcrun stapler staple "$RUNNER_TEMP/export/StandLock.app"
 
       - name: Install create-dmg
         run: brew install create-dmg
