@@ -10,6 +10,7 @@ struct StandLockApp: App {
         MenuBarExtra {
             MenuBarView()
                 .environmentObject(appCoordinator)
+                .environmentObject(appDelegate.updateObserver)
         } label: {
             Image(nsImage: MenuBarIcon.make(progress: appCoordinator.breakProgress))
         }

@@ -22,6 +22,11 @@ private final class OnboardingWindowCloseDelegate: NSObject, NSWindowDelegate {
 
 @MainActor
 final class AppCoordinator: ObservableObject {
+    enum SettingsTab: Int, Hashable {
+        case general, schedules, detection, permissions, about
+    }
+
+    @Published var selectedSettingsTab: SettingsTab = .general
     @Published var nextBreakTime: Date?
     @Published private(set) var breakScheduledAt: Date?
     @Published var isBreakActive: Bool = false
