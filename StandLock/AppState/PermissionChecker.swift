@@ -172,12 +172,15 @@ final class PermissionChecker: ObservableObject {
 
     @MainActor private static var shownRestartAlerts: Set<String> = []
 
+    private(set) static var isRelaunching = false
+
     func relaunchApp() {
         let task = Process()
         task.executableURL = URL(fileURLWithPath: "/usr/bin/open")
         task.arguments = ["-n", Bundle.main.bundlePath]
         do {
             try task.run()
+            Self.isRelaunching = true
             NSApp.terminate(nil)
         } catch {
             let alert = NSAlert()

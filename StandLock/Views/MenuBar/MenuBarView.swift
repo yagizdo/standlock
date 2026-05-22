@@ -197,6 +197,7 @@ struct MenuBarView: View {
                 }
             }
             .buttonStyle(MenuBarRowStyle())
+            .disabled(coordinator.isBreakActive)
         }
     }
 
