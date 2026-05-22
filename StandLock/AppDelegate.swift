@@ -19,6 +19,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
+        if PermissionChecker.isRelaunching { return .terminateNow }
         let hasActiveOverlay = sender.windows.contains { $0 is BreakOverlayWindow && $0.isVisible }
         return hasActiveOverlay ? .terminateCancel : .terminateNow
     }
