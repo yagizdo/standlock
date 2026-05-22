@@ -173,7 +173,7 @@ private struct GentleActionView: View {
                         .strokeBorder(palette.paperEdge, lineWidth: 1)
                 )
                 .onAppear { isFieldFocused = true }
-                .onChange(of: typedPhrase) { _, newValue in
+                .onChange(of: typedPhrase) { newValue in
                     if newValue.trimmingCharacters(in: .whitespaces)
                         .caseInsensitiveCompare("skip") == .orderedSame {
                         onDismiss()
@@ -257,7 +257,7 @@ private struct FirmActionView: View {
                 }
                 showPhraseField = true
             }
-            .onChange(of: phraseMatches) { _, matches in
+            .onChange(of: phraseMatches) { matches in
                 if matches {
                     if escalationTier >= 2 {
                         showSkipConfirmation = true
@@ -270,10 +270,10 @@ private struct FirmActionView: View {
                 Button("Skip", role: .destructive) { onDismiss() }
                 Button("Cancel", role: .cancel) { typedPhrase = "" }
             }
-            .onChange(of: showSkipConfirmation) { _, showing in
+            .onChange(of: showSkipConfirmation) { showing in
                 if !showing { isFieldFocused = true }
             }
-            .onChange(of: showPhraseField) { _, showing in
+            .onChange(of: showPhraseField) { showing in
                 if showing { isFieldFocused = true }
             }
         }

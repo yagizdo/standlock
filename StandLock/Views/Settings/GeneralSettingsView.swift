@@ -10,7 +10,7 @@ struct GeneralSettingsView: View {
         Form {
             Section {
                 Toggle("Launch at Startup", isOn: $launchAtStartup)
-                    .onChange(of: launchAtStartup) { _, newValue in
+                    .onChange(of: launchAtStartup) { newValue in
                         guard !isUpdating else { return }
                         setLaunchAtStartup(newValue)
                     }

@@ -157,7 +157,7 @@ struct ScheduleFormView: View {
                         TextField("", value: $breakIntervalMinutes, format: .number)
                             .textFieldStyle(.roundedBorder)
                             .frame(width: 50)
-                            .onChange(of: breakIntervalMinutes) { _, newValue in
+                            .onChange(of: breakIntervalMinutes) { newValue in
                                 breakIntervalMinutes = max(1, min(180, newValue))
                             }
                         Stepper("", value: $breakIntervalMinutes, in: 1...180, step: 5)
@@ -175,7 +175,7 @@ struct ScheduleFormView: View {
                         TextField("", value: $breakDurationMinutes, format: .number)
                             .textFieldStyle(.roundedBorder)
                             .frame(width: 50)
-                            .onChange(of: breakDurationMinutes) { _, newValue in
+                            .onChange(of: breakDurationMinutes) { newValue in
                                 breakDurationMinutes = max(1, min(60, newValue))
                             }
                         Stepper("", value: $breakDurationMinutes, in: 1...60, step: 1)
