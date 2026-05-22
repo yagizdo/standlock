@@ -2,12 +2,13 @@ import AppKit
 @preconcurrency import Sparkle
 
 final class AppDelegate: NSObject, NSApplicationDelegate {
+    let updateObserver = UpdateObserver()
     let updaterController: SPUStandardUpdaterController
 
     override init() {
         updaterController = SPUStandardUpdaterController(
             startingUpdater: true,
-            updaterDelegate: nil,
+            updaterDelegate: updateObserver,
             userDriverDelegate: nil
         )
         super.init()

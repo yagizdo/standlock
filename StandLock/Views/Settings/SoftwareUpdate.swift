@@ -3,6 +3,26 @@ import Combine
 @preconcurrency import Sparkle
 
 @MainActor
+final class UpdateObserver: NSObject, ObservableObject, SPUUpdaterDelegate {
+    @Published var updateAvailable = false
+    @Published var availableVersion: String?
+
+    nonisolated override init() {
+        super.init()
+    }
+
+    func updater(_ updater: SPUUpdater, didFindValidUpdate item: SUAppcastItem) {
+        updateAvailable = true
+        availableVersion = item.displayVersionString
+    }
+
+    func updaterDidNotFindUpdate(_ updater: SPUUpdater) {
+        updateAvailable = false
+        availableVersion = nil
+    }
+}
+
+@MainActor
 final class CheckForUpdatesViewModel: ObservableObject {
     @Published var canCheckForUpdates = false
 
