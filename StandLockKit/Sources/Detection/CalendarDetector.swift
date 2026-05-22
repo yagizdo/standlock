@@ -15,14 +15,24 @@ public final class CalendarDetector: @unchecked Sendable {
 
     public func requestAccess() async -> Bool {
         do {
-            return try await eventStore.requestFullAccessToEvents()
+            if #available(macOS 14, *) {
+                return try await eventStore.requestFullAccessToEvents()
+            } else {
+                return try await eventStore.requestAccess(to: .event)
+            }
         } catch {
             return false
         }
     }
 
     public func hasActiveEvent(at date: Date = Date()) -> Bool {
-        guard authorizationStatus == .fullAccess else { return false }
+        let hasAccess: Bool
+        if #available(macOS 14, *) {
+            hasAccess = authorizationStatus == .fullAccess
+        } else {
+            hasAccess = authorizationStatus == .authorized
+        }
+        guard hasAccess else { return false }
         let end = date.addingTimeInterval(TimeInterval(lookAheadMinutes * 60))
         let predicate = eventStore.predicateForEvents(withStart: date, end: end, calendars: nil)
         let events = eventStore.events(matching: predicate)

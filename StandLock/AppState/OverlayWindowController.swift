@@ -146,7 +146,7 @@ final class OverlayWindowController: LockPresenting, Observable {
     }
 
     private func forceFocus() {
-        NSApp.activate()
+        NSApp.activate(ignoringOtherApps: true)
         overlayWindows.first?.orderFrontRegardless()
         overlayWindows.first?.makeKeyAndOrderFront(nil)
     }
