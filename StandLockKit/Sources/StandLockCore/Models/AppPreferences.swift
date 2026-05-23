@@ -12,6 +12,7 @@ public struct AppPreferences: Codable, Sendable, Equatable {
     public var calendarDetectionEnabled: Bool
     public var calendarLookAheadMinutes: Int
     public var screenSharingDetectionEnabled: Bool
+    public var screenSharingPostDeferral: PostDeferralBehavior
     public var focusModeDetection: DetectionBehavior
     public var idleDetectionEnabled: Bool
 
@@ -49,6 +50,7 @@ public struct AppPreferences: Codable, Sendable, Equatable {
         calendarDetectionEnabled: Bool = true,
         calendarLookAheadMinutes: Int = 5,
         screenSharingDetectionEnabled: Bool = true,
+        screenSharingPostDeferral: PostDeferralBehavior = .triggerBreak,
         focusModeDetection: DetectionBehavior = .deferBreak,
         idleDetectionEnabled: Bool = true,
         pauseMediaDuringBreak: Bool = true,
@@ -65,6 +67,7 @@ public struct AppPreferences: Codable, Sendable, Equatable {
         self.calendarDetectionEnabled = calendarDetectionEnabled
         self.calendarLookAheadMinutes = calendarLookAheadMinutes
         self.screenSharingDetectionEnabled = screenSharingDetectionEnabled
+        self.screenSharingPostDeferral = screenSharingPostDeferral
         self.focusModeDetection = focusModeDetection
         self.idleDetectionEnabled = idleDetectionEnabled
         self.pauseMediaDuringBreak = pauseMediaDuringBreak
@@ -78,7 +81,7 @@ public struct AppPreferences: Codable, Sendable, Equatable {
         case strictEscapeHoldDuration
         case cameraDetection, microphoneDetection
         case calendarDetectionEnabled, calendarLookAheadMinutes
-        case screenSharingDetectionEnabled
+        case screenSharingDetectionEnabled, screenSharingPostDeferral
         case focusModeDetection, idleDetectionEnabled
         case pauseMediaDuringBreak, resumeMediaAfterBreak
         case resetIntervalOnSkip
@@ -100,6 +103,7 @@ public struct AppPreferences: Codable, Sendable, Equatable {
         calendarDetectionEnabled = try c.decodeIfPresent(Bool.self, forKey: .calendarDetectionEnabled) ?? true
         calendarLookAheadMinutes = try c.decodeIfPresent(Int.self, forKey: .calendarLookAheadMinutes) ?? 5
         screenSharingDetectionEnabled = try c.decodeIfPresent(Bool.self, forKey: .screenSharingDetectionEnabled) ?? true
+        screenSharingPostDeferral = try c.decodeIfPresent(PostDeferralBehavior.self, forKey: .screenSharingPostDeferral) ?? .triggerBreak
         focusModeDetection = try c.decodeIfPresent(DetectionBehavior.self, forKey: .focusModeDetection) ?? .deferBreak
         idleDetectionEnabled = try c.decodeIfPresent(Bool.self, forKey: .idleDetectionEnabled) ?? true
         pauseMediaDuringBreak = try c.decodeIfPresent(Bool.self, forKey: .pauseMediaDuringBreak) ?? true
@@ -127,4 +131,9 @@ public enum DetectionBehavior: String, Codable, Sendable, CaseIterable {
     case deferBreak
     case reduceToGentle
     case ignore
+}
+
+public enum PostDeferralBehavior: String, Codable, Sendable {
+    case triggerBreak
+    case skipBreak
 }
