@@ -650,6 +650,125 @@ struct BreakCoordinatorTests {
         coordinator.stop()
     }
 
+    // MARK: - Post-Deferral Polling Tests
+
+    @Test @MainActor
+    func breakSkippedAfterScreenSharingDeferral() async {
+        let scheduler = MockScheduler()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        let detector = MockDetector()
+        detector.contextToReturn = DetectionContext(screenSharingActive: true)
+        let locker = MockLocker()
+
+        let coordinator = BreakCoordinator(
+            scheduler: scheduler, detector: detector, locker: locker,
+            deferralPollingInterval: 0.1
+        )
+        let schedule = makeSchedule()
+        let prefs = AppPreferences(
+            screenSharingDetectionEnabled: true,
+            screenSharingPostDeferral: .skipBreak
+        )
+
+        var deferredEvents: [CoordinatorEvent] = []
+        var scheduledEvents: [CoordinatorEvent] = []
+        let listener = Task {
+            for await event in coordinator.events {
+                if case .breakDeferred = event { deferredEvents.append(event) }
+                if case .nextBreakScheduled = event { scheduledEvents.append(event) }
+            }
+        }
+
+        coordinator.start(with: [schedule], preferences: prefs)
+        try? await Task.sleep(for: .milliseconds(300))
+
+        #expect(!deferredEvents.isEmpty)
+        #expect(!locker.showOverlayCalled)
+
+        let scheduledBefore = scheduledEvents.count
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(600)
+        detector.contextToReturn = .clear
+        try? await Task.sleep(for: .milliseconds(300))
+
+        #expect(!locker.showOverlayCalled)
+        #expect(scheduledEvents.count > scheduledBefore)
+
+        coordinator.stop()
+        listener.cancel()
+    }
+
+    @Test @MainActor
+    func breakTriggersAfterScreenSharingDeferralClears() async {
+        let scheduler = MockScheduler()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        let detector = MockDetector()
+        detector.contextToReturn = DetectionContext(screenSharingActive: true)
+        let locker = MockLocker()
+
+        let coordinator = BreakCoordinator(
+            scheduler: scheduler, detector: detector, locker: locker,
+            deferralPollingInterval: 0.1
+        )
+        let schedule = makeSchedule()
+        let prefs = AppPreferences(
+            screenSharingDetectionEnabled: true,
+            screenSharingPostDeferral: .triggerBreak
+        )
+
+        var deferredEvents: [CoordinatorEvent] = []
+        let listener = Task {
+            for await event in coordinator.events {
+                if case .breakDeferred = event { deferredEvents.append(event) }
+            }
+        }
+
+        coordinator.start(with: [schedule], preferences: prefs)
+        try? await Task.sleep(for: .milliseconds(300))
+
+        #expect(!deferredEvents.isEmpty)
+        #expect(!locker.showOverlayCalled)
+
+        detector.contextToReturn = .clear
+        try? await Task.sleep(for: .milliseconds(300))
+
+        #expect(locker.showOverlayCalled)
+
+        coordinator.stop()
+        listener.cancel()
+    }
+
+    @Test @MainActor
+    func deferralContinuesWhileScreenSharingActive() async {
+        let scheduler = MockScheduler()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        let detector = MockDetector()
+        detector.contextToReturn = DetectionContext(screenSharingActive: true)
+        let locker = MockLocker()
+
+        let coordinator = BreakCoordinator(
+            scheduler: scheduler, detector: detector, locker: locker,
+            deferralPollingInterval: 0.1
+        )
+        let schedule = makeSchedule()
+        let prefs = AppPreferences(screenSharingDetectionEnabled: true)
+
+        var deferredCount = 0
+        let listener = Task {
+            for await event in coordinator.events {
+                if case .breakDeferred = event { deferredCount += 1 }
+            }
+        }
+
+        coordinator.start(with: [schedule], preferences: prefs)
+        try? await Task.sleep(for: .milliseconds(500))
+
+        #expect(deferredCount >= 2)
+        #expect(!locker.showOverlayCalled)
+
+        coordinator.stop()
+        listener.cancel()
+    }
+
     @Test @MainActor
     func dailyBreakCapRespected() async {
         let scheduler = MockScheduler()

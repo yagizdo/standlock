@@ -22,17 +22,19 @@ public final class BreakCoordinator: BreakCoordinating {
     private var escalationTiers: [UUID: Int] = [:]
     public var exercises: [Exercise] = []
 
+    private let deferralPollingInterval: TimeInterval
     private let eventContinuation: AsyncStream<CoordinatorEvent>.Continuation
     public nonisolated let events: AsyncStream<CoordinatorEvent>
 
     public init(scheduler: any SchedulingEngine, detector: any ContextDetecting,
-                locker: any LockPresenting) {
+                locker: any LockPresenting, deferralPollingInterval: TimeInterval = 10) {
         var continuation: AsyncStream<CoordinatorEvent>.Continuation!
         self.events = AsyncStream { continuation = $0 }
         self.eventContinuation = continuation
         self.scheduler = scheduler
         self.detector = detector
         self.locker = locker
+        self.deferralPollingInterval = deferralPollingInterval
     }
 
     public func start(with schedules: [Schedule], preferences: AppPreferences) {
@@ -204,15 +206,15 @@ public final class BreakCoordinator: BreakCoordinating {
 
         if let deferral = shouldDefer(context: context) {
             statistics.breaksDeferred += 1
-            eventContinuation.yield(.breakDeferred(deferral, nextAttempt: Date().addingTimeInterval(10)))
+            eventContinuation.yield(.breakDeferred(deferral, nextAttempt: Date().addingTimeInterval(deferralPollingInterval)))
             eventContinuation.yield(.statisticsUpdated(statistics))
             breakTimer = Task {
                 while !Task.isCancelled {
-                    try? await Task.sleep(for: .seconds(10))
+                    try? await Task.sleep(for: .seconds(self.deferralPollingInterval))
                     guard !Task.isCancelled else { return }
                     let freshContext = await self.detector.currentContext()
                     if let newReason = self.shouldDefer(context: freshContext) {
-                        self.eventContinuation.yield(.breakDeferred(newReason, nextAttempt: Date().addingTimeInterval(10)))
+                        self.eventContinuation.yield(.breakDeferred(newReason, nextAttempt: Date().addingTimeInterval(self.deferralPollingInterval)))
                     } else if self.shouldSkipAfterDeferral(reason: deferral) {
                         self.scheduleNextBreak()
                         return

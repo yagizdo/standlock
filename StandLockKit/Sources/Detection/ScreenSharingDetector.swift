@@ -1,13 +1,19 @@
 import AppKit
 
 public struct ScreenSharingDetector: Sendable {
-    public init() {}
+    private let processNames: @Sendable () -> [String]
+
+    public init() {
+        self.processNames = {
+            NSWorkspace.shared.runningApplications.compactMap { $0.executableURL?.lastPathComponent }
+        }
+    }
+
+    init(processNames: @escaping @Sendable () -> [String]) {
+        self.processNames = processNames
+    }
 
     public func isScreenBeingShared() async -> Bool {
-        let apps = NSWorkspace.shared.runningApplications
-        return apps.contains { app in
-            let exe = app.executableURL?.lastPathComponent
-            return exe == "ScreensharingAgent" || exe == "screencaptureui"
-        }
+        processNames().contains { $0 == "ScreensharingAgent" || $0 == "screencaptureui" }
     }
 }
