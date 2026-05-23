@@ -1,5 +1,33 @@
 # Changelog
 
+## StandLock v0.2.0
+
+**Features**
+- Detect active screen sharing sessions and defer breaks automatically (befaf41)
+- Add post-deferral behavior option with 10-second polling for deferred breaks (adcdcac)
+- Progressive friction escalation: skipping breaks gets harder the more you skip (04a8308)
+- Redesigned menu bar dropdown with rounded-row buttons and update banner (619eef9)
+- Refreshed settings UI with improved layout and escalation path controls (189dd93)
+- Replaced ZIP distribution with DMG for drag-to-Applications install experience (395a747)
+
+**Bug Fixes**
+- Staple notarization ticket to app bundle before DMG packaging (4d11993)
+- Allow app termination during relaunch even when break overlay is active (183c24b)
+- Enforce overlay focus on all screens and block quit during breaks (9c70503)
+- Eliminate dual-timer race condition and pre-fetch detection context (cc78ee2)
+- Decode raw Int for EscalationLevel to survive unrecognized stored values (26d8c7c)
+- Reset escalation tier on idle-counted breaks, fix skip button deduplication (2dd9d39)
+- Add #available guards for macOS 14+ APIs (07f9237)
+
+**Improvements**
+- Lower deployment target from macOS 15 to macOS 13 (Ventura) (336dd03)
+- Replace @Observable with ObservableObject for macOS 13 compatibility (5cf1ff7)
+- Migrate SwiftUI property wrappers and onChange closures for macOS 13 (2b0d5e6, 763a449)
+- Replace boolean escalation flags with EscalationLevel enum (0116278)
+- Add polling loop and screen sharing detector tests (48595e3)
+
+**Full Changelog:** https://github.com/yagizdo/StandLock/compare/v0.1.4...v0.2.0
+
 ## StandLock v0.1.4
 
 **Features**
