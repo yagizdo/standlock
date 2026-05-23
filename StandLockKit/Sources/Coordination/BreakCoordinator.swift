@@ -204,13 +204,23 @@ public final class BreakCoordinator: BreakCoordinating {
 
         if let deferral = shouldDefer(context: context) {
             statistics.breaksDeferred += 1
-            let nextAttempt = Date().addingTimeInterval(60)
-            eventContinuation.yield(.breakDeferred(deferral, nextAttempt: nextAttempt))
+            eventContinuation.yield(.breakDeferred(deferral, nextAttempt: Date().addingTimeInterval(10)))
             eventContinuation.yield(.statisticsUpdated(statistics))
             breakTimer = Task {
-                try? await Task.sleep(for: .seconds(60))
-                guard !Task.isCancelled else { return }
-                await triggerBreak(for: schedule)
+                while !Task.isCancelled {
+                    try? await Task.sleep(for: .seconds(10))
+                    guard !Task.isCancelled else { return }
+                    let freshContext = await self.detector.currentContext()
+                    if let newReason = self.shouldDefer(context: freshContext) {
+                        self.eventContinuation.yield(.breakDeferred(newReason, nextAttempt: Date().addingTimeInterval(10)))
+                    } else if self.shouldSkipAfterDeferral(reason: deferral) {
+                        self.scheduleNextBreak()
+                        return
+                    } else {
+                        await self.triggerBreak(for: schedule, context: freshContext)
+                        return
+                    }
+                }
             }
             return
         }
@@ -251,6 +261,10 @@ public final class BreakCoordinator: BreakCoordinating {
         if context.screenSharingActive && preferences.screenSharingDetectionEnabled { return .screenSharing }
         if context.focusModeActive && preferences.focusModeDetection == .deferBreak { return .focusMode }
         return nil
+    }
+
+    private func shouldSkipAfterDeferral(reason: DeferralReason) -> Bool {
+        reason == .screenSharing && preferences.screenSharingPostDeferral == .skipBreak
     }
 
     private func shouldReduce(context: DetectionContext) -> DisciplineLevel? {

@@ -58,6 +58,15 @@ struct DetectionSettingsView: View {
                     }
                 }
 
+                if coordinator.preferences.screenSharingDetectionEnabled {
+                    Picker("After sharing ends", selection: $coordinator.preferences.screenSharingPostDeferral) {
+                        Text("Start break").tag(PostDeferralBehavior.triggerBreak)
+                        Text("Skip break").tag(PostDeferralBehavior.skipBreak)
+                    }
+                    .pickerStyle(.segmented)
+                    .padding(.leading, 24)
+                }
+
                 detectionRow(
                     title: "Focus Mode",
                     description: "Defer breaks when Focus mode is active",
