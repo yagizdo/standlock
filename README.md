@@ -5,7 +5,7 @@
 [![macOS 13+](https://img.shields.io/badge/macOS-13%2B-brightgreen)](https://github.com/yagizdo/StandLock/releases/latest)
 [![Homebrew](https://img.shields.io/badge/brew-yagizdo%2Ftap%2Fstandlock-orange)](https://github.com/yagizdo/homebrew-tap)
 [![License: MIT](https://img.shields.io/badge/license-MIT-purple)](LICENSE)
-[![Website](https://img.shields.io/badge/website-standlock.app-blue)](https://standlock.app)
+[![Website](https://img.shields.io/badge/website-standlock.app-blue)](https://standlock.app?ref=github-readme)
 
 A macOS menu bar app that reminds you to stand up and move. It sits quietly in your menu bar, tracks your schedules, and puts a full-screen overlay when it's time for a break. You pick how strict it should be: skip freely, type a phrase to dismiss, or lock your input entirely until the break is over.
 
