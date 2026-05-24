@@ -1,36 +1,25 @@
 import SwiftUI
 
 struct PermissionsView: View {
-    @StateObject private var checker = PermissionChecker()
+    @EnvironmentObject private var checker: PermissionChecker
 
     var body: some View {
         Form {
             Section {
                 PermissionRow(
                     title: "Input Monitoring",
-                    description: "Detect keyboard activity for idle detection and escape combo. You'll need to enable it in System Settings.",
+                    description: "Enables idle detection and the escape key combo.",
                     systemImage: "keyboard",
                     status: checker.inputMonitoringStatus,
                     settingsURLs: PermissionType.inputMonitoring.settingsURLs,
                     action: { checker.requestInputMonitoring() },
                     restartAction: { checker.relaunchApp() }
                 )
-            } header: {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Grant permissions that match your usage.")
-                        .textCase(nil)
-                        .font(.callout)
-                        .foregroundStyle(.secondary)
-                        .padding(.bottom, 4)
-                    Text("Recommended")
-                }
-            }
 
-            Section("Optional") {
                 PermissionRow(
                     title: "Accessibility",
-                    description: "Enables Strict mode to fully block keyboard and mouse input. Requires manual toggle in System Settings.",
-                    systemImage: "hand.raised.circle",
+                    description: "Enables Strict mode to fully block keyboard and mouse input.",
+                  systemImage: "hand.raised.circle",
                     status: checker.accessibilityStatus,
                     settingsURLs: PermissionType.accessibility.settingsURLs,
                     action: { checker.requestAccessibility() },
@@ -39,17 +28,21 @@ struct PermissionsView: View {
 
                 PermissionRow(
                     title: "Calendar Access",
-                    description: "Read your calendar to defer breaks during meetings.",
+                    description: "Defer breaks during calendar events.",
                     systemImage: "calendar",
                     status: checker.calendarPermissionStatus,
                     settingsURLs: PermissionType.calendar.settingsURLs,
                     action: { checker.requestCalendar() },
                     restartAction: { checker.relaunchApp() }
                 )
+            } header: {
+                Text("Grant permissions that match your usage. StandLock works without any of them.")
+                    .textCase(nil)
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
             }
         }
         .formStyle(.grouped)
-        .task { await checker.pollContinuously() }
     }
 }
 

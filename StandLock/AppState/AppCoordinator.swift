@@ -41,6 +41,8 @@ final class AppCoordinator: ObservableObject {
     @Published var hasCompletedOnboarding: Bool = false
     @Published private(set) var breakProgress: Double = 0
 
+    let permissionChecker = PermissionChecker()
+
     private var coordinator: BreakCoordinator?
     private let overlayController = OverlayWindowController()
     private var eventListenerTask: Task<Void, Never>?
@@ -53,6 +55,7 @@ final class AppCoordinator: ObservableObject {
         loadExercises()
         loadData()
         startProgressTimer()
+        Task { await permissionChecker.pollContinuously() }
         if !schedules.isEmpty {
             startCoordinator()
         }
@@ -288,7 +291,9 @@ final class AppCoordinator: ObservableObject {
         window.titleVisibility = .hidden
         window.isReleasedWhenClosed = false
         window.contentView = NSHostingView(
-            rootView: OnboardingView().environmentObject(self)
+            rootView: OnboardingView()
+                .environmentObject(self)
+                .environmentObject(permissionChecker)
         )
         window.center()
 

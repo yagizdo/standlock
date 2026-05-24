@@ -4,7 +4,7 @@ import StandLockCore
 
 struct DisciplineLevelPicker: View {
     @Binding var selection: DisciplineLevel
-    @StateObject private var checker = PermissionChecker()
+    @EnvironmentObject private var checker: PermissionChecker
     @State private var showPermissionAlert = false
 
     var body: some View {
@@ -34,7 +34,6 @@ struct DisciplineLevelPicker: View {
         } message: {
             Text("Strict mode requires Accessibility permission to block input during breaks.")
         }
-        .task { await checker.pollContinuously() }
     }
 }
 
