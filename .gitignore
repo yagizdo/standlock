@@ -39,6 +39,7 @@ ExportOptions.plist
 *.swo
 *~
 .vscode/
+buildServer.json
 
 # Personal configs
 *.xcuserstate
