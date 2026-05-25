@@ -94,6 +94,7 @@ final class AppCoordinator: ObservableObject {
            let raw = json["escalationLevel"] as? Int, raw > 0 {
             for i in schedules.indices { schedules[i].progressiveEnforcement = true }
             saveSchedules()
+            savePreferences()
         }
 
         if let data = UserDefaults.standard.data(forKey: "statistics"),

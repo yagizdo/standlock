@@ -64,6 +64,7 @@ struct ManuscriptBreakView: View {
                         ActionArea(
                             tier: enforcementTier, palette: palette,
                             preferences: preferences, statistics: statistics,
+                            disciplineLevel: level,
                             escalationTier: escalationTierIndex,
                             onDismiss: onSkip
                         )

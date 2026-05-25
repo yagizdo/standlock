@@ -21,6 +21,7 @@ public struct EnforcementPolicy: Sendable, Equatable {
     public let tiers: [EnforcementTier]
 
     public init(tiers: [EnforcementTier]) {
+        precondition(!tiers.isEmpty, "EnforcementPolicy requires at least one tier")
         self.tiers = tiers
     }
 

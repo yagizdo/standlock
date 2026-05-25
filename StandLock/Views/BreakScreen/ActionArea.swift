@@ -6,6 +6,7 @@ struct ActionArea: View {
     let palette: BreakPalette
     let preferences: AppPreferences
     let statistics: BreakStatistics
+    let disciplineLevel: DisciplineLevel
     var escalationTier: Int = 0
     let onDismiss: () -> Void
 
@@ -59,7 +60,7 @@ struct ActionArea: View {
                 HoldDismissView(palette: palette, holdDuration: duration, onDismiss: onDismiss)
             }
         case .typePhrase(let phrase, let requiresConfirmation):
-            if statistics.breaksSkipped >= preferences.firmDailySkipLimit {
+            if disciplineLevel == .firm && statistics.breaksSkipped >= preferences.firmDailySkipLimit {
                 Text("Daily skip limit reached")
                     .font(BreakTypography.label(size: 12, weight: .medium))
                     .foregroundStyle(palette.inkFaint)
