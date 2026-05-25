@@ -39,8 +39,6 @@ final class OverlayWindowController: LockPresenting {
         currentStatistics = statistics
         currentEscalationTier = escalationTier
 
-        NSApp.setActivationPolicy(.regular)
-
         let palette = BreakPalette.for(level)
         for screen in NSScreen.screens {
             let window = BreakOverlayWindow(screen: screen)
@@ -54,7 +52,6 @@ final class OverlayWindowController: LockPresenting {
             )
             window.setContent(contentView)
             window.orderFrontRegardless()
-            window.makeKeyAndOrderFront(nil)
             overlayWindows.append(window)
         }
         isShowing = true
@@ -147,9 +144,10 @@ final class OverlayWindowController: LockPresenting {
     }
 
     private func forceFocus() {
-        NSApp.activate(ignoringOtherApps: true)
-        overlayWindows.first?.orderFrontRegardless()
-        overlayWindows.first?.makeKeyAndOrderFront(nil)
+        for window in overlayWindows {
+            window.orderFrontRegardless()
+        }
+        overlayWindows.first?.makeKey()
     }
 
     private func startFocusEnforcer() {

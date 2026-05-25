@@ -10,7 +10,7 @@ final class BreakOverlayWindow: NSWindow {
             defer: false
         )
         level = .screenSaver
-        collectionBehavior = [.canJoinAllSpaces, .stationary, .ignoresCycle]
+        collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .stationary, .ignoresCycle]
         isOpaque = true
         backgroundColor = .white
         hasShadow = false
