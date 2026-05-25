@@ -19,7 +19,7 @@ struct PermissionsView: View {
                 PermissionRow(
                     title: "Accessibility",
                     description: "Enables Strict mode to fully block keyboard and mouse input.",
-                  systemImage: "hand.raised.circle",
+                    systemImage: "hand.raised.circle",
                     status: checker.accessibilityStatus,
                     settingsURLs: PermissionType.accessibility.settingsURLs,
                     action: { checker.requestAccessibility() },
