@@ -89,6 +89,14 @@ final class AppCoordinator: ObservableObject {
             preferences = decoded
         }
 
+        if let prefData = UserDefaults.standard.data(forKey: "preferences"),
+           let json = try? JSONSerialization.jsonObject(with: prefData) as? [String: Any],
+           let raw = json["escalationLevel"] as? Int, raw > 0 {
+            for i in schedules.indices { schedules[i].progressiveEnforcement = true }
+            saveSchedules()
+            savePreferences()
+        }
+
         if let data = UserDefaults.standard.data(forKey: "statistics"),
            let decoded = try? JSONDecoder().decode(BreakStatistics.self, from: data) {
             todayStats = decoded
@@ -328,14 +336,15 @@ final class AppCoordinator: ObservableObject {
         }
     }
 
-    func createDefaultSchedule() {
+    func createDefaultSchedule(progressiveEnforcement: Bool = false) {
         let defaultSchedule = Schedule(
             name: "Work Hours",
             days: .weekdays,
             windows: [TimeWindow(startHour: 9, startMinute: 0, endHour: 17, endMinute: 0)],
             breakInterval: 45 * 60,
             breakDuration: 5 * 60,
-            disciplineLevel: .gentle
+            disciplineLevel: .gentle,
+            progressiveEnforcement: progressiveEnforcement
         )
         addSchedule(defaultSchedule)
     }

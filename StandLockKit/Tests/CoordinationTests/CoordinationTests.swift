@@ -56,7 +56,8 @@ func makeSchedule(
     level: DisciplineLevel = .gentle,
     breakInterval: TimeInterval = 60,
     breakDuration: TimeInterval = 10,
-    dailyBreakCap: Int? = nil
+    dailyBreakCap: Int? = nil,
+    progressiveEnforcement: Bool = false
 ) -> Schedule {
     Schedule(
         name: "Test",
@@ -65,7 +66,8 @@ func makeSchedule(
         breakInterval: breakInterval,
         breakDuration: breakDuration,
         disciplineLevel: level,
-        dailyBreakCap: dailyBreakCap
+        dailyBreakCap: dailyBreakCap,
+        progressiveEnforcement: progressiveEnforcement
     )
 }
 
@@ -473,17 +475,16 @@ struct BreakCoordinatorTests {
     // MARK: - Escalation Tier Tests
 
     @Test @MainActor
-    func tierIncrementsOnSkip() async {
+    func tierIncrementsWhenEnforcementEnabled() async {
         let scheduler = MockScheduler()
         scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
         let detector = MockDetector()
         let locker = MockLocker()
 
         let coordinator = BreakCoordinator(scheduler: scheduler, detector: detector, locker: locker)
-        let prefs = AppPreferences(escalationLevel: .gentle)
-        let schedule = makeSchedule(level: .gentle)
+        let schedule = makeSchedule(level: .gentle, progressiveEnforcement: true)
 
-        coordinator.start(with: [schedule], preferences: prefs)
+        coordinator.start(with: [schedule], preferences: AppPreferences())
         try? await Task.sleep(for: .milliseconds(300))
         #expect(locker.lastEscalationTier == 0)
 
@@ -519,10 +520,9 @@ struct BreakCoordinatorTests {
         let locker = MockLocker()
 
         let coordinator = BreakCoordinator(scheduler: scheduler, detector: detector, locker: locker)
-        let prefs = AppPreferences(escalationLevel: .gentle)
-        let schedule = makeSchedule(level: .gentle, breakDuration: 5)
+        let schedule = makeSchedule(level: .gentle, breakDuration: 5, progressiveEnforcement: true)
 
-        coordinator.start(with: [schedule], preferences: prefs)
+        coordinator.start(with: [schedule], preferences: AppPreferences())
         try? await Task.sleep(for: .milliseconds(300))
 
         coordinator.skipActiveBreak()
@@ -543,17 +543,16 @@ struct BreakCoordinatorTests {
     }
 
     @Test @MainActor
-    func tierZeroWhenDisabled() async {
+    func tierIsZeroWhenEnforcementDisabled() async {
         let scheduler = MockScheduler()
         scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
         let detector = MockDetector()
         let locker = MockLocker()
 
         let coordinator = BreakCoordinator(scheduler: scheduler, detector: detector, locker: locker)
-        let prefs = AppPreferences(escalationLevel: .off)
-        let schedule = makeSchedule(level: .gentle)
+        let schedule = makeSchedule(level: .gentle, progressiveEnforcement: false)
 
-        coordinator.start(with: [schedule], preferences: prefs)
+        coordinator.start(with: [schedule], preferences: AppPreferences())
         try? await Task.sleep(for: .milliseconds(300))
 
         coordinator.skipActiveBreak()
@@ -577,10 +576,9 @@ struct BreakCoordinatorTests {
         let locker = MockLocker()
 
         let coordinator = BreakCoordinator(scheduler: scheduler, detector: detector, locker: locker)
-        let prefs = AppPreferences(escalationLevel: .strict)
-        let schedule = makeSchedule(level: .strict, breakDuration: 5)
+        let schedule = makeSchedule(level: .strict, breakDuration: 5, progressiveEnforcement: true)
 
-        coordinator.start(with: [schedule], preferences: prefs)
+        coordinator.start(with: [schedule], preferences: AppPreferences())
         try? await Task.sleep(for: .milliseconds(300))
         #expect(locker.lastEscalationTier == 0)
 
@@ -604,13 +602,12 @@ struct BreakCoordinatorTests {
         let locker = MockLocker()
 
         let coordinator = BreakCoordinator(scheduler: scheduler, detector: detector, locker: locker)
-        let prefs = AppPreferences(escalationLevel: .gentle)
-        let scheduleA = makeSchedule(level: .gentle)
-        let scheduleB = makeSchedule(level: .gentle)
+        let scheduleA = makeSchedule(level: .gentle, progressiveEnforcement: true)
+        let scheduleB = makeSchedule(level: .gentle, progressiveEnforcement: true)
 
         scheduler.nextBreakTimes[scheduleA.id] = Date().addingTimeInterval(0.05)
         scheduler.nextBreakTimes[scheduleB.id] = Date().addingTimeInterval(100)
-        coordinator.start(with: [scheduleA, scheduleB], preferences: prefs)
+        coordinator.start(with: [scheduleA, scheduleB], preferences: AppPreferences())
         try? await Task.sleep(for: .milliseconds(300))
 
         #expect(locker.lastEscalationTier == 0)
@@ -633,17 +630,16 @@ struct BreakCoordinatorTests {
         let locker = MockLocker()
 
         let coordinator = BreakCoordinator(scheduler: scheduler, detector: detector, locker: locker)
-        let prefs = AppPreferences(escalationLevel: .gentle)
-        let schedule = makeSchedule(level: .gentle)
+        let schedule = makeSchedule(level: .gentle, progressiveEnforcement: true)
 
-        coordinator.start(with: [schedule], preferences: prefs)
+        coordinator.start(with: [schedule], preferences: AppPreferences())
         try? await Task.sleep(for: .milliseconds(300))
 
         coordinator.skipActiveBreak()
         coordinator.stop()
 
         scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
-        coordinator.start(with: [schedule], preferences: prefs)
+        coordinator.start(with: [schedule], preferences: AppPreferences())
         try? await Task.sleep(for: .milliseconds(300))
         #expect(locker.lastEscalationTier == 0)
 

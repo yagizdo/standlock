@@ -38,9 +38,9 @@ struct QuickSetupStepView: View {
 
             Toggle(isOn: $escalationEnabled) {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("Progressive friction")
+                    Text("Progressive Enforcement")
                         .font(.subheadline.weight(.medium))
-                    Text("Each time you skip, the next break is harder to dismiss")
+                    Text("Make breaks harder to skip over time")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }

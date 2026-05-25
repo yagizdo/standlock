@@ -134,9 +134,9 @@ public final class BreakCoordinator: BreakCoordinating {
 
     // MARK: - Escalation
 
-    private func currentTier(for scheduleID: UUID, level: DisciplineLevel) -> Int {
-        guard preferences.escalationEnabled(for: level) else { return 0 }
-        return min(escalationTiers[scheduleID, default: 0], 3)
+    private func currentTier(for schedule: Schedule) -> Int {
+        guard schedule.progressiveEnforcement else { return 0 }
+        return min(escalationTiers[schedule.id, default: 0], 3)
     }
 
     // MARK: - Private
@@ -234,7 +234,7 @@ public final class BreakCoordinator: BreakCoordinating {
 
         let duration = currentBreakDuration(for: schedule)
         let exercise = exercises.randomElement()
-        let tier = currentTier(for: schedule.id, level: effectiveLevel)
+        let tier = currentTier(for: schedule)
         let breakEvent = BreakEvent(
             scheduledAt: Date(), duration: duration,
             level: effectiveLevel, scheduleId: schedule.id

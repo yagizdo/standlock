@@ -21,11 +21,7 @@ struct OnboardingView: View {
                 default:
                     QuickSetupStepView(
                         onCreateDefault: { escalationEnabled in
-                            if escalationEnabled {
-                                appCoordinator.preferences.escalationLevel = .strict
-                                appCoordinator.savePreferences()
-                            }
-                            appCoordinator.createDefaultSchedule()
+                            appCoordinator.createDefaultSchedule(progressiveEnforcement: escalationEnabled)
                             appCoordinator.completeOnboarding()
                             dismiss()
                         },

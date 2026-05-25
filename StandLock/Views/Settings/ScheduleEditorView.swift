@@ -195,7 +195,7 @@ private struct ScheduleRow: View {
     }
 
     private var levelBadge: some View {
-        Text(schedule.disciplineLevel.displayName)
+        Text(schedule.disciplineLevel.displayName + (schedule.progressiveEnforcement ? "+" : ""))
             .font(.caption2.weight(.medium))
             .padding(.horizontal, 8)
             .padding(.vertical, 3)
