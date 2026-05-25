@@ -13,7 +13,18 @@ env:
   TEAM_ID: F475N5N7V6
 
 jobs:
+  test:
+    runs-on: macos-26
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run StandLockKit tests
+        run: swift test --package-path StandLockKit
+
   release:
+    needs: test
     runs-on: macos-26
 
     steps:
