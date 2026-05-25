@@ -1,13 +1,13 @@
 # StandLock
 
-[![Version](https://img.shields.io/badge/version-0.2.0-blue)](https://github.com/yagizdo/StandLock/releases)
+[![Version](https://img.shields.io/badge/version-0.2.1-blue)](https://github.com/yagizdo/StandLock/releases)
 [![Release](https://github.com/yagizdo/standlock/actions/workflows/release.yml/badge.svg)](https://github.com/yagizdo/standlock/actions/workflows/release.yml)
 [![macOS 13+](https://img.shields.io/badge/macOS-13%2B-brightgreen)](https://github.com/yagizdo/StandLock/releases/latest)
 [![Homebrew](https://img.shields.io/badge/brew-yagizdo%2Ftap%2Fstandlock-orange)](https://github.com/yagizdo/homebrew-tap)
 [![License: MIT](https://img.shields.io/badge/license-MIT-purple)](LICENSE)
 [![Website](https://img.shields.io/badge/website-standlock.app-blue)](https://standlock.app?ref=github-readme)
 
-A macOS menu bar app that reminds you to stand up and move. It sits quietly in your menu bar, tracks your schedules, and puts a full-screen overlay when it's time for a break. You pick how strict it should be: skip freely, type a phrase to dismiss, or lock your input entirely until the break is over.
+A macOS menu bar app that reminds you to stand up and move. It sits quietly in your menu bar, tracks your schedules, and puts a full-screen overlay when it's time for a break. You pick how strict each schedule should be.
 
 ## Why
 
@@ -28,6 +28,7 @@ Most break reminder apps show a notification you can swipe away in half a second
 - Time windows (e.g., 09:00–12:00, 13:00–17:00)
 - Day selection: weekdays, weekends, every day, or custom
 - Pomodoro-style repetition cycles (short/long break patterns)
+- Optional progressive enforcement: skipped breaks escalate dismiss difficulty
 
 **Context Awareness**
 - Defers breaks during meetings (camera/microphone active)

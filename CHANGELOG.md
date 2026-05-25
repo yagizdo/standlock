@@ -1,5 +1,22 @@
 # Changelog
 
+## StandLock v0.2.1
+
+**Features**
+- Per-schedule progressive enforcement replaces global escalation level (c03e86d)
+- Playful escalation mechanics on break screen for persistent skippers (f3dafd3)
+- Permission-gated toggles for Calendar, Idle Detection, and Strict settings (404169a)
+
+**Bug Fixes**
+- Make enforcement migration idempotent and scope skip limit to Firm level only (bfdf736)
+- Improve Input Monitoring detection with event tap probe fallback for stale TCC cache (d0e2620)
+
+**Improvements**
+- Consolidate PermissionChecker to a single shared instance (3db84a4)
+- Add gated toggle binding tests and fix PermissionsView indentation (71873ea)
+
+**Full Changelog:** https://github.com/yagizdo/StandLock/compare/v0.2.0...v0.2.1
+
 ## StandLock v0.2.0
 
 **Features**
