@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct PermissionsStepView: View {
-    @StateObject private var checker = PermissionChecker()
+    @EnvironmentObject private var checker: PermissionChecker
     var onContinue: () -> Void
 
     var body: some View {
@@ -10,7 +10,7 @@ struct PermissionsStepView: View {
                 .font(.title2)
                 .fontWeight(.semibold)
 
-            Text("StandLock works best with these permissions. You can grant them now or later in Settings.")
+            Text("StandLock works without any permissions. Each one unlocks an extra feature. You can grant them now or later in Settings.")
                 .font(.callout)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
@@ -20,7 +20,7 @@ struct PermissionsStepView: View {
                 permissionCard(
                     icon: "keyboard",
                     name: "Input Monitoring",
-                    description: "Detect keyboard activity for idle detection and escape combo.",
+                    description: "Enables idle detection and the escape key combo.",
                     status: checker.inputMonitoringStatus,
                     action: { checker.requestInputMonitoring() },
                     restartAction: { checker.relaunchApp() }
@@ -40,7 +40,6 @@ struct PermissionsStepView: View {
                     name: "Calendar Access",
                     description: "Defer breaks during calendar events.",
                     status: checker.calendarPermissionStatus,
-                    isOptional: true,
                     action: { checker.requestCalendar() },
                     restartAction: { checker.relaunchApp() }
                 )
@@ -60,7 +59,6 @@ struct PermissionsStepView: View {
         }
         .padding(24)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .task { await checker.pollContinuously() }
     }
 
     private func permissionCard(
@@ -68,7 +66,6 @@ struct PermissionsStepView: View {
         name: String,
         description: String,
         status: PermissionStatus,
-        isOptional: Bool = false,
         action: @escaping () -> Void,
         restartAction: @escaping () -> Void
     ) -> some View {
@@ -82,7 +79,7 @@ struct PermissionsStepView: View {
                 HStack(spacing: 6) {
                     Text(name)
                         .font(.body.weight(.medium))
-                    statusBadge(for: status, isOptional: isOptional)
+                    statusBadge(for: status)
                 }
                 Text(description)
                     .font(.caption)
@@ -104,22 +101,16 @@ struct PermissionsStepView: View {
     }
 
     @ViewBuilder
-    private func statusBadge(for status: PermissionStatus, isOptional: Bool) -> some View {
+    private func statusBadge(for status: PermissionStatus) -> some View {
         switch status {
         case .granted:
             Image(systemName: "checkmark.circle.fill")
                 .foregroundStyle(.green)
                 .font(.caption)
         case .notGranted:
-            if isOptional {
-                Image(systemName: "circle")
-                    .foregroundStyle(.blue)
-                    .font(.caption)
-            } else {
-                Image(systemName: "exclamationmark.circle")
-                    .foregroundStyle(.orange)
-                    .font(.caption)
-            }
+            Image(systemName: "circle")
+                .foregroundStyle(.blue)
+                .font(.caption)
         case .denied:
             Image(systemName: "xmark.circle.fill")
                 .foregroundStyle(.red)

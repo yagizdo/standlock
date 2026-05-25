@@ -49,6 +49,12 @@ final class PermissionChecker: ObservableObject {
         inputMonitoringGranted = CGPreflightListenEventAccess()
         accessibilityGranted = AXIsProcessTrusted()
         calendarStatus = EKEventStore.authorizationStatus(for: .event)
+        let probe = probeInputMonitoringAccess()
+        if probe {
+            inputMonitoringGranted = true
+            inputMonitoringProbeSucceeded = true
+            lastProbeTime = Date()
+        }
     }
 
     var accessibilityStatus: PermissionStatus {
@@ -110,17 +116,18 @@ final class PermissionChecker: ObservableObject {
     }
 
     private func updateInputMonitoringProbe() {
-        guard inputMonitoringGranted else {
-            inputMonitoringProbeSucceeded = false
-            return
-        }
         guard Date().timeIntervalSince(lastProbeTime) >= probeInterval else { return }
         lastProbeTime = Date()
-        inputMonitoringProbeSucceeded = probeInputMonitoringAccess()
+        let result = probeInputMonitoringAccess()
+        inputMonitoringProbeSucceeded = result
+        if result && !inputMonitoringGranted {
+            inputMonitoringGranted = true
+        }
     }
 
     func refreshStatus() {
-        inputMonitoringGranted = CGPreflightListenEventAccess()
+        let preflight = CGPreflightListenEventAccess()
+        inputMonitoringGranted = preflight || inputMonitoringProbeSucceeded
         accessibilityGranted = AXIsProcessTrusted()
         calendarStatus = EKEventStore.authorizationStatus(for: .event)
     }
@@ -207,6 +214,35 @@ final class PermissionChecker: ObservableObject {
         }
     }
 
+    // MARK: - Feature Gates
+
+    var idleDetectionAvailable: Bool { inputMonitoringGranted }
+    var strictModeAvailable: Bool { accessibilityGranted }
+    var calendarIntegrationAvailable: Bool { CalendarDetector.isAuthorized(calendarStatus) }
+
+    func gatedToggle(
+        for preference: Binding<Bool>,
+        requires permission: PermissionType,
+        onDenied: @escaping () -> Void
+    ) -> Binding<Bool> {
+        let available: Bool
+        switch permission {
+        case .inputMonitoring: available = idleDetectionAvailable
+        case .accessibility: available = strictModeAvailable
+        case .calendar: available = calendarIntegrationAvailable
+        }
+        return Binding(
+            get: { available && preference.wrappedValue },
+            set: { newValue in
+                if newValue && !available {
+                    onDenied()
+                } else {
+                    preference.wrappedValue = newValue
+                }
+            }
+        )
+    }
+
     private func openSystemSettings(for permission: PermissionType) {
         for url in permission.settingsURLs {
             if NSWorkspace.shared.open(url) { return }
@@ -223,7 +259,12 @@ final class PermissionChecker: ObservableObject {
     }
 
     func requestInputMonitoring() {
-        _ = probeInputMonitoringAccess()
+        if probeInputMonitoringAccess() {
+            inputMonitoringGranted = true
+            inputMonitoringProbeSucceeded = true
+            lastProbeTime = Date()
+            return
+        }
 
         if CGPreflightListenEventAccess() {
             refreshStatus()

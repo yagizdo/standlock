@@ -3,6 +3,10 @@ import StandLockCore
 
 struct DetectionSettingsView: View {
     @EnvironmentObject private var coordinator: AppCoordinator
+    @EnvironmentObject private var permissionChecker: PermissionChecker
+    @State private var showCalendarPermissionAlert = false
+    @State private var showAccessibilityAlert = false
+    @State private var showInputMonitoringAlert = false
 
     var body: some View {
         Form {
@@ -23,7 +27,11 @@ struct DetectionSettingsView: View {
             }
 
             Section("Calendar & Focus") {
-                Toggle(isOn: $coordinator.preferences.calendarDetectionEnabled) {
+                Toggle(isOn: permissionChecker.gatedToggle(
+                    for: $coordinator.preferences.calendarDetectionEnabled,
+                    requires: .calendar,
+                    onDenied: { showCalendarPermissionAlert = true }
+                )) {
                     Label {
                         VStack(alignment: .leading, spacing: 2) {
                             Text("Calendar Integration")
@@ -36,7 +44,8 @@ struct DetectionSettingsView: View {
                     }
                 }
 
-                if coordinator.preferences.calendarDetectionEnabled {
+                if permissionChecker.calendarIntegrationAvailable
+                    && coordinator.preferences.calendarDetectionEnabled {
                     Stepper(
                         "Look-ahead: \(coordinator.preferences.calendarLookAheadMinutes) min",
                         value: $coordinator.preferences.calendarLookAheadMinutes,
@@ -105,7 +114,11 @@ struct DetectionSettingsView: View {
                     .padding(.leading, 24)
                 }
 
-                Toggle(isOn: $coordinator.preferences.idleDetectionEnabled) {
+                Toggle(isOn: permissionChecker.gatedToggle(
+                    for: $coordinator.preferences.idleDetectionEnabled,
+                    requires: .inputMonitoring,
+                    onDenied: { showInputMonitoringAlert = true }
+                )) {
                     Label {
                         VStack(alignment: .leading, spacing: 2) {
                             Text("Idle as Break")
@@ -158,8 +171,44 @@ struct DetectionSettingsView: View {
             }
         }
         .formStyle(.grouped)
+        .onChange(of: coordinator.preferences.escalationLevel) { newLevel in
+            if newLevel == .strict && !permissionChecker.strictModeAvailable {
+                coordinator.preferences.escalationLevel = .firm
+                showAccessibilityAlert = true
+            }
+        }
         .onChange(of: coordinator.preferences) { _ in
             coordinator.savePreferences()
+        }
+        .alert("Calendar Permission Required", isPresented: $showCalendarPermissionAlert) {
+            Button("Open System Settings") {
+                for url in PermissionType.calendar.settingsURLs {
+                    if NSWorkspace.shared.open(url) { break }
+                }
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Calendar Integration requires calendar access. Grant it in System Settings to enable this feature.")
+        }
+        .alert("Input Monitoring Required", isPresented: $showInputMonitoringAlert) {
+            Button("Open System Settings") {
+                for url in PermissionType.inputMonitoring.settingsURLs {
+                    if NSWorkspace.shared.open(url) { break }
+                }
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("This feature requires Input Monitoring permission. Grant it in System Settings to enable.")
+        }
+        .alert("Accessibility Permission Required", isPresented: $showAccessibilityAlert) {
+            Button("Open System Settings") {
+                for url in PermissionType.accessibility.settingsURLs {
+                    if NSWorkspace.shared.open(url) { break }
+                }
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Strict mode requires Accessibility permission to block input during breaks.")
         }
     }
 
