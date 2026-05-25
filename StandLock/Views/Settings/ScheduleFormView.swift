@@ -17,6 +17,7 @@ struct ScheduleFormView: View {
     @State private var shortBreakMinutes: Int = 10
     @State private var longBreakMinutes: Int = 30
     @State private var disciplineLevel: DisciplineLevel = .gentle
+    @State private var progressiveEnforcement: Bool = false
 
     private var isEditing: Bool { schedule != nil }
 
@@ -216,6 +217,10 @@ struct ScheduleFormView: View {
             Text("Discipline Level")
                 .font(.subheadline.weight(.medium))
             DisciplineLevelPicker(selection: $disciplineLevel)
+            Toggle("Progressive Enforcement", isOn: $progressiveEnforcement)
+            Text("Makes each skipped break harder to dismiss")
+                .font(.caption)
+                .foregroundStyle(.secondary)
         }
     }
 
@@ -263,6 +268,7 @@ struct ScheduleFormView: View {
         breakIntervalMinutes = Int(s.breakInterval / 60)
         breakDurationMinutes = Int(s.breakDuration / 60)
         disciplineLevel = s.disciplineLevel
+        progressiveEnforcement = s.progressiveEnforcement
 
         switch s.days {
         case .everyDay: dayPreset = .everyDay
@@ -306,7 +312,8 @@ struct ScheduleFormView: View {
             breakInterval: TimeInterval(breakIntervalMinutes * 60),
             breakDuration: TimeInterval(breakDurationMinutes * 60),
             repetitionRule: repetitionRule,
-            disciplineLevel: disciplineLevel
+            disciplineLevel: disciplineLevel,
+            progressiveEnforcement: progressiveEnforcement
         )
         onSave(result)
     }

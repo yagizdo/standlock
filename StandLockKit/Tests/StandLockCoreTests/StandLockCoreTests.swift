@@ -169,35 +169,97 @@ struct ScheduleModelTests {
         #expect(decoded.firmSkipDelay == 20)
         #expect(decoded.pauseMediaDuringBreak == true)
         #expect(decoded.resumeMediaAfterBreak == false)
-        #expect(decoded.escalationLevel == .off)
     }
 
-    @Test func escalationPreferencesRoundTrip() throws {
-        let prefs = AppPreferences(escalationLevel: .firm)
-        let data = try JSONEncoder().encode(prefs)
-        let decoded = try JSONDecoder().decode(AppPreferences.self, from: data)
-        #expect(decoded.escalationLevel == .firm)
-    }
-
-    @Test func escalationLegacyBoolMigration() throws {
+    @Test func appPreferencesDecodesWithoutEscalationLevel() throws {
         let json = """
         {
-            "gentleEscalationEnabled": true,
-            "firmEscalationEnabled": true,
-            "strictEscalationEnabled": false
+            "firmSkipDelay": 10,
+            "escalationLevel": 2
         }
         """.data(using: .utf8)!
         let decoded = try JSONDecoder().decode(AppPreferences.self, from: json)
-        #expect(decoded.escalationLevel == .firm)
+        #expect(decoded.firmSkipDelay == 10)
     }
 
-    @Test func escalationUnrecognizedRawValueFallsBackToOff() throws {
-        let json = """
-        {
-            "escalationLevel": 99
-        }
-        """.data(using: .utf8)!
-        let decoded = try JSONDecoder().decode(AppPreferences.self, from: json)
-        #expect(decoded.escalationLevel == .off)
+    // MARK: - EnforcementPolicy
+
+    @Test func enforcementPolicyGentleTiers() {
+        let policy = DisciplineLevel.gentle.enforcementPolicy(preferences: AppPreferences())
+        #expect(policy.tiers.count == 4)
+        #expect(policy.tiers[0].dismissMechanism == .button)
+        #expect(policy.tiers[0].skipDelay == 0)
+        #expect(policy.tiers[1].dismissMechanism == .button)
+        #expect(policy.tiers[1].skipDelay == 5)
+        #expect(policy.tiers[2].dismissMechanism == .holdButton(duration: 2))
+        #expect(policy.tiers[2].skipDelay == 10)
+        #expect(policy.tiers[3].dismissMechanism == .typePhrase(phrase: "skip", requiresConfirmation: false))
+        #expect(policy.tiers[3].skipDelay == 15)
+    }
+
+    @Test func enforcementPolicyFirmUsesPreferences() {
+        let prefs = AppPreferences(firmSkipDelay: 20, firmEscapePhrase: "let me go")
+        let policy = DisciplineLevel.firm.enforcementPolicy(preferences: prefs)
+        #expect(policy.tiers.count == 4)
+        #expect(policy.tiers[0].skipDelay == 20)
+        #expect(policy.tiers[0].dismissMechanism == .typePhrase(phrase: "let me go", requiresConfirmation: false))
+        #expect(policy.tiers[2].dismissMechanism == .typePhrase(phrase: "let me go", requiresConfirmation: true))
+        #expect(policy.tiers[3].dismissMechanism == .typePhrase(phrase: "let me go I really mean it", requiresConfirmation: true))
+        #expect(policy.tiers[3].skipDelay == 35)
+    }
+
+    @Test func enforcementPolicyStrictUsesPreferences() {
+        let prefs = AppPreferences(strictEscapeHoldDuration: 8)
+        let policy = DisciplineLevel.strict.enforcementPolicy(preferences: prefs)
+        #expect(policy.tiers.count == 4)
+        if case .keyCombo(let d) = policy.tiers[0].dismissMechanism { #expect(d == 8) }
+        else { Issue.record("Expected .keyCombo") }
+        if case .keyCombo(let d) = policy.tiers[1].dismissMechanism { #expect(d == 13) }
+        else { Issue.record("Expected .keyCombo") }
+        if case .keyCombo(let d) = policy.tiers[2].dismissMechanism { #expect(d == 18) }
+        else { Issue.record("Expected .keyCombo") }
+        if case .keyCombo(let d) = policy.tiers[3].dismissMechanism { #expect(d == 23) }
+        else { Issue.record("Expected .keyCombo") }
+    }
+
+    @Test func enforcementPolicyTierClampsToRange() {
+        let policy = DisciplineLevel.gentle.enforcementPolicy(preferences: AppPreferences())
+        let last = policy.tier(at: 99)
+        #expect(last == policy.tiers[3])
+        let first = policy.tier(at: -1)
+        #expect(first == policy.tiers[0])
+    }
+
+    // MARK: - Schedule with Progressive Enforcement
+
+    @Test func scheduleJsonWithProgressiveEnforcement() throws {
+        let schedule = Schedule(
+            name: "Test",
+            days: .weekdays,
+            windows: [TimeWindow(startHour: 9, startMinute: 0, endHour: 17, endMinute: 0)],
+            breakInterval: 2400, breakDuration: 600,
+            progressiveEnforcement: true
+        )
+        let data = try JSONEncoder().encode(schedule)
+        let decoded = try JSONDecoder().decode(Schedule.self, from: data)
+        #expect(decoded.progressiveEnforcement == true)
+        #expect(decoded == schedule)
+    }
+
+    @Test func scheduleJsonBackwardCompatibility() throws {
+        let original = Schedule(
+            name: "Old Schedule",
+            days: .weekdays,
+            windows: [TimeWindow(startHour: 9, startMinute: 0, endHour: 17, endMinute: 0)],
+            breakInterval: 2400, breakDuration: 600,
+            disciplineLevel: .gentle
+        )
+        let data = try JSONEncoder().encode(original)
+        var json = try JSONSerialization.jsonObject(with: data) as! [String: Any]
+        json.removeValue(forKey: "progressiveEnforcement")
+        let stripped = try JSONSerialization.data(withJSONObject: json)
+        let decoded = try JSONDecoder().decode(Schedule.self, from: stripped)
+        #expect(decoded.progressiveEnforcement == false)
+        #expect(decoded.name == "Old Schedule")
     }
 }

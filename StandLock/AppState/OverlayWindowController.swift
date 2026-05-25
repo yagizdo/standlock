@@ -104,12 +104,16 @@ final class OverlayWindowController: LockPresenting {
         }
     }
 
-    private static func tierMultiplier(_ tier: Int) -> Double {
-        AppPreferences.tierMultiplier(for: tier)
-    }
-
     private func startEventTap(preferences: AppPreferences) {
-        let effectiveHold = preferences.strictEscapeHoldDuration * Self.tierMultiplier(currentEscalationTier)
+        let level = currentLevel ?? .strict
+        let policy = level.enforcementPolicy(preferences: preferences)
+        let enforcementTier = policy.tier(at: currentEscalationTier)
+        let effectiveHold: TimeInterval
+        if case .keyCombo(let duration) = enforcementTier.dismissMechanism {
+            effectiveHold = duration
+        } else {
+            effectiveHold = preferences.strictEscapeHoldDuration
+        }
         eventTapController = EventTapController(
             escapeHoldDuration: effectiveHold,
             onEscapeTriggered: { [weak self] in

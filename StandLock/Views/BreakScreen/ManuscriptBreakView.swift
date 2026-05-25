@@ -7,7 +7,7 @@ struct ManuscriptBreakView: View {
     let exercise: Exercise?
     let preferences: AppPreferences
     let statistics: BreakStatistics
-    let escalationTier: Int
+    let enforcementTier: EnforcementTier
     let onSkip: () -> Void
     let onComplete: () -> Void
 
@@ -24,7 +24,8 @@ struct ManuscriptBreakView: View {
         self.exercise = exercise
         self.preferences = preferences
         self.statistics = statistics
-        self.escalationTier = escalationTier
+        let policy = level.enforcementPolicy(preferences: preferences)
+        self.enforcementTier = policy.tier(at: escalationTier)
         self.onSkip = onSkip
         self.onComplete = onComplete
         self._remainingSeconds = State(initialValue: totalDuration)
@@ -58,9 +59,8 @@ struct ManuscriptBreakView: View {
                             ExerciseBlock(exercise: exercise, palette: palette)
                         }
                         ActionArea(
-                            level: level, palette: palette,
+                            tier: enforcementTier, palette: palette,
                             preferences: preferences, statistics: statistics,
-                            escalationTier: escalationTier,
                             onDismiss: onSkip
                         )
                     }

@@ -19,3 +19,34 @@ public enum DisciplineLevel: String, Codable, Sendable, CaseIterable {
         }
     }
 }
+
+extension DisciplineLevel {
+    public func enforcementPolicy(preferences: AppPreferences) -> EnforcementPolicy {
+        switch self {
+        case .gentle:
+            return EnforcementPolicy(tiers: [
+                EnforcementTier(skipDelay: 0, dismissMechanism: .button),
+                EnforcementTier(skipDelay: 5, dismissMechanism: .button),
+                EnforcementTier(skipDelay: 10, dismissMechanism: .holdButton(duration: 2)),
+                EnforcementTier(skipDelay: 15, dismissMechanism: .typePhrase(phrase: "skip", requiresConfirmation: false)),
+            ])
+        case .firm:
+            let phrase = preferences.firmEscapePhrase
+            let base = preferences.firmSkipDelay
+            return EnforcementPolicy(tiers: [
+                EnforcementTier(skipDelay: base, dismissMechanism: .typePhrase(phrase: phrase, requiresConfirmation: false)),
+                EnforcementTier(skipDelay: base + 5, dismissMechanism: .typePhrase(phrase: phrase, requiresConfirmation: false)),
+                EnforcementTier(skipDelay: base + 10, dismissMechanism: .typePhrase(phrase: phrase, requiresConfirmation: true)),
+                EnforcementTier(skipDelay: base + 15, dismissMechanism: .typePhrase(phrase: phrase + " I really mean it", requiresConfirmation: true)),
+            ])
+        case .strict:
+            let hold = preferences.strictEscapeHoldDuration
+            return EnforcementPolicy(tiers: [
+                EnforcementTier(skipDelay: 0, dismissMechanism: .keyCombo(duration: hold)),
+                EnforcementTier(skipDelay: 0, dismissMechanism: .keyCombo(duration: hold + 5)),
+                EnforcementTier(skipDelay: 0, dismissMechanism: .keyCombo(duration: hold + 10)),
+                EnforcementTier(skipDelay: 0, dismissMechanism: .keyCombo(duration: hold + 15)),
+            ])
+        }
+    }
+}
