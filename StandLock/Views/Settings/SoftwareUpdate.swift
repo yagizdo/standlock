@@ -11,14 +11,19 @@ final class UpdateObserver: NSObject, ObservableObject, SPUUpdaterDelegate {
         super.init()
     }
 
-    func updater(_ updater: SPUUpdater, didFindValidUpdate item: SUAppcastItem) {
-        updateAvailable = true
-        availableVersion = item.displayVersionString
+    nonisolated func updater(_ updater: SPUUpdater, didFindValidUpdate item: SUAppcastItem) {
+        let version = item.displayVersionString
+        Task { @MainActor in
+            self.updateAvailable = true
+            self.availableVersion = version
+        }
     }
 
-    func updaterDidNotFindUpdate(_ updater: SPUUpdater) {
-        updateAvailable = false
-        availableVersion = nil
+    nonisolated func updaterDidNotFindUpdate(_ updater: SPUUpdater) {
+        Task { @MainActor in
+            self.updateAvailable = false
+            self.availableVersion = nil
+        }
     }
 }
 
