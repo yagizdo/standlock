@@ -1,5 +1,12 @@
 # Changelog
 
+## StandLock v0.2.3
+
+**Improvements**
+- Check for updates every 4 hours instead of daily (fc1a2ef)
+
+**Full Changelog:** https://github.com/yagizdo/StandLock/compare/v0.2.2...v0.2.3
+
 ## StandLock v0.2.2
 
 **Bug Fixes**
