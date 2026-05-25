@@ -1,6 +1,6 @@
 # StandLock
 
-[![Version](https://img.shields.io/badge/version-0.2.1-blue)](https://github.com/yagizdo/StandLock/releases)
+[![Version](https://img.shields.io/badge/version-0.2.2-blue)](https://github.com/yagizdo/StandLock/releases)
 [![Release](https://github.com/yagizdo/standlock/actions/workflows/release.yml/badge.svg)](https://github.com/yagizdo/standlock/actions/workflows/release.yml)
 [![macOS 13+](https://img.shields.io/badge/macOS-13%2B-brightgreen)](https://github.com/yagizdo/StandLock/releases/latest)
 [![Homebrew](https://img.shields.io/badge/brew-yagizdo%2Ftap%2Fstandlock-orange)](https://github.com/yagizdo/homebrew-tap)

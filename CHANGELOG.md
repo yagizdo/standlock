@@ -1,5 +1,13 @@
 # Changelog
 
+## StandLock v0.2.2
+
+**Bug Fixes**
+- Fix Sparkle delegate methods hidden from Obj-C runtime by MainActor isolation (59b9f94)
+- Fix overlay not appearing over full-screen apps (4f8fda8)
+
+**Full Changelog:** https://github.com/yagizdo/StandLock/compare/v0.2.1...v0.2.2
+
 ## StandLock v0.2.1
 
 **Features**
