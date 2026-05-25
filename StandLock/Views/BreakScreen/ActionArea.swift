@@ -6,6 +6,7 @@ struct ActionArea: View {
     let palette: BreakPalette
     let preferences: AppPreferences
     let statistics: BreakStatistics
+    var escalationTier: Int = 0
     let onDismiss: () -> Void
 
     @State private var showAction = false
@@ -50,9 +51,13 @@ struct ActionArea: View {
     private var mechanismView: some View {
         switch tier.dismissMechanism {
         case .button:
-            ButtonDismissView(palette: palette, onDismiss: onDismiss)
+            DodgingWrapper(isActive: escalationTier >= 2) {
+                ButtonDismissView(palette: palette, onDismiss: onDismiss)
+            }
         case .holdButton(let duration):
-            HoldDismissView(palette: palette, holdDuration: duration, onDismiss: onDismiss)
+            DodgingWrapper(isActive: escalationTier >= 2) {
+                HoldDismissView(palette: palette, holdDuration: duration, onDismiss: onDismiss)
+            }
         case .typePhrase(let phrase, let requiresConfirmation):
             if statistics.breaksSkipped >= preferences.firmDailySkipLimit {
                 Text("Daily skip limit reached")
@@ -62,6 +67,7 @@ struct ActionArea: View {
                 PhraseDismissView(
                     palette: palette, phrase: phrase,
                     requiresConfirmation: requiresConfirmation,
+                    escalationTier: escalationTier,
                     onDismiss: onDismiss
                 )
             }
@@ -70,6 +76,72 @@ struct ActionArea: View {
                 palette: palette, holdDuration: duration,
                 weeklyEscapeCount: statistics.weeklyEscapeCount
             )
+        }
+    }
+}
+
+// MARK: - Dodging
+
+private struct DodgingWrapper<Content: View>: View {
+    let isActive: Bool
+    let content: Content
+
+    @State private var center: CGPoint? = nil
+    @State private var containerSize: CGSize = .zero
+    @State private var dodgeCount = 0
+    @State private var mouseInZone = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    init(isActive: Bool, @ViewBuilder content: () -> Content) {
+        self.isActive = isActive
+        self.content = content()
+    }
+
+    var body: some View {
+        if isActive && !reduceMotion {
+            GeometryReader { geo in
+                content
+                    .fixedSize()
+                    .position(center ?? CGPoint(x: geo.size.width / 2, y: geo.size.height / 2))
+                    .onAppear {
+                        containerSize = geo.size
+                        center = CGPoint(x: geo.size.width / 2, y: geo.size.height / 2)
+                    }
+            }
+            .frame(height: 250)
+            .contentShape(Rectangle())
+            .onContinuousHover { phase in
+                guard dodgeCount < 8, containerSize.width > 0 else { return }
+                switch phase {
+                case .active(let location):
+                    let c = center ?? CGPoint(x: containerSize.width / 2, y: containerSize.height / 2)
+                    let dist = hypot(location.x - c.x, location.y - c.y)
+                    if dist < 100, !mouseInZone {
+                        mouseInZone = true
+                        performDodge()
+                    } else if dist >= 100 {
+                        mouseInZone = false
+                    }
+                case .ended:
+                    mouseInZone = false
+                }
+            }
+        } else {
+            content
+        }
+    }
+
+    private func performDodge() {
+        dodgeCount += 1
+        let c = center ?? CGPoint(x: containerSize.width / 2, y: containerSize.height / 2)
+        let angle = Double.random(in: 0 ..< 2 * .pi)
+        let r: CGFloat = 150
+        var nx = c.x + cos(angle) * r
+        var ny = c.y + sin(angle) * r
+        nx = max(60, min(containerSize.width - 60, nx))
+        ny = max(30, min(containerSize.height - 30, ny))
+        withAnimation(.spring(response: 0.3, dampingFraction: 0.65)) {
+            center = CGPoint(x: nx, y: ny)
         }
     }
 }
@@ -154,11 +226,23 @@ private struct PhraseDismissView: View {
     let palette: BreakPalette
     let phrase: String
     let requiresConfirmation: Bool
+    let escalationTier: Int
     let onDismiss: () -> Void
 
     @State private var typedPhrase = ""
     @State private var showSkipConfirmation = false
+    @State private var displayPhrase: String
     @FocusState private var isFieldFocused: Bool
+
+    init(palette: BreakPalette, phrase: String, requiresConfirmation: Bool,
+         escalationTier: Int, onDismiss: @escaping () -> Void) {
+        self.palette = palette
+        self.phrase = phrase
+        self.requiresConfirmation = requiresConfirmation
+        self.escalationTier = escalationTier
+        self.onDismiss = onDismiss
+        self._displayPhrase = State(initialValue: phrase)
+    }
 
     private var phraseMatches: Bool {
         typedPhrase.trimmingCharacters(in: .whitespaces)
@@ -172,14 +256,16 @@ private struct PhraseDismissView: View {
                     .font(BreakTypography.label(size: 12))
                     .tracking(0.15)
                     .foregroundStyle(palette.inkFaint)
-                Text("\"\(phrase)\"")
+                Text("\"\(displayPhrase)\"")
                     .font(BreakTypography.exerciseName(size: 12).italic())
                     .foregroundStyle(palette.ink)
+                    .contentTransition(.interpolate)
                 Text(" to dismiss")
                     .font(BreakTypography.label(size: 12))
                     .tracking(0.15)
                     .foregroundStyle(palette.inkFaint)
             }
+            .animation(.easeInOut(duration: 0.2), value: displayPhrase)
 
             TextField("", text: $typedPhrase)
                 .font(BreakTypography.exerciseName(size: 16))
@@ -215,6 +301,25 @@ private struct PhraseDismissView: View {
         }
         .onChange(of: showSkipConfirmation) { showing in
             if !showing { isFieldFocused = true }
+        }
+        .task {
+            guard escalationTier >= 2 else { return }
+            let alternatives = [
+                "I love standing up",
+                "Taking breaks is great actually",
+            ]
+            for (i, alt) in alternatives.enumerated() {
+                try? await Task.sleep(for: .seconds(4 + i * 10))
+                guard !Task.isCancelled else { return }
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    displayPhrase = alt
+                }
+                try? await Task.sleep(for: .seconds(2))
+                guard !Task.isCancelled else { return }
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    displayPhrase = phrase
+                }
+            }
         }
         .transition(.opacity)
     }

@@ -8,11 +8,13 @@ struct ManuscriptBreakView: View {
     let preferences: AppPreferences
     let statistics: BreakStatistics
     let enforcementTier: EnforcementTier
+    let escalationTierIndex: Int
     let onSkip: () -> Void
     let onComplete: () -> Void
 
     @State private var remainingSeconds: TimeInterval
     @State private var isVisible = false
+    @State private var splashTexts: [String] = []
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     init(level: DisciplineLevel, totalDuration: TimeInterval, exercise: Exercise?,
@@ -26,6 +28,7 @@ struct ManuscriptBreakView: View {
         self.statistics = statistics
         let policy = level.enforcementPolicy(preferences: preferences)
         self.enforcementTier = policy.tier(at: escalationTier)
+        self.escalationTierIndex = escalationTier
         self.onSkip = onSkip
         self.onComplete = onComplete
         self._remainingSeconds = State(initialValue: totalDuration)
@@ -61,6 +64,7 @@ struct ManuscriptBreakView: View {
                         ActionArea(
                             tier: enforcementTier, palette: palette,
                             preferences: preferences, statistics: statistics,
+                            escalationTier: escalationTierIndex,
                             onDismiss: onSkip
                         )
                     }
@@ -73,11 +77,48 @@ struct ManuscriptBreakView: View {
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .opacity(isVisible ? 1 : 0)
+
+                if escalationTierIndex >= 2, !splashTexts.isEmpty {
+                    Group {
+                        SplashLabel(text: splashTexts[0], palette: palette, rotation: -15)
+                            .position(x: geometry.size.width * 0.15, y: geometry.size.height * 0.25)
+                        if splashTexts.count > 1 {
+                            SplashLabel(text: splashTexts[1], palette: palette, rotation: 12)
+                                .position(x: geometry.size.width * 0.83, y: geometry.size.height * 0.35)
+                        }
+                        if splashTexts.count > 2 {
+                            SplashLabel(text: splashTexts[2], palette: palette, rotation: -8)
+                                .position(x: geometry.size.width * 0.20, y: geometry.size.height * 0.72)
+                        }
+                    }
+                    .allowsHitTesting(false)
+                    .opacity(isVisible ? 1 : 0)
+                }
             }
         }
         .ignoresSafeArea()
         .preferredColorScheme(.light)
         .onAppear {
+            if escalationTierIndex >= 2 {
+                splashTexts = Array([
+                    "Ctrl+Z won't fix your posture",
+                    "Two minutes. You'll survive.",
+                    "The code will wait.",
+                    "Your spine has entered the chat",
+                    "Even CPUs need cooling breaks",
+                    "Stretch now, debug later",
+                    "Consecutive skip detected",
+                    "Screen time: hours. Break time: refused.",
+                    "Standing: surprisingly not fatal",
+                    "Brief pause. Big difference.",
+                    "The chair isn't going anywhere",
+                    "You're still here?",
+                    "Never gonna give you up",
+                    "This is fine.",
+                    "One does not simply skip breaks",
+                    "I'm in this picture and I don't like it",
+                ].shuffled().prefix(3))
+            }
             if reduceMotion {
                 isVisible = true
             } else {
@@ -133,5 +174,30 @@ struct ManuscriptBreakView: View {
             isVisible = false
         }
         onComplete()
+    }
+}
+
+// MARK: - Splash Label
+
+private struct SplashLabel: View {
+    let text: String
+    let palette: BreakPalette
+    var rotation: Double = -12
+
+    @State private var isPulsing = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    var body: some View {
+        Text(text)
+            .font(BreakTypography.label(size: 16, weight: .bold))
+            .foregroundStyle(palette.accent)
+            .rotationEffect(.degrees(rotation))
+            .scaleEffect(isPulsing ? 1.06 : 1.0)
+            .onAppear {
+                guard !reduceMotion else { return }
+                withAnimation(.easeInOut(duration: 1.0).repeatForever(autoreverses: true)) {
+                    isPulsing = true
+                }
+            }
     }
 }
