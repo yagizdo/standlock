@@ -217,7 +217,7 @@ final class PermissionChecker: ObservableObject {
     // MARK: - Feature Gates
 
     var idleDetectionAvailable: Bool { inputMonitoringGranted }
-    var strictModeAvailable: Bool { accessibilityGranted }
+    var strictModeAvailable: Bool { accessibilityGranted && inputMonitoringGranted }
     var calendarIntegrationAvailable: Bool { CalendarDetector.isAuthorized(calendarStatus) }
 
     func gatedToggle(

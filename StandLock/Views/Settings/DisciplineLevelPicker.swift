@@ -7,10 +7,6 @@ struct DisciplineLevelPicker: View {
     @EnvironmentObject private var checker: PermissionChecker
     @State private var showPermissionAlert = false
 
-    private var strictAvailable: Bool {
-        checker.accessibilityGranted && checker.inputMonitoringGranted
-    }
-
     private var missingPermissionMessage: String {
         if !checker.accessibilityGranted && !checker.inputMonitoringGranted {
             return "Strict mode requires Accessibility and Input Monitoring permissions."
@@ -27,10 +23,10 @@ struct DisciplineLevelPicker: View {
                 LevelCard(
                     level: level,
                     isSelected: selection == level,
-                    isDisabled: level == .strict && !strictAvailable
+                    isDisabled: level == .strict && !checker.strictModeAvailable
                 )
                 .onTapGesture {
-                    if level == .strict && !strictAvailable {
+                    if level == .strict && !checker.strictModeAvailable {
                         showPermissionAlert = true
                     } else {
                         selection = level

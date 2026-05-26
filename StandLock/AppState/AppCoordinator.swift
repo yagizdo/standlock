@@ -137,10 +137,8 @@ final class AppCoordinator: ObservableObject {
             savePreferences()
         }
 
-        let strictAllowed = permissionChecker.strictModeAvailable
-            && permissionChecker.idleDetectionAvailable
         var schedulesChanged = false
-        if !strictAllowed {
+        if !permissionChecker.strictModeAvailable {
             for i in schedules.indices where schedules[i].disciplineLevel == .strict {
                 schedules[i].disciplineLevel = .gentle
                 schedulesChanged = true
@@ -160,6 +158,7 @@ final class AppCoordinator: ObservableObject {
     // MARK: - Coordinator Lifecycle
 
     private func startCoordinator() {
+        stopCoordinator()
         let scheduler = ScheduleEvaluator()
         let detector = CompositeDetector(
             calendar: CalendarDetector(lookAheadMinutes: preferences.calendarLookAheadMinutes)
