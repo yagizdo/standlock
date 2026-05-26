@@ -10,7 +10,7 @@ struct PermissionsStepView: View {
                 .font(.title2)
                 .fontWeight(.semibold)
 
-            Text("StandLock works without any permissions. Each one unlocks an extra feature. You can grant them now or later in Settings.")
+            Text("Each permission unlocks a feature. You can grant them now or later in Settings.")
                 .font(.callout)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
