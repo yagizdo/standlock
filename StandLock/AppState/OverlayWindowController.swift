@@ -72,8 +72,6 @@ final class OverlayWindowController: LockPresenting {
 
     func dismissOverlay() {
         guard isShowing else { return }
-        endBreakMedia()
-
         if let observer = screenObserver {
             NotificationCenter.default.removeObserver(observer)
             screenObserver = nil
@@ -133,14 +131,6 @@ final class OverlayWindowController: LockPresenting {
     private func handleEscape() {
         dismissOverlay()
         onEscape?()
-    }
-
-    private func endBreakMedia() {
-        if currentPreferences?.resumeMediaAfterBreak == true {
-            mediaController.resumeIfPaused()
-        } else {
-            mediaController.reset()
-        }
     }
 
     private func forceFocus() {

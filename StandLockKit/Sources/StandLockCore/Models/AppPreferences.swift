@@ -17,7 +17,6 @@ public struct AppPreferences: Codable, Sendable, Equatable {
     public var idleDetectionEnabled: Bool
 
     public var pauseMediaDuringBreak: Bool
-    public var resumeMediaAfterBreak: Bool
 
     public var resetIntervalOnSkip: Bool
 
@@ -35,7 +34,6 @@ public struct AppPreferences: Codable, Sendable, Equatable {
         focusModeDetection: DetectionBehavior = .deferBreak,
         idleDetectionEnabled: Bool = true,
         pauseMediaDuringBreak: Bool = true,
-        resumeMediaAfterBreak: Bool = false,
         resetIntervalOnSkip: Bool = true
     ) {
         self.firmSkipDelay = firmSkipDelay
@@ -51,7 +49,6 @@ public struct AppPreferences: Codable, Sendable, Equatable {
         self.focusModeDetection = focusModeDetection
         self.idleDetectionEnabled = idleDetectionEnabled
         self.pauseMediaDuringBreak = pauseMediaDuringBreak
-        self.resumeMediaAfterBreak = resumeMediaAfterBreak
         self.resetIntervalOnSkip = resetIntervalOnSkip
     }
 
@@ -62,7 +59,7 @@ public struct AppPreferences: Codable, Sendable, Equatable {
         case calendarDetectionEnabled, calendarLookAheadMinutes
         case screenSharingDetectionEnabled, screenSharingPostDeferral
         case focusModeDetection, idleDetectionEnabled
-        case pauseMediaDuringBreak, resumeMediaAfterBreak
+        case pauseMediaDuringBreak
         case resetIntervalOnSkip
     }
 
@@ -81,7 +78,6 @@ public struct AppPreferences: Codable, Sendable, Equatable {
         focusModeDetection = try c.decodeIfPresent(DetectionBehavior.self, forKey: .focusModeDetection) ?? .deferBreak
         idleDetectionEnabled = try c.decodeIfPresent(Bool.self, forKey: .idleDetectionEnabled) ?? true
         pauseMediaDuringBreak = try c.decodeIfPresent(Bool.self, forKey: .pauseMediaDuringBreak) ?? true
-        resumeMediaAfterBreak = try c.decodeIfPresent(Bool.self, forKey: .resumeMediaAfterBreak) ?? false
         resetIntervalOnSkip = try c.decodeIfPresent(Bool.self, forKey: .resetIntervalOnSkip) ?? true
     }
 }

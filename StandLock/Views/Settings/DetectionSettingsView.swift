@@ -97,22 +97,6 @@ struct DetectionSettingsView: View {
                     }
                 }
 
-                if coordinator.preferences.pauseMediaDuringBreak {
-                    Toggle(isOn: $coordinator.preferences.resumeMediaAfterBreak) {
-                        Label {
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text("Resume After Break")
-                                Text("Automatically resume playback when the break ends")
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                            }
-                        } icon: {
-                            Image(systemName: "speaker.wave.2")
-                        }
-                    }
-                    .padding(.leading, 24)
-                }
-
                 Toggle(isOn: permissionChecker.gatedToggle(
                     for: $coordinator.preferences.idleDetectionEnabled,
                     requires: .inputMonitoring,

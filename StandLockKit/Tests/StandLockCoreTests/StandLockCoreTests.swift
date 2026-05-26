@@ -133,7 +133,6 @@ struct ScheduleModelTests {
             focusModeDetection: .ignore,
             idleDetectionEnabled: false,
             pauseMediaDuringBreak: false,
-            resumeMediaAfterBreak: true,
             resetIntervalOnSkip: false
         )
         let data = try JSONEncoder().encode(prefs)
@@ -144,7 +143,6 @@ struct ScheduleModelTests {
         #expect(decoded.microphoneDetection == .ignore)
         #expect(!decoded.calendarDetectionEnabled)
         #expect(!decoded.pauseMediaDuringBreak)
-        #expect(decoded.resumeMediaAfterBreak)
         #expect(!decoded.resetIntervalOnSkip)
     }
 
@@ -168,7 +166,6 @@ struct ScheduleModelTests {
         let decoded = try JSONDecoder().decode(AppPreferences.self, from: json)
         #expect(decoded.firmSkipDelay == 20)
         #expect(decoded.pauseMediaDuringBreak == true)
-        #expect(decoded.resumeMediaAfterBreak == false)
     }
 
     @Test func appPreferencesDecodesWithoutEscalationLevel() throws {

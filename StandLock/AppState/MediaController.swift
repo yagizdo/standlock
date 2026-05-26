@@ -2,7 +2,6 @@ import Foundation
 
 @MainActor
 final class MediaController {
-    private var didPause = false
     private let sendCommand: (@convention(c) (UInt32, AnyObject?) -> Bool)?
 
     nonisolated init() {
@@ -21,16 +20,5 @@ final class MediaController {
     func pause() {
         guard let sendCommand else { return }
         _ = sendCommand(1, nil)
-        didPause = true
-    }
-
-    func resumeIfPaused() {
-        defer { didPause = false }
-        guard didPause, let sendCommand else { return }
-        _ = sendCommand(0, nil)
-    }
-
-    func reset() {
-        didPause = false
     }
 }
