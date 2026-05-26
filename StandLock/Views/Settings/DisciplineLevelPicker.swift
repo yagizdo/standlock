@@ -7,16 +7,26 @@ struct DisciplineLevelPicker: View {
     @EnvironmentObject private var checker: PermissionChecker
     @State private var showPermissionAlert = false
 
+    private var missingPermissionMessage: String {
+        if !checker.accessibilityGranted && !checker.inputMonitoringGranted {
+            return "Strict mode requires Accessibility and Input Monitoring permissions."
+        } else if !checker.accessibilityGranted {
+            return "Strict mode requires Accessibility permission to block input during breaks."
+        } else {
+            return "Strict mode requires Input Monitoring permission for the escape key combo."
+        }
+    }
+
     var body: some View {
         HStack(spacing: 12) {
             ForEach(DisciplineLevel.allCases, id: \.self) { level in
                 LevelCard(
                     level: level,
                     isSelected: selection == level,
-                    isDisabled: level == .strict && !checker.accessibilityGranted
+                    isDisabled: level == .strict && !checker.strictModeAvailable
                 )
                 .onTapGesture {
-                    if level == .strict && !checker.accessibilityGranted {
+                    if level == .strict && !checker.strictModeAvailable {
                         showPermissionAlert = true
                     } else {
                         selection = level
@@ -24,15 +34,21 @@ struct DisciplineLevelPicker: View {
                 }
             }
         }
-        .alert("Accessibility Permission Required", isPresented: $showPermissionAlert) {
+        .alert("Permission Required", isPresented: $showPermissionAlert) {
             Button("Open System Settings") {
-                for url in PermissionType.accessibility.settingsURLs {
-                    if NSWorkspace.shared.open(url) { break }
+                if !checker.accessibilityGranted {
+                    for url in PermissionType.accessibility.settingsURLs {
+                        if NSWorkspace.shared.open(url) { break }
+                    }
+                } else {
+                    for url in PermissionType.inputMonitoring.settingsURLs {
+                        if NSWorkspace.shared.open(url) { break }
+                    }
                 }
             }
             Button("Cancel", role: .cancel) {}
         } message: {
-            Text("Strict mode requires Accessibility permission to block input during breaks.")
+            Text(missingPermissionMessage)
         }
     }
 }

@@ -1,4 +1,5 @@
 import SwiftUI
+import Combine
 import Coordination
 import StandLockCore
 import Scheduling
@@ -50,11 +51,18 @@ final class AppCoordinator: ObservableObject {
     private var loadedExercises: [Exercise] = []
     private var onboardingWindow: NSWindow?
     private var onboardingWindowDelegate: OnboardingWindowCloseDelegate?
+    private var permissionSyncCancellable: AnyCancellable?
 
     init() {
         loadExercises()
         loadData()
+        syncPreferencesWithPermissions()
         startProgressTimer()
+        permissionSyncCancellable = permissionChecker.objectWillChange
+            .receive(on: RunLoop.main)
+            .sink { [weak self] _ in
+                self?.syncPreferencesWithPermissions()
+            }
         Task { await permissionChecker.pollContinuously() }
         if !schedules.isEmpty {
             startCoordinator()
@@ -115,6 +123,33 @@ final class AppCoordinator: ObservableObject {
         coordinator?.updatePreferences(preferences)
     }
 
+    private func syncPreferencesWithPermissions() {
+        var prefsChanged = false
+        if preferences.idleDetectionEnabled && !permissionChecker.idleDetectionAvailable {
+            preferences.idleDetectionEnabled = false
+            prefsChanged = true
+        }
+        if preferences.calendarDetectionEnabled && !permissionChecker.calendarIntegrationAvailable {
+            preferences.calendarDetectionEnabled = false
+            prefsChanged = true
+        }
+        if prefsChanged {
+            savePreferences()
+        }
+
+        var schedulesChanged = false
+        if !permissionChecker.strictModeAvailable {
+            for i in schedules.indices where schedules[i].disciplineLevel == .strict {
+                schedules[i].disciplineLevel = .gentle
+                schedulesChanged = true
+            }
+        }
+        if schedulesChanged {
+            saveSchedules()
+            restartCoordinator()
+        }
+    }
+
     func saveStatistics() {
         guard let data = try? JSONEncoder().encode(todayStats) else { return }
         UserDefaults.standard.set(data, forKey: "statistics")
@@ -123,6 +158,7 @@ final class AppCoordinator: ObservableObject {
     // MARK: - Coordinator Lifecycle
 
     private func startCoordinator() {
+        stopCoordinator()
         let scheduler = ScheduleEvaluator()
         let detector = CompositeDetector(
             calendar: CalendarDetector(lookAheadMinutes: preferences.calendarLookAheadMinutes)
