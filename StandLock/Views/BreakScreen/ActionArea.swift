@@ -231,6 +231,7 @@ private struct PhraseDismissView: View {
     let onDismiss: () -> Void
 
     @State private var typedPhrase = ""
+    @State private var previousPhrase = ""
     @State private var showSkipConfirmation = false
     @State private var displayPhrase: String
     @FocusState private var isFieldFocused: Bool
@@ -286,6 +287,13 @@ private struct PhraseDismissView: View {
                         .strokeBorder(palette.paperEdge, lineWidth: 1)
                 )
                 .onAppear { isFieldFocused = true }
+                .onChange(of: typedPhrase) { newValue in
+                    if newValue.count - previousPhrase.count > 1 {
+                        typedPhrase = previousPhrase
+                        return
+                    }
+                    previousPhrase = newValue
+                }
         }
         .onChange(of: phraseMatches) { matches in
             if matches {
