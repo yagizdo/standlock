@@ -2,7 +2,6 @@ import Foundation
 
 public enum DismissMechanism: Sendable, Equatable {
     case button
-    case holdButton(duration: TimeInterval)
     case typePhrase(phrase: String, requiresConfirmation: Bool)
     case findButton(count: Int, attempts: Int)
     case keyCombo(duration: TimeInterval)

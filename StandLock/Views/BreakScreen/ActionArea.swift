@@ -66,10 +66,6 @@ struct ActionArea: View {
             DodgingWrapper(isActive: escalationTier >= 1) {
                 ButtonDismissView(palette: palette, onDismiss: onDismiss)
             }
-        case .holdButton(let duration):
-            DodgingWrapper(isActive: escalationTier >= 1) {
-                HoldDismissView(palette: palette, holdDuration: duration, onDismiss: onDismiss)
-            }
         case .typePhrase(let phrase, let requiresConfirmation):
             PhraseDismissView(
                 palette: palette, phrase: phrase,
@@ -376,52 +372,6 @@ private struct ButtonDismissView: View {
         .onLongPressGesture(minimumDuration: .infinity, pressing: { pressing in
             isPressed = pressing
         }, perform: {})
-        .transition(.opacity)
-    }
-}
-
-// MARK: - Hold
-
-private struct HoldDismissView: View {
-    let palette: BreakPalette
-    let holdDuration: TimeInterval
-    let onDismiss: () -> Void
-
-    @State private var holdProgress: CGFloat = 0
-
-    var body: some View {
-        VStack(spacing: 8) {
-            Text("Hold to skip")
-                .font(BreakTypography.label(size: 12))
-                .foregroundStyle(palette.inkFaint)
-
-            ZStack {
-                Circle()
-                    .stroke(palette.paperEdge, lineWidth: 3)
-                    .frame(width: 44, height: 44)
-                Circle()
-                    .trim(from: 0, to: holdProgress)
-                    .stroke(palette.ink, style: StrokeStyle(lineWidth: 3, lineCap: .round))
-                    .frame(width: 44, height: 44)
-                    .rotationEffect(.degrees(-90))
-                Image(systemName: "forward.fill")
-                    .font(.system(size: 14))
-                    .foregroundStyle(palette.ink)
-            }
-            .onLongPressGesture(minimumDuration: holdDuration) {
-                onDismiss()
-            } onPressingChanged: { pressing in
-                if pressing {
-                    withAnimation(.linear(duration: holdDuration)) {
-                        holdProgress = 1
-                    }
-                } else {
-                    withAnimation(.easeOut(duration: 0.2)) {
-                        holdProgress = 0
-                    }
-                }
-            }
-        }
         .transition(.opacity)
     }
 }

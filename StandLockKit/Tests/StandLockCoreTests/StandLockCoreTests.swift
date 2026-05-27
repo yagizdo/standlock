@@ -179,6 +179,15 @@ struct ScheduleModelTests {
         #expect(decoded.firmSkipDelay == 10)
     }
 
+    // MARK: - DisciplineLevel
+
+    @Test func dailySkipLimitPerDisciplineLevel() {
+        let prefs = AppPreferences(firmDailySkipLimit: 3)
+        #expect(DisciplineLevel.gentle.dailySkipLimit(preferences: prefs) == nil)
+        #expect(DisciplineLevel.firm.dailySkipLimit(preferences: prefs) == 3)
+        #expect(DisciplineLevel.strict.dailySkipLimit(preferences: prefs) == nil)
+    }
+
     // MARK: - EnforcementPolicy
 
     @Test func enforcementPolicyGentleTiers() {
