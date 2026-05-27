@@ -192,15 +192,17 @@ struct ScheduleModelTests {
 
     @Test func enforcementPolicyGentleTiers() {
         let policy = DisciplineLevel.gentle.enforcementPolicy(preferences: AppPreferences())
-        #expect(policy.tiers.count == 4)
+        #expect(policy.tiers.count == 5)
         #expect(policy.tiers[0].dismissMechanism == .button)
         #expect(policy.tiers[0].skipDelay == 0)
         #expect(policy.tiers[1].dismissMechanism == .button)
         #expect(policy.tiers[1].skipDelay == 5)
         #expect(policy.tiers[2].dismissMechanism == .findButton(count: 8, attempts: 3))
         #expect(policy.tiers[2].skipDelay == 10)
-        #expect(policy.tiers[3].dismissMechanism == .typePhrase(phrase: "skip", requiresConfirmation: false))
-        #expect(policy.tiers[3].skipDelay == 15)
+        #expect(policy.tiers[3].dismissMechanism == .crateOpening(slotCount: 12, maxAttempts: 3))
+        #expect(policy.tiers[3].skipDelay == 12)
+        #expect(policy.tiers[4].dismissMechanism == .typePhrase(phrase: "skip", requiresConfirmation: false))
+        #expect(policy.tiers[4].skipDelay == 15)
     }
 
     @Test func enforcementPolicyFirmUsesPreferences() {
@@ -231,7 +233,7 @@ struct ScheduleModelTests {
     @Test func enforcementPolicyTierClampsToRange() {
         let policy = DisciplineLevel.gentle.enforcementPolicy(preferences: AppPreferences())
         let last = policy.tier(at: 99)
-        #expect(last == policy.tiers[3])
+        #expect(last == policy.tiers[4])
         let first = policy.tier(at: -1)
         #expect(first == policy.tiers[0])
     }
