@@ -179,6 +179,15 @@ struct ScheduleModelTests {
         #expect(decoded.firmSkipDelay == 10)
     }
 
+    // MARK: - DisciplineLevel
+
+    @Test func dailySkipLimitPerDisciplineLevel() {
+        let prefs = AppPreferences(firmDailySkipLimit: 3)
+        #expect(DisciplineLevel.gentle.dailySkipLimit(preferences: prefs) == nil)
+        #expect(DisciplineLevel.firm.dailySkipLimit(preferences: prefs) == 3)
+        #expect(DisciplineLevel.strict.dailySkipLimit(preferences: prefs) == nil)
+    }
+
     // MARK: - EnforcementPolicy
 
     @Test func enforcementPolicyGentleTiers() {
@@ -188,7 +197,7 @@ struct ScheduleModelTests {
         #expect(policy.tiers[0].skipDelay == 0)
         #expect(policy.tiers[1].dismissMechanism == .button)
         #expect(policy.tiers[1].skipDelay == 5)
-        #expect(policy.tiers[2].dismissMechanism == .holdButton(duration: 2))
+        #expect(policy.tiers[2].dismissMechanism == .findButton(count: 8, attempts: 3))
         #expect(policy.tiers[2].skipDelay == 10)
         #expect(policy.tiers[3].dismissMechanism == .typePhrase(phrase: "skip", requiresConfirmation: false))
         #expect(policy.tiers[3].skipDelay == 15)
@@ -200,7 +209,7 @@ struct ScheduleModelTests {
         #expect(policy.tiers.count == 4)
         #expect(policy.tiers[0].skipDelay == 20)
         #expect(policy.tiers[0].dismissMechanism == .typePhrase(phrase: "let me go", requiresConfirmation: false))
-        #expect(policy.tiers[2].dismissMechanism == .typePhrase(phrase: "let me go", requiresConfirmation: true))
+        #expect(policy.tiers[2].dismissMechanism == .findButton(count: 8, attempts: 3))
         #expect(policy.tiers[3].dismissMechanism == .typePhrase(phrase: "let me go I really mean it", requiresConfirmation: true))
         #expect(policy.tiers[3].skipDelay == 35)
     }

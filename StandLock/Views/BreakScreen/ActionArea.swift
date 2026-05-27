@@ -50,28 +50,36 @@ struct ActionArea: View {
 
     @ViewBuilder
     private var mechanismView: some View {
+        if let limit = disciplineLevel.dailySkipLimit(preferences: preferences), statistics.breaksSkipped >= limit {
+            Text("Daily skip limit reached")
+                .font(BreakTypography.label(size: 12, weight: .medium))
+                .foregroundStyle(palette.inkFaint)
+        } else {
+            mechanismContent
+        }
+    }
+
+    @ViewBuilder
+    private var mechanismContent: some View {
         switch tier.dismissMechanism {
         case .button:
-            DodgingWrapper(isActive: escalationTier >= 2) {
+            DodgingWrapper(isActive: escalationTier >= 1) {
                 ButtonDismissView(palette: palette, onDismiss: onDismiss)
             }
-        case .holdButton(let duration):
-            DodgingWrapper(isActive: escalationTier >= 2) {
-                HoldDismissView(palette: palette, holdDuration: duration, onDismiss: onDismiss)
-            }
         case .typePhrase(let phrase, let requiresConfirmation):
-            if disciplineLevel == .firm && statistics.breaksSkipped >= preferences.firmDailySkipLimit {
-                Text("Daily skip limit reached")
-                    .font(BreakTypography.label(size: 12, weight: .medium))
-                    .foregroundStyle(palette.inkFaint)
-            } else {
-                PhraseDismissView(
-                    palette: palette, phrase: phrase,
-                    requiresConfirmation: requiresConfirmation,
-                    escalationTier: escalationTier,
-                    onDismiss: onDismiss
-                )
-            }
+            PhraseDismissView(
+                palette: palette, phrase: phrase,
+                requiresConfirmation: requiresConfirmation,
+                escalationTier: escalationTier,
+                onDismiss: onDismiss
+            )
+        case .findButton(let count, let attempts):
+            FindButtonDismissView(
+                palette: palette,
+                buttonCount: count,
+                maxAttempts: attempts,
+                onDismiss: onDismiss
+            )
         case .keyCombo(let duration):
             KeyComboDismissView(
                 palette: palette, holdDuration: duration,
@@ -109,18 +117,18 @@ private struct DodgingWrapper<Content: View>: View {
                         center = CGPoint(x: geo.size.width / 2, y: geo.size.height / 2)
                     }
             }
-            .frame(height: 250)
+            .frame(height: 400)
             .contentShape(Rectangle())
             .onContinuousHover { phase in
-                guard dodgeCount < 8, containerSize.width > 0 else { return }
+                guard dodgeCount < 14, containerSize.width > 0 else { return }
                 switch phase {
                 case .active(let location):
                     let c = center ?? CGPoint(x: containerSize.width / 2, y: containerSize.height / 2)
                     let dist = hypot(location.x - c.x, location.y - c.y)
-                    if dist < 100, !mouseInZone {
+                    if dist < 180, !mouseInZone {
                         mouseInZone = true
-                        performDodge()
-                    } else if dist >= 100 {
+                        performDodge(awayFrom: location)
+                    } else if dist >= 180 {
                         mouseInZone = false
                     }
                 case .ended:
@@ -132,17 +140,210 @@ private struct DodgingWrapper<Content: View>: View {
         }
     }
 
-    private func performDodge() {
+    private func performDodge(awayFrom mouse: CGPoint) {
         dodgeCount += 1
         let c = center ?? CGPoint(x: containerSize.width / 2, y: containerSize.height / 2)
-        let angle = Double.random(in: 0 ..< 2 * .pi)
-        let r: CGFloat = 150
+        let baseAngle = atan2(c.y - mouse.y, c.x - mouse.x)
+        let angle = baseAngle + Double.random(in: -0.5...0.5)
+        let r: CGFloat = 280
         var nx = c.x + cos(angle) * r
         var ny = c.y + sin(angle) * r
-        nx = max(60, min(containerSize.width - 60, nx))
-        ny = max(30, min(containerSize.height - 30, ny))
-        withAnimation(.spring(response: 0.3, dampingFraction: 0.65)) {
+        nx = max(40, min(containerSize.width - 40, nx))
+        ny = max(20, min(containerSize.height - 20, ny))
+        withAnimation(.spring(response: 0.25, dampingFraction: 0.8)) {
             center = CGPoint(x: nx, y: ny)
+        }
+        Task { @MainActor in
+            try? await Task.sleep(for: .milliseconds(350))
+            mouseInZone = false
+        }
+    }
+}
+
+// MARK: - Shake
+
+private struct ShakeEffect: GeometryEffect {
+    var shakes: CGFloat
+
+    var animatableData: CGFloat {
+        get { shakes }
+        set { shakes = newValue }
+    }
+
+    func effectValue(size: CGSize) -> ProjectionTransform {
+        let translation = -5 * sin(shakes * .pi * 2)
+        return ProjectionTransform(CGAffineTransform(translationX: translation, y: 0))
+    }
+}
+
+// MARK: - Find Button
+
+private struct FindButtonDismissView: View {
+    let palette: BreakPalette
+    let buttonCount: Int
+    let maxAttempts: Int
+    let onDismiss: () -> Void
+
+    @State private var buttonIDs: [UUID]
+    @State private var correctIndex: Int
+    @State private var remainingAttempts: Int
+    @State private var shakeAmounts: [CGFloat]
+    @State private var wrongIndex: Int? = nil
+    @State private var correctFound = false
+    @State private var isProcessing = false
+    @State private var round = 0
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    init(palette: BreakPalette, buttonCount: Int, maxAttempts: Int, onDismiss: @escaping () -> Void) {
+        self.palette = palette
+        self.buttonCount = buttonCount
+        self.maxAttempts = maxAttempts
+        self.onDismiss = onDismiss
+        let ids = (0..<buttonCount).map { _ in UUID() }
+        self._buttonIDs = State(initialValue: ids)
+        self._correctIndex = State(initialValue: Int.random(in: 0..<buttonCount))
+        self._remainingAttempts = State(initialValue: maxAttempts)
+        self._shakeAmounts = State(initialValue: Array(repeating: 0, count: buttonCount))
+    }
+
+    private let columns = Array(repeating: GridItem(.fixed(120), spacing: 8), count: 4)
+
+    private let headerMessages = [
+        "Find the right button to skip",
+        "Wrong again? Shocking.",
+        "This is getting embarrassing",
+        "Even a coin flip would work now",
+    ]
+
+    private let exhaustedMessages = [
+        "Better luck next time!",
+        "Wow. All three. Wasted.",
+        "You're really committed to failing",
+        "It's literally 50/50 now",
+    ]
+
+    private let subtitleMessages = [
+        "One of these actually works...",
+        "Fewer buttons, still lost?",
+        "Maybe standing up is easier than this",
+        "Two buttons. No excuses.",
+    ]
+
+    var body: some View {
+        VStack(spacing: 12) {
+            headerView
+            attemptDots
+            gridView
+            Text(subtitleMessages[min(round, subtitleMessages.count - 1)])
+                .font(BreakTypography.label(size: 11))
+                .foregroundStyle(palette.inkFaint)
+                .contentTransition(.interpolate)
+                .animation(.easeInOut(duration: 0.2), value: round)
+        }
+        .transition(.opacity)
+    }
+
+    private var headerView: some View {
+        let text = remainingAttempts == 0
+            ? exhaustedMessages[min(round, exhaustedMessages.count - 1)]
+            : headerMessages[min(round, headerMessages.count - 1)]
+        return Text(text)
+            .font(BreakTypography.label(size: 14, weight: .medium))
+            .foregroundStyle(palette.ink)
+            .contentTransition(.interpolate)
+            .animation(.easeInOut(duration: 0.2), value: remainingAttempts)
+            .animation(.easeInOut(duration: 0.2), value: round)
+    }
+
+    private var attemptDots: some View {
+        HStack(spacing: 6) {
+            ForEach(0..<maxAttempts, id: \.self) { i in
+                Circle()
+                    .fill(i < remainingAttempts ? palette.accent : palette.paperEdge)
+                    .frame(width: 8, height: 8)
+            }
+        }
+    }
+
+    private var gridView: some View {
+        LazyVGrid(columns: columns, spacing: 8) {
+            ForEach(Array(buttonIDs.enumerated()), id: \.element) { index, _ in
+                Button(action: { handleTap(at: index) }) {
+                    Text("Skip this break \u{2192}")
+                        .font(BreakTypography.label(size: 12, weight: .medium))
+                        .foregroundStyle(wrongIndex == index ? Color.red : (correctFound && index == correctIndex ? Color.green : palette.ink))
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 8)
+                        .background(
+                            RoundedRectangle(cornerRadius: 6)
+                                .fill(palette.paper.opacity(0.6))
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 6)
+                                .strokeBorder(
+                                    wrongIndex == index ? Color.red.opacity(0.5) :
+                                    (correctFound && index == correctIndex ? Color.green.opacity(0.5) : palette.paperEdge),
+                                    lineWidth: 1
+                                )
+                        )
+                }
+                .buttonStyle(.plain)
+                .modifier(ShakeEffect(shakes: index < shakeAmounts.count ? shakeAmounts[index] : 0))
+                .disabled(correctFound || isProcessing)
+            }
+        }
+    }
+
+    private func handleTap(at index: Int) {
+        if index == correctIndex {
+            withAnimation(.easeOut(duration: 0.15)) {
+                correctFound = true
+            }
+            Task { @MainActor in
+                try? await Task.sleep(for: .milliseconds(300))
+                onDismiss()
+            }
+        } else {
+            wrongIndex = index
+            remainingAttempts -= 1
+            isProcessing = true
+
+            if !reduceMotion {
+                withAnimation(.default) {
+                    shakeAmounts[index] += 3
+                }
+            }
+
+            Task { @MainActor in
+                try? await Task.sleep(for: .milliseconds(500))
+                wrongIndex = nil
+
+                let shuffled = buttonIDs.shuffled()
+                let newCorrectIndex = Int.random(in: 0..<shuffled.count)
+                let animation: Animation? = reduceMotion ? nil : .spring(response: 0.45, dampingFraction: 0.7)
+                withAnimation(animation) {
+                    buttonIDs = shuffled
+                    correctIndex = newCorrectIndex
+                }
+
+                if remainingAttempts == 0 {
+                    try? await Task.sleep(for: .milliseconds(600))
+                    round += 1
+                    let newCount = max(2, buttonIDs.count - 2)
+                    if newCount < buttonIDs.count {
+                        let trimmed = Array(buttonIDs.shuffled().prefix(newCount))
+                        let trimCorrectIndex = Int.random(in: 0..<newCount)
+                        let trimAnimation: Animation? = reduceMotion ? nil : .spring(response: 0.45, dampingFraction: 0.7)
+                        withAnimation(trimAnimation) {
+                            buttonIDs = trimmed
+                            correctIndex = trimCorrectIndex
+                        }
+                        shakeAmounts = Array(repeating: 0, count: newCount)
+                    }
+                    remainingAttempts = maxAttempts
+                }
+                isProcessing = false
+            }
         }
     }
 }
@@ -175,52 +376,6 @@ private struct ButtonDismissView: View {
     }
 }
 
-// MARK: - Hold
-
-private struct HoldDismissView: View {
-    let palette: BreakPalette
-    let holdDuration: TimeInterval
-    let onDismiss: () -> Void
-
-    @State private var holdProgress: CGFloat = 0
-
-    var body: some View {
-        VStack(spacing: 8) {
-            Text("Hold to skip")
-                .font(BreakTypography.label(size: 12))
-                .foregroundStyle(palette.inkFaint)
-
-            ZStack {
-                Circle()
-                    .stroke(palette.paperEdge, lineWidth: 3)
-                    .frame(width: 44, height: 44)
-                Circle()
-                    .trim(from: 0, to: holdProgress)
-                    .stroke(palette.ink, style: StrokeStyle(lineWidth: 3, lineCap: .round))
-                    .frame(width: 44, height: 44)
-                    .rotationEffect(.degrees(-90))
-                Image(systemName: "forward.fill")
-                    .font(.system(size: 14))
-                    .foregroundStyle(palette.ink)
-            }
-            .onLongPressGesture(minimumDuration: holdDuration) {
-                onDismiss()
-            } onPressingChanged: { pressing in
-                if pressing {
-                    withAnimation(.linear(duration: holdDuration)) {
-                        holdProgress = 1
-                    }
-                } else {
-                    withAnimation(.easeOut(duration: 0.2)) {
-                        holdProgress = 0
-                    }
-                }
-            }
-        }
-        .transition(.opacity)
-    }
-}
-
 // MARK: - Type Phrase
 
 private struct PhraseDismissView: View {
@@ -234,6 +389,8 @@ private struct PhraseDismissView: View {
     @State private var previousPhrase = ""
     @State private var showSkipConfirmation = false
     @State private var displayPhrase: String
+    @State private var switchCount = 0
+    @State private var canSwitch = true
     @FocusState private var isFieldFocused: Bool
 
     init(palette: BreakPalette, phrase: String, requiresConfirmation: Bool,
@@ -248,7 +405,7 @@ private struct PhraseDismissView: View {
 
     private var phraseMatches: Bool {
         typedPhrase.trimmingCharacters(in: .whitespaces)
-            .caseInsensitiveCompare(phrase) == .orderedSame
+            .caseInsensitiveCompare(displayPhrase) == .orderedSame
     }
 
     var body: some View {
@@ -277,7 +434,7 @@ private struct PhraseDismissView: View {
                 .focused($isFieldFocused)
                 .padding(.horizontal, 12)
                 .padding(.vertical, 8)
-                .frame(width: 320, height: 38)
+                .frame(width: 400, height: 38)
                 .background(
                     RoundedRectangle(cornerRadius: 6)
                         .fill(Color.black.opacity(0.04))
@@ -293,6 +450,29 @@ private struct PhraseDismissView: View {
                         return
                     }
                     previousPhrase = newValue
+
+                    if newValue.count <= 2 {
+                        canSwitch = true
+                    }
+
+                    guard escalationTier >= 2, switchCount < 2, canSwitch,
+                          displayPhrase.count > 6 else { return }
+                    let threshold = max(3, Int(Double(displayPhrase.count) * 0.6))
+                    guard newValue.count >= threshold else { return }
+
+                    switchCount += 1
+                    canSwitch = false
+                    typedPhrase = ""
+                    previousPhrase = ""
+                    let nextPhrase: String
+                    if switchCount == 1 {
+                        nextPhrase = "Are you sure about that?"
+                    } else {
+                        nextPhrase = "I solemnly swear to take every single break from now until the end of time itself"
+                    }
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        displayPhrase = nextPhrase
+                    }
                 }
         }
         .onChange(of: phraseMatches) { matches in
@@ -311,23 +491,15 @@ private struct PhraseDismissView: View {
         .onChange(of: showSkipConfirmation) { showing in
             if !showing { isFieldFocused = true }
         }
-        .task {
-            guard escalationTier >= 2 else { return }
-            let alternatives = [
-                "I love standing up",
-                "Taking breaks is great actually",
-            ]
-            for (i, alt) in alternatives.enumerated() {
-                try? await Task.sleep(for: .seconds(4 + i * 10))
-                guard !Task.isCancelled else { return }
-                withAnimation(.easeInOut(duration: 0.2)) {
-                    displayPhrase = alt
-                }
-                try? await Task.sleep(for: .seconds(2))
-                guard !Task.isCancelled else { return }
-                withAnimation(.easeInOut(duration: 0.2)) {
-                    displayPhrase = phrase
-                }
+        .task(id: switchCount) {
+            guard switchCount == 2 else { return }
+            try? await Task.sleep(for: .seconds(5))
+            guard !Task.isCancelled, switchCount == 2 else { return }
+            switchCount = 3
+            typedPhrase = ""
+            previousPhrase = ""
+            withAnimation(.easeInOut(duration: 0.2)) {
+                displayPhrase = phrase
             }
         }
         .transition(.opacity)
