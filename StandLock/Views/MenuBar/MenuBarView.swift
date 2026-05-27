@@ -146,6 +146,7 @@ struct MenuBarView: View {
                     .foregroundStyle(.green)
                 Spacer()
                 Button("Update") {
+                    NSApp.activate(ignoringOtherApps: true)
                     (NSApp.delegate as? AppDelegate)?.updaterController.updater.checkForUpdates()
                 }
                 .buttonStyle(.bordered)
