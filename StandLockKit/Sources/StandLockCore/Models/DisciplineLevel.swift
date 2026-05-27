@@ -11,6 +11,14 @@ public enum DisciplineLevel: String, Codable, Sendable, CaseIterable {
         }
     }
 
+    public func dailySkipLimit(preferences: AppPreferences) -> Int? {
+        switch self {
+        case .gentle: nil
+        case .firm: preferences.firmDailySkipLimit
+        case .strict: nil
+        }
+    }
+
     public var description: String {
         switch self {
         case .gentle: "Full-screen overlay with immediate skip button"
@@ -27,7 +35,7 @@ extension DisciplineLevel {
             return EnforcementPolicy(tiers: [
                 EnforcementTier(skipDelay: 0, dismissMechanism: .button),
                 EnforcementTier(skipDelay: 5, dismissMechanism: .button),
-                EnforcementTier(skipDelay: 10, dismissMechanism: .holdButton(duration: 2)),
+                EnforcementTier(skipDelay: 10, dismissMechanism: .findButton(count: 8, attempts: 3)),
                 EnforcementTier(skipDelay: 15, dismissMechanism: .typePhrase(phrase: "skip", requiresConfirmation: false)),
             ])
         case .firm:
@@ -36,7 +44,7 @@ extension DisciplineLevel {
             return EnforcementPolicy(tiers: [
                 EnforcementTier(skipDelay: base, dismissMechanism: .typePhrase(phrase: phrase, requiresConfirmation: false)),
                 EnforcementTier(skipDelay: base + 5, dismissMechanism: .typePhrase(phrase: phrase, requiresConfirmation: false)),
-                EnforcementTier(skipDelay: base + 10, dismissMechanism: .typePhrase(phrase: phrase, requiresConfirmation: true)),
+                EnforcementTier(skipDelay: base + 10, dismissMechanism: .findButton(count: 8, attempts: 3)),
                 EnforcementTier(skipDelay: base + 15, dismissMechanism: .typePhrase(phrase: phrase + " I really mean it", requiresConfirmation: true)),
             ])
         case .strict:
