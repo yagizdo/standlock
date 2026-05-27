@@ -104,8 +104,6 @@ struct ManuscriptBreakView: View {
                 splashTexts = Array([
                     "Ctrl+Z won't fix your posture",
                     "Two minutes. You'll survive.",
-                    "The code will wait.",
-                    "Your spine has entered the chat",
                     "Even CPUs need cooling breaks",
                     "Stretch now, debug later",
                     "Consecutive skip detected",
@@ -118,6 +116,12 @@ struct ManuscriptBreakView: View {
                     "This is fine.",
                     "One does not simply skip breaks",
                     "I'm in this picture and I don't like it",
+                    "Go touch some grass",
+                    "git commit -m \"touched grass\"",
+                    "sudo stand up",
+                    "Have you tried turning yourself off and on?",
+                    "It works on my spine",
+                    "LGTM. Now stand up.",
                 ].shuffled().prefix(3))
             }
             if reduceMotion {
