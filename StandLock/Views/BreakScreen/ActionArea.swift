@@ -366,7 +366,7 @@ private struct CrateOpeningDismissView: View {
     private let slotWidth: CGFloat = 52
     private let slotSpacing: CGFloat = 4
     private let viewportWidth: CGFloat = 420
-    private let spinDuration: TimeInterval = 4.0
+    private let spinDuration: TimeInterval = 7.0
     private let greenSlotOffset = 4
 
     @State private var stripOffset: CGFloat = 0
@@ -391,21 +391,36 @@ private struct CrateOpeningDismissView: View {
         Set((0..<3).map { $0 * slotCount + greenSlotOffset })
     }
 
+    private let headerMessages = [
+        "So you'd rather gamble than stand up",
+        "Bold of you to try again",
+        "Fine. Last spin.",
+    ]
+
+    private let loseMessages = [
+        "Saw that coming",
+        "Genuinely impressive",
+    ]
+
+    private let subtitleMessages = [
+        "Most of these are red. Just saying.",
+        "Still feeling lucky?",
+        "Last chance. No pressure.",
+    ]
+
     private var headerText: String {
         switch landed {
         case nil:
-            return currentAttempt == 0 ? "Try your luck!" : "Try again!"
+            return headerMessages[min(currentAttempt, headerMessages.count - 1)]
         case false:
-            return "Not this time..."
+            return loseMessages[min(currentAttempt, loseMessages.count - 1)]
         case true:
-            return "Lucky!"
+            return "Ugh. Fine, go."
         }
     }
 
     private var subtitleText: String {
-        if currentAttempt == 0 { return "One of these lets you skip..." }
-        let remaining = maxAttempts - currentAttempt
-        return remaining == 1 ? "Last chance..." : "\(remaining) chances left"
+        subtitleMessages[min(currentAttempt, subtitleMessages.count - 1)]
     }
 
     var body: some View {
@@ -425,35 +440,68 @@ private struct CrateOpeningDismissView: View {
                 }
             }
 
-            VStack(spacing: 4) {
+            VStack(spacing: 0) {
                 IndicatorTriangle()
-                    .fill(palette.ink)
-                    .frame(width: 12, height: 8)
+                    .fill(palette.accent)
+                    .frame(width: 10, height: 6)
 
-                HStack(spacing: slotSpacing) {
-                    ForEach(0..<totalSlots, id: \.self) { i in
-                        let isGreen = greenIndices.contains(i)
-                        RoundedRectangle(cornerRadius: 6)
-                            .fill(isGreen ? Color.green.opacity(0.8) : Color.red.opacity(0.8))
-                            .frame(width: slotWidth, height: 48)
-                            .overlay(
-                                Text(isGreen ? "Skip" : "\u{2715}")
-                                    .font(BreakTypography.label(size: isGreen ? 13 : 16, weight: .medium))
-                                    .foregroundStyle(.white)
-                            )
+                ZStack {
+                    HStack(spacing: slotSpacing) {
+                        ForEach(0..<totalSlots, id: \.self) { i in
+                            let isGreen = greenIndices.contains(i)
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(isGreen ? palette.accent : Color.red.opacity(0.55))
+                                .frame(width: slotWidth, height: 52)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .strokeBorder(
+                                            isGreen ? palette.accent.opacity(0.3) : Color.red.opacity(0.15),
+                                            lineWidth: 1
+                                        )
+                                )
+                                .overlay(
+                                    Text(isGreen ? "Skip" : "\u{2715}")
+                                        .font(BreakTypography.label(size: isGreen ? 13 : 16, weight: .medium))
+                                        .foregroundStyle(.white)
+                                )
+                        }
                     }
+                    .offset(x: stripOffset)
+                    .frame(width: viewportWidth, height: 64, alignment: .leading)
+
+                    HStack(spacing: 0) {
+                        LinearGradient(
+                            colors: [palette.paper, palette.paper.opacity(0)],
+                            startPoint: .leading, endPoint: .trailing
+                        )
+                        .frame(width: 36)
+                        Spacer()
+                        LinearGradient(
+                            colors: [palette.paper.opacity(0), palette.paper],
+                            startPoint: .leading, endPoint: .trailing
+                        )
+                        .frame(width: 36)
+                    }
+
+                    Rectangle()
+                        .fill(palette.accent)
+                        .frame(width: 2, height: 64)
                 }
-                .offset(x: stripOffset)
-                .frame(width: viewportWidth, height: 60, alignment: .leading)
-                .clipped()
+                .frame(width: viewportWidth, height: 64)
+                .clipShape(RoundedRectangle(cornerRadius: 10))
                 .background(
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(palette.paper.opacity(0.3))
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(palette.paper.opacity(0.4))
                 )
                 .overlay(
-                    RoundedRectangle(cornerRadius: 8)
+                    RoundedRectangle(cornerRadius: 10)
                         .strokeBorder(palette.paperEdge, lineWidth: 1)
                 )
+
+                IndicatorTriangle()
+                    .fill(palette.accent)
+                    .frame(width: 10, height: 6)
+                    .rotationEffect(.degrees(180))
             }
 
             Text(subtitleText)
@@ -517,7 +565,7 @@ private struct CrateOpeningDismissView: View {
                 }
                 try? await Task.sleep(for: .milliseconds(400))
             } else {
-                withAnimation(.timingCurve(0.15, 0.85, 0.25, 1.0, duration: spinDuration)) {
+                withAnimation(.timingCurve(0.1, 0.8, 0.2, 1.0, duration: spinDuration)) {
                     stripOffset = finalOffset
                 }
                 try? await Task.sleep(for: .seconds(spinDuration + 0.3))
