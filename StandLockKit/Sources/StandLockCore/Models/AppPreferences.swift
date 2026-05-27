@@ -1,6 +1,7 @@
 import Foundation
 
 public struct AppPreferences: Codable, Sendable, Equatable {
+    public var gentleDailySkipLimit: Int
     public var firmSkipDelay: TimeInterval
     public var firmEscapePhrase: String
     public var firmDailySkipLimit: Int
@@ -21,6 +22,7 @@ public struct AppPreferences: Codable, Sendable, Equatable {
     public var resetIntervalOnSkip: Bool
 
     public init(
+        gentleDailySkipLimit: Int = 5,
         firmSkipDelay: TimeInterval = 10,
         firmEscapePhrase: String = "I choose to skip this break",
         firmDailySkipLimit: Int = 5,
@@ -36,6 +38,7 @@ public struct AppPreferences: Codable, Sendable, Equatable {
         pauseMediaDuringBreak: Bool = true,
         resetIntervalOnSkip: Bool = true
     ) {
+        self.gentleDailySkipLimit = gentleDailySkipLimit
         self.firmSkipDelay = firmSkipDelay
         self.firmEscapePhrase = firmEscapePhrase
         self.firmDailySkipLimit = firmDailySkipLimit
@@ -53,6 +56,7 @@ public struct AppPreferences: Codable, Sendable, Equatable {
     }
 
     private enum CodingKeys: String, CodingKey {
+        case gentleDailySkipLimit
         case firmSkipDelay, firmEscapePhrase, firmDailySkipLimit
         case strictEscapeHoldDuration
         case cameraDetection, microphoneDetection
@@ -65,6 +69,7 @@ public struct AppPreferences: Codable, Sendable, Equatable {
 
     public init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
+        gentleDailySkipLimit = try c.decodeIfPresent(Int.self, forKey: .gentleDailySkipLimit) ?? 5
         firmSkipDelay = try c.decodeIfPresent(TimeInterval.self, forKey: .firmSkipDelay) ?? 10
         firmEscapePhrase = try c.decodeIfPresent(String.self, forKey: .firmEscapePhrase) ?? "I choose to skip this break"
         firmDailySkipLimit = try c.decodeIfPresent(Int.self, forKey: .firmDailySkipLimit) ?? 5

@@ -13,7 +13,7 @@ public enum DisciplineLevel: String, Codable, Sendable, CaseIterable {
 
     public func dailySkipLimit(preferences: AppPreferences) -> Int? {
         switch self {
-        case .gentle: nil
+        case .gentle: preferences.gentleDailySkipLimit
         case .firm: preferences.firmDailySkipLimit
         case .strict: nil
         }

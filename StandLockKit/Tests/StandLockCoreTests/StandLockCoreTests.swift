@@ -182,8 +182,8 @@ struct ScheduleModelTests {
     // MARK: - DisciplineLevel
 
     @Test func dailySkipLimitPerDisciplineLevel() {
-        let prefs = AppPreferences(firmDailySkipLimit: 3)
-        #expect(DisciplineLevel.gentle.dailySkipLimit(preferences: prefs) == nil)
+        let prefs = AppPreferences(gentleDailySkipLimit: 4, firmDailySkipLimit: 3)
+        #expect(DisciplineLevel.gentle.dailySkipLimit(preferences: prefs) == 4)
         #expect(DisciplineLevel.firm.dailySkipLimit(preferences: prefs) == 3)
         #expect(DisciplineLevel.strict.dailySkipLimit(preferences: prefs) == nil)
     }
