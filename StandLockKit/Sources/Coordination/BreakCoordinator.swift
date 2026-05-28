@@ -89,7 +89,7 @@ public final class BreakCoordinator: BreakCoordinating {
         guard var event = currentBreak else { return }
         event.outcome = .skipped
         if let scheduleID = currentBreak?.scheduleId {
-            escalationTiers[scheduleID, default: 0] = min(escalationTiers[scheduleID, default: 0] + 1, 3)
+            escalationTiers[scheduleID, default: 0] = min(escalationTiers[scheduleID, default: 0] + 1, 4)
         }
         locker.dismissOverlay()
         statistics.breaksSkipped += 1
@@ -105,7 +105,7 @@ public final class BreakCoordinator: BreakCoordinating {
         guard var event = currentBreak else { return }
         event.outcome = .escaped
         if let scheduleID = currentBreak?.scheduleId {
-            escalationTiers[scheduleID, default: 0] = min(escalationTiers[scheduleID, default: 0] + 1, 3)
+            escalationTiers[scheduleID, default: 0] = min(escalationTiers[scheduleID, default: 0] + 1, 4)
         }
         locker.dismissOverlay()
         statistics.breaksEscaped += 1
@@ -136,7 +136,8 @@ public final class BreakCoordinator: BreakCoordinating {
 
     private func currentTier(for schedule: Schedule) -> Int {
         guard schedule.progressiveEnforcement else { return 0 }
-        return min(escalationTiers[schedule.id, default: 0], 3)
+        let maxTier = schedule.disciplineLevel.enforcementPolicy(preferences: preferences).tiers.count - 1
+        return min(escalationTiers[schedule.id, default: 0], maxTier)
     }
 
     // MARK: - Private
