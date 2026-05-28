@@ -80,6 +80,13 @@ struct ActionArea: View {
                 maxAttempts: attempts,
                 onDismiss: onDismiss
             )
+        case .crateOpening(let slotCount, let maxAttempts):
+            CrateOpeningDismissView(
+                palette: palette,
+                slotCount: slotCount,
+                maxAttempts: maxAttempts,
+                onDismiss: onDismiss
+            )
         case .keyCombo(let duration):
             KeyComboDismissView(
                 palette: palette, holdDuration: duration,
@@ -345,6 +352,252 @@ private struct FindButtonDismissView: View {
                 isProcessing = false
             }
         }
+    }
+}
+
+// MARK: - Crate Opening
+
+private struct CrateOpeningDismissView: View {
+    let palette: BreakPalette
+    let slotCount: Int
+    let maxAttempts: Int
+    let onDismiss: () -> Void
+
+    private let slotWidth: CGFloat = 52
+    private let slotSpacing: CGFloat = 4
+    private let viewportWidth: CGFloat = 420
+    private let spinDuration: TimeInterval = 7.0
+    private let greenSlotOffset = 4
+
+    @State private var stripOffset: CGFloat = 0
+    @State private var currentAttempt = 0
+    @State private var isSpinning = false
+    @State private var landed: Bool? = nil
+    @State private var usedAttempts: [Bool]
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    init(palette: BreakPalette, slotCount: Int, maxAttempts: Int, onDismiss: @escaping () -> Void) {
+        self.palette = palette
+        self.slotCount = slotCount
+        self.maxAttempts = maxAttempts
+        self.onDismiss = onDismiss
+        self._usedAttempts = State(initialValue: Array(repeating: false, count: maxAttempts))
+    }
+
+    private var totalSlots: Int { slotCount * 3 }
+    private var slotStride: CGFloat { slotWidth + slotSpacing }
+
+    private var greenIndices: Set<Int> {
+        Set((0..<3).map { $0 * slotCount + greenSlotOffset })
+    }
+
+    private let headerMessages = [
+        "So you'd rather gamble than stand up",
+        "Bold of you to try again",
+        "Fine. Last spin.",
+    ]
+
+    private let loseMessages = [
+        "Saw that coming",
+        "Genuinely impressive",
+    ]
+
+    private let subtitleMessages = [
+        "Most of these are red. Just saying.",
+        "Still feeling lucky?",
+        "Last chance. No pressure.",
+    ]
+
+    private var headerText: String {
+        switch landed {
+        case nil:
+            return headerMessages[min(currentAttempt, headerMessages.count - 1)]
+        case false:
+            return loseMessages[min(currentAttempt, loseMessages.count - 1)]
+        case true:
+            return "Ugh. Fine, go."
+        }
+    }
+
+    private var subtitleText: String {
+        subtitleMessages[min(currentAttempt, subtitleMessages.count - 1)]
+    }
+
+    var body: some View {
+        VStack(spacing: 12) {
+            Text(headerText)
+                .font(BreakTypography.label(size: 14, weight: .medium))
+                .foregroundStyle(palette.ink)
+                .contentTransition(.interpolate)
+                .animation(.easeInOut(duration: 0.2), value: landed)
+                .animation(.easeInOut(duration: 0.2), value: currentAttempt)
+
+            HStack(spacing: 6) {
+                ForEach(0..<maxAttempts, id: \.self) { i in
+                    Circle()
+                        .fill(usedAttempts[i] ? palette.paperEdge : palette.accent)
+                        .frame(width: 8, height: 8)
+                }
+            }
+
+            VStack(spacing: 0) {
+                IndicatorTriangle()
+                    .fill(palette.accent)
+                    .frame(width: 10, height: 6)
+
+                ZStack {
+                    HStack(spacing: slotSpacing) {
+                        ForEach(0..<totalSlots, id: \.self) { i in
+                            let isGreen = greenIndices.contains(i)
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(isGreen ? palette.accent : Color.red.opacity(0.55))
+                                .frame(width: slotWidth, height: 52)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .strokeBorder(
+                                            isGreen ? palette.accent.opacity(0.3) : Color.red.opacity(0.15),
+                                            lineWidth: 1
+                                        )
+                                )
+                                .overlay(
+                                    Text(isGreen ? "Skip" : "\u{2715}")
+                                        .font(BreakTypography.label(size: isGreen ? 13 : 16, weight: .medium))
+                                        .foregroundStyle(.white)
+                                )
+                        }
+                    }
+                    .offset(x: stripOffset)
+                    .frame(width: viewportWidth, height: 64, alignment: .leading)
+
+                    HStack(spacing: 0) {
+                        LinearGradient(
+                            colors: [palette.paper, palette.paper.opacity(0)],
+                            startPoint: .leading, endPoint: .trailing
+                        )
+                        .frame(width: 36)
+                        Spacer()
+                        LinearGradient(
+                            colors: [palette.paper.opacity(0), palette.paper],
+                            startPoint: .leading, endPoint: .trailing
+                        )
+                        .frame(width: 36)
+                    }
+
+                    Rectangle()
+                        .fill(palette.accent)
+                        .frame(width: 2, height: 64)
+                }
+                .frame(width: viewportWidth, height: 64)
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+                .background(
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(palette.paper.opacity(0.4))
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .strokeBorder(palette.paperEdge, lineWidth: 1)
+                )
+
+                IndicatorTriangle()
+                    .fill(palette.accent)
+                    .frame(width: 10, height: 6)
+                    .rotationEffect(.degrees(180))
+            }
+
+            Text(subtitleText)
+                .font(BreakTypography.label(size: 11))
+                .foregroundStyle(palette.inkFaint)
+                .contentTransition(.interpolate)
+                .animation(.easeInOut(duration: 0.2), value: currentAttempt)
+
+            Button(action: spin) {
+                VStack(spacing: 4) {
+                    Text(currentAttempt == 0 ? "Spin \u{2192}" : "Try again \u{2192}")
+                        .font(BreakTypography.label(size: 14, weight: .medium))
+                        .foregroundStyle(palette.ink)
+                    Rectangle()
+                        .fill(palette.ink)
+                        .frame(height: 1)
+                }
+                .fixedSize()
+            }
+            .buttonStyle(.plain)
+            .disabled(isSpinning)
+            .opacity(isSpinning ? 0.4 : 1)
+        }
+        .transition(.opacity)
+    }
+
+    private func spin() {
+        guard !isSpinning else { return }
+        isSpinning = true
+        landed = nil
+
+        var transaction = Transaction(animation: nil)
+        transaction.disablesAnimations = true
+        withTransaction(transaction) {
+            stripOffset = 0
+        }
+
+        let greens = Array(greenIndices).filter { $0 >= slotCount }
+        let nonGreens = (slotCount..<totalSlots).filter { !greenIndices.contains($0) }
+
+        let targetIndex: Int
+        switch currentAttempt {
+        case 0:
+            targetIndex = Int.random(in: slotCount..<totalSlots)
+        case 1:
+            targetIndex = Double.random(in: 0..<1) < 0.35
+                ? greens.randomElement()!
+                : nonGreens.randomElement()!
+        default:
+            targetIndex = greens.randomElement()!
+        }
+
+        let jitter = CGFloat.random(in: -10...10)
+        let finalOffset = viewportWidth / 2 - CGFloat(targetIndex) * slotStride - slotWidth / 2 + jitter
+        let hitGreen = greenIndices.contains(targetIndex)
+
+        Task { @MainActor in
+            if reduceMotion {
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    stripOffset = finalOffset
+                }
+                try? await Task.sleep(for: .milliseconds(400))
+            } else {
+                withAnimation(.timingCurve(0.1, 0.8, 0.2, 1.0, duration: spinDuration)) {
+                    stripOffset = finalOffset
+                }
+                try? await Task.sleep(for: .seconds(spinDuration + 0.3))
+            }
+
+            guard !Task.isCancelled else { return }
+
+            if hitGreen {
+                landed = true
+                try? await Task.sleep(for: .milliseconds(500))
+                guard !Task.isCancelled else { return }
+                onDismiss()
+            } else {
+                landed = false
+                usedAttempts[currentAttempt] = true
+                try? await Task.sleep(for: .milliseconds(800))
+                guard !Task.isCancelled else { return }
+                currentAttempt += 1
+                isSpinning = false
+            }
+        }
+    }
+}
+
+private struct IndicatorTriangle: Shape {
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        path.move(to: CGPoint(x: rect.midX, y: rect.maxY))
+        path.addLine(to: CGPoint(x: rect.minX, y: rect.minY))
+        path.addLine(to: CGPoint(x: rect.maxX, y: rect.minY))
+        path.closeSubpath()
+        return path
     }
 }
 

@@ -70,6 +70,25 @@ struct LockStateMachineTests {
         #expect(sm.dailySkipCount == 1)
     }
 
+    @Test func gentleDailySkipLimitReached() {
+        var sm = LockStateMachine(dailySkipLimit: 2)
+
+        sm.handle(.activate(level: .gentle, duration: 300))
+        sm.handle(.skipRequested)
+        #expect(sm.state == .dismissed(outcome: .skipped))
+        #expect(sm.dailySkipCount == 1)
+
+        sm.handle(.activate(level: .gentle, duration: 300))
+        sm.handle(.skipRequested)
+        #expect(sm.state == .dismissed(outcome: .skipped))
+        #expect(sm.dailySkipCount == 2)
+
+        sm.handle(.activate(level: .gentle, duration: 300))
+        sm.handle(.skipRequested)
+        #expect(sm.state == .active(level: .gentle, remainingSeconds: 300))
+        #expect(sm.dailySkipCount == 2)
+    }
+
     @Test func firmSkipDelay() {
         var sm = LockStateMachine(skipDelay: 10, dailySkipLimit: 5)
         sm.handle(.activate(level: .firm, duration: 300))

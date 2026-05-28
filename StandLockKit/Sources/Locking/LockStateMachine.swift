@@ -65,8 +65,10 @@ public struct LockStateMachine: Sendable {
             }
 
         case (.active(.gentle, _), .skipRequested):
-            dailySkipCount += 1
-            state = .dismissed(outcome: .skipped)
+            if dailySkipCount < dailySkipLimit {
+                dailySkipCount += 1
+                state = .dismissed(outcome: .skipped)
+            }
 
         case (.active(.firm, _), .phraseTyped(let correct)):
             if correct && dailySkipCount < dailySkipLimit {
