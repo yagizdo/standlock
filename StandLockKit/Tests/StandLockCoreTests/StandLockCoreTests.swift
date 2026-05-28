@@ -201,7 +201,7 @@ struct ScheduleModelTests {
         #expect(policy.tiers[2].skipDelay == 10)
         #expect(policy.tiers[3].dismissMechanism == .crateOpening(slotCount: 12, maxAttempts: 3))
         #expect(policy.tiers[3].skipDelay == 12)
-        #expect(policy.tiers[4].dismissMechanism == .typePhrase(phrase: "skip", requiresConfirmation: false))
+        #expect(policy.tiers[4].dismissMechanism == .typePhrase(phrase: "My legs are decorative", requiresConfirmation: false))
         #expect(policy.tiers[4].skipDelay == 15)
     }
 
