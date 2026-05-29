@@ -6,6 +6,7 @@ public enum DismissMechanism: Sendable, Equatable {
     case findButton(count: Int, attempts: Int)
     case crateOpening(slotCount: Int, maxAttempts: Int)
     case keyCombo(duration: TimeInterval)
+    case roastChallenge(sentenceCount: Int)
 }
 
 public struct EnforcementTier: Sendable, Equatable {
