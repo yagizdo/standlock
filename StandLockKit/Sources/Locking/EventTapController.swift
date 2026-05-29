@@ -2,6 +2,11 @@ import CoreGraphics
 import ApplicationServices
 import Foundation
 
+public extension Notification.Name {
+    static let escapeHoldStarted = Notification.Name("StandLock.escapeHoldStarted")
+    static let escapeHoldEnded = Notification.Name("StandLock.escapeHoldEnded")
+}
+
 public final class EventTapController: @unchecked Sendable {
     private var eventTap: CFMachPort?
     private var runLoopSource: CFRunLoopSource?
@@ -9,6 +14,7 @@ public final class EventTapController: @unchecked Sendable {
     public private(set) var isBlocking: Bool = false
     private let onEscapeTriggered: @Sendable () -> Void
     var escapeDetector: EscapeDetector
+    private var holdTimer: Timer?
 
     public init(
         escapeHoldDuration: TimeInterval = 10.0,
@@ -62,6 +68,7 @@ public final class EventTapController: @unchecked Sendable {
     }
 
     public func stop() {
+        cancelHoldTimer()
         if let source = runLoopSource {
             CFRunLoopRemoveSource(CFRunLoopGetMain(), source, .commonModes)
         }
@@ -85,6 +92,7 @@ public final class EventTapController: @unchecked Sendable {
 
         if type == .flagsChanged {
             let flags = event.flags
+            let wasHolding = escapeDetector.isHolding
             escapeDetector.flagsChanged(
                 controlDown: flags.contains(.maskControl),
                 optionDown: flags.contains(.maskAlternate),
@@ -92,12 +100,39 @@ public final class EventTapController: @unchecked Sendable {
                 at: Date()
             )
             if escapeDetector.isEscapeTriggered(at: Date()) {
+                cancelHoldTimer()
                 onEscapeTriggered()
                 return Unmanaged.passUnretained(event)
+            }
+
+            if escapeDetector.isHolding && !wasHolding {
+                startHoldTimer()
+                NotificationCenter.default.post(name: .escapeHoldStarted, object: nil)
+            } else if !escapeDetector.isHolding && wasHolding {
+                cancelHoldTimer()
+                NotificationCenter.default.post(name: .escapeHoldEnded, object: nil)
             }
         }
 
         return isBlocking ? nil : Unmanaged.passUnretained(event)
+    }
+
+    private func startHoldTimer() {
+        holdTimer = Timer.scheduledTimer(
+            withTimeInterval: escapeDetector.requiredDuration + 0.01,
+            repeats: false
+        ) { [weak self] _ in
+            guard let self else { return }
+            if self.escapeDetector.isEscapeTriggered(at: Date()) {
+                self.onEscapeTriggered()
+            }
+            self.holdTimer = nil
+        }
+    }
+
+    private func cancelHoldTimer() {
+        holdTimer?.invalidate()
+        holdTimer = nil
     }
 }
 

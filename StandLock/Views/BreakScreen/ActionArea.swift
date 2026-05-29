@@ -1,5 +1,6 @@
 import SwiftUI
 import StandLockCore
+import Locking
 
 struct ActionArea: View {
     let tier: EnforcementTier
@@ -766,18 +767,49 @@ private struct KeyComboDismissView: View {
     let holdDuration: TimeInterval
     let weeklyEscapeCount: Int
 
+    @State private var holdingKeys = false
+    @State private var progress: CGFloat = 0
+    @State private var remaining: Int
+
+    init(palette: BreakPalette, holdDuration: TimeInterval, weeklyEscapeCount: Int) {
+        self.palette = palette
+        self.holdDuration = holdDuration
+        self.weeklyEscapeCount = weeklyEscapeCount
+        self._remaining = State(initialValue: Int(holdDuration))
+    }
+
     var body: some View {
         VStack(spacing: 12) {
             HStack(spacing: 8) {
                 Text("Hold")
                     .font(BreakTypography.label(size: 13))
                     .foregroundStyle(palette.inkSoft)
-                keycap("⌃")
-                keycap("⌥")
-                keycap("⌘")
+                keycap("⌃", active: holdingKeys)
+                keycap("⌥", active: holdingKeys)
+                keycap("⌘", active: holdingKeys)
                 Text("for \(Int(holdDuration)) seconds to exit.")
                     .font(BreakTypography.label(size: 13))
                     .foregroundStyle(palette.inkSoft)
+            }
+
+            if holdingKeys {
+                VStack(spacing: 6) {
+                    Capsule()
+                        .fill(palette.accent.opacity(0.15))
+                        .frame(width: 200, height: 4)
+                        .overlay(alignment: .leading) {
+                            Capsule()
+                                .fill(palette.accent)
+                                .frame(width: 200 * progress, height: 4)
+                        }
+                        .clipShape(Capsule())
+                    Text("\(remaining)s")
+                        .font(BreakTypography.label(size: 11, weight: .medium))
+                        .foregroundStyle(palette.accent)
+                        .contentTransition(.numericText())
+                        .animation(.default, value: remaining)
+                }
+                .transition(.opacity)
             }
 
             HStack(spacing: 0) {
@@ -791,21 +823,46 @@ private struct KeyComboDismissView: View {
                     .foregroundStyle(palette.inkFaint)
             }
         }
+        .animation(.easeOut(duration: 0.2), value: holdingKeys)
+        .onReceive(NotificationCenter.default.publisher(for: .escapeHoldStarted)) { _ in
+            holdingKeys = true
+            remaining = Int(holdDuration)
+            progress = 0
+            withAnimation(.linear(duration: holdDuration)) {
+                progress = 1
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .escapeHoldEnded)) { _ in
+            withAnimation(.easeOut(duration: 0.15)) {
+                holdingKeys = false
+            }
+            progress = 0
+            remaining = Int(holdDuration)
+        }
+        .task(id: holdingKeys) {
+            guard holdingKeys else { return }
+            while remaining > 0 {
+                try? await Task.sleep(for: .seconds(1))
+                guard !Task.isCancelled else { return }
+                remaining -= 1
+            }
+        }
     }
 
-    private func keycap(_ glyph: String) -> some View {
+    private func keycap(_ glyph: String, active: Bool = false) -> some View {
         Text(glyph)
             .font(BreakTypography.keycap())
-            .foregroundStyle(palette.ink)
+            .foregroundStyle(active ? .white : palette.ink)
             .frame(minWidth: 26, minHeight: 24)
             .padding(.horizontal, 8)
             .background(
                 RoundedRectangle(cornerRadius: 4)
-                    .fill(Color.black.opacity(0.05))
+                    .fill(active ? palette.accent : Color.black.opacity(0.05))
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 4)
-                    .strokeBorder(palette.paperEdge, lineWidth: 1)
+                    .strokeBorder(active ? palette.accent.opacity(0.3) : palette.paperEdge, lineWidth: 1)
             )
+            .animation(.easeOut(duration: 0.15), value: active)
     }
 }
