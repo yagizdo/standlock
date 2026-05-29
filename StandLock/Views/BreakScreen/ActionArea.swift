@@ -693,7 +693,7 @@ private struct RoastChallengeDismissView: View {
             HStack(spacing: 6) {
                 ForEach(0..<sentenceCount, id: \.self) { i in
                     Circle()
-                        .fill(i < currentIndex ? palette.accent : (i == currentIndex ? palette.accent : palette.paperEdge))
+                        .fill(i < currentIndex ? palette.accent : (i == currentIndex ? palette.accent.opacity(0.5) : palette.paperEdge))
                         .frame(width: 8, height: 8)
                 }
             }
