@@ -7,7 +7,7 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-purple)](LICENSE)
 [![Website](https://img.shields.io/badge/website-standlock.app-blue)](https://standlock.app?ref=github-readme)
 
-A macOS menu bar app that reminds you to stand up and move. It sits quietly in your menu bar, tracks your schedules, and puts a full-screen overlay when it's time for a break. You pick how strict each schedule should be.
+A macOS menu bar app that forces you to take stand-up breaks. It runs quietly in your menu bar, manages multiple schedules, and puts a full-screen overlay on every display when it's time. You pick how strict each schedule should be, and the app gets progressively harder to dismiss the more you skip.
 
 ## Why
 
@@ -15,34 +15,52 @@ Most break reminder apps show a notification you can swipe away in half a second
 
 ## Features
 
-**Three Discipline Levels**
+### Discipline Levels
+
+Each schedule has its own discipline level. Pick one per schedule and change it anytime.
 
 | Level | Behavior |
 |-------|----------|
 | Gentle | Full-screen overlay with an immediate skip button |
 | Firm | Timed skip delay + type an escape phrase to dismiss |
-| Strict | Full input blocking, only an emergency key combo exits |
+| Strict | Full input blocking, only an emergency key combo (Ctrl+Option+Command hold) exits |
 
-**Smart Scheduling**
-- Multiple named schedules with independent settings
-- Time windows (e.g., 09:00–12:00, 13:00–17:00)
+### Escalation
+
+Enable progressive enforcement on any schedule and each consecutive skip makes the next break harder to dismiss. Challenges range from dodging buttons and mini-games to typing embarrassing phrases with snarky app commentary. Complete a break (or let idle detection count one) and the tier resets.
+
+### Smart Scheduling
+
+- Multiple named schedules, each with its own discipline level and settings
+- Time windows (e.g., 09:00-12:00, 13:00-17:00)
 - Day selection: weekdays, weekends, every day, or custom
-- Pomodoro-style repetition cycles (short/long break patterns)
-- Optional progressive enforcement: skipped breaks escalate dismiss difficulty
+- Pomodoro-style repetition cycles with short/long break patterns
+- Configurable daily skip limits per discipline level
 
-**Context Awareness**
-- Defers breaks during meetings (camera/microphone active)
-- Respects screen sharing sessions
-- Integrates with Calendar to skip during events
-- Detects idle time so you don't get a break after already being away
+### Context Awareness
+
+- Defers breaks during meetings (camera/microphone active) or screen sharing
+- Integrates with Calendar to skip during upcoming events
+- Detects idle time: if you've already been away long enough, the break counts as completed
 - Honors macOS Focus modes
+- Each detection can be set to defer the break, reduce to Gentle, or ignore it entirely
 
-**Break Experience**
-- Full-screen overlay with countdown timer
-- Menu bar timer showing remaining time until next break (always-on or last-minutes countdown)
+### Break Experience
+
+- Full-screen overlay on every display with countdown timer
+- Exercise suggestions during breaks (stretches, water reminders, squats)
 - Pauses system media during breaks
-- Exercise suggestions during breaks (stretches, water breaks, squats)
-- Streak and completion statistics in the menu bar
+
+### Menu Bar
+
+- Timer showing remaining time until next break (always-on or last-minutes countdown)
+- Break stats: completions, current streak, completion rate
+- Pause/resume controls
+
+### General
+
+- **Launch at login** via macOS login items
+- **Auto-update** checks every 4 hours via Sparkle, with an update banner in the menu bar
 
 ## Install
 
@@ -52,7 +70,9 @@ Most break reminder apps show a notification you can swipe away in half a second
 
 ### GitHub Releases
 
-Download: <https://github.com/yagizdo/StandLock/releases/latest>
+Download the DMG: <https://github.com/yagizdo/StandLock/releases/latest>
+
+Drag StandLock to your Applications folder, then open it. The app appears in your menu bar.
 
 ### Homebrew
 
@@ -71,7 +91,7 @@ StandLock requests only the permissions it needs, and only when you use a featur
 | **Calendar** | Optional. Reads your calendar events to automatically defer breaks during meetings. Never modifies your calendar. |
 | **Camera & Microphone** | Not accessed directly. StandLock checks whether another app is using the camera or mic to detect active meetings and defer breaks accordingly. |
 
-You can revoke any permission at any time in **System Settings > Privacy & Security**. StandLock will fall back gracefully: Strict mode becomes unavailable without both Accessibility and Input Monitoring, idle detection becomes less accurate without Input Monitoring, and meeting detection is skipped without Calendar access.
+You can revoke any permission at any time in **System Settings > Privacy & Security**. When a permission is revoked, features that depend on it are auto-disabled: Strict mode switches schedules back to Gentle, idle detection turns off, and calendar integration is skipped. No crashes, no broken state.
 
 ## Building from Source
 
