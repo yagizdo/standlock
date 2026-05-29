@@ -1,5 +1,16 @@
 # Changelog
 
+## StandLock v0.2.5
+
+**Features**
+- Menu bar countdown timer with two display modes: always-on full timer or last-minutes-only countdown (e041bdb)
+- Roast challenge as Firm tier 5 dismiss mechanic: type embarrassing sentences to earn a skip (74e7a00)
+
+**Bug Fixes**
+- Active progress dot in roast challenge now renders at 50% opacity to distinguish from completed dots (187b538)
+
+**Full Changelog:** https://github.com/yagizdo/StandLock/compare/v0.2.4...v0.2.5
+
 ## StandLock v0.2.4
 
 **Features**

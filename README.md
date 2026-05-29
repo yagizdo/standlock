@@ -1,6 +1,6 @@
 # StandLock
 
-[![Version](https://img.shields.io/badge/version-0.2.4-blue)](https://github.com/yagizdo/StandLock/releases)
+[![Version](https://img.shields.io/badge/version-0.2.5-blue)](https://github.com/yagizdo/StandLock/releases)
 [![Release](https://github.com/yagizdo/standlock/actions/workflows/release.yml/badge.svg)](https://github.com/yagizdo/standlock/actions/workflows/release.yml)
 [![macOS 13+](https://img.shields.io/badge/macOS-13%2B-brightgreen)](https://github.com/yagizdo/StandLock/releases/latest)
 [![Homebrew](https://img.shields.io/badge/brew-yagizdo%2Ftap%2Fstandlock-orange)](https://github.com/yagizdo/homebrew-tap)
@@ -39,6 +39,7 @@ Most break reminder apps show a notification you can swipe away in half a second
 
 **Break Experience**
 - Full-screen overlay with countdown timer
+- Menu bar timer showing remaining time until next break (always-on or last-minutes countdown)
 - Pauses system media during breaks
 - Exercise suggestions during breaks (stretches, water breaks, squats)
 - Streak and completion statistics in the menu bar
