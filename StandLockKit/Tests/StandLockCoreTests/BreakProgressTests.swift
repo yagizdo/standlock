@@ -99,4 +99,90 @@ struct BreakProgressTests {
     @Test func overOneClampsToFull() {
         #expect(ProgressDisplayBranch(progress: 2.0) == .full)
     }
+
+    // MARK: - formatMenuBarTimer
+
+    @Test func timerHiddenWhenBreakActive() {
+        #expect(formatMenuBarTimer(
+            secondsRemaining: 30, showFullTimer: true, countdownMinutes: 1,
+            isBreakActive: true, isPaused: false, hasScheduledBreak: true
+        ) == nil)
+    }
+
+    @Test func timerHiddenWhenPaused() {
+        #expect(formatMenuBarTimer(
+            secondsRemaining: 30, showFullTimer: true, countdownMinutes: 1,
+            isBreakActive: false, isPaused: true, hasScheduledBreak: true
+        ) == nil)
+    }
+
+    @Test func timerHiddenWhenNoSchedule() {
+        #expect(formatMenuBarTimer(
+            secondsRemaining: 30, showFullTimer: true, countdownMinutes: 1,
+            isBreakActive: false, isPaused: false, hasScheduledBreak: false
+        ) == nil)
+    }
+
+    @Test func fullTimerShowsMinutes() {
+        #expect(formatMenuBarTimer(
+            secondsRemaining: 1920, showFullTimer: true, countdownMinutes: 1,
+            isBreakActive: false, isPaused: false, hasScheduledBreak: true
+        ) == "32m")
+    }
+
+    @Test func fullTimerShowsSecondsUnder60() {
+        #expect(formatMenuBarTimer(
+            secondsRemaining: 45, showFullTimer: true, countdownMinutes: 1,
+            isBreakActive: false, isPaused: false, hasScheduledBreak: true
+        ) == "0:45")
+    }
+
+    @Test func countdownHiddenAboveThreshold() {
+        #expect(formatMenuBarTimer(
+            secondsRemaining: 120, showFullTimer: false, countdownMinutes: 1,
+            isBreakActive: false, isPaused: false, hasScheduledBreak: true
+        ) == nil)
+    }
+
+    @Test func countdownVisibleWithinThreshold() {
+        #expect(formatMenuBarTimer(
+            secondsRemaining: 45, showFullTimer: false, countdownMinutes: 1,
+            isBreakActive: false, isPaused: false, hasScheduledBreak: true
+        ) == "0:45")
+    }
+
+    @Test func countdownThreeMinutesShowsMinutes() {
+        #expect(formatMenuBarTimer(
+            secondsRemaining: 150, showFullTimer: false, countdownMinutes: 3,
+            isBreakActive: false, isPaused: false, hasScheduledBreak: true
+        ) == "3m")
+    }
+
+    @Test func minuteRoundsUp() {
+        #expect(formatMenuBarTimer(
+            secondsRemaining: 90, showFullTimer: true, countdownMinutes: 1,
+            isBreakActive: false, isPaused: false, hasScheduledBreak: true
+        ) == "2m")
+    }
+
+    @Test func exactMinuteBoundary() {
+        #expect(formatMenuBarTimer(
+            secondsRemaining: 60, showFullTimer: true, countdownMinutes: 1,
+            isBreakActive: false, isPaused: false, hasScheduledBreak: true
+        ) == "1m")
+    }
+
+    @Test func fractionalSecondsAboveMinuteNotRoundedUp() {
+        #expect(formatMenuBarTimer(
+            secondsRemaining: 60.01, showFullTimer: true, countdownMinutes: 1,
+            isBreakActive: false, isPaused: false, hasScheduledBreak: true
+        ) == "1m")
+    }
+
+    @Test func zeroSecondsFormatsCorrectly() {
+        #expect(formatMenuBarTimer(
+            secondsRemaining: 0, showFullTimer: true, countdownMinutes: 1,
+            isBreakActive: false, isPaused: false, hasScheduledBreak: true
+        ) == "0:00")
+    }
 }

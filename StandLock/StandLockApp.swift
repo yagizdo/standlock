@@ -14,6 +14,10 @@ struct StandLockApp: App {
                 .environmentObject(appDelegate.updateObserver)
         } label: {
             Image(nsImage: MenuBarIcon.make(progress: appCoordinator.breakProgress))
+            if let timerText = appCoordinator.menuBarTimerText {
+                Text(timerText)
+                    .monospacedDigit()
+            }
         }
         .menuBarExtraStyle(.window)
 

@@ -21,6 +21,9 @@ public struct AppPreferences: Codable, Sendable, Equatable {
 
     public var resetIntervalOnSkip: Bool
 
+    public var showFullWorkTimer: Bool
+    public var menuBarCountdownMinutes: Int
+
     public init(
         gentleDailySkipLimit: Int = 5,
         firmSkipDelay: TimeInterval = 10,
@@ -36,7 +39,9 @@ public struct AppPreferences: Codable, Sendable, Equatable {
         focusModeDetection: DetectionBehavior = .deferBreak,
         idleDetectionEnabled: Bool = true,
         pauseMediaDuringBreak: Bool = true,
-        resetIntervalOnSkip: Bool = true
+        resetIntervalOnSkip: Bool = true,
+        showFullWorkTimer: Bool = false,
+        menuBarCountdownMinutes: Int = 1
     ) {
         self.gentleDailySkipLimit = gentleDailySkipLimit
         self.firmSkipDelay = firmSkipDelay
@@ -53,6 +58,8 @@ public struct AppPreferences: Codable, Sendable, Equatable {
         self.idleDetectionEnabled = idleDetectionEnabled
         self.pauseMediaDuringBreak = pauseMediaDuringBreak
         self.resetIntervalOnSkip = resetIntervalOnSkip
+        self.showFullWorkTimer = showFullWorkTimer
+        self.menuBarCountdownMinutes = menuBarCountdownMinutes
     }
 
     private enum CodingKeys: String, CodingKey {
@@ -65,6 +72,7 @@ public struct AppPreferences: Codable, Sendable, Equatable {
         case focusModeDetection, idleDetectionEnabled
         case pauseMediaDuringBreak
         case resetIntervalOnSkip
+        case showFullWorkTimer, menuBarCountdownMinutes
     }
 
     public init(from decoder: Decoder) throws {
@@ -84,6 +92,8 @@ public struct AppPreferences: Codable, Sendable, Equatable {
         idleDetectionEnabled = try c.decodeIfPresent(Bool.self, forKey: .idleDetectionEnabled) ?? true
         pauseMediaDuringBreak = try c.decodeIfPresent(Bool.self, forKey: .pauseMediaDuringBreak) ?? true
         resetIntervalOnSkip = try c.decodeIfPresent(Bool.self, forKey: .resetIntervalOnSkip) ?? true
+        showFullWorkTimer = try c.decodeIfPresent(Bool.self, forKey: .showFullWorkTimer) ?? false
+        menuBarCountdownMinutes = try c.decodeIfPresent(Int.self, forKey: .menuBarCountdownMinutes) ?? 1
     }
 }
 

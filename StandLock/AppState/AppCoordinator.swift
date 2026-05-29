@@ -41,6 +41,7 @@ final class AppCoordinator: ObservableObject {
     @Published var preferences: AppPreferences = AppPreferences()
     @Published var hasCompletedOnboarding: Bool = false
     @Published private(set) var breakProgress: Double = 0
+    @Published private(set) var menuBarTimerText: String?
 
     let permissionChecker = PermissionChecker()
 
@@ -121,6 +122,7 @@ final class AppCoordinator: ObservableObject {
         guard let data = try? JSONEncoder().encode(preferences) else { return }
         UserDefaults.standard.set(data, forKey: "preferences")
         coordinator?.updatePreferences(preferences)
+        updateMenuBarTimer()
     }
 
     private func syncPreferencesWithPermissions() {
@@ -220,6 +222,7 @@ final class AppCoordinator: ObservableObject {
             nextBreakTime = date
             breakScheduledAt = Date()
             recalculateProgress()
+            updateMenuBarTimer()
 
         case .breakStarted(let e):
             deferralReason = nil
@@ -232,6 +235,7 @@ final class AppCoordinator: ObservableObject {
             isBreakActive = false
             currentBreakRemaining = 0
             breakProgress = 0
+            menuBarTimerText = nil
 
         case .breakDeferred(let reason, _):
             deferralReason = reason
@@ -239,10 +243,12 @@ final class AppCoordinator: ObservableObject {
         case .schedulePaused(let until):
             isPaused = true
             pausedUntil = until
+            menuBarTimerText = nil
 
         case .scheduleResumed:
             isPaused = false
             pausedUntil = nil
+            updateMenuBarTimer()
 
         case .statisticsUpdated(let stats):
             todayStats = stats
@@ -304,11 +310,31 @@ final class AppCoordinator: ObservableObject {
     private func startProgressTimer() {
         progressTimer = Task {
             while !Task.isCancelled {
-                try? await Task.sleep(for: .seconds(10))
-                guard !Task.isCancelled else { break }
                 recalculateProgress()
+                updateMenuBarTimer()
+
+                let interval: Duration = if let remaining = nextBreakTime?.timeIntervalSinceNow,
+                                            menuBarTimerText != nil, remaining < 60 {
+                    .seconds(1)
+                } else {
+                    .seconds(10)
+                }
+                try? await Task.sleep(for: interval, tolerance: interval == .seconds(10) ? .seconds(2) : .milliseconds(100))
+                guard !Task.isCancelled else { break }
             }
         }
+    }
+
+    private func updateMenuBarTimer() {
+        let remaining = nextBreakTime?.timeIntervalSinceNow ?? 0
+        menuBarTimerText = formatMenuBarTimer(
+            secondsRemaining: remaining,
+            showFullTimer: preferences.showFullWorkTimer,
+            countdownMinutes: preferences.menuBarCountdownMinutes,
+            isBreakActive: isBreakActive,
+            isPaused: isPaused,
+            hasScheduledBreak: nextBreakTime != nil
+        )
     }
 
     private func recalculateProgress() {

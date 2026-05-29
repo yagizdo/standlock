@@ -14,6 +14,32 @@ public func calculateBreakProgress(
     return min(1.0, max(0.0, elapsed / total))
 }
 
+public func formatMenuBarTimer(
+    secondsRemaining: TimeInterval,
+    showFullTimer: Bool,
+    countdownMinutes: Int,
+    isBreakActive: Bool,
+    isPaused: Bool,
+    hasScheduledBreak: Bool
+) -> String? {
+    if isBreakActive || isPaused || !hasScheduledBreak { return nil }
+    let remaining = max(0, secondsRemaining)
+
+    if !showFullTimer {
+        let threshold = TimeInterval(countdownMinutes * 60)
+        if remaining > threshold { return nil }
+    }
+
+    let wholeSeconds = remaining.rounded(.down)
+    if wholeSeconds < 60 {
+        let seconds = Int(wholeSeconds) % 60
+        return String(format: "0:%02d", seconds)
+    } else {
+        let minutes = Int(ceil(wholeSeconds / 60))
+        return "\(minutes)m"
+    }
+}
+
 public enum ProgressDisplayBranch: Sendable, Equatable {
     case empty
     case partial
