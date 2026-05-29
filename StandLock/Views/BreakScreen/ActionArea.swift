@@ -93,6 +93,12 @@ struct ActionArea: View {
                 palette: palette, holdDuration: duration,
                 weeklyEscapeCount: statistics.weeklyEscapeCount
             )
+        case .roastChallenge(let sentenceCount):
+            RoastChallengeDismissView(
+                palette: palette,
+                sentenceCount: sentenceCount,
+                onDismiss: onDismiss
+            )
         }
     }
 }
@@ -599,6 +605,182 @@ private struct IndicatorTriangle: Shape {
         path.addLine(to: CGPoint(x: rect.maxX, y: rect.minY))
         path.closeSubpath()
         return path
+    }
+}
+
+// MARK: - Roast Challenge
+
+private struct RoastChallengeDismissView: View {
+    let palette: BreakPalette
+    let sentenceCount: Int
+    let onDismiss: () -> Void
+
+    @State private var currentIndex = 0
+    @State private var typedText = ""
+    @State private var previousText = ""
+    @State private var phase: Phase = .typing
+    @State private var selectedSentences: [String]
+    @State private var currentResponse = ""
+    @FocusState private var isFieldFocused: Bool
+
+    private enum Phase {
+        case typing
+        case responding
+    }
+
+    init(palette: BreakPalette, sentenceCount: Int, onDismiss: @escaping () -> Void) {
+        self.palette = palette
+        self.sentenceCount = sentenceCount
+        self.onDismiss = onDismiss
+        self._selectedSentences = State(initialValue: Array(Self.sentencePool.shuffled().prefix(sentenceCount)))
+    }
+
+    private static let sentencePool = [
+        "I'm too lazy to stand for thirty seconds",
+        "My spine filed a complaint but I ignored it",
+        "I treat my legs like decorative furniture",
+        "Standing is my greatest fear",
+        "I'd rather humiliate myself than take a break",
+        "My chair and I are in a committed relationship",
+        "I choose early back pain over a short walk",
+        "Exercise? I thought you said extra fries",
+        "I skipped leg day and every other day too",
+        "My doctor would be so disappointed right now",
+        "I'm allergic to standing up",
+        "My posture is a cry for help",
+        "I consider sitting a competitive sport",
+        "My legs forgot their purpose",
+        "I treat health advice as gentle suggestions",
+    ]
+
+    private static let responsesAfterFirst = [
+        "I already knew that. Next.",
+        "Tell me something I don't know.",
+        "Boring. Type another one.",
+    ]
+
+    private static let responsesAfterSecond = [
+        "Still going? Wow.",
+        "You actually typed that? Impressive dedication to laziness.",
+        "Two down and zero shame. One more.",
+    ]
+
+    private static let responsesFinal = [
+        "Fine. You're even more hopeless than I thought. Take your skip.",
+        "Okay okay, you win. Or lose. Depends on perspective.",
+        "I'm out of insults. Skip granted, you absolute legend.",
+    ]
+
+    private static let headerMessages = [
+        "You want to skip? Earn it.",
+        "Not done yet.",
+        "Last one. Make it count.",
+    ]
+
+    private var phraseMatches: Bool {
+        typedText.trimmingCharacters(in: .whitespaces)
+            .caseInsensitiveCompare(selectedSentences[currentIndex]) == .orderedSame
+    }
+
+    var body: some View {
+        VStack(spacing: 12) {
+            Text(Self.headerMessages[min(currentIndex, Self.headerMessages.count - 1)])
+                .font(BreakTypography.label(size: 14, weight: .medium))
+                .foregroundStyle(palette.ink)
+                .contentTransition(.interpolate)
+                .animation(.easeInOut(duration: 0.2), value: currentIndex)
+
+            HStack(spacing: 6) {
+                ForEach(0..<sentenceCount, id: \.self) { i in
+                    Circle()
+                        .fill(i < currentIndex ? palette.accent : (i == currentIndex ? palette.accent.opacity(0.5) : palette.paperEdge))
+                        .frame(width: 8, height: 8)
+                }
+            }
+
+            switch phase {
+            case .typing:
+                VStack(spacing: 12) {
+                    HStack(spacing: 0) {
+                        Text("Write ")
+                            .font(BreakTypography.label(size: 12))
+                            .tracking(0.15)
+                            .foregroundStyle(palette.inkFaint)
+                        Text("\"\(selectedSentences[currentIndex])\"")
+                            .font(BreakTypography.exerciseName(size: 12).italic())
+                            .foregroundStyle(palette.ink)
+                            .contentTransition(.interpolate)
+                        Text(" to continue")
+                            .font(BreakTypography.label(size: 12))
+                            .tracking(0.15)
+                            .foregroundStyle(palette.inkFaint)
+                    }
+                    .animation(.easeInOut(duration: 0.2), value: currentIndex)
+
+                    TextField("", text: $typedText)
+                        .font(BreakTypography.exerciseName(size: 16))
+                        .foregroundStyle(palette.ink)
+                        .multilineTextAlignment(.center)
+                        .textFieldStyle(.plain)
+                        .focused($isFieldFocused)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 8)
+                        .frame(width: 400, height: 38)
+                        .background(
+                            RoundedRectangle(cornerRadius: 6)
+                                .fill(Color.black.opacity(0.04))
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 6)
+                                .strokeBorder(palette.paperEdge, lineWidth: 1)
+                        )
+                        .onAppear { isFieldFocused = true }
+                        .onChange(of: typedText) { newValue in
+                            if newValue.count - previousText.count > 1 {
+                                typedText = previousText
+                                return
+                            }
+                            previousText = newValue
+                        }
+                }
+                .transition(.opacity)
+
+            case .responding:
+                Text(currentResponse)
+                    .font(BreakTypography.label(size: 13, weight: .medium))
+                    .foregroundStyle(palette.ink)
+                    .transition(.opacity)
+            }
+        }
+        .animation(.easeInOut(duration: 0.2), value: phase == .responding)
+        .onChange(of: phraseMatches) { matches in
+            guard matches else { return }
+            let responsePool: [String]
+            switch currentIndex {
+            case 0: responsePool = Self.responsesAfterFirst
+            case 1: responsePool = Self.responsesAfterSecond
+            default: responsePool = Self.responsesFinal
+            }
+            currentResponse = responsePool.randomElement()!
+            withAnimation(.easeInOut(duration: 0.2)) { phase = .responding }
+
+            Task { @MainActor in
+                let delay: Duration = currentIndex < sentenceCount - 1 ? .milliseconds(1500) : .milliseconds(2000)
+                try? await Task.sleep(for: delay)
+                guard !Task.isCancelled else { return }
+
+                if currentIndex < sentenceCount - 1 {
+                    currentIndex += 1
+                    typedText = ""
+                    previousText = ""
+                    withAnimation(.easeInOut(duration: 0.2)) { phase = .typing }
+                    isFieldFocused = true
+                } else {
+                    onDismiss()
+                }
+            }
+        }
+        .transition(.opacity)
     }
 }
 
