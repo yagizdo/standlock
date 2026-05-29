@@ -1,6 +1,6 @@
 # StandLock
 
-[![Version](https://img.shields.io/badge/version-0.2.3-blue)](https://github.com/yagizdo/StandLock/releases)
+[![Version](https://img.shields.io/badge/version-0.2.4-blue)](https://github.com/yagizdo/StandLock/releases)
 [![Release](https://github.com/yagizdo/standlock/actions/workflows/release.yml/badge.svg)](https://github.com/yagizdo/standlock/actions/workflows/release.yml)
 [![macOS 13+](https://img.shields.io/badge/macOS-13%2B-brightgreen)](https://github.com/yagizdo/StandLock/releases/latest)
 [![Homebrew](https://img.shields.io/badge/brew-yagizdo%2Ftap%2Fstandlock-orange)](https://github.com/yagizdo/homebrew-tap)
@@ -39,7 +39,7 @@ Most break reminder apps show a notification you can swipe away in half a second
 
 **Break Experience**
 - Full-screen overlay with countdown timer
-- Pauses system media during breaks and resumes when the break ends
+- Pauses system media during breaks
 - Exercise suggestions during breaks (stretches, water breaks, squats)
 - Streak and completion statistics in the menu bar
 
@@ -66,11 +66,11 @@ StandLock requests only the permissions it needs, and only when you use a featur
 | Permission | Why |
 |------------|-----|
 | **Accessibility** | Required for Strict mode. Blocks keyboard and mouse input during breaks by installing a system-level event tap. Without this, Strict mode cannot enforce breaks. |
-| **Input Monitoring** | Recommended alongside Accessibility. Lets StandLock detect idle time accurately so it won't interrupt you right after you've already been away from the keyboard. |
+| **Input Monitoring** | Required for Strict mode (alongside Accessibility). Also lets StandLock detect idle time accurately so it won't interrupt you right after you've already been away from the keyboard. |
 | **Calendar** | Optional. Reads your calendar events to automatically defer breaks during meetings. Never modifies your calendar. |
 | **Camera & Microphone** | Not accessed directly. StandLock checks whether another app is using the camera or mic to detect active meetings and defer breaks accordingly. |
 
-You can revoke any permission at any time in **System Settings > Privacy & Security**. StandLock will fall back gracefully: Strict mode becomes unavailable without Accessibility, idle detection becomes less accurate without Input Monitoring, and meeting detection is skipped without Calendar access.
+You can revoke any permission at any time in **System Settings > Privacy & Security**. StandLock will fall back gracefully: Strict mode becomes unavailable without both Accessibility and Input Monitoring, idle detection becomes less accurate without Input Monitoring, and meeting detection is skipped without Calendar access.
 
 ## Building from Source
 

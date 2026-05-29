@@ -1,5 +1,25 @@
 # Changelog
 
+## StandLock v0.2.4
+
+**Features**
+- Find-the-button game as Gentle tier 2 dismiss mechanic (5b85060)
+- CS:GO-style crate opening as Gentle tier 3 dismiss mechanic (b1eebb9)
+- Improved crate animation with 7-second spin and escalating teasing messages (ba543c0)
+- Daily skip limit for Gentle discipline level, 5 skips per day (6332df4)
+- Type-a-funny-phrase dismiss as Gentle tier 4 escalation (6bf5851)
+- New developer-themed splash texts on break screen (31f49b4)
+
+**Bug Fixes**
+- Fix strict mode escape combo never triggering; add visible hold countdown (4ea3348)
+- Fix update window appearing behind other windows when launched from menu bar (7beb399)
+- Block paste in Firm mode's type-phrase field to prevent cheating (6a88893)
+- Remove unreliable auto-resume media playback after breaks (84a6b87)
+- Prevent double coordinator start on launch (93807da)
+- Auto-disable idle detection, calendar integration, and strict mode when required permissions are revoked (7babc3f)
+
+**Full Changelog:** https://github.com/yagizdo/StandLock/compare/v0.2.3...v0.2.4
+
 ## StandLock v0.2.3
 
 **Improvements**
