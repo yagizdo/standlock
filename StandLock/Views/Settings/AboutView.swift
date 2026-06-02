@@ -42,14 +42,24 @@ struct AboutView: View {
             .padding(12)
             .background(.quaternary.opacity(0.5), in: RoundedRectangle(cornerRadius: 8))
 
-            VStack(spacing: 4) {
-                Text("Made by Yağız")
-                    .font(.footnote)
-                Link("GitHub", destination: URL(string: "https://github.com/yagizdo/StandLock")!)
-                    .font(.footnote)
+            HStack(spacing: 16) {
+                aboutLink("GitHub", icon: "curlybraces", url: "https://github.com/yagizdo/StandLock")
+                aboutLink("Website", icon: "globe", url: "https://standlock.app")
+                aboutLink("Twitter", icon: "at", url: "https://x.com/yagizdo")
             }
+
+            Text("© 2026 Yılmaz Yağız Dokumacı. MIT License.")
+                .font(.footnote)
+                .foregroundStyle(.tertiary)
         }
         .padding(.top, 12)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+    }
+
+    private func aboutLink(_ title: String, icon: String, url: String) -> some View {
+        Link(destination: URL(string: url)!) {
+            Label(title, systemImage: icon)
+                .font(.footnote)
+        }
     }
 }
