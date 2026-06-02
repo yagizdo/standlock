@@ -77,27 +77,30 @@ public final class BreakCoordinator: BreakCoordinating {
     }
 
     public func handleSystemSleep() {
-        breakTimer?.cancel()
-        breakTimer = nil
-        if locker.isShowing {
-            locker.dismissOverlay()
-            if var event = currentBreak {
-                event.outcome = .skipped
-                statistics.breaksSkipped += 1
-                statistics.currentStreak = 0
-                eventContinuation.yield(.breakSkipped(event))
-                eventContinuation.yield(.statisticsUpdated(statistics))
-            }
-            currentBreak = nil
-            currentSchedule = nil
-        }
+        cancelAndDismissIfShowing()
     }
 
     public func handleSystemWake() {
-        scheduleNextBreak()
+        if isPaused {
+            resume()
+        } else {
+            scheduleNextBreak()
+        }
     }
 
     public func handleScreenLock() {
+        cancelAndDismissIfShowing()
+    }
+
+    public func handleScreenUnlock() {
+        if isPaused {
+            resume()
+        } else {
+            scheduleNextBreak()
+        }
+    }
+
+    private func cancelAndDismissIfShowing() {
         breakTimer?.cancel()
         breakTimer = nil
         if locker.isShowing {
@@ -112,10 +115,6 @@ public final class BreakCoordinator: BreakCoordinating {
             currentBreak = nil
             currentSchedule = nil
         }
-    }
-
-    public func handleScreenUnlock() {
-        scheduleNextBreak()
     }
 
     public func skipNextBreak() {
