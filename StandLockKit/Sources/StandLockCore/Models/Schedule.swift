@@ -103,7 +103,10 @@ public struct TimeWindow: Codable, Sendable, Equatable {
         let time = hour * 60 + minute
         let start = startHour * 60 + startMinute
         let end = endHour * 60 + endMinute
-        return time >= start && time < end
+        if start <= end {
+            return time >= start && time < end
+        }
+        return time >= start || time < end
     }
 }
 

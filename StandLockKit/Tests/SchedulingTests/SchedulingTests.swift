@@ -115,6 +115,28 @@ struct ScheduleEvaluatorTests {
         #expect(abs(next!.timeIntervalSince(expected)) < 1)
     }
 
+    @Test func isWithinActiveWindow_midnightCrossing() {
+        let schedule = makeSchedule(windows: [
+            TimeWindow(startHour: 23, startMinute: 0, endHour: 0, endMinute: 0)
+        ])
+        let monday23_10 = makeDate(day: 11, hour: 23, minute: 10)
+        #expect(evaluator.isWithinActiveWindow(schedule, at: monday23_10))
+        let monday22_59 = makeDate(day: 11, hour: 22, minute: 59)
+        #expect(!evaluator.isWithinActiveWindow(schedule, at: monday22_59))
+    }
+
+    @Test func isWithinActiveWindow_overnightWindow() {
+        let schedule = makeSchedule(windows: [
+            TimeWindow(startHour: 22, startMinute: 0, endHour: 6, endMinute: 0)
+        ])
+        let monday23 = makeDate(day: 11, hour: 23)
+        let monday1 = makeDate(day: 12, hour: 1)
+        let monday10 = makeDate(day: 12, hour: 10)
+        #expect(evaluator.isWithinActiveWindow(schedule, at: monday23))
+        #expect(evaluator.isWithinActiveWindow(schedule, at: monday1))
+        #expect(!evaluator.isWithinActiveWindow(schedule, at: monday10))
+    }
+
     @Test func nextBreakTime_noActiveSchedule() {
         let schedule = makeSchedule(days: .custom([]))
         let result = evaluator.nextBreakTime(for: schedule, after: Date())
