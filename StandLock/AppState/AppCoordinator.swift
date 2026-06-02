@@ -224,6 +224,10 @@ final class AppCoordinator: ObservableObject {
             breakScheduledAt = Date()
             recalculateProgress()
             updateMenuBarTimer()
+            if menuBarTimerText != nil {
+                progressTimer?.cancel()
+                startProgressTimer()
+            }
 
         case .breakStarted(let e):
             deferralReason = nil

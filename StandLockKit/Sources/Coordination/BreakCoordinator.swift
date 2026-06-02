@@ -81,6 +81,13 @@ public final class BreakCoordinator: BreakCoordinating {
         breakTimer = nil
         if locker.isShowing {
             locker.dismissOverlay()
+            if var event = currentBreak {
+                event.outcome = .skipped
+                statistics.breaksSkipped += 1
+                statistics.currentStreak = 0
+                eventContinuation.yield(.breakSkipped(event))
+                eventContinuation.yield(.statisticsUpdated(statistics))
+            }
             currentBreak = nil
             currentSchedule = nil
         }
@@ -95,6 +102,13 @@ public final class BreakCoordinator: BreakCoordinating {
         breakTimer = nil
         if locker.isShowing {
             locker.dismissOverlay()
+            if var event = currentBreak {
+                event.outcome = .skipped
+                statistics.breaksSkipped += 1
+                statistics.currentStreak = 0
+                eventContinuation.yield(.breakSkipped(event))
+                eventContinuation.yield(.statisticsUpdated(statistics))
+            }
             currentBreak = nil
             currentSchedule = nil
         }
