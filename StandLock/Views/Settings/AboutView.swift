@@ -2,7 +2,7 @@ import SwiftUI
 @preconcurrency import Sparkle
 
 struct AboutView: View {
-    @NSApplicationDelegateAdaptor private var appDelegate: AppDelegate
+    let updater: SPUUpdater
 
     private var version: String {
         Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
@@ -35,8 +35,8 @@ struct AboutView: View {
                 .foregroundStyle(.secondary)
 
             VStack(alignment: .leading, spacing: 8) {
-                UpdaterSettingsView(updater: appDelegate.updaterController.updater)
-                CheckForUpdatesView(updater: appDelegate.updaterController.updater)
+                UpdaterSettingsView(updater: updater)
+                CheckForUpdatesView(updater: updater)
             }
             .padding(.horizontal, 40)
             .padding(12)

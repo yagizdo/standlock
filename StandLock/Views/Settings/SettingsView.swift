@@ -1,7 +1,9 @@
 import SwiftUI
+@preconcurrency import Sparkle
 
 struct SettingsView: View {
     @Binding var selectedTab: AppCoordinator.SettingsTab
+    let updater: SPUUpdater
 
     var body: some View {
         VStack(spacing: 0) {
@@ -20,7 +22,7 @@ struct SettingsView: View {
         case .schedules: ScheduleEditorView()
         case .detection: DetectionSettingsView()
         case .permissions: PermissionsView()
-        case .about: AboutView()
+        case .about: AboutView(updater: updater)
         }
     }
 }
