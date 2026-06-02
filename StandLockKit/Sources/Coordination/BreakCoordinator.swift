@@ -76,6 +76,20 @@ public final class BreakCoordinator: BreakCoordinating {
         scheduleNextBreak()
     }
 
+    public func handleSystemSleep() {
+        breakTimer?.cancel()
+        breakTimer = nil
+        if locker.isShowing {
+            locker.dismissOverlay()
+            currentBreak = nil
+            currentSchedule = nil
+        }
+    }
+
+    public func handleSystemWake() {
+        scheduleNextBreak()
+    }
+
     public func skipNextBreak() {
         breakTimer?.cancel()
         breakTimer = nil
