@@ -51,6 +51,7 @@ private struct SettingsTabBar: View {
                     }
                     .padding(.vertical, 6)
                     .padding(.horizontal, 10)
+                    .contentShape(Rectangle())
                     .foregroundStyle(selectedTab == tab ? Color.accentColor : .secondary)
                     .background(
                         RoundedRectangle(cornerRadius: 6)
