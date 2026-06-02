@@ -47,6 +47,7 @@
 		F1A2B3C4D5E6F7081920A1B2 /* MediaController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A2B3C4D5E6F7081920A1B3 /* MediaController.swift */; };
 		FBB74759FC16BB2E5F728128 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A85E4C082C8E3C5083ABAEB /* OnboardingView.swift */; };
 		FF4C7AAB3CFF56C574A3EAA2 /* BreakPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C3B7E68FDF3C989BA50F367 /* BreakPalette.swift */; };
+		A1B2C3D4E5F60718293A4B5C /* StatisticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C3D4E5F6071829304A5B6C /* StatisticsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -88,6 +89,7 @@
 		E2E6E6102A1900D1FAB2A856 /* DetectionSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetectionSettingsView.swift; sourceTree = "<group>"; };
 		E5A68046037D0CAAE70C0F88 /* ActionArea.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionArea.swift; sourceTree = "<group>"; };
 		FE0E2C708B760F809144B756 /* PermissionChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionChecker.swift; sourceTree = "<group>"; };
+		B2C3D4E5F6071829304A5B6C /* StatisticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -144,6 +146,7 @@
 				14C3EDA84FE380ED1AF6CE8A /* ScheduleFormView.swift */,
 				512EB234C46341A2816AAE12 /* SettingsView.swift */,
 				303422D10B9C319038D63E32 /* SoftwareUpdate.swift */,
+				B2C3D4E5F6071829304A5B6C /* StatisticsView.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -340,6 +343,7 @@
 				B0845F2F14770C95395FBA5F /* ScheduleFormView.swift in Sources */,
 				6AF974084F51158A71D9EA47 /* SettingsView.swift in Sources */,
 				009F1339F2742632532208AA /* SoftwareUpdate.swift in Sources */,
+				A1B2C3D4E5F60718293A4B5C /* StatisticsView.swift in Sources */,
 				2CD0D3C3CF795626E50A5EAA /* StandLockApp.swift in Sources */,
 				D588F2EB46E9B8124422C5EE /* StatsFooter.swift in Sources */,
 				51FC83BD2349C694BF8C11DD /* TimerNumerals.swift in Sources */,
