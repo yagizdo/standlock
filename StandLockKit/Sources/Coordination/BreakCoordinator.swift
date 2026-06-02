@@ -90,6 +90,20 @@ public final class BreakCoordinator: BreakCoordinating {
         scheduleNextBreak()
     }
 
+    public func handleScreenLock() {
+        breakTimer?.cancel()
+        breakTimer = nil
+        if locker.isShowing {
+            locker.dismissOverlay()
+            currentBreak = nil
+            currentSchedule = nil
+        }
+    }
+
+    public func handleScreenUnlock() {
+        scheduleNextBreak()
+    }
+
     public func skipNextBreak() {
         breakTimer?.cancel()
         breakTimer = nil

@@ -320,6 +320,18 @@ final class AppCoordinator: ObservableObject {
                 self?.coordinator?.handleSystemWake()
             }
         }
+
+        let distributed = DistributedNotificationCenter.default()
+        distributed.addObserver(forName: .init("com.apple.screenIsLocked"), object: nil, queue: .main) { [weak self] _ in
+            MainActor.assumeIsolated {
+                self?.coordinator?.handleScreenLock()
+            }
+        }
+        distributed.addObserver(forName: .init("com.apple.screenIsUnlocked"), object: nil, queue: .main) { [weak self] _ in
+            MainActor.assumeIsolated {
+                self?.coordinator?.handleScreenUnlock()
+            }
+        }
     }
 
     // MARK: - Break Progress
