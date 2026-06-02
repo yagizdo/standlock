@@ -22,7 +22,7 @@ struct StandLockApp: App {
         .menuBarExtraStyle(.window)
 
         Settings {
-            SettingsView()
+            SettingsView(selectedTab: $appCoordinator.selectedSettingsTab, updater: appDelegate.updaterController.updater)
                 .environmentObject(appCoordinator)
                 .environmentObject(appCoordinator.permissionChecker)
         }

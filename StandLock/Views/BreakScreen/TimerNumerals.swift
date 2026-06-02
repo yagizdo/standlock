@@ -31,7 +31,7 @@ struct TimerNumerals: View {
             Text(timeString)
                 .font(BreakTypography.timerNumerals(size: fontSize))
                 .monospacedDigit()
-                .tracking(fontSize * -0.04)
+                .tracking(fontSize * -0.02)
                 .foregroundStyle(palette.ink)
                 .contentTransition(.identity)
                 .transaction { $0.animation = nil }

@@ -59,6 +59,7 @@ final class AppCoordinator: ObservableObject {
         loadData()
         syncPreferencesWithPermissions()
         startProgressTimer()
+        observeSystemSleep()
         permissionSyncCancellable = permissionChecker.objectWillChange
             .receive(on: RunLoop.main)
             .sink { [weak self] _ in
@@ -223,6 +224,10 @@ final class AppCoordinator: ObservableObject {
             breakScheduledAt = Date()
             recalculateProgress()
             updateMenuBarTimer()
+            if menuBarTimerText != nil {
+                progressTimer?.cancel()
+                startProgressTimer()
+            }
 
         case .breakStarted(let e):
             deferralReason = nil
@@ -303,6 +308,34 @@ final class AppCoordinator: ObservableObject {
 
     func changeDisciplineLevel(_ level: DisciplineLevel) {
         coordinator?.changeDisciplineLevel(level)
+    }
+
+    // MARK: - System Sleep
+
+    private func observeSystemSleep() {
+        let center = NSWorkspace.shared.notificationCenter
+        center.addObserver(forName: NSWorkspace.willSleepNotification, object: nil, queue: .main) { [weak self] _ in
+            MainActor.assumeIsolated {
+                self?.coordinator?.handleSystemSleep()
+            }
+        }
+        center.addObserver(forName: NSWorkspace.didWakeNotification, object: nil, queue: .main) { [weak self] _ in
+            MainActor.assumeIsolated {
+                self?.coordinator?.handleSystemWake()
+            }
+        }
+
+        let distributed = DistributedNotificationCenter.default()
+        distributed.addObserver(forName: .init("com.apple.screenIsLocked"), object: nil, queue: .main) { [weak self] _ in
+            MainActor.assumeIsolated {
+                self?.coordinator?.handleScreenLock()
+            }
+        }
+        distributed.addObserver(forName: .init("com.apple.screenIsUnlocked"), object: nil, queue: .main) { [weak self] _ in
+            MainActor.assumeIsolated {
+                self?.coordinator?.handleScreenUnlock()
+            }
+        }
     }
 
     // MARK: - Break Progress
