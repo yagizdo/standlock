@@ -24,7 +24,7 @@ private final class OnboardingWindowCloseDelegate: NSObject, NSWindowDelegate {
 @MainActor
 final class AppCoordinator: ObservableObject {
     enum SettingsTab: Int, Hashable {
-        case general, schedules, detection, permissions, about
+        case general, schedules, detection, permissions, statistics, about
     }
 
     @Published var selectedSettingsTab: SettingsTab = .general
@@ -42,6 +42,7 @@ final class AppCoordinator: ObservableObject {
     @Published var hasCompletedOnboarding: Bool = false
     @Published private(set) var breakProgress: Double = 0
     @Published private(set) var menuBarTimerText: String?
+    @Published var breakHistory: BreakHistory = BreakHistory()
 
     let permissionChecker = PermissionChecker()
 
@@ -112,6 +113,28 @@ final class AppCoordinator: ObservableObject {
             todayStats = decoded
             todayStats.resetWeeklyIfNeeded(currentDate: Date())
         }
+
+        if let data = UserDefaults.standard.data(forKey: "breakHistory"),
+           let decoded = try? JSONDecoder().decode(BreakHistory.self, from: data) {
+            breakHistory = decoded
+        }
+        let cutoff = DailyBreakRecord.dateKey(
+            from: Calendar.current.date(byAdding: .day, value: -400, to: Date())!
+        )
+        breakHistory.pruneOlderThan(cutoff)
+
+        if breakHistory.records.isEmpty && todayStats.breaksCompleted > 0 {
+            let key = DailyBreakRecord.dateKey(from: Date())
+            let record = DailyBreakRecord(
+                dateKey: key,
+                breaksCompleted: todayStats.breaksCompleted,
+                breaksSkipped: todayStats.breaksSkipped,
+                breaksEscaped: todayStats.breaksEscaped,
+                hadActiveSchedule: !schedules.filter(\.isEnabled).isEmpty
+            )
+            breakHistory.upsert(record)
+            saveHistory()
+        }
     }
 
     func saveSchedules() {
@@ -156,6 +179,31 @@ final class AppCoordinator: ObservableObject {
     func saveStatistics() {
         guard let data = try? JSONEncoder().encode(todayStats) else { return }
         UserDefaults.standard.set(data, forKey: "statistics")
+    }
+
+    func saveHistory() {
+        guard let data = try? JSONEncoder().encode(breakHistory) else { return }
+        UserDefaults.standard.set(data, forKey: "breakHistory")
+    }
+
+    private func updateDailyHistory(_ stats: BreakStatistics) {
+        let key = DailyBreakRecord.dateKey(from: Date())
+        let hasActiveSchedule = !schedules.filter(\.isEnabled).isEmpty
+        var record = breakHistory.record(for: key)
+            ?? DailyBreakRecord(dateKey: key, hadActiveSchedule: hasActiveSchedule)
+        record.breaksCompleted = stats.breaksCompleted
+        record.breaksSkipped = stats.breaksSkipped
+        record.breaksEscaped = stats.breaksEscaped
+        record.hadActiveSchedule = hasActiveSchedule
+
+        let enabledSchedules = schedules.filter(\.isEnabled)
+        let avgDuration = enabledSchedules.isEmpty
+            ? 300.0
+            : enabledSchedules.map(\.breakDuration).reduce(0, +) / Double(enabledSchedules.count)
+        record.totalBreakDuration = Double(stats.breaksCompleted) * avgDuration
+
+        breakHistory.upsert(record)
+        saveHistory()
     }
 
     // MARK: - Coordinator Lifecycle
@@ -258,6 +306,7 @@ final class AppCoordinator: ObservableObject {
         case .statisticsUpdated(let stats):
             todayStats = stats
             saveStatistics()
+            updateDailyHistory(stats)
         }
     }
 

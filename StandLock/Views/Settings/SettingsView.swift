@@ -12,7 +12,7 @@ struct SettingsView: View {
             tabContent
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-        .frame(width: 520, height: 480)
+        .frame(width: 520, height: selectedTab == .statistics ? 580 : 480)
     }
 
     @ViewBuilder
@@ -22,6 +22,7 @@ struct SettingsView: View {
         case .schedules: ScheduleEditorView()
         case .detection: DetectionSettingsView()
         case .permissions: PermissionsView()
+        case .statistics: StatisticsView()
         case .about: AboutView(updater: updater)
         }
     }
@@ -35,6 +36,7 @@ private struct SettingsTabBar: View {
         (.schedules, "Schedules", "calendar.badge.clock"),
         (.detection, "Detection", "eye"),
         (.permissions, "Permissions", "lock.shield"),
+        (.statistics, "Statistics", "chart.bar.xaxis"),
         (.about, "About", "info.circle"),
     ]
 
