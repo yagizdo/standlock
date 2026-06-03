@@ -29,6 +29,11 @@ public struct AggregateStats: Equatable, Sendable {
 public struct BreakHistory: Codable, Sendable {
     public var records: [String: DailyBreakRecord]
     public var bestStreak: Int
+    public private(set) var revision: Int = 0
+
+    private enum CodingKeys: String, CodingKey {
+        case records, bestStreak
+    }
 
     public init() {
         records = [:]
@@ -51,6 +56,7 @@ public struct BreakHistory: Codable, Sendable {
         if streak > bestStreak {
             bestStreak = streak
         }
+        revision += 1
     }
 
     public mutating func pruneOlderThan(_ dateKey: String) {

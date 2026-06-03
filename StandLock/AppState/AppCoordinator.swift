@@ -125,12 +125,18 @@ final class AppCoordinator: ObservableObject {
 
         if breakHistory.records.isEmpty && todayStats.breaksCompleted > 0 {
             let key = DailyBreakRecord.dateKey(from: Date())
+            let enabledSchedules = schedules.filter(\.isEnabled)
+            let avgDuration = enabledSchedules.isEmpty
+                ? 300.0
+                : enabledSchedules.map(\.breakDuration).reduce(0, +) / Double(enabledSchedules.count)
+            let totalDuration = Double(todayStats.breaksCompleted) * avgDuration
             let record = DailyBreakRecord(
                 dateKey: key,
                 breaksCompleted: todayStats.breaksCompleted,
                 breaksSkipped: todayStats.breaksSkipped,
                 breaksEscaped: todayStats.breaksEscaped,
-                hadActiveSchedule: !schedules.filter(\.isEnabled).isEmpty
+                totalBreakDuration: totalDuration,
+                hadActiveSchedule: !enabledSchedules.isEmpty
             )
             breakHistory.upsert(record)
             saveHistory()

@@ -35,7 +35,7 @@ struct StatisticsView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .onAppear { rebuildCache() }
-        .onChange(of: coordinator.breakHistory.records.count) { _ in rebuildCache() }
+        .onChange(of: coordinator.breakHistory.revision) { _ in rebuildCache() }
         .onChange(of: selectedPeriod) { _ in
             cachedStats = coordinator.breakHistory.aggregateStats(for: selectedPeriod)
         }
@@ -98,6 +98,8 @@ private func heatmapColor(count: Int, maxCount: Int) -> Color {
     default:      return .green.opacity(1.0)
     }
 }
+
+private let calendarDayNames = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
 
 // MARK: - Year Heatmap View
 
@@ -219,7 +221,11 @@ private struct MonthCalendarView: View {
     let history: BreakHistory
     let activeDays: Int
 
-    private static let dayNames = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+    private static let monthYearFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.dateFormat = "MMMM yyyy"
+        return f
+    }()
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 4), count: 7)
 
     var body: some View {
@@ -242,7 +248,7 @@ private struct MonthCalendarView: View {
             }
 
             LazyVGrid(columns: columns, spacing: 4) {
-                ForEach(Self.dayNames, id: \.self) { name in
+                ForEach(calendarDayNames, id: \.self) { name in
                     Text(name)
                         .font(.caption2)
                         .foregroundStyle(.secondary)
@@ -295,9 +301,7 @@ private struct MonthCalendarView: View {
     }
 
     private func monthYearString(from date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "MMMM yyyy"
-        return formatter.string(from: date)
+        Self.monthYearFormatter.string(from: date)
     }
 }
 
@@ -307,7 +311,6 @@ private struct WeekCardsView: View {
     let history: BreakHistory
     let activeDays: Int
 
-    private static let dayNames = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 4), count: 7)
 
     var body: some View {
@@ -336,7 +339,7 @@ private struct WeekCardsView: View {
             }
 
             LazyVGrid(columns: columns, spacing: 4) {
-                ForEach(Self.dayNames, id: \.self) { name in
+                ForEach(calendarDayNames, id: \.self) { name in
                     Text(name)
                         .font(.caption2)
                         .foregroundStyle(.secondary)
@@ -407,7 +410,6 @@ private struct HeatmapData {
 
     let weeks: [[HeatmapDay?]]
     let monthLabels: [Int: String]
-    let activeDaysCount: Int
     let maxCount: Int
 
     init(history: BreakHistory, referenceDate: Date) {
@@ -416,7 +418,6 @@ private struct HeatmapData {
 
         var weeksArray: [[HeatmapDay?]] = Array(repeating: Array(repeating: nil, count: 7), count: 53)
         var labels: [Int: String] = [:]
-        var activeCount = 0
         var maxBreaks = 0
         var lastMonth = -1
         var lastLabelCol = -10
@@ -429,7 +430,6 @@ private struct HeatmapData {
             let col = dayOffset / 7
 
             let breakCount = history.record(for: key)?.breaksCompleted ?? 0
-            if breakCount > 0 { activeCount += 1 }
             if breakCount > maxBreaks { maxBreaks = breakCount }
 
             weeksArray[col][row] = HeatmapDay(dateKey: key, breakCount: breakCount)
@@ -446,7 +446,6 @@ private struct HeatmapData {
 
         weeks = weeksArray
         monthLabels = labels
-        activeDaysCount = activeCount
         self.maxCount = maxBreaks
     }
 }

@@ -75,6 +75,7 @@ struct BreakHistoryTests {
         let decoded = try JSONDecoder().decode(BreakHistory.self, from: data)
 
         #expect(decoded.records.count == 1)
+        #expect(decoded.bestStreak == 1)
         let record = decoded.record(for: "2026-06-01")!
         #expect(record.breaksCompleted == 3)
         #expect(record.breaksSkipped == 1)
@@ -102,13 +103,14 @@ struct BreakHistoryTests {
         for offset in 0..<7 {
             let day = calendar.date(byAdding: .day, value: -offset, to: ref)!
             let key = DailyBreakRecord.dateKey(from: day)
-            history.upsert(makeRecord(key, completed: 2))
+            history.upsert(makeRecord(key, completed: 2, duration: 600))
         }
         let outside = calendar.date(byAdding: .day, value: -7, to: ref)!
         history.upsert(makeRecord(DailyBreakRecord.dateKey(from: outside), completed: 100))
 
         let stats = history.aggregateStats(for: .week, referenceDate: ref)
         #expect(stats.totalCompleted == 14)
+        #expect(stats.totalBreakTime == 4200)
     }
 
     @Test func aggregateYearSums365Days() {
