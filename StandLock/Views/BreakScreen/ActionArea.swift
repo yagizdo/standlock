@@ -375,6 +375,7 @@ private struct CrateOpeningDismissView: View {
     private let viewportWidth: CGFloat = 420
     private let spinDuration: TimeInterval = 7.0
     private let greenSlotOffset = 4
+    private let repetitions = 8
 
     @State private var stripOffset: CGFloat = 0
     @State private var currentAttempt = 0
@@ -388,14 +389,20 @@ private struct CrateOpeningDismissView: View {
         self.slotCount = slotCount
         self.maxAttempts = maxAttempts
         self.onDismiss = onDismiss
+        let stride: CGFloat = 56
+        self._stripOffset = State(initialValue: 420 / 2 - CGFloat(slotCount - 1) * stride - 52 / 2)
         self._usedAttempts = State(initialValue: Array(repeating: false, count: maxAttempts))
     }
 
-    private var totalSlots: Int { slotCount * 3 }
+    private var totalSlots: Int { slotCount * repetitions }
     private var slotStride: CGFloat { slotWidth + slotSpacing }
 
     private var greenIndices: Set<Int> {
-        Set((0..<3).map { $0 * slotCount + greenSlotOffset })
+        Set((0..<repetitions).map { $0 * slotCount + greenSlotOffset })
+    }
+
+    private var initialOffset: CGFloat {
+        viewportWidth / 2 - CGFloat(slotCount - 1) * slotStride - slotWidth / 2
     }
 
     private let headerMessages = [
@@ -543,16 +550,18 @@ private struct CrateOpeningDismissView: View {
         var transaction = Transaction(animation: nil)
         transaction.disablesAnimations = true
         withTransaction(transaction) {
-            stripOffset = 0
+            stripOffset = initialOffset
         }
 
-        let greens = Array(greenIndices).filter { $0 >= slotCount }
-        let nonGreens = (slotCount..<totalSlots).filter { !greenIndices.contains($0) }
+        let targetStart = slotCount * 4
+        let targetEnd = slotCount * (repetitions - 1)
+        let greens = Array(greenIndices).filter { $0 >= targetStart && $0 < targetEnd }
+        let nonGreens = (targetStart..<targetEnd).filter { !greenIndices.contains($0) }
 
         let targetIndex: Int
         switch currentAttempt {
         case 0:
-            targetIndex = Int.random(in: slotCount..<totalSlots)
+            targetIndex = Int.random(in: targetStart..<targetEnd)
         case 1:
             targetIndex = Double.random(in: 0..<1) < 0.35
                 ? greens.randomElement()!
