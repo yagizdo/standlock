@@ -5,6 +5,7 @@ public enum DismissMechanism: Sendable, Equatable {
     case typePhrase(phrase: String, requiresConfirmation: Bool)
     case findButton(count: Int, attempts: Int)
     case crateOpening(slotCount: Int, maxAttempts: Int)
+    case slotMachine(reelCount: Int, maxAttempts: Int)
     case keyCombo(duration: TimeInterval)
     case roastChallenge(sentenceCount: Int)
 }

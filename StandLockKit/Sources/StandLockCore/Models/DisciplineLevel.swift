@@ -37,7 +37,8 @@ extension DisciplineLevel {
                 EnforcementTier(skipDelay: 5, dismissMechanism: .button),
                 EnforcementTier(skipDelay: 10, dismissMechanism: .findButton(count: 8, attempts: 3)),
                 EnforcementTier(skipDelay: 12, dismissMechanism: .crateOpening(slotCount: 12, maxAttempts: 3)),
-                EnforcementTier(skipDelay: 15, dismissMechanism: .typePhrase(phrase: "My legs are decorative", requiresConfirmation: false)),
+                EnforcementTier(skipDelay: 14, dismissMechanism: .slotMachine(reelCount: 3, maxAttempts: 3)),
+                EnforcementTier(skipDelay: 16, dismissMechanism: .typePhrase(phrase: "My legs are decorative", requiresConfirmation: false)),
             ])
         case .firm:
             let phrase = preferences.firmEscapePhrase
@@ -45,7 +46,7 @@ extension DisciplineLevel {
             return EnforcementPolicy(tiers: [
                 EnforcementTier(skipDelay: base, dismissMechanism: .typePhrase(phrase: phrase, requiresConfirmation: false)),
                 EnforcementTier(skipDelay: base + 5, dismissMechanism: .typePhrase(phrase: phrase, requiresConfirmation: false)),
-                EnforcementTier(skipDelay: base + 10, dismissMechanism: .findButton(count: 8, attempts: 3)),
+                EnforcementTier(skipDelay: base + 10, dismissMechanism: .slotMachine(reelCount: 3, maxAttempts: 3)),
                 EnforcementTier(skipDelay: base + 15, dismissMechanism: .typePhrase(phrase: phrase + " I really mean it", requiresConfirmation: true)),
                 EnforcementTier(skipDelay: base + 20, dismissMechanism: .roastChallenge(sentenceCount: 3)),
             ])
