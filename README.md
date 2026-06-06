@@ -1,6 +1,6 @@
 # StandLock
 
-[![Version](https://img.shields.io/badge/version-0.2.5-blue)](https://github.com/yagizdo/StandLock/releases)
+[![Version](https://img.shields.io/badge/version-0.2.6-blue)](https://github.com/yagizdo/StandLock/releases)
 [![Release](https://github.com/yagizdo/standlock/actions/workflows/release.yml/badge.svg)](https://github.com/yagizdo/standlock/actions/workflows/release.yml)
 [![macOS 13+](https://img.shields.io/badge/macOS-13%2B-brightgreen)](https://github.com/yagizdo/StandLock/releases/latest)
 [![Homebrew](https://img.shields.io/badge/brew-yagizdo%2Ftap%2Fstandlock-orange)](https://github.com/yagizdo/homebrew-tap)
@@ -51,10 +51,18 @@ Enable progressive enforcement on any schedule and each consecutive skip makes t
 - Exercise suggestions during breaks (stretches, water reminders, squats)
 - Pauses system media during breaks
 
+### Break Statistics
+
+A dedicated Statistics tab in Settings tracks break history over time.
+
+- 6 metric cards: completions, skips, completion rate, current streak, best streak, total break time
+- Week view with per-day cards, month calendar, and year heatmap
+- Filtered by period: today, this week, this month, this year
+
 ### Menu Bar
 
 - Timer showing remaining time until next break (always-on or last-minutes countdown)
-- Break stats: completions, current streak, completion rate
+- Break stats: completions, streak, and skips for today
 - Pause/resume controls
 
 ### General

@@ -1,5 +1,25 @@
 # Changelog
 
+## StandLock v0.2.6
+
+**Features**
+- Break statistics dashboard in Settings: 6 metric cards (completions, skips, completion rate, streak, best streak, break time) with week, month, and year history views (2a30763)
+- Slot machine challenge as Gentle tier 4 escalation: spin reels to earn a skip (174d7cc)
+- Social links and copyright in About view (32bc0d3)
+
+**Bug Fixes**
+- Resume schedule correctly after sleep/wake during active pause (958c6a8)
+- Emit break event on screen lock and sleep, and restart countdown timer (d9ac47b)
+- Handle midnight-crossing time windows in schedule evaluation (0040e97)
+- Pause break timer during screen lock (7238981)
+- Handle system sleep/wake; replace TabView with custom tab bar to fix navigation issues (579ae35)
+- Extend crate spin strip for infinite scroll feel (e5751d3)
+- Cancel slot machine auto-stop tasks on re-spin to prevent spin conflicts (79a5f7a)
+- Expand tab bar hit area to reduce missed taps (cdd9e34)
+- Reduce timer numeral tracking to prevent glyph clipping (2d3dd5a)
+
+**Full Changelog:** https://github.com/yagizdo/StandLock/compare/v0.2.5...v0.2.6
+
 ## StandLock v0.2.5
 
 **Features**
