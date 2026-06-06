@@ -508,11 +508,16 @@ struct BreakCoordinatorTests {
         try? await Task.sleep(for: .milliseconds(300))
         #expect(locker.lastEscalationTier == 4)
 
-        // Cap at 4 (gentle has 5 tiers, index 0-4)
         coordinator.skipActiveBreak()
         scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
         try? await Task.sleep(for: .milliseconds(300))
-        #expect(locker.lastEscalationTier == 4)
+        #expect(locker.lastEscalationTier == 5)
+
+        // Cap at 5 (gentle has 6 tiers, index 0-5)
+        coordinator.skipActiveBreak()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        try? await Task.sleep(for: .milliseconds(300))
+        #expect(locker.lastEscalationTier == 5)
 
         coordinator.stop()
     }

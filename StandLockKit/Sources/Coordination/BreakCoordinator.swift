@@ -130,7 +130,8 @@ public final class BreakCoordinator: BreakCoordinating {
         guard var event = currentBreak else { return }
         event.outcome = .skipped
         if let scheduleID = currentBreak?.scheduleId {
-            escalationTiers[scheduleID, default: 0] = min(escalationTiers[scheduleID, default: 0] + 1, 4)
+            let maxTier = (currentSchedule?.disciplineLevel.enforcementPolicy(preferences: preferences).tiers.count ?? 5) - 1
+            escalationTiers[scheduleID, default: 0] = min(escalationTiers[scheduleID, default: 0] + 1, maxTier)
         }
         locker.dismissOverlay()
         statistics.breaksSkipped += 1
@@ -146,7 +147,8 @@ public final class BreakCoordinator: BreakCoordinating {
         guard var event = currentBreak else { return }
         event.outcome = .escaped
         if let scheduleID = currentBreak?.scheduleId {
-            escalationTiers[scheduleID, default: 0] = min(escalationTiers[scheduleID, default: 0] + 1, 4)
+            let maxTier = (currentSchedule?.disciplineLevel.enforcementPolicy(preferences: preferences).tiers.count ?? 5) - 1
+            escalationTiers[scheduleID, default: 0] = min(escalationTiers[scheduleID, default: 0] + 1, maxTier)
         }
         locker.dismissOverlay()
         statistics.breaksEscaped += 1

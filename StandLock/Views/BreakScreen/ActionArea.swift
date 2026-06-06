@@ -633,7 +633,6 @@ private struct SlotMachineDismissView: View {
     @State private var gamePhase: GamePhase = .idle
     @State private var currentAttempt = 0
     @State private var usedAttempts: [Bool]
-    @State private var roundNumber = 0
     @State private var nearMiss = false
     @State private var winGlow = false
     @State private var loseFlash: Set<Int> = []
@@ -705,15 +704,9 @@ private struct SlotMachineDismissView: View {
     private let lossMessages = ["The house always wins", "Two out of three ain\u{2019}t... well, it IS bad here.", "Impressive. Not a single one."]
     private let nearMissMessage = "Soooo close. The universe has a cruel sense of humor."
     private let winMessages = ["Genuinely impressive. Fine, go.", "Took you two tries but okay.", "Jackpot. Ugh."]
-    private let roundHeaders = ["Out of coins", "Back for more punishment?", "At this point you\u{2019}ve spent more energy gambling than a break would take"]
-    private let roundSubtitles = ["The machine wins this round. Maybe just... stand up?", "You know standing takes 30 seconds, right?", "This is getting sad"]
-
     private var headerText: String {
         switch gamePhase {
         case .idle, .spinning:
-            if roundNumber > 0 {
-                return roundHeaders[min(roundNumber - 1, roundHeaders.count - 1)]
-            }
             return headers[min(currentAttempt, headers.count - 1)]
         case .evaluating:
             return headers[min(currentAttempt, headers.count - 1)]
@@ -734,10 +727,7 @@ private struct SlotMachineDismissView: View {
     }
 
     private var subtitleText: String {
-        if roundNumber > 0 {
-            return roundSubtitles[min(roundNumber - 1, roundSubtitles.count - 1)]
-        }
-        return subtitles[min(currentAttempt, subtitles.count - 1)]
+        subtitles[min(currentAttempt, subtitles.count - 1)]
     }
 
     // MARK: Computed
@@ -756,7 +746,6 @@ private struct SlotMachineDismissView: View {
                 .contentTransition(.interpolate)
                 .animation(.easeInOut(duration: 0.2), value: gamePhase)
                 .animation(.easeInOut(duration: 0.2), value: currentAttempt)
-                .animation(.easeInOut(duration: 0.2), value: roundNumber)
 
             if gamePhase == .fallback {
                 fallbackContent
@@ -782,12 +771,11 @@ private struct SlotMachineDismissView: View {
                     .foregroundStyle(palette.inkFaint)
                     .contentTransition(.interpolate)
                     .animation(.easeInOut(duration: 0.2), value: currentAttempt)
-                    .animation(.easeInOut(duration: 0.2), value: roundNumber)
 
                 if gamePhase == .idle {
                     Button(action: startSpin) {
                         VStack(spacing: 4) {
-                            Text(currentAttempt == 0 && roundNumber == 0 ? "Spin \u{2192}" : "Try again \u{2192}")
+                            Text(currentAttempt == 0 ? "Spin \u{2192}" : "Try again \u{2192}")
                                 .font(BreakTypography.label(size: 14, weight: .medium))
                                 .foregroundStyle(palette.ink)
                             Rectangle()
@@ -819,7 +807,7 @@ private struct SlotMachineDismissView: View {
         let rawFirst = (-offset - symbolHeight) / symbolStride
         let rawLast = (viewportHeight - offset) / symbolStride
         let first = max(0, Int(floor(rawFirst)) - 2)
-        let last = Int(ceil(rawLast)) + 2
+        let last = max(first, Int(ceil(rawLast)) + 2)
 
         return ZStack {
             ForEach(first...last, id: \.self) { i in
@@ -994,6 +982,14 @@ private struct SlotMachineDismissView: View {
                 speed: 220 * factor,
                 spinStart: now
             )
+            let reelIndex = i
+            Task { @MainActor in
+                try? await Task.sleep(for: .seconds(15))
+                guard !Task.isCancelled else { return }
+                if reels[reelIndex].phase == .spinning {
+                    stopReel(reelIndex)
+                }
+            }
         }
 
         gamePhase = .spinning

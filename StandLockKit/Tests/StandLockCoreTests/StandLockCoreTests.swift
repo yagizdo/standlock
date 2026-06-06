@@ -214,6 +214,7 @@ struct ScheduleModelTests {
         #expect(policy.tiers[0].skipDelay == 20)
         #expect(policy.tiers[0].dismissMechanism == .typePhrase(phrase: "let me go", requiresConfirmation: false))
         #expect(policy.tiers[2].dismissMechanism == .slotMachine(reelCount: 3, maxAttempts: 3))
+        #expect(policy.tiers[2].skipDelay == 30)
         #expect(policy.tiers[3].dismissMechanism == .typePhrase(phrase: "let me go I really mean it", requiresConfirmation: true))
         #expect(policy.tiers[3].skipDelay == 35)
         #expect(policy.tiers[4].dismissMechanism == .roastChallenge(sentenceCount: 3))
@@ -247,6 +248,8 @@ struct ScheduleModelTests {
         let last = policy.tier(at: 99)
         #expect(last == policy.tiers[4])
         #expect(last.dismissMechanism == .roastChallenge(sentenceCount: 3))
+        let first = policy.tier(at: -1)
+        #expect(first == policy.tiers[0])
     }
 
     // MARK: - Schedule with Progressive Enforcement
