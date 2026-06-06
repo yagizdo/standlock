@@ -33,7 +33,7 @@ extension DisciplineLevel {
         switch self {
         case .gentle:
             return EnforcementPolicy(tiers: [
-                EnforcementTier(skipDelay: 0, dismissMechanism: .slotMachine(reelCount: 3, maxAttempts: 3)),
+                EnforcementTier(skipDelay: 0, dismissMechanism: .button),
                 EnforcementTier(skipDelay: 5, dismissMechanism: .button),
                 EnforcementTier(skipDelay: 10, dismissMechanism: .findButton(count: 8, attempts: 3)),
                 EnforcementTier(skipDelay: 12, dismissMechanism: .crateOpening(slotCount: 12, maxAttempts: 3)),
