@@ -636,6 +636,7 @@ private struct SlotMachineDismissView: View {
     @State private var nearMiss = false
     @State private var winGlow = false
     @State private var loseFlash: Set<Int> = []
+    @State private var autoStopTasks: [Task<Void, Never>] = []
     @State private var fallbackInput = ""
     private let fallbackPhrase = "I prefer sitting anyway"
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -972,6 +973,9 @@ private struct SlotMachineDismissView: View {
             return
         }
 
+        autoStopTasks.forEach { $0.cancel() }
+        autoStopTasks = []
+
         let now = Date()
         let factor = speedFactor(for: currentAttempt)
 
@@ -983,13 +987,14 @@ private struct SlotMachineDismissView: View {
                 spinStart: now
             )
             let reelIndex = i
-            Task { @MainActor in
+            let task = Task { @MainActor in
                 try? await Task.sleep(for: .seconds(15))
                 guard !Task.isCancelled else { return }
                 if reels[reelIndex].phase == .spinning {
                     stopReel(reelIndex)
                 }
             }
+            autoStopTasks.append(task)
         }
 
         gamePhase = .spinning
