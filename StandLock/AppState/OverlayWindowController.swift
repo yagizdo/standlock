@@ -18,6 +18,8 @@ final class OverlayWindowController: LockPresenting {
     private var currentPreferences: AppPreferences?
     private var currentStatistics: BreakStatistics?
     private var currentEscalationTier: Int = 0
+    private var breakStartDate: Date?
+    private var lastScreenChangeHandled: Date = .distantPast
 
     var onSkip: (() -> Void)?
     var onComplete: (() -> Void)?
@@ -30,7 +32,11 @@ final class OverlayWindowController: LockPresenting {
         exercise: Exercise?, preferences: AppPreferences,
         statistics: BreakStatistics, escalationTier: Int = 0
     ) {
+        let isRecreation = isShowing
         dismissOverlay()
+        if !isRecreation {
+            breakStartDate = Date()
+        }
 
         currentLevel = level
         currentDuration = duration
@@ -119,16 +125,19 @@ final class OverlayWindowController: LockPresenting {
     }
 
     private func handleSkip() {
+        breakStartDate = nil
         dismissOverlay()
         onSkip?()
     }
 
     private func handleComplete() {
+        breakStartDate = nil
         dismissOverlay()
         onComplete?()
     }
 
     private func handleEscape() {
+        breakStartDate = nil
         dismissOverlay()
         onEscape?()
     }
@@ -154,19 +163,33 @@ final class OverlayWindowController: LockPresenting {
             forName: NSApplication.didChangeScreenParametersNotification,
             object: nil, queue: .main
         ) { [weak self] _ in
-            self?.handleScreenChange()
+            MainActor.assumeIsolated {
+                self?.handleScreenChange()
+            }
         }
     }
 
     private func handleScreenChange() {
+        let now = Date()
+        guard now.timeIntervalSince(lastScreenChangeHandled) > 2.0 else { return }
+        lastScreenChangeHandled = now
+
         guard isShowing,
               let level = currentLevel,
               let prefs = currentPreferences,
               let stats = currentStatistics else { return }
+
+        let elapsed = breakStartDate.map { now.timeIntervalSince($0) } ?? 0
+        guard elapsed < currentDuration else {
+            handleComplete()
+            return
+        }
+
+        let remaining = currentDuration - elapsed
         let tier = currentEscalationTier
         dismissOverlay()
         showOverlay(
-            level: level, duration: currentDuration,
+            level: level, duration: remaining,
             exercise: currentExercise, preferences: prefs,
             statistics: stats, escalationTier: tier
         )

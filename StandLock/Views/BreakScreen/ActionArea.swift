@@ -1,3 +1,4 @@
+import AppKit
 import SwiftUI
 import StandLockCore
 import Locking
@@ -52,9 +53,12 @@ struct ActionArea: View {
     @ViewBuilder
     private var mechanismView: some View {
         if let limit = disciplineLevel.dailySkipLimit(preferences: preferences), statistics.breaksSkipped >= limit {
-            Text("Daily skip limit reached")
-                .font(BreakTypography.label(size: 12, weight: .medium))
-                .foregroundStyle(palette.inkFaint)
+            VStack(spacing: 8) {
+                Text("Daily skip limit reached")
+                    .font(BreakTypography.label(size: 12, weight: .medium))
+                    .foregroundStyle(palette.inkFaint)
+                EmergencyEscapeView(palette: palette, onEscape: onDismiss)
+            }
         } else {
             mechanismContent
         }
@@ -1068,6 +1072,107 @@ private struct SlotMachineDismissView: View {
                 gamePhase = .idle
             }
         }
+    }
+}
+
+// MARK: - Emergency Escape
+
+private final class ComboMonitor: ObservableObject {
+    var onActivated: (() -> Void)?
+    var onDeactivated: (() -> Void)?
+    private var token: Any?
+
+    func start() {
+        guard token == nil else { return }
+        token = NSEvent.addLocalMonitorForEvents(matching: .flagsChanged) { [weak self] event in
+            let required: NSEvent.ModifierFlags = [.control, .option, .command]
+            if event.modifierFlags.intersection(required) == required {
+                self?.onActivated?()
+            } else {
+                self?.onDeactivated?()
+            }
+            return event
+        }
+    }
+
+    func stop() {
+        if let t = token { NSEvent.removeMonitor(t) }
+        token = nil
+    }
+
+    deinit { if let t = token { NSEvent.removeMonitor(t) } }
+}
+
+private struct EmergencyEscapeView: View {
+    let palette: BreakPalette
+    let onEscape: () -> Void
+    private let holdSeconds = 30
+
+    @StateObject private var monitor = ComboMonitor()
+    @State private var holding = false
+    @State private var progress: CGFloat = 0
+    @State private var remaining = 30
+
+    var body: some View {
+        VStack(spacing: 6) {
+            HStack(spacing: 5) {
+                Text("Emergency")
+                    .font(BreakTypography.label(size: 10))
+                    .foregroundStyle(palette.inkFaint.opacity(0.45))
+                keycap("⌃")
+                keycap("⌥")
+                keycap("⌘")
+                Text("× \(holdSeconds)s")
+                    .font(BreakTypography.label(size: 10))
+                    .foregroundStyle(palette.inkFaint.opacity(0.45))
+            }
+            if holding {
+                Capsule()
+                    .fill(palette.accent.opacity(0.15))
+                    .frame(width: 100, height: 3)
+                    .overlay(alignment: .leading) {
+                        Capsule()
+                            .fill(palette.accent.opacity(0.6))
+                            .frame(width: 100 * progress, height: 3)
+                    }
+                    .clipShape(Capsule())
+                    .transition(.opacity)
+            }
+        }
+        .animation(.easeOut(duration: 0.2), value: holding)
+        .onAppear {
+            monitor.onActivated = { holding = true }
+            monitor.onDeactivated = {
+                holding = false
+                progress = 0
+            }
+            monitor.start()
+        }
+        .onDisappear { monitor.stop() }
+        .task(id: holding) {
+            guard holding else {
+                progress = 0
+                return
+            }
+            remaining = holdSeconds
+            withAnimation(.linear(duration: Double(holdSeconds))) { progress = 1 }
+            while remaining > 0 {
+                try? await Task.sleep(for: .seconds(1))
+                guard !Task.isCancelled, holding else { return }
+                remaining -= 1
+            }
+            onEscape()
+        }
+    }
+
+    private func keycap(_ glyph: String) -> some View {
+        Text(glyph)
+            .font(BreakTypography.keycap())
+            .foregroundStyle(palette.inkFaint.opacity(0.45))
+            .frame(minWidth: 20, minHeight: 18)
+            .padding(.horizontal, 5)
+            .background(RoundedRectangle(cornerRadius: 4).fill(Color.black.opacity(0.04)))
+            .overlay(RoundedRectangle(cornerRadius: 4).strokeBorder(palette.paperEdge.opacity(0.4), lineWidth: 1))
     }
 }
 
