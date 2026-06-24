@@ -54,6 +54,7 @@ final class OverlayWindowController: LockPresenting {
                 exercise: exercise, preferences: preferences,
                 statistics: statistics, escalationTier: escalationTier,
                 onSkip: { [weak self] in self?.handleSkip() },
+                onEscape: { [weak self] in self?.handleEscape() },
                 onComplete: { [weak self] in self?.handleComplete() }
             )
             window.setContent(contentView)
@@ -187,10 +188,11 @@ final class OverlayWindowController: LockPresenting {
 
         let remaining = currentDuration - elapsed
         let tier = currentEscalationTier
+        let exercise = currentExercise
         dismissOverlay()
         showOverlay(
             level: level, duration: remaining,
-            exercise: currentExercise, preferences: prefs,
+            exercise: exercise, preferences: prefs,
             statistics: stats, escalationTier: tier
         )
     }

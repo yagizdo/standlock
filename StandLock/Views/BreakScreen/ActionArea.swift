@@ -11,6 +11,7 @@ struct ActionArea: View {
     let disciplineLevel: DisciplineLevel
     var escalationTier: Int = 0
     let onDismiss: () -> Void
+    var onEscape: (() -> Void)?
 
     @State private var showAction = false
     @State private var countdown: Int = 0
@@ -57,7 +58,7 @@ struct ActionArea: View {
                 Text("Daily skip limit reached")
                     .font(BreakTypography.label(size: 12, weight: .medium))
                     .foregroundStyle(palette.inkFaint)
-                EmergencyEscapeView(palette: palette, onEscape: onDismiss)
+                EmergencyEscapeView(palette: palette, onEscape: onEscape ?? onDismiss)
             }
         } else {
             mechanismContent
