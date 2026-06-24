@@ -1,5 +1,15 @@
 # Changelog
 
+## StandLock v0.2.7
+
+**Bug Fixes**
+- Countdown timer is preserved when screen configuration changes; connecting or disconnecting a monitor no longer resets the timer to the full duration (4a3c721)
+- Emergency escape (⌃⌥⌘ hold) is now available when the daily skip limit is reached, so users are never permanently locked out (883b72b)
+- Emergency escape key combo is now detected globally, so it works even when the overlay briefly loses keyboard focus (3eca987)
+- Autocorrect is disabled on challenge text fields so macOS does not alter phrases while you type (f0ade57)
+
+**Full Changelog:** https://github.com/yagizdo/StandLock/compare/v0.2.6...v0.2.7
+
 ## StandLock v0.2.6
 
 **Features**
