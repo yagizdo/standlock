@@ -913,6 +913,7 @@ private struct SlotMachineDismissView: View {
             .font(BreakTypography.label(size: 14))
             .foregroundStyle(palette.ink)
             .multilineTextAlignment(.center)
+            .autocorrectionDisabled()
             .padding(8)
             .background(
                 RoundedRectangle(cornerRadius: 6)
@@ -1302,6 +1303,7 @@ private struct RoastChallengeDismissView: View {
                         .multilineTextAlignment(.center)
                         .textFieldStyle(.plain)
                         .focused($isFieldFocused)
+                        .autocorrectionDisabled()
                         .padding(.horizontal, 12)
                         .padding(.vertical, 8)
                         .frame(width: 400, height: 38)
@@ -1447,6 +1449,7 @@ private struct PhraseDismissView: View {
                 .multilineTextAlignment(.center)
                 .textFieldStyle(.plain)
                 .focused($isFieldFocused)
+                .autocorrectionDisabled()
                 .padding(.horizontal, 12)
                 .padding(.vertical, 8)
                 .frame(width: 400, height: 38)
