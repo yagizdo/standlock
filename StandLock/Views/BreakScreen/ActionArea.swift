@@ -1078,15 +1078,17 @@ private struct SlotMachineDismissView: View {
 
 // MARK: - Emergency Escape
 
-private final class ComboMonitor: ObservableObject {
+private final class ComboMonitor: ObservableObject, @unchecked Sendable {
     var onActivated: (() -> Void)?
     var onDeactivated: (() -> Void)?
-    private var token: Any?
+    private var localToken: Any?
+    private var globalToken: Any?
 
     func start() {
-        guard token == nil else { return }
-        token = NSEvent.addLocalMonitorForEvents(matching: .flagsChanged) { [weak self] event in
-            let required: NSEvent.ModifierFlags = [.control, .option, .command]
+        guard localToken == nil else { return }
+        let required: NSEvent.ModifierFlags = [.control, .option, .command]
+
+        localToken = NSEvent.addLocalMonitorForEvents(matching: .flagsChanged) { [weak self] event in
             if event.modifierFlags.intersection(required) == required {
                 self?.onActivated?()
             } else {
@@ -1094,14 +1096,28 @@ private final class ComboMonitor: ObservableObject {
             }
             return event
         }
+
+        // Global monitor catches flagsChanged when the app isn't the active app.
+        // flagsChanged does not require Input Monitoring permission.
+        globalToken = NSEvent.addGlobalMonitorForEvents(matching: .flagsChanged) { [weak self] event in
+            let matched = event.modifierFlags.intersection(required) == required
+            DispatchQueue.main.async { [weak self] in
+                matched ? self?.onActivated?() : self?.onDeactivated?()
+            }
+        }
     }
 
     func stop() {
-        if let t = token { NSEvent.removeMonitor(t) }
-        token = nil
+        if let t = localToken { NSEvent.removeMonitor(t) }
+        if let t = globalToken { NSEvent.removeMonitor(t) }
+        localToken = nil
+        globalToken = nil
     }
 
-    deinit { if let t = token { NSEvent.removeMonitor(t) } }
+    deinit {
+        if let t = localToken { NSEvent.removeMonitor(t) }
+        if let t = globalToken { NSEvent.removeMonitor(t) }
+    }
 }
 
 private struct EmergencyEscapeView: View {
@@ -1111,52 +1127,29 @@ private struct EmergencyEscapeView: View {
 
     @StateObject private var monitor = ComboMonitor()
     @State private var holding = false
-    @State private var progress: CGFloat = 0
-    @State private var remaining = 30
 
     var body: some View {
-        VStack(spacing: 6) {
-            HStack(spacing: 5) {
-                Text("Emergency")
-                    .font(BreakTypography.label(size: 10))
-                    .foregroundStyle(palette.inkFaint.opacity(0.45))
-                keycap("⌃")
-                keycap("⌥")
-                keycap("⌘")
-                Text("× \(holdSeconds)s")
-                    .font(BreakTypography.label(size: 10))
-                    .foregroundStyle(palette.inkFaint.opacity(0.45))
-            }
-            if holding {
-                Capsule()
-                    .fill(palette.accent.opacity(0.15))
-                    .frame(width: 100, height: 3)
-                    .overlay(alignment: .leading) {
-                        Capsule()
-                            .fill(palette.accent.opacity(0.6))
-                            .frame(width: 100 * progress, height: 3)
-                    }
-                    .clipShape(Capsule())
-                    .transition(.opacity)
-            }
+        HStack(spacing: 5) {
+            Text("Emergency")
+                .font(BreakTypography.label(size: 10))
+                .foregroundStyle(palette.inkFaint.opacity(0.45))
+            keycap("⌃", active: holding)
+            keycap("⌥", active: holding)
+            keycap("⌘", active: holding)
+            Text("× \(holdSeconds)s")
+                .font(BreakTypography.label(size: 10))
+                .foregroundStyle(holding ? palette.inkFaint : palette.inkFaint.opacity(0.45))
         }
         .animation(.easeOut(duration: 0.2), value: holding)
         .onAppear {
             monitor.onActivated = { holding = true }
-            monitor.onDeactivated = {
-                holding = false
-                progress = 0
-            }
+            monitor.onDeactivated = { holding = false }
             monitor.start()
         }
         .onDisappear { monitor.stop() }
         .task(id: holding) {
-            guard holding else {
-                progress = 0
-                return
-            }
-            remaining = holdSeconds
-            withAnimation(.linear(duration: Double(holdSeconds))) { progress = 1 }
+            guard holding else { return }
+            var remaining = holdSeconds
             while remaining > 0 {
                 try? await Task.sleep(for: .seconds(1))
                 guard !Task.isCancelled, holding else { return }
@@ -1166,14 +1159,15 @@ private struct EmergencyEscapeView: View {
         }
     }
 
-    private func keycap(_ glyph: String) -> some View {
+    private func keycap(_ glyph: String, active: Bool = false) -> some View {
         Text(glyph)
             .font(BreakTypography.keycap())
-            .foregroundStyle(palette.inkFaint.opacity(0.45))
+            .foregroundStyle(active ? .white : palette.inkFaint.opacity(0.45))
             .frame(minWidth: 20, minHeight: 18)
             .padding(.horizontal, 5)
-            .background(RoundedRectangle(cornerRadius: 4).fill(Color.black.opacity(0.04)))
-            .overlay(RoundedRectangle(cornerRadius: 4).strokeBorder(palette.paperEdge.opacity(0.4), lineWidth: 1))
+            .background(RoundedRectangle(cornerRadius: 4).fill(active ? palette.accent : Color.black.opacity(0.04)))
+            .overlay(RoundedRectangle(cornerRadius: 4).strokeBorder(active ? palette.accent.opacity(0.3) : palette.paperEdge.opacity(0.4), lineWidth: 1))
+            .animation(.easeOut(duration: 0.15), value: active)
     }
 }
 
