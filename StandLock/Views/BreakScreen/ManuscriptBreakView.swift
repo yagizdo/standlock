@@ -10,6 +10,7 @@ struct ManuscriptBreakView: View {
     let enforcementTier: EnforcementTier
     let escalationTierIndex: Int
     let onSkip: () -> Void
+    let onEscape: () -> Void
     let onComplete: () -> Void
 
     @State private var remainingSeconds: TimeInterval
@@ -20,7 +21,9 @@ struct ManuscriptBreakView: View {
     init(level: DisciplineLevel, totalDuration: TimeInterval, exercise: Exercise?,
          preferences: AppPreferences, statistics: BreakStatistics,
          escalationTier: Int = 0,
-         onSkip: @escaping () -> Void, onComplete: @escaping () -> Void) {
+         onSkip: @escaping () -> Void,
+         onEscape: @escaping () -> Void,
+         onComplete: @escaping () -> Void) {
         self.level = level
         self.totalDuration = totalDuration
         self.exercise = exercise
@@ -30,6 +33,7 @@ struct ManuscriptBreakView: View {
         self.enforcementTier = policy.tier(at: escalationTier)
         self.escalationTierIndex = escalationTier
         self.onSkip = onSkip
+        self.onEscape = onEscape
         self.onComplete = onComplete
         self._remainingSeconds = State(initialValue: totalDuration)
     }
@@ -66,7 +70,8 @@ struct ManuscriptBreakView: View {
                             preferences: preferences, statistics: statistics,
                             disciplineLevel: level,
                             escalationTier: escalationTierIndex,
-                            onDismiss: onSkip
+                            onDismiss: onSkip,
+                            onEscape: onEscape
                         )
                     }
                     .padding(.horizontal, 40)

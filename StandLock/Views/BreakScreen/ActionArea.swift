@@ -1,3 +1,4 @@
+import AppKit
 import SwiftUI
 import StandLockCore
 import Locking
@@ -10,6 +11,7 @@ struct ActionArea: View {
     let disciplineLevel: DisciplineLevel
     var escalationTier: Int = 0
     let onDismiss: () -> Void
+    var onEscape: (() -> Void)?
 
     @State private var showAction = false
     @State private var countdown: Int = 0
@@ -52,9 +54,12 @@ struct ActionArea: View {
     @ViewBuilder
     private var mechanismView: some View {
         if let limit = disciplineLevel.dailySkipLimit(preferences: preferences), statistics.breaksSkipped >= limit {
-            Text("Daily skip limit reached")
-                .font(BreakTypography.label(size: 12, weight: .medium))
-                .foregroundStyle(palette.inkFaint)
+            VStack(spacing: 8) {
+                Text("Daily skip limit reached")
+                    .font(BreakTypography.label(size: 12, weight: .medium))
+                    .foregroundStyle(palette.inkFaint)
+                EmergencyEscapeView(palette: palette, onEscape: onEscape ?? onDismiss)
+            }
         } else {
             mechanismContent
         }
@@ -909,6 +914,7 @@ private struct SlotMachineDismissView: View {
             .font(BreakTypography.label(size: 14))
             .foregroundStyle(palette.ink)
             .multilineTextAlignment(.center)
+            .autocorrectionDisabled()
             .padding(8)
             .background(
                 RoundedRectangle(cornerRadius: 6)
@@ -1071,6 +1077,101 @@ private struct SlotMachineDismissView: View {
     }
 }
 
+// MARK: - Emergency Escape
+
+private final class ComboMonitor: ObservableObject, @unchecked Sendable {
+    var onActivated: (() -> Void)?
+    var onDeactivated: (() -> Void)?
+    private var localToken: Any?
+    private var globalToken: Any?
+
+    func start() {
+        guard localToken == nil else { return }
+        let required: NSEvent.ModifierFlags = [.control, .option, .command]
+
+        localToken = NSEvent.addLocalMonitorForEvents(matching: .flagsChanged) { [weak self] event in
+            if event.modifierFlags.intersection(required) == required {
+                self?.onActivated?()
+            } else {
+                self?.onDeactivated?()
+            }
+            return event
+        }
+
+        // Global monitor catches flagsChanged when the app isn't the active app.
+        // flagsChanged does not require Input Monitoring permission.
+        globalToken = NSEvent.addGlobalMonitorForEvents(matching: .flagsChanged) { [weak self] event in
+            let matched = event.modifierFlags.intersection(required) == required
+            DispatchQueue.main.async { [weak self] in
+                matched ? self?.onActivated?() : self?.onDeactivated?()
+            }
+        }
+    }
+
+    func stop() {
+        if let t = localToken { NSEvent.removeMonitor(t) }
+        if let t = globalToken { NSEvent.removeMonitor(t) }
+        localToken = nil
+        globalToken = nil
+    }
+
+    deinit {
+        if let t = localToken { NSEvent.removeMonitor(t) }
+        if let t = globalToken { NSEvent.removeMonitor(t) }
+    }
+}
+
+private struct EmergencyEscapeView: View {
+    let palette: BreakPalette
+    let onEscape: () -> Void
+    private let holdSeconds = 30
+
+    @StateObject private var monitor = ComboMonitor()
+    @State private var holding = false
+
+    var body: some View {
+        HStack(spacing: 5) {
+            Text("Emergency")
+                .font(BreakTypography.label(size: 10))
+                .foregroundStyle(palette.inkFaint.opacity(0.45))
+            keycap("⌃", active: holding)
+            keycap("⌥", active: holding)
+            keycap("⌘", active: holding)
+            Text("× \(holdSeconds)s")
+                .font(BreakTypography.label(size: 10))
+                .foregroundStyle(holding ? palette.inkFaint : palette.inkFaint.opacity(0.45))
+        }
+        .animation(.easeOut(duration: 0.2), value: holding)
+        .onAppear {
+            monitor.onActivated = { holding = true }
+            monitor.onDeactivated = { holding = false }
+            monitor.start()
+        }
+        .onDisappear { monitor.stop() }
+        .task(id: holding) {
+            guard holding else { return }
+            var remaining = holdSeconds
+            while remaining > 0 {
+                try? await Task.sleep(for: .seconds(1))
+                guard !Task.isCancelled, holding else { return }
+                remaining -= 1
+            }
+            onEscape()
+        }
+    }
+
+    private func keycap(_ glyph: String, active: Bool = false) -> some View {
+        Text(glyph)
+            .font(BreakTypography.keycap())
+            .foregroundStyle(active ? .white : palette.inkFaint.opacity(0.45))
+            .frame(minWidth: 20, minHeight: 18)
+            .padding(.horizontal, 5)
+            .background(RoundedRectangle(cornerRadius: 4).fill(active ? palette.accent : Color.black.opacity(0.04)))
+            .overlay(RoundedRectangle(cornerRadius: 4).strokeBorder(active ? palette.accent.opacity(0.3) : palette.paperEdge.opacity(0.4), lineWidth: 1))
+            .animation(.easeOut(duration: 0.15), value: active)
+    }
+}
+
 private struct IndicatorTriangle: Shape {
     func path(in rect: CGRect) -> Path {
         var path = Path()
@@ -1197,6 +1298,7 @@ private struct RoastChallengeDismissView: View {
                         .multilineTextAlignment(.center)
                         .textFieldStyle(.plain)
                         .focused($isFieldFocused)
+                        .autocorrectionDisabled()
                         .padding(.horizontal, 12)
                         .padding(.vertical, 8)
                         .frame(width: 400, height: 38)
@@ -1342,6 +1444,7 @@ private struct PhraseDismissView: View {
                 .multilineTextAlignment(.center)
                 .textFieldStyle(.plain)
                 .focused($isFieldFocused)
+                .autocorrectionDisabled()
                 .padding(.horizontal, 12)
                 .padding(.vertical, 8)
                 .frame(width: 400, height: 38)
