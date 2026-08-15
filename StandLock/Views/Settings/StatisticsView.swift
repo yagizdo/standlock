@@ -184,6 +184,9 @@ private struct YearHeatmapView: View {
                     if let day = data.weeks[col][row] {
                         let color = heatmapColor(count: day.breakCount, maxCount: data.maxCount)
                         context.fill(path, with: .color(color))
+                        if day.dateKey == data.todayKey {
+                            context.stroke(path, with: .color(.accentColor), lineWidth: 1.5)
+                        }
                     }
                 }
             }
@@ -276,7 +279,9 @@ private struct MonthCalendarView: View {
                         .frame(maxWidth: .infinity)
                 }
 
-                ForEach(0..<offset, id: \.self) { _ in
+                // Negative IDs keep leading blanks from colliding with the 1...daysInMonth cells
+                // that share this grid's ID space.
+                ForEach(-offset..<0, id: \.self) { _ in
                     Color.clear.frame(height: 44)
                 }
 
@@ -432,10 +437,11 @@ private struct HeatmapData {
     let weeks: [[HeatmapDay?]]
     let monthLabels: [Int: String]
     let maxCount: Int
+    let todayKey: String
 
     init(history: BreakHistory, referenceDate: Date) {
-        var calendar = Calendar.current
-        calendar.firstWeekday = 2
+        let calendar = Calendar.current
+        todayKey = DailyBreakRecord.dateKey(from: referenceDate)
 
         var weeksArray: [[HeatmapDay?]] = Array(repeating: Array(repeating: nil, count: 7), count: 53)
         var labels: [Int: String] = [:]
@@ -443,12 +449,18 @@ private struct HeatmapData {
         var lastMonth = -1
         var lastLabelCol = -10
 
+        let startDate = calendar.date(byAdding: .day, value: -364, to: referenceDate) ?? referenceDate
+        // Column 0 begins on the Monday of the earliest week so every column is one real
+        // Mon-Sun week. Slicing the window into raw 7-day blocks would put two different
+        // calendar weeks in the same column whenever the window does not start on a Monday.
+        let startColumnOffset = (calendar.component(.weekday, from: startDate) + 5) % 7
+
         for dayOffset in 0..<365 {
-            guard let day = calendar.date(byAdding: .day, value: -(364 - dayOffset), to: referenceDate) else { continue }
+            guard let day = calendar.date(byAdding: .day, value: dayOffset, to: startDate) else { continue }
             let key = DailyBreakRecord.dateKey(from: day)
             let weekday = calendar.component(.weekday, from: day)
             let row = (weekday + 5) % 7
-            let col = dayOffset / 7
+            let col = (startColumnOffset + dayOffset) / 7
 
             let breakCount = history.record(for: key)?.breaksCompleted ?? 0
             if breakCount > maxBreaks { maxBreaks = breakCount }
