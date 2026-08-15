@@ -442,6 +442,87 @@ struct BreakCoordinatorTests {
         listener.cancel()
     }
 
+    // AppCoordinator starts the coordinator before it attaches its event listener, so the
+    // rollover emitted from inside start() has no consumer yet. It survives only because
+    // AsyncStream buffers unboundedly by default; a switch to a bounded policy or an early
+    // finish() would silently drop the day's first event and leave stale counters on screen.
+    @Test @MainActor
+    func rolloverEmittedBeforeListenerAttachesIsStillDelivered() async {
+        let scheduler = MockScheduler()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(600)
+        let detector = MockDetector()
+        let locker = MockLocker()
+
+        let coordinator = BreakCoordinator(scheduler: scheduler, detector: detector, locker: locker)
+        let schedule = makeSchedule(breakDuration: 5)
+
+        let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: Date())!
+        var yesterdayStats = BreakStatistics(date: yesterday)
+        yesterdayStats.breaksSkipped = 2
+        yesterdayStats.breaksCompleted = 3
+
+        // Start first, subscribe second -- the production ordering.
+        coordinator.start(with: [schedule], preferences: AppPreferences(), statistics: yesterdayStats)
+
+        var statsEvents: [BreakStatistics] = []
+        let listener = Task {
+            for await event in coordinator.events {
+                if case .statisticsUpdated(let s) = event { statsEvents.append(s) }
+            }
+        }
+        try? await Task.sleep(for: .milliseconds(100))
+
+        #expect(statsEvents.count == 1)
+        #expect(statsEvents.last?.breaksSkipped == 0)
+        #expect(statsEvents.last?.breaksCompleted == 0)
+
+        coordinator.stop()
+        listener.cancel()
+    }
+
+    // refreshDailyRollover(now:) must hand its date to everything it triggers. When the nested
+    // scheduleNextBreak re-read the real clock instead, resetDailyIfNeeded fired a second time
+    // in the reverse direction -- re-zeroing the counters, rewinding statistics.date, and
+    // emitting a second event for one logical rollover.
+    @Test @MainActor
+    func injectedRolloverDateGovernsTheWholeOperation() async {
+        let scheduler = MockScheduler()
+        // No next break available, so start() leaves breakTimer nil -- the same shape as a
+        // schedule that used up its daily cap, which is the only state that re-arms on rollover.
+        scheduler.nextBreakTimeToReturn = nil
+        let detector = MockDetector()
+        let locker = MockLocker()
+
+        let coordinator = BreakCoordinator(scheduler: scheduler, detector: detector, locker: locker)
+        let schedule = makeSchedule(breakDuration: 5)
+
+        var statsEvents: [BreakStatistics] = []
+        let listener = Task {
+            for await event in coordinator.events {
+                if case .statisticsUpdated(let s) = event { statsEvents.append(s) }
+            }
+        }
+
+        coordinator.start(with: [schedule], preferences: AppPreferences(),
+                          statistics: BreakStatistics(date: Date()))
+        try? await Task.sleep(for: .milliseconds(100))
+        statsEvents.removeAll()
+
+        // The new day frees the schedule, so the rollover re-arms -- exercising the nested call.
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(600)
+        let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: Date())!
+        coordinator.refreshDailyRollover(now: tomorrow)
+        try? await Task.sleep(for: .milliseconds(100))
+
+        // One logical rollover, one event -- not one forwards and one back.
+        #expect(statsEvents.count == 1)
+        // The injected day stuck rather than being rewound by the nested reschedule.
+        #expect(Calendar.current.isDate(statsEvents.last?.date ?? Date(), inSameDayAs: tomorrow))
+
+        coordinator.stop()
+        listener.cancel()
+    }
+
     @Test @MainActor
     func restoredStatisticsFromSameDayAreKept() async {
         let scheduler = MockScheduler()

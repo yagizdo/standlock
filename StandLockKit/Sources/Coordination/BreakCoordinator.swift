@@ -92,7 +92,7 @@ public final class BreakCoordinator {
         // sleeping screen, and a live timer is never touched: while paused it holds the resume
         // task, and otherwise it holds the next break.
         if !isPaused && !isSuspended && breakTimer == nil {
-            scheduleNextBreak()
+            scheduleNextBreak(now: now)
         }
     }
 
@@ -230,14 +230,17 @@ public final class BreakCoordinator {
 
     // MARK: - Private
 
-    private func scheduleNextBreak() {
+    /// `now` governs both the rollover check and the search for the next break, so an injected
+    /// date describes one consistent moment. Without it the rollover here would re-read the real
+    /// clock and undo a caller-injected day change, since `resetDailyIfNeeded` fires in both
+    /// directions.
+    private func scheduleNextBreak(now: Date = Date()) {
         breakTimer?.cancel()
         breakTimer = nil
-        rolloverIfNeeded()
+        rolloverIfNeeded(now: now)
         guard !isPaused else { return }
 
         var earliest: (date: Date, schedule: Schedule)?
-        let now = Date()
         for schedule in activeSchedules where schedule.isEnabled {
             if let cap = schedule.dailyBreakCap,
                (dailyBreakCounts[schedule.id] ?? 0) >= cap { continue }
