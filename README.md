@@ -1,6 +1,6 @@
 # StandLock
 
-[![Version](https://img.shields.io/badge/version-0.2.8-blue)](https://github.com/yagizdo/StandLock/releases)
+[![Version](https://img.shields.io/badge/version-0.3.0-blue)](https://github.com/yagizdo/StandLock/releases)
 [![Release](https://github.com/yagizdo/standlock/actions/workflows/release.yml/badge.svg)](https://github.com/yagizdo/standlock/actions/workflows/release.yml)
 [![macOS 13+](https://img.shields.io/badge/macOS-13%2B-brightgreen)](https://github.com/yagizdo/StandLock/releases/latest)
 [![Homebrew](https://img.shields.io/badge/brew-yagizdo%2Ftap%2Fstandlock-orange)](https://github.com/yagizdo/homebrew-tap)
@@ -35,6 +35,7 @@ Enable progressive enforcement on any schedule and each consecutive skip makes t
 - Time windows (e.g., 09:00-12:00, 13:00-17:00)
 - Day selection: weekdays, weekends, every day, or custom
 - Pomodoro-style repetition cycles with short/long break patterns
+- Alternating work intervals: a schedule can cycle through up to 6 intervals instead of one (e.g. 58 min sitting, then 28 min standing), each with an optional label the break screen shows as what's coming next
 - Configurable daily skip limits per discipline level
 
 ### Context Awareness
