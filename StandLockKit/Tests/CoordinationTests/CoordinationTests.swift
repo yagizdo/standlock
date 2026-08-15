@@ -1578,6 +1578,38 @@ struct BreakCoordinatorTests {
     }
 
     @Test @MainActor
+    func rolloverDuringDeferralKeepsThePendingBreak() async {
+        let scheduler = MockScheduler()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        let detector = MockDetector()
+        detector.contextToReturn = DetectionContext(screenSharingActive: true)
+        let locker = MockLocker()
+
+        let coordinator = BreakCoordinator(
+            scheduler: scheduler, detector: detector, locker: locker,
+            deferralPollingInterval: 0.1
+        )
+        let schedule = makeSchedule(breakDuration: 5)
+        let prefs = AppPreferences(screenSharingDetectionEnabled: true)
+
+        coordinator.start(with: [schedule], preferences: prefs)
+        try? await Task.sleep(for: .milliseconds(300))
+        #expect(!locker.showOverlayCalled)
+
+        // The day turns over while the poll is still waiting for the screen share to end.
+        // Re-arming here would cancel the poll and drop the deferred break silently.
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(600)
+        let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: Date())!
+        coordinator.refreshDailyRollover(now: tomorrow)
+
+        detector.contextToReturn = .clear
+        try? await Task.sleep(for: .milliseconds(300))
+
+        #expect(locker.showOverlayCalled)
+        coordinator.stop()
+    }
+
+    @Test @MainActor
     func cycleIndicesIndependentPerSchedule() async {
         let scheduler = MockScheduler()
         let detector = MockDetector()

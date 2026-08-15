@@ -28,6 +28,9 @@ public final class BreakCoordinator {
     /// to advance that schedule's cycle; cleared whenever the timer is cancelled or the break
     /// becomes active, so a slot can never advance twice.
     private var pendingBreakScheduleID: UUID?
+    /// True only while the deferral poll loop owns `breakTimer`. That loop is suspended between
+    /// polls, so anything that re-arms the timer cancels it and drops the deferred break.
+    private var isDeferringBreak = false
     public var exercises: [Exercise] = []
 
     private let deferralPollingInterval: TimeInterval
@@ -63,7 +66,7 @@ public final class BreakCoordinator {
     public func stop() {
         breakTimer?.cancel()
         breakTimer = nil
-        pendingBreakScheduleID = nil
+        clearPendingBreak()
         if locker.isShowing { locker.dismissOverlay() }
         currentBreak = nil
         currentSchedule = nil
@@ -73,7 +76,7 @@ public final class BreakCoordinator {
     public func pause(for duration: TimeInterval) {
         breakTimer?.cancel()
         breakTimer = nil
-        pendingBreakScheduleID = nil
+        clearPendingBreak()
         isPaused = true
         let until = Date().addingTimeInterval(duration)
         eventContinuation.yield(.schedulePaused(until: until))
@@ -98,8 +101,9 @@ public final class BreakCoordinator {
         // behind, and a timer armed before midnight was computed from the old day's cycle
         // index -- the new day's first break must come from index 0 (scheduleNextBreak
         // cancels any pending timer itself). Nothing may be armed behind a locked or
-        // sleeping screen, and while paused the timer holds the resume task.
-        if !isPaused && !isSuspended {
+        // sleeping screen, while paused the timer holds the resume task, and re-arming
+        // during a deferral would cancel the poll loop and lose the deferred break.
+        if !isPaused && !isSuspended && !isDeferringBreak {
             scheduleNextBreak(now: now)
         }
     }
@@ -154,7 +158,7 @@ public final class BreakCoordinator {
     private func cancelAndDismissIfShowing() {
         breakTimer?.cancel()
         breakTimer = nil
-        pendingBreakScheduleID = nil
+        clearPendingBreak()
         if locker.isShowing {
             locker.dismissOverlay()
             if var event = currentBreak {
@@ -175,8 +179,8 @@ public final class BreakCoordinator {
         breakTimer = nil
         if let id = pendingBreakScheduleID {
             cycleIndices[id, default: 0] += 1
-            pendingBreakScheduleID = nil
         }
+        clearPendingBreak()
         updateStatistics {
             $0.breaksSkipped += 1
             $0.currentStreak = 0
@@ -245,6 +249,13 @@ public final class BreakCoordinator {
 
     // MARK: - Private
 
+    /// The pending slot and the deferral flag always end together: whoever concludes a slot
+    /// concludes the poll that was waiting on it.
+    private func clearPendingBreak() {
+        pendingBreakScheduleID = nil
+        isDeferringBreak = false
+    }
+
     /// `now` governs both the rollover check and the search for the next break, so an injected
     /// date describes one consistent moment. Without it the rollover here would re-read the real
     /// clock and undo a caller-injected day change, since `resetDailyIfNeeded` fires in both
@@ -292,7 +303,7 @@ public final class BreakCoordinator {
 
     private func triggerBreak(for schedule: Schedule, context: DetectionContext) async {
         // The pending break is now active; a menu skip from here on must not advance again.
-        pendingBreakScheduleID = nil
+        clearPendingBreak()
         rolloverIfNeeded()
         if preferences.idleDetectionEnabled {
             let breakDuration = currentBreakDuration(for: schedule)
@@ -323,6 +334,7 @@ public final class BreakCoordinator {
             // The deferred slot is still pending, so a menu skip during the poll loop
             // must conclude it for this schedule.
             pendingBreakScheduleID = schedule.id
+            isDeferringBreak = true
             eventContinuation.yield(.breakDeferred(deferral, nextAttempt: Date().addingTimeInterval(deferralPollingInterval)))
             updateStatistics { $0.breaksDeferred += 1 }
             breakTimer = Task {
@@ -330,11 +342,14 @@ public final class BreakCoordinator {
                     try? await Task.sleep(for: .seconds(self.deferralPollingInterval))
                     guard !Task.isCancelled else { return }
                     let freshContext = await self.detector.currentContext()
+                    // Cancellation does not interrupt the await above, so re-check before
+                    // mutating: a menu skip during it already concluded this slot.
+                    guard !Task.isCancelled else { return }
                     if let newReason = self.shouldDefer(context: freshContext) {
                         self.eventContinuation.yield(.breakDeferred(newReason, nextAttempt: Date().addingTimeInterval(self.deferralPollingInterval)))
                     } else if self.shouldSkipAfterDeferral(reason: deferral) {
                         self.cycleIndices[schedule.id, default: 0] += 1
-                        self.pendingBreakScheduleID = nil
+                        self.clearPendingBreak()
                         self.scheduleNextBreak()
                         return
                     } else {

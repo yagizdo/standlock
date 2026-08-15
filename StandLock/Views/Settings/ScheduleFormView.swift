@@ -343,9 +343,11 @@ struct ScheduleFormView: View {
             return IntervalStep(duration: TimeInterval(row.minutes * 60),
                                 label: trimmed.isEmpty ? nil : trimmed)
         }
-        // A single unlabeled row is the canonical single-interval schedule; `breakInterval`
-        // always mirrors the first entry so old readers see a sane single interval.
-        let intervalCycle: [IntervalStep]? = (steps.count == 1 && steps[0].label == nil) ? nil : steps
+        // A single row is the canonical single-interval schedule; `breakInterval` always
+        // mirrors the first entry so old readers see a sane single interval. The label field
+        // is hidden at one row, so a label left over from a deleted row must not persist --
+        // it would be invisible, unclearable, and still drive the break screen.
+        let intervalCycle: [IntervalStep]? = steps.count == 1 ? nil : steps
 
         let result = Schedule(
             id: schedule?.id ?? UUID(),
