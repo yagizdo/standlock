@@ -59,8 +59,14 @@ public struct BreakHistory: Codable, Sendable {
         revision += 1
     }
 
-    public mutating func pruneOlderThan(_ dateKey: String) {
+    /// Returns `true` when records were actually dropped, so the caller can skip a pointless save.
+    @discardableResult
+    public mutating func pruneOlderThan(_ dateKey: String) -> Bool {
+        let before = records.count
         records = records.filter { $0.key >= dateKey }
+        guard records.count != before else { return false }
+        revision += 1
+        return true
     }
 
     // MARK: - Streak
