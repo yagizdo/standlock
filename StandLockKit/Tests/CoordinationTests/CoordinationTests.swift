@@ -10,9 +10,11 @@ final class MockScheduler: SchedulingEngine, @unchecked Sendable {
     var nextBreakTimeToReturn: Date?
     var nextBreakTimes: [UUID: Date] = [:]
     var breakDurationToReturn: TimeInterval = 300
+    var receivedCycleIndices: [(scheduleID: UUID, index: Int)] = []
 
-    func nextBreakTime(for schedule: Schedule, after date: Date) -> Date? {
-        nextBreakTimes[schedule.id] ?? nextBreakTimeToReturn
+    func nextBreakTime(for schedule: Schedule, after date: Date, cycleIndex: Int) -> Date? {
+        receivedCycleIndices.append((scheduleID: schedule.id, index: cycleIndex))
+        return nextBreakTimes[schedule.id] ?? nextBreakTimeToReturn
     }
     func breakDuration(for schedule: Schedule, breakIndex: Int) -> TimeInterval { breakDurationToReturn }
     func isWithinActiveWindow(_ schedule: Schedule, at date: Date) -> Bool { true }

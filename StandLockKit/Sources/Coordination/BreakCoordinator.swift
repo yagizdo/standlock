@@ -244,7 +244,7 @@ public final class BreakCoordinator {
         for schedule in activeSchedules where schedule.isEnabled {
             if let cap = schedule.dailyBreakCap,
                (dailyBreakCounts[schedule.id] ?? 0) >= cap { continue }
-            if let next = scheduler.nextBreakTime(for: schedule, after: now) {
+            if let next = scheduler.nextBreakTime(for: schedule, after: now, cycleIndex: 0) {
                 if earliest == nil || next < earliest!.date {
                     earliest = (next, schedule)
                 }

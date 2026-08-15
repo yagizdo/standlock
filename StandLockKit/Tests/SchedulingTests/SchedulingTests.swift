@@ -18,6 +18,7 @@ private func makeSchedule(
     windows: [TimeWindow] = [TimeWindow(startHour: 9, startMinute: 0, endHour: 17, endMinute: 0)],
     breakInterval: TimeInterval = 2400,
     breakDuration: TimeInterval = 600,
+    intervalCycle: [IntervalStep]? = nil,
     repetitionRule: RepetitionRule? = nil,
     disciplineLevel: DisciplineLevel = .gentle,
     dailyBreakCap: Int? = nil
@@ -25,6 +26,7 @@ private func makeSchedule(
     Schedule(
         name: "Test", days: days, windows: windows,
         breakInterval: breakInterval, breakDuration: breakDuration,
+        intervalCycle: intervalCycle,
         repetitionRule: repetitionRule, disciplineLevel: disciplineLevel,
         dailyBreakCap: dailyBreakCap
     )
@@ -78,7 +80,7 @@ struct ScheduleEvaluatorTests {
     @Test func nextBreakTime_simpleInterval() {
         let monday9am = makeDate(day: 12, hour: 9)
         let schedule = makeSchedule(breakInterval: 2400) // 40 min
-        let next = evaluator.nextBreakTime(for: schedule, after: monday9am)
+        let next = evaluator.nextBreakTime(for: schedule, after: monday9am, cycleIndex: 0)
         #expect(next != nil)
         let diff = next!.timeIntervalSince(monday9am)
         #expect(diff == 2400)
@@ -87,7 +89,7 @@ struct ScheduleEvaluatorTests {
     @Test func nextBreakTime_multipleBreaks() {
         let monday9_40 = makeDate(day: 12, hour: 9, minute: 40)
         let schedule = makeSchedule(breakInterval: 2400)
-        let next = evaluator.nextBreakTime(for: schedule, after: monday9_40)
+        let next = evaluator.nextBreakTime(for: schedule, after: monday9_40, cycleIndex: 0)
         #expect(next != nil)
         let expected = makeDate(day: 12, hour: 10, minute: 20)
         #expect(abs(next!.timeIntervalSince(expected)) < 1)
@@ -96,7 +98,7 @@ struct ScheduleEvaluatorTests {
     @Test func nextBreakTime_endOfWindow() {
         let monday16_50 = makeDate(day: 12, hour: 16, minute: 50)
         let schedule = makeSchedule(breakInterval: 2400) // 40 min would go past 17:00
-        let next = evaluator.nextBreakTime(for: schedule, after: monday16_50)
+        let next = evaluator.nextBreakTime(for: schedule, after: monday16_50, cycleIndex: 0)
         #expect(next != nil)
         // Should be next day's window start + interval
         let expectedBase = makeDate(day: 13, hour: 9, minute: 0) // Tuesday 09:00
@@ -107,7 +109,7 @@ struct ScheduleEvaluatorTests {
     @Test func nextBreakTime_weekendScheduleOnFriday() {
         let friday17 = makeDate(day: 15, hour: 17, minute: 30) // 2026-05-15 Friday, after window
         let schedule = makeSchedule(days: .weekdays)
-        let next = evaluator.nextBreakTime(for: schedule, after: friday17)
+        let next = evaluator.nextBreakTime(for: schedule, after: friday17, cycleIndex: 0)
         #expect(next != nil)
         // Should be Monday's window
         let mondayBase = makeDate(day: 18, hour: 9, minute: 0) // 2026-05-18 Monday
@@ -139,8 +141,53 @@ struct ScheduleEvaluatorTests {
 
     @Test func nextBreakTime_noActiveSchedule() {
         let schedule = makeSchedule(days: .custom([]))
-        let result = evaluator.nextBreakTime(for: schedule, after: Date())
+        let result = evaluator.nextBreakTime(for: schedule, after: Date(), cycleIndex: 0)
         #expect(result == nil)
+    }
+
+    @Test func nextBreakTime_cycleIndexSelectsInterval() {
+        let monday9am = makeDate(day: 11, hour: 9)
+        let schedule = makeSchedule(intervalCycle: [
+            IntervalStep(duration: 58 * 60), IntervalStep(duration: 28 * 60),
+        ])
+        let first = evaluator.nextBreakTime(for: schedule, after: monday9am, cycleIndex: 0)
+        #expect(first == makeDate(day: 11, hour: 9, minute: 58))
+        let second = evaluator.nextBreakTime(for: schedule, after: monday9am, cycleIndex: 1)
+        #expect(second == makeDate(day: 11, hour: 9, minute: 28))
+    }
+
+    @Test func nextBreakTime_cycleIndexWraps() {
+        let monday9am = makeDate(day: 11, hour: 9)
+        let schedule = makeSchedule(intervalCycle: [
+            IntervalStep(duration: 58 * 60), IntervalStep(duration: 28 * 60),
+        ])
+        let next = evaluator.nextBreakTime(for: schedule, after: monday9am, cycleIndex: 2)
+        #expect(next == makeDate(day: 11, hour: 9, minute: 58))
+    }
+
+    @Test func nextBreakTime_nilCycleFallsBackToBreakInterval() {
+        let monday9am = makeDate(day: 11, hour: 9)
+        let schedule = makeSchedule(breakInterval: 2400, intervalCycle: nil)
+        let next = evaluator.nextBreakTime(for: schedule, after: monday9am, cycleIndex: 5)
+        #expect(next == makeDate(day: 11, hour: 9, minute: 40))
+    }
+
+    @Test func nextBreakTime_emptyCycleFallsBackToBreakInterval() {
+        let monday9am = makeDate(day: 11, hour: 9)
+        let schedule = makeSchedule(breakInterval: 2400, intervalCycle: [])
+        let next = evaluator.nextBreakTime(for: schedule, after: monday9am, cycleIndex: 3)
+        #expect(next == makeDate(day: 11, hour: 9, minute: 40))
+    }
+
+    @Test func nextBreakTime_endOfWindowUsesSelectedInterval() {
+        let monday16_50 = makeDate(day: 11, hour: 16, minute: 50)
+        let schedule = makeSchedule(intervalCycle: [
+            IntervalStep(duration: 58 * 60), IntervalStep(duration: 28 * 60),
+        ])
+        let next = evaluator.nextBreakTime(for: schedule, after: monday16_50, cycleIndex: 1)
+        // 16:50 + 28 min lands past 17:00, so the window-jump path must also
+        // use the selected interval: Tuesday 09:00 + 28 min.
+        #expect(next == makeDate(day: 12, hour: 9, minute: 28))
     }
 
     @Test func breakDuration_noRepetitionRule() {
