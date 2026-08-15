@@ -3,7 +3,7 @@
 ## StandLock v0.2.8
 
 **Bug Fixes**
-- Daily counters now reset at the calendar day boundary. An app left running across midnight kept reporting yesterday's "breaks skipped today", permanently tripped the daily skip limit, blocked schedules that had hit their daily break cap, carried escalation tiers into the next day, and wrote multi-day totals into a single day's history record (ecbd6e5)
+- Daily counters now reset at the calendar day boundary. An app left running across midnight kept reporting yesterday's "breaks skipped today", permanently tripped the daily skip limit, blocked schedules that had hit their daily break cap, carried escalation tiers into the next day, and wrote multi-day totals into a single day's history record (fixes #32, ecbd6e5)
 - Week and Month totals in Statistics are now calendar aligned. They previously summed the trailing 7 and 30 days while the grids below them drew a Monday-to-Sunday week and a calendar month, so the numbers disagreed with the cells right under them. Year stays a rolling 365 days to match its heatmap (2281239)
 - Statistics no longer goes stale. Switching periods rebuilt the totals but not the heatmap, and a panel left open across midnight kept drawing yesterday (ace5307)
 - Year heatmap columns now start on Monday instead of slicing the window into raw 7-day blocks, today's cell is outlined, and the month grid's leading blanks no longer collide with real day cells (6ce2ff6)
