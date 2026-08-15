@@ -95,22 +95,47 @@ struct BreakHistoryTests {
         #expect(stats.totalSkipped == 1)
     }
 
-    @Test func aggregateWeekSumsLast7Days() {
+    @Test func aggregateWeekCoversCalendarWeekFromMonday() {
         var history = BreakHistory()
-        let ref = date("2026-06-01")
-        let calendar = Calendar.current
+        let ref = date("2026-06-04") // Thursday
 
-        for offset in 0..<7 {
-            let day = calendar.date(byAdding: .day, value: -offset, to: ref)!
-            let key = DailyBreakRecord.dateKey(from: day)
+        for key in ["2026-06-01", "2026-06-02", "2026-06-03", "2026-06-04"] {
             history.upsert(makeRecord(key, completed: 2, duration: 600))
         }
-        let outside = calendar.date(byAdding: .day, value: -7, to: ref)!
-        history.upsert(makeRecord(DailyBreakRecord.dateKey(from: outside), completed: 100))
+        // Sunday closing the previous week. Within the trailing 7 days, outside this week.
+        history.upsert(makeRecord("2026-05-31", completed: 100))
 
         let stats = history.aggregateStats(for: .week, referenceDate: ref)
-        #expect(stats.totalCompleted == 14)
-        #expect(stats.totalBreakTime == 4200)
+        #expect(stats.totalCompleted == 8)
+        #expect(stats.totalBreakTime == 2400)
+        #expect(stats.activeDays == 4)
+    }
+
+    @Test func aggregateMonthCoversCalendarMonth() {
+        var history = BreakHistory()
+        let ref = date("2026-06-15")
+
+        history.upsert(makeRecord("2026-06-01", completed: 3))
+        history.upsert(makeRecord("2026-06-15", completed: 4))
+        // Within the trailing 30 days, outside the calendar month.
+        history.upsert(makeRecord("2026-05-31", completed: 100))
+
+        let stats = history.aggregateStats(for: .month, referenceDate: ref)
+        #expect(stats.totalCompleted == 7)
+        #expect(stats.activeDays == 2)
+    }
+
+    @Test func aggregateWeekOnSundayStillStartsOnMonday() {
+        var history = BreakHistory()
+        let ref = date("2026-06-07") // Sunday
+
+        history.upsert(makeRecord("2026-06-01", completed: 1)) // Monday, first day of the week
+        history.upsert(makeRecord("2026-06-07", completed: 1))
+        history.upsert(makeRecord("2026-05-31", completed: 100)) // previous Sunday
+
+        let stats = history.aggregateStats(for: .week, referenceDate: ref)
+        #expect(stats.totalCompleted == 2)
+        #expect(stats.activeDays == 2)
     }
 
     @Test func aggregateYearSums365Days() {

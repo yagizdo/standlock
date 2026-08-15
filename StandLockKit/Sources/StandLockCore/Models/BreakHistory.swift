@@ -104,17 +104,27 @@ public struct BreakHistory: Codable, Sendable {
 
     // MARK: - Aggregation
 
+    /// Start of the window a period covers. Week and month are calendar aligned so the totals
+    /// match the Monday-Sunday and calendar-month grids the statistics panel draws; year stays
+    /// a rolling window because the heatmap is one too.
+    private func windowStart(for period: StatsPeriod, referenceDate: Date, calendar: Calendar) -> Date {
+        switch period {
+        case .today:
+            return referenceDate
+        case .week:
+            let daysFromMonday = (calendar.component(.weekday, from: referenceDate) + 5) % 7
+            return calendar.date(byAdding: .day, value: -daysFromMonday, to: referenceDate) ?? referenceDate
+        case .month:
+            let components = calendar.dateComponents([.year, .month], from: referenceDate)
+            return calendar.date(from: components) ?? referenceDate
+        case .year:
+            return calendar.date(byAdding: .day, value: -364, to: referenceDate) ?? referenceDate
+        }
+    }
+
     public func aggregateStats(for period: StatsPeriod, referenceDate: Date = Date()) -> AggregateStats {
         let calendar = Calendar.current
-        let daysBack: Int
-        switch period {
-        case .today: daysBack = 0
-        case .week: daysBack = 6
-        case .month: daysBack = 29
-        case .year: daysBack = 364
-        }
-
-        let startDate = calendar.date(byAdding: .day, value: -daysBack, to: referenceDate)!
+        let startDate = windowStart(for: period, referenceDate: referenceDate, calendar: calendar)
         let startKey = DailyBreakRecord.dateKey(from: startDate)
         let endKey = DailyBreakRecord.dateKey(from: referenceDate)
         let filtered = records(in: startKey...endKey)
