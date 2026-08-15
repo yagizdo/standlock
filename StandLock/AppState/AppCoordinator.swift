@@ -124,7 +124,9 @@ final class AppCoordinator: ObservableObject {
         let cutoff = DailyBreakRecord.dateKey(
             from: Calendar.current.date(byAdding: .day, value: -400, to: Date())!
         )
-        breakHistory.pruneOlderThan(cutoff)
+        if breakHistory.pruneOlderThan(cutoff) {
+            saveHistory()
+        }
 
         // Back-fills today's record for users upgrading from before break history existed. Must
         // stay below the daily reset above, otherwise stale multi-day totals land on today.

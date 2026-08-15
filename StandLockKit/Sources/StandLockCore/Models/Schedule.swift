@@ -88,15 +88,28 @@ public enum Weekday: Int, Codable, Sendable, CaseIterable, Comparable {
     }
 }
 
-public struct TimeWindow: Codable, Sendable, Equatable {
+public struct TimeWindow: Codable, Sendable, Equatable, Identifiable {
+    /// Not persisted. It only has to stay stable for as long as a form is on screen, so SwiftUI
+    /// can track rows across insertions and deletions instead of addressing them by index.
+    public let id = UUID()
     public var startHour: Int
     public var startMinute: Int
     public var endHour: Int
     public var endMinute: Int
 
+    private enum CodingKeys: String, CodingKey {
+        case startHour, startMinute, endHour, endMinute
+    }
+
     public init(startHour: Int, startMinute: Int, endHour: Int, endMinute: Int) {
         self.startHour = startHour; self.startMinute = startMinute
         self.endHour = endHour; self.endMinute = endMinute
+    }
+
+    /// Identity is per-session only, so equality stays on the values a window actually stores.
+    public static func == (lhs: TimeWindow, rhs: TimeWindow) -> Bool {
+        lhs.startHour == rhs.startHour && lhs.startMinute == rhs.startMinute
+            && lhs.endHour == rhs.endHour && lhs.endMinute == rhs.endMinute
     }
 
     public func contains(hour: Int, minute: Int) -> Bool {

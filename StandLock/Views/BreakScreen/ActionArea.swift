@@ -555,7 +555,9 @@ private struct CrateOpeningDismissView: View {
     }
 
     private func spin() {
-        guard !isSpinning else { return }
+        // `usedAttempts` is sized to `maxAttempts`; without this bound a losing spin past the
+        // last attempt would write out of range.
+        guard !isSpinning, currentAttempt < maxAttempts else { return }
         isSpinning = true
         landed = nil
 
