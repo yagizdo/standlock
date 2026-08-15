@@ -171,6 +171,8 @@ struct ScheduleFormView: View {
                                 .foregroundStyle(.secondary)
 
                             if intervalRows.count > 1 {
+                                TextField("Label (optional, e.g. Sitting)", text: $row.label)
+                                    .textFieldStyle(.roundedBorder)
                                 Button {
                                     intervalRows.removeAll { $0.id == row.id }
                                 } label: {

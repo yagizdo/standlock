@@ -366,7 +366,15 @@ public final class BreakCoordinator {
         eventContinuation.yield(.breakStarted(breakEvent))
         locker.showOverlay(level: effectiveLevel, duration: duration,
                            exercise: exercise, preferences: preferences,
-                           statistics: statistics, escalationTier: tier)
+                           statistics: statistics, escalationTier: tier,
+                           nextIntervalLabel: nextIntervalLabel(for: schedule))
+    }
+
+    /// The cycle index was already advanced when this break triggered, so it points at the
+    /// upcoming work block.
+    private func nextIntervalLabel(for schedule: Schedule) -> String? {
+        guard let cycle = schedule.intervalCycle, !cycle.isEmpty else { return nil }
+        return cycle[cycleIndices[schedule.id, default: 0] % cycle.count].label
     }
 
     private func currentBreakDuration(for schedule: Schedule) -> TimeInterval {

@@ -33,16 +33,19 @@ final class MockLocker: LockPresenting, @unchecked Sendable {
     var lastDuration: TimeInterval?
     var lastPreferences: AppPreferences?
     var lastEscalationTier: Int?
+    var lastNextIntervalLabel: String?
     var isShowing = false
 
     func showOverlay(level: DisciplineLevel, duration: TimeInterval,
                      exercise: Exercise?, preferences: AppPreferences,
-                     statistics: BreakStatistics, escalationTier: Int) {
+                     statistics: BreakStatistics, escalationTier: Int,
+                     nextIntervalLabel: String?) {
         showOverlayCalled = true
         lastLevel = level
         lastDuration = duration
         lastPreferences = preferences
         lastEscalationTier = escalationTier
+        lastNextIntervalLabel = nextIntervalLabel
         isShowing = true
     }
 
@@ -1596,6 +1599,50 @@ struct BreakCoordinatorTests {
 
         #expect(lastCycleIndex(scheduler, for: scheduleA) == 1)
         #expect(lastCycleIndex(scheduler, for: scheduleB) == 0)
+        coordinator.stop()
+    }
+
+    @Test @MainActor
+    func overlayReceivesNextIntervalLabel() async {
+        let scheduler = MockScheduler()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        let detector = MockDetector()
+        let locker = MockLocker()
+
+        let coordinator = BreakCoordinator(scheduler: scheduler, detector: detector, locker: locker)
+        let schedule = makeSchedule(breakDuration: 5, intervalCycle: [
+            IntervalStep(duration: 58 * 60, label: "Sitting"),
+            IntervalStep(duration: 28 * 60, label: "Standing"),
+        ])
+
+        coordinator.start(with: [schedule], preferences: AppPreferences())
+        try? await Task.sleep(for: .milliseconds(300))
+        // During the first break the upcoming work block is the cycle's second entry.
+        #expect(locker.lastNextIntervalLabel == "Standing")
+
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        coordinator.completeActiveBreak()
+        try? await Task.sleep(for: .milliseconds(300))
+        #expect(locker.lastNextIntervalLabel == "Sitting")
+
+        coordinator.stop()
+    }
+
+    @Test @MainActor
+    func overlayLabelNilWithoutCycle() async {
+        let scheduler = MockScheduler()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        let detector = MockDetector()
+        let locker = MockLocker()
+
+        let coordinator = BreakCoordinator(scheduler: scheduler, detector: detector, locker: locker)
+        let schedule = makeSchedule(breakDuration: 5)
+
+        coordinator.start(with: [schedule], preferences: AppPreferences())
+        try? await Task.sleep(for: .milliseconds(300))
+        #expect(locker.showOverlayCalled)
+        #expect(locker.lastNextIntervalLabel == nil)
+
         coordinator.stop()
     }
 

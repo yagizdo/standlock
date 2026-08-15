@@ -9,6 +9,7 @@ struct ManuscriptBreakView: View {
     let statistics: BreakStatistics
     let enforcementTier: EnforcementTier
     let escalationTierIndex: Int
+    let nextIntervalLabel: String?
     let onSkip: () -> Void
     let onEscape: () -> Void
     let onComplete: () -> Void
@@ -21,6 +22,7 @@ struct ManuscriptBreakView: View {
     init(level: DisciplineLevel, totalDuration: TimeInterval, exercise: Exercise?,
          preferences: AppPreferences, statistics: BreakStatistics,
          escalationTier: Int = 0,
+         nextIntervalLabel: String? = nil,
          onSkip: @escaping () -> Void,
          onEscape: @escaping () -> Void,
          onComplete: @escaping () -> Void) {
@@ -32,6 +34,7 @@ struct ManuscriptBreakView: View {
         let policy = level.enforcementPolicy(preferences: preferences)
         self.enforcementTier = policy.tier(at: escalationTier)
         self.escalationTierIndex = escalationTier
+        self.nextIntervalLabel = nextIntervalLabel
         self.onSkip = onSkip
         self.onEscape = onEscape
         self.onComplete = onComplete
@@ -55,6 +58,9 @@ struct ManuscriptBreakView: View {
 
                     VStack(spacing: compact ? 16 : 24) {
                         LevelPill(level: level, palette: palette)
+                        if let nextIntervalLabel, !nextIntervalLabel.isEmpty {
+                            NextIntervalLabel(text: nextIntervalLabel, palette: palette)
+                        }
                         TimerNumerals(
                             remainingSeconds: remainingSeconds,
                             totalDuration: totalDuration,

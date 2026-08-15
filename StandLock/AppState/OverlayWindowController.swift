@@ -18,6 +18,7 @@ final class OverlayWindowController: LockPresenting {
     private var currentPreferences: AppPreferences?
     private var currentStatistics: BreakStatistics?
     private var currentEscalationTier: Int = 0
+    private var currentNextIntervalLabel: String?
     private var breakStartDate: Date?
     private var lastScreenChangeHandled: Date = .distantPast
 
@@ -30,7 +31,8 @@ final class OverlayWindowController: LockPresenting {
     func showOverlay(
         level: DisciplineLevel, duration: TimeInterval,
         exercise: Exercise?, preferences: AppPreferences,
-        statistics: BreakStatistics, escalationTier: Int = 0
+        statistics: BreakStatistics, escalationTier: Int = 0,
+        nextIntervalLabel: String? = nil
     ) {
         let isRecreation = isShowing
         dismissOverlay()
@@ -44,6 +46,7 @@ final class OverlayWindowController: LockPresenting {
         currentPreferences = preferences
         currentStatistics = statistics
         currentEscalationTier = escalationTier
+        currentNextIntervalLabel = nextIntervalLabel
 
         let palette = BreakPalette.for(level)
         for screen in NSScreen.screens {
@@ -53,6 +56,7 @@ final class OverlayWindowController: LockPresenting {
                 level: level, totalDuration: duration,
                 exercise: exercise, preferences: preferences,
                 statistics: statistics, escalationTier: escalationTier,
+                nextIntervalLabel: nextIntervalLabel,
                 onSkip: { [weak self] in self?.handleSkip() },
                 onEscape: { [weak self] in self?.handleEscape() },
                 onComplete: { [weak self] in self?.handleComplete() }
@@ -189,11 +193,13 @@ final class OverlayWindowController: LockPresenting {
         let remaining = currentDuration - elapsed
         let tier = currentEscalationTier
         let exercise = currentExercise
+        let nextLabel = currentNextIntervalLabel
         dismissOverlay()
         showOverlay(
             level: level, duration: remaining,
             exercise: exercise, preferences: prefs,
-            statistics: stats, escalationTier: tier
+            statistics: stats, escalationTier: tier,
+            nextIntervalLabel: nextLabel
         )
     }
 }
