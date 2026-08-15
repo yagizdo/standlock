@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+**New**
+- A schedule can now cycle through multiple work intervals instead of one, e.g. 58 min sitting > 2 min break > 28 min standing > 2 min break > repeat. Each interval can carry an optional label, and the break screen shows what comes next ("NEXT: STANDING"). The cycle stays on plan regardless of how a break ends, and each day starts from the first interval. Existing single-interval schedules are unchanged (fixes #30, #35)
+
 ## StandLock v0.2.8
 
 **Bug Fixes**
