@@ -117,6 +117,43 @@ struct ScheduleModelTests {
         #expect(stats.weeklyEscapeCount == 0)
     }
 
+    @Test func breakStatisticsDailyResetKeepsSameDayCounters() {
+        var stats = BreakStatistics(date: Date())
+        stats.breaksCompleted = 4
+        stats.breaksSkipped = 2
+        stats.breaksEscaped = 1
+        stats.breaksDeferred = 3
+
+        #expect(stats.resetDailyIfNeeded(currentDate: Date()) == false)
+        #expect(stats.breaksCompleted == 4)
+        #expect(stats.breaksSkipped == 2)
+        #expect(stats.breaksEscaped == 1)
+        #expect(stats.breaksDeferred == 3)
+    }
+
+    @Test func breakStatisticsDailyResetClearsCountersOnNewDay() {
+        let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: Date())!
+        var stats = BreakStatistics(date: yesterday)
+        stats.breaksCompleted = 4
+        stats.breaksSkipped = 2
+        stats.breaksEscaped = 1
+        stats.breaksDeferred = 3
+        stats.currentStreak = 7
+        stats.weeklyEscapeCount = 2
+
+        let now = Date()
+        #expect(stats.resetDailyIfNeeded(currentDate: now) == true)
+        #expect(stats.breaksCompleted == 0)
+        #expect(stats.breaksSkipped == 0)
+        #expect(stats.breaksEscaped == 0)
+        #expect(stats.breaksDeferred == 0)
+        #expect(Calendar.current.isDate(stats.date, inSameDayAs: now))
+
+        // Streak and weekly escapes span days and must survive the rollover.
+        #expect(stats.currentStreak == 7)
+        #expect(stats.weeklyEscapeCount == 2)
+    }
+
     // MARK: - AppPreferences
 
     @Test func appPreferencesJsonRoundTrip() throws {

@@ -105,7 +105,7 @@ struct MenuBarView: View {
             )
             statItem(
                 icon: "flame",
-                value: "\(coordinator.todayStats.currentStreak)",
+                value: "\(coordinator.breakHistory.currentStreak())",
                 label: "Streak"
             )
             statItem(

@@ -25,6 +25,23 @@ public struct BreakStatistics: Codable, Sendable {
         return Double(breaksCompleted) / Double(totalBreaks)
     }
 
+    /// Clears the per-day counters when `currentDate` falls on a different calendar day
+    /// than the one these statistics were recorded for. Streak and weekly counters span
+    /// multiple days and are left untouched.
+    /// Unlike `resetWeeklyIfNeeded` this triggers in both directions: a clock correction or a
+    /// timezone change that moves the date backwards must still recover, otherwise a single
+    /// future-stamped date would freeze the counters until that day arrives.
+    @discardableResult
+    public mutating func resetDailyIfNeeded(currentDate: Date) -> Bool {
+        guard !Calendar.current.isDate(date, inSameDayAs: currentDate) else { return false }
+        date = currentDate
+        breaksCompleted = 0
+        breaksSkipped = 0
+        breaksEscaped = 0
+        breaksDeferred = 0
+        return true
+    }
+
     public mutating func resetWeeklyIfNeeded(currentDate: Date) {
         let currentWeekStart = Calendar.current.date(from: Calendar.current.dateComponents(
             [.yearForWeekOfYear, .weekOfYear], from: currentDate))!
