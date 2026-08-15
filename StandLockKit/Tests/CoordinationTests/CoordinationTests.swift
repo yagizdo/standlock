@@ -367,6 +367,265 @@ struct BreakCoordinatorTests {
     }
 
     @Test @MainActor
+    func staleStatisticsRollOverToNewDay() async {
+        let scheduler = MockScheduler()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        let detector = MockDetector()
+        let locker = MockLocker()
+
+        let coordinator = BreakCoordinator(scheduler: scheduler, detector: detector, locker: locker)
+        let schedule = makeSchedule(breakDuration: 5)
+
+        let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: Date())!
+        var yesterdayStats = BreakStatistics(date: yesterday)
+        yesterdayStats.breaksSkipped = 2
+        yesterdayStats.breaksCompleted = 3
+
+        var lastStats: BreakStatistics?
+        let listener = Task {
+            for await event in coordinator.events {
+                if case .statisticsUpdated(let s) = event { lastStats = s }
+            }
+        }
+
+        coordinator.start(with: [schedule], preferences: AppPreferences(), statistics: yesterdayStats)
+        try? await Task.sleep(for: .milliseconds(300))
+
+        coordinator.skipActiveBreak()
+        try? await Task.sleep(for: .milliseconds(100))
+
+        #expect(lastStats?.breaksSkipped == 1)
+        #expect(lastStats?.breaksCompleted == 0)
+
+        coordinator.stop()
+        listener.cancel()
+    }
+
+    // Issue #32: the app keeps running across days, so a rollover must report a clean day on
+    // its own -- before any break is taken -- rather than carrying yesterday's counters.
+    @Test @MainActor
+    func rolloverEmitsZeroedStatisticsBeforeAnyBreak() async {
+        let scheduler = MockScheduler()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(600)
+        let detector = MockDetector()
+        let locker = MockLocker()
+
+        let coordinator = BreakCoordinator(scheduler: scheduler, detector: detector, locker: locker)
+        let schedule = makeSchedule(breakDuration: 5)
+
+        let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: Date())!
+        var yesterdayStats = BreakStatistics(date: yesterday)
+        yesterdayStats.breaksSkipped = 2
+        yesterdayStats.breaksCompleted = 3
+        yesterdayStats.breaksEscaped = 1
+        yesterdayStats.currentStreak = 4
+
+        var statsEvents: [BreakStatistics] = []
+        let listener = Task {
+            for await event in coordinator.events {
+                if case .statisticsUpdated(let s) = event { statsEvents.append(s) }
+            }
+        }
+
+        coordinator.start(with: [schedule], preferences: AppPreferences(), statistics: yesterdayStats)
+        try? await Task.sleep(for: .milliseconds(100))
+
+        // Exactly one event, emitted by the rollover itself rather than by a later mutation.
+        #expect(statsEvents.count == 1)
+        #expect(statsEvents.last?.breaksSkipped == 0)
+        #expect(statsEvents.last?.breaksCompleted == 0)
+        #expect(statsEvents.last?.breaksEscaped == 0)
+        // The break streak spans days and must survive the rollover.
+        #expect(statsEvents.last?.currentStreak == 4)
+
+        coordinator.stop()
+        listener.cancel()
+    }
+
+    // AppCoordinator starts the coordinator before it attaches its event listener, so the
+    // rollover emitted from inside start() has no consumer yet. It survives only because
+    // AsyncStream buffers unboundedly by default; a switch to a bounded policy or an early
+    // finish() would silently drop the day's first event and leave stale counters on screen.
+    @Test @MainActor
+    func rolloverEmittedBeforeListenerAttachesIsStillDelivered() async {
+        let scheduler = MockScheduler()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(600)
+        let detector = MockDetector()
+        let locker = MockLocker()
+
+        let coordinator = BreakCoordinator(scheduler: scheduler, detector: detector, locker: locker)
+        let schedule = makeSchedule(breakDuration: 5)
+
+        let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: Date())!
+        var yesterdayStats = BreakStatistics(date: yesterday)
+        yesterdayStats.breaksSkipped = 2
+        yesterdayStats.breaksCompleted = 3
+
+        // Start first, subscribe second -- the production ordering.
+        coordinator.start(with: [schedule], preferences: AppPreferences(), statistics: yesterdayStats)
+
+        var statsEvents: [BreakStatistics] = []
+        let listener = Task {
+            for await event in coordinator.events {
+                if case .statisticsUpdated(let s) = event { statsEvents.append(s) }
+            }
+        }
+        try? await Task.sleep(for: .milliseconds(100))
+
+        #expect(statsEvents.count == 1)
+        #expect(statsEvents.last?.breaksSkipped == 0)
+        #expect(statsEvents.last?.breaksCompleted == 0)
+
+        coordinator.stop()
+        listener.cancel()
+    }
+
+    // refreshDailyRollover(now:) must hand its date to everything it triggers. When the nested
+    // scheduleNextBreak re-read the real clock instead, resetDailyIfNeeded fired a second time
+    // in the reverse direction -- re-zeroing the counters, rewinding statistics.date, and
+    // emitting a second event for one logical rollover.
+    @Test @MainActor
+    func injectedRolloverDateGovernsTheWholeOperation() async {
+        let scheduler = MockScheduler()
+        // No next break available, so start() leaves breakTimer nil -- the same shape as a
+        // schedule that used up its daily cap, which is the only state that re-arms on rollover.
+        scheduler.nextBreakTimeToReturn = nil
+        let detector = MockDetector()
+        let locker = MockLocker()
+
+        let coordinator = BreakCoordinator(scheduler: scheduler, detector: detector, locker: locker)
+        let schedule = makeSchedule(breakDuration: 5)
+
+        var statsEvents: [BreakStatistics] = []
+        let listener = Task {
+            for await event in coordinator.events {
+                if case .statisticsUpdated(let s) = event { statsEvents.append(s) }
+            }
+        }
+
+        coordinator.start(with: [schedule], preferences: AppPreferences(),
+                          statistics: BreakStatistics(date: Date()))
+        try? await Task.sleep(for: .milliseconds(100))
+        statsEvents.removeAll()
+
+        // The new day frees the schedule, so the rollover re-arms -- exercising the nested call.
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(600)
+        let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: Date())!
+        coordinator.refreshDailyRollover(now: tomorrow)
+        try? await Task.sleep(for: .milliseconds(100))
+
+        // One logical rollover, one event -- not one forwards and one back.
+        #expect(statsEvents.count == 1)
+        // The injected day stuck rather than being rewound by the nested reschedule.
+        #expect(Calendar.current.isDate(statsEvents.last?.date ?? Date(), inSameDayAs: tomorrow))
+
+        coordinator.stop()
+        listener.cancel()
+    }
+
+    @Test @MainActor
+    func restoredStatisticsFromSameDayAreKept() async {
+        let scheduler = MockScheduler()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        let detector = MockDetector()
+        let locker = MockLocker()
+
+        let coordinator = BreakCoordinator(scheduler: scheduler, detector: detector, locker: locker)
+        let schedule = makeSchedule(breakDuration: 5)
+
+        var todayStats = BreakStatistics(date: Date())
+        todayStats.breaksSkipped = 2
+        todayStats.breaksCompleted = 3
+
+        var lastStats: BreakStatistics?
+        let listener = Task {
+            for await event in coordinator.events {
+                if case .statisticsUpdated(let s) = event { lastStats = s }
+            }
+        }
+
+        coordinator.start(with: [schedule], preferences: AppPreferences(), statistics: todayStats)
+        try? await Task.sleep(for: .milliseconds(300))
+
+        coordinator.skipActiveBreak()
+        try? await Task.sleep(for: .milliseconds(100))
+
+        #expect(lastStats?.breaksSkipped == 3)
+        #expect(lastStats?.breaksCompleted == 3)
+
+        coordinator.stop()
+        listener.cancel()
+    }
+
+    @Test @MainActor
+    func escalationTierAndDailyCapResetOnRollover() async {
+        let scheduler = MockScheduler()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        let detector = MockDetector()
+        let locker = MockLocker()
+
+        let coordinator = BreakCoordinator(scheduler: scheduler, detector: detector, locker: locker)
+        let schedule = makeSchedule(dailyBreakCap: 2, progressiveEnforcement: true)
+
+        coordinator.start(with: [schedule], preferences: AppPreferences())
+        try? await Task.sleep(for: .milliseconds(300))
+        #expect(locker.lastEscalationTier == 0)
+
+        // Each reassignment has to precede the call that reschedules, or the coordinator reads
+        // the previous, already-elapsed date instead.
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        coordinator.skipActiveBreak()
+        try? await Task.sleep(for: .milliseconds(300))
+        #expect(locker.lastEscalationTier == 1)
+
+        // The daily cap of 2 is now used up, so nothing more would fire today.
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        coordinator.skipActiveBreak()
+        try? await Task.sleep(for: .milliseconds(300))
+        #expect(locker.lastEscalationTier == 1)
+
+        let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: Date())!
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        coordinator.refreshDailyRollover(now: tomorrow)
+        try? await Task.sleep(for: .milliseconds(300))
+
+        // New day: the cap allows breaks again and enforcement starts from the base tier.
+        #expect(locker.lastEscalationTier == 0)
+
+        coordinator.stop()
+    }
+
+    // A rollover must never arm a break behind a locked screen: the overlay would sit on the
+    // lock screen and auto-complete, chaining a whole day of phantom breaks into the stats.
+    @Test @MainActor
+    func rolloverDoesNotArmBreakWhileScreenLocked() async {
+        let scheduler = MockScheduler()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        let detector = MockDetector()
+        let locker = MockLocker()
+
+        let coordinator = BreakCoordinator(scheduler: scheduler, detector: detector, locker: locker)
+        let schedule = makeSchedule(breakDuration: 5)
+
+        // Locking before the first await cancels the armed timer without letting it fire, which
+        // leaves the coordinator in the same shape as a schedule that used up its daily cap.
+        coordinator.start(with: [schedule], preferences: AppPreferences())
+        coordinator.handleScreenLock()
+
+        let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: Date())!
+        coordinator.refreshDailyRollover(now: tomorrow)
+        try? await Task.sleep(for: .milliseconds(300))
+        #expect(!locker.showOverlayCalled)
+
+        // Unlocking is what resumes the schedule.
+        coordinator.handleScreenUnlock()
+        try? await Task.sleep(for: .milliseconds(300))
+        #expect(locker.showOverlayCalled)
+
+        coordinator.stop()
+    }
+
+    @Test @MainActor
     func escapeActiveBreakDismissesAndIncrementsEscapeCount() async {
         let scheduler = MockScheduler()
         scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)

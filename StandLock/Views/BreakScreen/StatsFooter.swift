@@ -9,7 +9,7 @@ struct StatsFooter: View {
         HStack(spacing: 0) {
             Text("\(statistics.breaksCompleted) completed")
             Text("   \u{00B7}   ")
-            Text("\(statistics.currentStreak)-day streak")
+            Text("\(statistics.currentStreak) in a row")
             Text("   \u{00B7}   ")
             Text("\(statistics.breaksSkipped) skipped today")
         }

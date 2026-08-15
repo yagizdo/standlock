@@ -5,7 +5,7 @@ import Detection
 import Locking
 
 @MainActor
-public final class BreakCoordinator: BreakCoordinating {
+public final class BreakCoordinator {
     private let scheduler: any SchedulingEngine
     private let detector: any ContextDetecting
     private let locker: any LockPresenting
@@ -15,6 +15,9 @@ public final class BreakCoordinator: BreakCoordinating {
     private var repetitionTrackers: [UUID: RepetitionTracker] = [:]
     private var breakTimer: Task<Void, Never>?
     private var isPaused: Bool = false
+    /// Set while the screen is locked or the machine is asleep. Distinct from `isPaused`, which
+    /// is the user-facing pause; suspension only blocks work being started behind a dark screen.
+    private var isSuspended: Bool = false
     private var currentBreak: BreakEvent?
     private var currentSchedule: Schedule?
     private var statistics: BreakStatistics = BreakStatistics()
@@ -37,9 +40,13 @@ public final class BreakCoordinator: BreakCoordinating {
         self.deferralPollingInterval = deferralPollingInterval
     }
 
-    public func start(with schedules: [Schedule], preferences: AppPreferences) {
+    /// Pass previously persisted `statistics` so a relaunch during the day keeps today's
+    /// counters instead of restarting them from zero.
+    public func start(with schedules: [Schedule], preferences: AppPreferences,
+                      statistics: BreakStatistics = BreakStatistics()) {
         self.activeSchedules = schedules
         self.preferences = preferences
+        self.statistics = statistics
         for schedule in schedules {
             if let rule = schedule.repetitionRule {
                 repetitionTrackers[schedule.id] = RepetitionTracker(rule: rule)
@@ -76,11 +83,43 @@ public final class BreakCoordinator: BreakCoordinating {
         scheduleNextBreak()
     }
 
+    /// Rolls the daily counters over when the calendar day has changed. Safe to call often --
+    /// it is a no-op while the recorded day is still the current one.
+    public func refreshDailyRollover(now: Date = Date()) {
+        guard rolloverIfNeeded(now: now) else { return }
+        // A schedule that exhausted its daily cap leaves no pending timer behind, so it has to
+        // be re-armed once the new day frees the cap. Nothing may be armed behind a locked or
+        // sleeping screen, and a live timer is never touched: while paused it holds the resume
+        // task, and otherwise it holds the next break.
+        if !isPaused && !isSuspended && breakTimer == nil {
+            scheduleNextBreak(now: now)
+        }
+    }
+
+    @discardableResult
+    private func rolloverIfNeeded(now: Date = Date()) -> Bool {
+        guard statistics.resetDailyIfNeeded(currentDate: now) else { return false }
+        statistics.resetWeeklyIfNeeded(currentDate: now)
+        dailyBreakCounts.removeAll()
+        // Progressive enforcement escalates within a day; a new day starts from the base tier.
+        escalationTiers.removeAll()
+        eventContinuation.yield(.statisticsUpdated(statistics))
+        return true
+    }
+
+    private func updateStatistics(_ mutate: (inout BreakStatistics) -> Void) {
+        rolloverIfNeeded()
+        mutate(&statistics)
+        eventContinuation.yield(.statisticsUpdated(statistics))
+    }
+
     public func handleSystemSleep() {
+        isSuspended = true
         cancelAndDismissIfShowing()
     }
 
     public func handleSystemWake() {
+        isSuspended = false
         if isPaused {
             resume()
         } else {
@@ -89,10 +128,12 @@ public final class BreakCoordinator: BreakCoordinating {
     }
 
     public func handleScreenLock() {
+        isSuspended = true
         cancelAndDismissIfShowing()
     }
 
     public func handleScreenUnlock() {
+        isSuspended = false
         if isPaused {
             resume()
         } else {
@@ -107,10 +148,11 @@ public final class BreakCoordinator: BreakCoordinating {
             locker.dismissOverlay()
             if var event = currentBreak {
                 event.outcome = .skipped
-                statistics.breaksSkipped += 1
-                statistics.currentStreak = 0
                 eventContinuation.yield(.breakSkipped(event))
-                eventContinuation.yield(.statisticsUpdated(statistics))
+                updateStatistics {
+                    $0.breaksSkipped += 1
+                    $0.currentStreak = 0
+                }
             }
             currentBreak = nil
             currentSchedule = nil
@@ -120,9 +162,10 @@ public final class BreakCoordinator: BreakCoordinating {
     public func skipNextBreak() {
         breakTimer?.cancel()
         breakTimer = nil
-        statistics.breaksSkipped += 1
-        statistics.currentStreak = 0
-        eventContinuation.yield(.statisticsUpdated(statistics))
+        updateStatistics {
+            $0.breaksSkipped += 1
+            $0.currentStreak = 0
+        }
         scheduleNextBreak()
     }
 
@@ -134,10 +177,11 @@ public final class BreakCoordinator: BreakCoordinating {
             escalationTiers[scheduleID, default: 0] = min(escalationTiers[scheduleID, default: 0] + 1, maxTier)
         }
         locker.dismissOverlay()
-        statistics.breaksSkipped += 1
-        statistics.currentStreak = 0
         eventContinuation.yield(.breakSkipped(event))
-        eventContinuation.yield(.statisticsUpdated(statistics))
+        updateStatistics {
+            $0.breaksSkipped += 1
+            $0.currentStreak = 0
+        }
         currentBreak = nil
         currentSchedule = nil
         scheduleNextBreak()
@@ -151,10 +195,11 @@ public final class BreakCoordinator: BreakCoordinating {
             escalationTiers[scheduleID, default: 0] = min(escalationTiers[scheduleID, default: 0] + 1, maxTier)
         }
         locker.dismissOverlay()
-        statistics.breaksEscaped += 1
-        statistics.weeklyEscapeCount += 1
         eventContinuation.yield(.breakEscaped(event))
-        eventContinuation.yield(.statisticsUpdated(statistics))
+        updateStatistics {
+            $0.breaksEscaped += 1
+            $0.weeklyEscapeCount += 1
+        }
         currentBreak = nil
         currentSchedule = nil
         scheduleNextBreak()
@@ -185,13 +230,17 @@ public final class BreakCoordinator: BreakCoordinating {
 
     // MARK: - Private
 
-    private func scheduleNextBreak() {
+    /// `now` governs both the rollover check and the search for the next break, so an injected
+    /// date describes one consistent moment. Without it the rollover here would re-read the real
+    /// clock and undo a caller-injected day change, since `resetDailyIfNeeded` fires in both
+    /// directions.
+    private func scheduleNextBreak(now: Date = Date()) {
         breakTimer?.cancel()
         breakTimer = nil
+        rolloverIfNeeded(now: now)
         guard !isPaused else { return }
 
         var earliest: (date: Date, schedule: Schedule)?
-        let now = Date()
         for schedule in activeSchedules where schedule.isEnabled {
             if let cap = schedule.dailyBreakCap,
                (dailyBreakCounts[schedule.id] ?? 0) >= cap { continue }
@@ -225,6 +274,7 @@ public final class BreakCoordinator: BreakCoordinating {
     }
 
     private func triggerBreak(for schedule: Schedule, context: DetectionContext) async {
+        rolloverIfNeeded()
         if preferences.idleDetectionEnabled {
             let breakDuration = currentBreakDuration(for: schedule)
             if context.idleDuration >= breakDuration {
@@ -233,8 +283,6 @@ public final class BreakCoordinator: BreakCoordinating {
                     level: schedule.disciplineLevel, scheduleId: schedule.id,
                     outcome: .idleCounted
                 )
-                statistics.breaksCompleted += 1
-                statistics.currentStreak += 1
                 if var tracker = repetitionTrackers[schedule.id] {
                     tracker.recordBreak()
                     repetitionTrackers[schedule.id] = tracker
@@ -242,16 +290,18 @@ public final class BreakCoordinator: BreakCoordinating {
                 dailyBreakCounts[schedule.id, default: 0] += 1
                 escalationTiers[schedule.id] = 0
                 eventContinuation.yield(.breakCompleted(idleEvent))
-                eventContinuation.yield(.statisticsUpdated(statistics))
+                updateStatistics {
+                    $0.breaksCompleted += 1
+                    $0.currentStreak += 1
+                }
                 scheduleNextBreak()
                 return
             }
         }
 
         if let deferral = shouldDefer(context: context) {
-            statistics.breaksDeferred += 1
             eventContinuation.yield(.breakDeferred(deferral, nextAttempt: Date().addingTimeInterval(deferralPollingInterval)))
-            eventContinuation.yield(.statisticsUpdated(statistics))
+            updateStatistics { $0.breaksDeferred += 1 }
             breakTimer = Task {
                 while !Task.isCancelled {
                     try? await Task.sleep(for: .seconds(self.deferralPollingInterval))
@@ -325,14 +375,15 @@ public final class BreakCoordinator: BreakCoordinating {
         completed.outcome = .completed
         escalationTiers[schedule.id] = 0
         locker.dismissOverlay()
-        statistics.breaksCompleted += 1
-        statistics.currentStreak += 1
         if var tracker = repetitionTrackers[schedule.id] {
             tracker.recordBreak()
             repetitionTrackers[schedule.id] = tracker
         }
         eventContinuation.yield(.breakCompleted(completed))
-        eventContinuation.yield(.statisticsUpdated(statistics))
+        updateStatistics {
+            $0.breaksCompleted += 1
+            $0.currentStreak += 1
+        }
         currentBreak = nil
         currentSchedule = nil
         scheduleNextBreak()

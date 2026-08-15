@@ -112,6 +112,9 @@ final class AppCoordinator: ObservableObject {
            let decoded = try? JSONDecoder().decode(BreakStatistics.self, from: data) {
             todayStats = decoded
             todayStats.resetWeeklyIfNeeded(currentDate: Date())
+            if todayStats.resetDailyIfNeeded(currentDate: Date()) {
+                saveStatistics()
+            }
         }
 
         if let data = UserDefaults.standard.data(forKey: "breakHistory"),
@@ -123,6 +126,8 @@ final class AppCoordinator: ObservableObject {
         )
         breakHistory.pruneOlderThan(cutoff)
 
+        // Back-fills today's record for users upgrading from before break history existed. Must
+        // stay below the daily reset above, otherwise stale multi-day totals land on today.
         if breakHistory.records.isEmpty && todayStats.breaksCompleted > 0 {
             let key = DailyBreakRecord.dateKey(from: Date())
             let enabledSchedules = schedules.filter(\.isEnabled)
@@ -195,6 +200,12 @@ final class AppCoordinator: ObservableObject {
     private func updateDailyHistory(_ stats: BreakStatistics) {
         let key = DailyBreakRecord.dateKey(from: Date())
         let hasActiveSchedule = !schedules.filter(\.isEnabled).isEmpty
+        // Zeroed counters never describe a day worth recording: they mean either a fresh day
+        // just rolled over or a deferral-only update, and a stored record with zero completed
+        // breaks ends the streak in BreakHistory.currentStreak while a missing one reads as a
+        // day still in progress. Writing them would also let a backwards day change (date-line
+        // travel, an NTP correction) blank out a day that already has real numbers.
+        guard stats.totalBreaks > 0 else { return }
         var record = breakHistory.record(for: key)
             ?? DailyBreakRecord(dateKey: key, hadActiveSchedule: hasActiveSchedule)
         record.breaksCompleted = stats.breaksCompleted
@@ -236,7 +247,9 @@ final class AppCoordinator: ObservableObject {
             breakCoordinator?.escapeActiveBreak()
         }
 
-        breakCoordinator.start(with: schedules.filter(\.isEnabled), preferences: preferences)
+        breakCoordinator.start(with: schedules.filter(\.isEnabled),
+                               preferences: preferences,
+                               statistics: todayStats)
 
         eventListenerTask = Task {
             for await event in breakCoordinator.events {
@@ -398,6 +411,7 @@ final class AppCoordinator: ObservableObject {
     private func startProgressTimer() {
         progressTimer = Task {
             while !Task.isCancelled {
+                rolloverDailyStatsIfNeeded()
                 recalculateProgress()
                 updateMenuBarTimer()
 
@@ -410,6 +424,17 @@ final class AppCoordinator: ObservableObject {
                 try? await Task.sleep(for: interval, tolerance: interval == .seconds(10) ? .seconds(2) : .milliseconds(100))
                 guard !Task.isCancelled else { break }
             }
+        }
+    }
+
+    /// Clears the per-day counters once the calendar day changes. The coordinator owns the
+    /// live statistics, so it rolls over first and reports back through `statisticsUpdated`;
+    /// the local copy is only rolled directly when no coordinator is running.
+    private func rolloverDailyStatsIfNeeded() {
+        if let coordinator {
+            coordinator.refreshDailyRollover()
+        } else if todayStats.resetDailyIfNeeded(currentDate: Date()) {
+            saveStatistics()
         }
     }
 
