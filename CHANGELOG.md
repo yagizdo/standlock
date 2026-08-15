@@ -1,5 +1,22 @@
 # Changelog
 
+## StandLock v0.2.8
+
+**Bug Fixes**
+- Daily counters now reset at the calendar day boundary. An app left running across midnight kept reporting yesterday's "breaks skipped today", permanently tripped the daily skip limit, blocked schedules that had hit their daily break cap, carried escalation tiers into the next day, and wrote multi-day totals into a single day's history record (ecbd6e5)
+- Week and Month totals in Statistics are now calendar aligned. They previously summed the trailing 7 and 30 days while the grids below them drew a Monday-to-Sunday week and a calendar month, so the numbers disagreed with the cells right under them. Year stays a rolling 365 days to match its heatmap (2281239)
+- Statistics no longer goes stale. Switching periods rebuilt the totals but not the heatmap, and a panel left open across midnight kept drawing yesterday (ace5307)
+- Year heatmap columns now start on Monday instead of slicing the window into raw 7-day blocks, today's cell is outlined, and the month grid's leading blanks no longer collide with real day cells (6ce2ff6)
+- Removing a time window from a schedule no longer misbinds the remaining rows (6c6912c)
+- The slot machine challenge now stops accepting spins once attempts run out. A losing spin on the last attempt left the button live and the next tap crashed (23a07ad)
+- Break history is saved after startup pruning, so records older than 400 days are removed once instead of being reloaded and re-pruned on every launch (3d253eb)
+
+**Notes**
+- The daily counter fix applies from this version onward. Days already stored in Settings → Statistics keep their old numbers, since those records hold carried-over multi-day totals that cannot be split back into per-day values.
+- Week and Month figures will read differently than in earlier versions. The stored break records are unchanged; only the counting window moved.
+
+**Full Changelog:** https://github.com/yagizdo/StandLock/compare/v0.2.7...v0.2.8
+
 ## StandLock v0.2.7
 
 **Bug Fixes**
