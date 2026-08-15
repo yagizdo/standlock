@@ -123,16 +123,18 @@ struct ScheduleFormView: View {
                 .buttonStyle(.plain)
             }
 
-            ForEach(windows.indices, id: \.self) { index in
+            // Bound by identity, not index: removing a row while indices are the identity leaves
+            // SwiftUI holding a stale index and the `$windows[index]` bindings read out of range.
+            ForEach($windows) { $window in
                 HStack(spacing: 8) {
-                    timePicker("Start", hour: $windows[index].startHour, minute: $windows[index].startMinute)
+                    timePicker("Start", hour: $window.startHour, minute: $window.startMinute)
                     Text("to")
                         .foregroundStyle(.secondary)
-                    timePicker("End", hour: $windows[index].endHour, minute: $windows[index].endMinute)
+                    timePicker("End", hour: $window.endHour, minute: $window.endMinute)
 
                     if windows.count > 1 {
                         Button {
-                            windows.remove(at: index)
+                            windows.removeAll { $0.id == window.id }
                         } label: {
                             Image(systemName: "minus.circle")
                                 .foregroundStyle(.red)
