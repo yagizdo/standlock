@@ -8,6 +8,7 @@ public struct Schedule: Codable, Sendable, Identifiable, Equatable {
     public var windows: [TimeWindow]
     public var breakInterval: TimeInterval
     public var breakDuration: TimeInterval
+    public var intervalCycle: [IntervalStep]?
     public var repetitionRule: RepetitionRule?
     public var disciplineLevel: DisciplineLevel
     public var dailyBreakCap: Int?
@@ -17,6 +18,7 @@ public struct Schedule: Codable, Sendable, Identifiable, Equatable {
         id: UUID = UUID(), name: String, isEnabled: Bool = true,
         days: DaySelection, windows: [TimeWindow],
         breakInterval: TimeInterval, breakDuration: TimeInterval,
+        intervalCycle: [IntervalStep]? = nil,
         repetitionRule: RepetitionRule? = nil,
         disciplineLevel: DisciplineLevel = .gentle,
         dailyBreakCap: Int? = nil,
@@ -25,6 +27,7 @@ public struct Schedule: Codable, Sendable, Identifiable, Equatable {
         self.id = id; self.name = name; self.isEnabled = isEnabled
         self.days = days; self.windows = windows
         self.breakInterval = breakInterval; self.breakDuration = breakDuration
+        self.intervalCycle = intervalCycle
         self.repetitionRule = repetitionRule
         self.disciplineLevel = disciplineLevel; self.dailyBreakCap = dailyBreakCap
         self.progressiveEnforcement = progressiveEnforcement
@@ -32,7 +35,7 @@ public struct Schedule: Codable, Sendable, Identifiable, Equatable {
 
     private enum CodingKeys: String, CodingKey {
         case id, name, isEnabled, days, windows
-        case breakInterval, breakDuration, repetitionRule
+        case breakInterval, breakDuration, intervalCycle, repetitionRule
         case disciplineLevel, dailyBreakCap, progressiveEnforcement
     }
 
@@ -45,6 +48,7 @@ public struct Schedule: Codable, Sendable, Identifiable, Equatable {
         windows = try c.decode([TimeWindow].self, forKey: .windows)
         breakInterval = try c.decode(TimeInterval.self, forKey: .breakInterval)
         breakDuration = try c.decode(TimeInterval.self, forKey: .breakDuration)
+        intervalCycle = try c.decodeIfPresent([IntervalStep].self, forKey: .intervalCycle)
         repetitionRule = try c.decodeIfPresent(RepetitionRule.self, forKey: .repetitionRule)
         disciplineLevel = try c.decodeIfPresent(DisciplineLevel.self, forKey: .disciplineLevel) ?? .gentle
         dailyBreakCap = try c.decodeIfPresent(Int.self, forKey: .dailyBreakCap)
@@ -120,6 +124,16 @@ public struct TimeWindow: Codable, Sendable, Equatable, Identifiable {
             return time >= start && time < end
         }
         return time >= start || time < end
+    }
+}
+
+public struct IntervalStep: Codable, Sendable, Equatable {
+    public var duration: TimeInterval
+    public var label: String?
+
+    public init(duration: TimeInterval, label: String? = nil) {
+        self.duration = duration
+        self.label = label
     }
 }
 

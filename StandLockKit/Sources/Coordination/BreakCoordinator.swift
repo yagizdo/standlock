@@ -23,6 +23,14 @@ public final class BreakCoordinator {
     private var statistics: BreakStatistics = BreakStatistics()
     private var dailyBreakCounts: [UUID: Int] = [:]
     private var escalationTiers: [UUID: Int] = [:]
+    private var cycleIndices: [UUID: Int] = [:]
+    /// Which schedule the armed break timer targets. A menu skip of a not-yet-fired break has
+    /// to advance that schedule's cycle; cleared whenever the timer is cancelled or the break
+    /// becomes active, so a slot can never advance twice.
+    private var pendingBreakScheduleID: UUID?
+    /// True only while the deferral poll loop owns `breakTimer`. That loop is suspended between
+    /// polls, so anything that re-arms the timer cancels it and drops the deferred break.
+    private var isDeferringBreak = false
     public var exercises: [Exercise] = []
 
     private let deferralPollingInterval: TimeInterval
@@ -58,6 +66,7 @@ public final class BreakCoordinator {
     public func stop() {
         breakTimer?.cancel()
         breakTimer = nil
+        clearPendingBreak()
         if locker.isShowing { locker.dismissOverlay() }
         currentBreak = nil
         currentSchedule = nil
@@ -67,6 +76,7 @@ public final class BreakCoordinator {
     public func pause(for duration: TimeInterval) {
         breakTimer?.cancel()
         breakTimer = nil
+        clearPendingBreak()
         isPaused = true
         let until = Date().addingTimeInterval(duration)
         eventContinuation.yield(.schedulePaused(until: until))
@@ -87,11 +97,13 @@ public final class BreakCoordinator {
     /// it is a no-op while the recorded day is still the current one.
     public func refreshDailyRollover(now: Date = Date()) {
         guard rolloverIfNeeded(now: now) else { return }
-        // A schedule that exhausted its daily cap leaves no pending timer behind, so it has to
-        // be re-armed once the new day frees the cap. Nothing may be armed behind a locked or
-        // sleeping screen, and a live timer is never touched: while paused it holds the resume
-        // task, and otherwise it holds the next break.
-        if !isPaused && !isSuspended && breakTimer == nil {
+        // Re-arm on every rollover: a schedule that exhausted its daily cap left no timer
+        // behind, and a timer armed before midnight was computed from the old day's cycle
+        // index -- the new day's first break must come from index 0 (scheduleNextBreak
+        // cancels any pending timer itself). Nothing may be armed behind a locked or
+        // sleeping screen, while paused the timer holds the resume task, and re-arming
+        // during a deferral would cancel the poll loop and lose the deferred break.
+        if !isPaused && !isSuspended && !isDeferringBreak {
             scheduleNextBreak(now: now)
         }
     }
@@ -103,6 +115,8 @@ public final class BreakCoordinator {
         dailyBreakCounts.removeAll()
         // Progressive enforcement escalates within a day; a new day starts from the base tier.
         escalationTiers.removeAll()
+        // Every day starts the interval cycle from its first entry.
+        cycleIndices.removeAll()
         eventContinuation.yield(.statisticsUpdated(statistics))
         return true
     }
@@ -144,6 +158,7 @@ public final class BreakCoordinator {
     private func cancelAndDismissIfShowing() {
         breakTimer?.cancel()
         breakTimer = nil
+        clearPendingBreak()
         if locker.isShowing {
             locker.dismissOverlay()
             if var event = currentBreak {
@@ -162,6 +177,10 @@ public final class BreakCoordinator {
     public func skipNextBreak() {
         breakTimer?.cancel()
         breakTimer = nil
+        if let id = pendingBreakScheduleID {
+            cycleIndices[id, default: 0] += 1
+        }
+        clearPendingBreak()
         updateStatistics {
             $0.breaksSkipped += 1
             $0.currentStreak = 0
@@ -230,6 +249,13 @@ public final class BreakCoordinator {
 
     // MARK: - Private
 
+    /// The pending slot and the deferral flag always end together: whoever concludes a slot
+    /// concludes the poll that was waiting on it.
+    private func clearPendingBreak() {
+        pendingBreakScheduleID = nil
+        isDeferringBreak = false
+    }
+
     /// `now` governs both the rollover check and the search for the next break, so an injected
     /// date describes one consistent moment. Without it the rollover here would re-read the real
     /// clock and undo a caller-injected day change, since `resetDailyIfNeeded` fires in both
@@ -244,7 +270,8 @@ public final class BreakCoordinator {
         for schedule in activeSchedules where schedule.isEnabled {
             if let cap = schedule.dailyBreakCap,
                (dailyBreakCounts[schedule.id] ?? 0) >= cap { continue }
-            if let next = scheduler.nextBreakTime(for: schedule, after: now) {
+            if let next = scheduler.nextBreakTime(for: schedule, after: now,
+                                                  cycleIndex: cycleIndices[schedule.id, default: 0]) {
                 if earliest == nil || next < earliest!.date {
                     earliest = (next, schedule)
                 }
@@ -252,6 +279,7 @@ public final class BreakCoordinator {
         }
 
         guard let target = earliest else { return }
+        pendingBreakScheduleID = target.schedule.id
         eventContinuation.yield(.nextBreakScheduled(target.date))
 
         breakTimer = Task {
@@ -274,6 +302,8 @@ public final class BreakCoordinator {
     }
 
     private func triggerBreak(for schedule: Schedule, context: DetectionContext) async {
+        // The pending break is now active; a menu skip from here on must not advance again.
+        clearPendingBreak()
         rolloverIfNeeded()
         if preferences.idleDetectionEnabled {
             let breakDuration = currentBreakDuration(for: schedule)
@@ -288,6 +318,7 @@ public final class BreakCoordinator {
                     repetitionTrackers[schedule.id] = tracker
                 }
                 dailyBreakCounts[schedule.id, default: 0] += 1
+                cycleIndices[schedule.id, default: 0] += 1
                 escalationTiers[schedule.id] = 0
                 eventContinuation.yield(.breakCompleted(idleEvent))
                 updateStatistics {
@@ -300,6 +331,10 @@ public final class BreakCoordinator {
         }
 
         if let deferral = shouldDefer(context: context) {
+            // The deferred slot is still pending, so a menu skip during the poll loop
+            // must conclude it for this schedule.
+            pendingBreakScheduleID = schedule.id
+            isDeferringBreak = true
             eventContinuation.yield(.breakDeferred(deferral, nextAttempt: Date().addingTimeInterval(deferralPollingInterval)))
             updateStatistics { $0.breaksDeferred += 1 }
             breakTimer = Task {
@@ -307,9 +342,14 @@ public final class BreakCoordinator {
                     try? await Task.sleep(for: .seconds(self.deferralPollingInterval))
                     guard !Task.isCancelled else { return }
                     let freshContext = await self.detector.currentContext()
+                    // Cancellation does not interrupt the await above, so re-check before
+                    // mutating: a menu skip during it already concluded this slot.
+                    guard !Task.isCancelled else { return }
                     if let newReason = self.shouldDefer(context: freshContext) {
                         self.eventContinuation.yield(.breakDeferred(newReason, nextAttempt: Date().addingTimeInterval(self.deferralPollingInterval)))
                     } else if self.shouldSkipAfterDeferral(reason: deferral) {
+                        self.cycleIndices[schedule.id, default: 0] += 1
+                        self.clearPendingBreak()
                         self.scheduleNextBreak()
                         return
                     } else {
@@ -336,11 +376,20 @@ public final class BreakCoordinator {
         currentBreak = breakEvent
         currentSchedule = schedule
         dailyBreakCounts[schedule.id, default: 0] += 1
+        cycleIndices[schedule.id, default: 0] += 1
 
         eventContinuation.yield(.breakStarted(breakEvent))
         locker.showOverlay(level: effectiveLevel, duration: duration,
                            exercise: exercise, preferences: preferences,
-                           statistics: statistics, escalationTier: tier)
+                           statistics: statistics, escalationTier: tier,
+                           nextIntervalLabel: nextIntervalLabel(for: schedule))
+    }
+
+    /// The cycle index was already advanced when this break triggered, so it points at the
+    /// upcoming work block.
+    private func nextIntervalLabel(for schedule: Schedule) -> String? {
+        guard let cycle = schedule.intervalCycle, !cycle.isEmpty else { return nil }
+        return cycle[cycleIndices[schedule.id, default: 0] % cycle.count].label
     }
 
     private func currentBreakDuration(for schedule: Schedule) -> TimeInterval {

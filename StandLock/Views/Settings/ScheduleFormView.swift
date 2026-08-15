@@ -10,7 +10,7 @@ struct ScheduleFormView: View {
     @State private var dayPreset: DayPreset = .weekdays
     @State private var customDays: Set<Weekday> = []
     @State private var windows: [TimeWindow] = [TimeWindow(startHour: 9, startMinute: 0, endHour: 17, endMinute: 0)]
-    @State private var breakIntervalMinutes: Int = 40
+    @State private var intervalRows: [IntervalRowModel] = [IntervalRowModel(minutes: 40)]
     @State private var breakDurationMinutes: Int = 10
     @State private var useRepetition: Bool = false
     @State private var shortBreakCount: Int = 3
@@ -151,22 +151,45 @@ struct ScheduleFormView: View {
             Text("Timing")
                 .font(.subheadline.weight(.medium))
 
-            HStack(spacing: 24) {
+            HStack(alignment: .top, spacing: 24) {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Break every")
                         .font(.caption)
                         .foregroundStyle(.secondary)
-                    HStack(spacing: 4) {
-                        TextField("", value: $breakIntervalMinutes, format: .number)
-                            .textFieldStyle(.roundedBorder)
-                            .frame(width: 50)
-                            .onChange(of: breakIntervalMinutes) { newValue in
-                                breakIntervalMinutes = max(1, min(180, newValue))
+                    // Bound by identity for the same reason as the windows section.
+                    ForEach($intervalRows) { $row in
+                        HStack(spacing: 4) {
+                            TextField("", value: $row.minutes, format: .number)
+                                .textFieldStyle(.roundedBorder)
+                                .frame(width: 50)
+                                .onChange(of: row.minutes) { newValue in
+                                    row.minutes = max(1, min(180, newValue))
+                                }
+                            Stepper("", value: $row.minutes, in: 1...180, step: 5)
+                                .labelsHidden()
+                            Text("min")
+                                .foregroundStyle(.secondary)
+
+                            if intervalRows.count > 1 {
+                                TextField("Label (optional, e.g. Sitting)", text: $row.label)
+                                    .textFieldStyle(.roundedBorder)
+                                Button {
+                                    intervalRows.removeAll { $0.id == row.id }
+                                } label: {
+                                    Image(systemName: "minus.circle")
+                                        .foregroundStyle(.red)
+                                }
+                                .buttonStyle(.plain)
                             }
-                        Stepper("", value: $breakIntervalMinutes, in: 1...180, step: 5)
-                            .labelsHidden()
-                        Text("min")
-                            .foregroundStyle(.secondary)
+                        }
+                    }
+                    if intervalRows.count < 6 {
+                        Button {
+                            intervalRows.append(IntervalRowModel(minutes: 40))
+                        } label: {
+                            Image(systemName: "plus.circle")
+                        }
+                        .buttonStyle(.plain)
                     }
                 }
 
@@ -187,6 +210,12 @@ struct ScheduleFormView: View {
                             .foregroundStyle(.secondary)
                     }
                 }
+            }
+
+            if intervalRows.count > 1 {
+                Text("Breaks cycle through these intervals in order.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
             }
         }
     }
@@ -267,7 +296,11 @@ struct ScheduleFormView: View {
         guard let s = schedule else { return }
         name = s.name
         windows = s.windows
-        breakIntervalMinutes = Int(s.breakInterval / 60)
+        if let cycle = s.intervalCycle, !cycle.isEmpty {
+            intervalRows = cycle.map { IntervalRowModel(minutes: Int($0.duration / 60), label: $0.label ?? "") }
+        } else {
+            intervalRows = [IntervalRowModel(minutes: Int(s.breakInterval / 60))]
+        }
         breakDurationMinutes = Int(s.breakDuration / 60)
         disciplineLevel = s.disciplineLevel
         progressiveEnforcement = s.progressiveEnforcement
@@ -305,20 +338,39 @@ struct ScheduleFormView: View {
             )
             : nil
 
+        let steps = intervalRows.map { row -> IntervalStep in
+            let trimmed = row.label.trimmingCharacters(in: .whitespaces)
+            return IntervalStep(duration: TimeInterval(row.minutes * 60),
+                                label: trimmed.isEmpty ? nil : trimmed)
+        }
+        // A single row is the canonical single-interval schedule; `breakInterval` always
+        // mirrors the first entry so old readers see a sane single interval. The label field
+        // is hidden at one row, so a label left over from a deleted row must not persist --
+        // it would be invisible, unclearable, and still drive the break screen.
+        let intervalCycle: [IntervalStep]? = steps.count == 1 ? nil : steps
+
         let result = Schedule(
             id: schedule?.id ?? UUID(),
             name: name.trimmingCharacters(in: .whitespaces),
             isEnabled: schedule?.isEnabled ?? true,
             days: days,
             windows: windows,
-            breakInterval: TimeInterval(breakIntervalMinutes * 60),
+            breakInterval: steps[0].duration,
             breakDuration: TimeInterval(breakDurationMinutes * 60),
+            intervalCycle: intervalCycle,
             repetitionRule: repetitionRule,
             disciplineLevel: disciplineLevel,
             progressiveEnforcement: progressiveEnforcement
         )
         onSave(result)
     }
+}
+
+/// Session-only row identity, same non-persisted-id pattern as `TimeWindow.id`.
+private struct IntervalRowModel: Identifiable {
+    let id = UUID()
+    var minutes: Int
+    var label: String = ""
 }
 
 private enum DayPreset {

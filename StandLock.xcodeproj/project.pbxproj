@@ -26,6 +26,7 @@
 		6AF974084F51158A71D9EA47 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512EB234C46341A2816AAE12 /* SettingsView.swift */; };
 		6F9C00664AAD42633900A642 /* Exercises.json in Resources */ = {isa = PBXBuildFile; fileRef = 2063FDE70AFCC135664A8FD4 /* Exercises.json */; };
 		726D144CA2B3B5AF4D4503AE /* LevelPill.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF6724F4176D1F398DF9A697 /* LevelPill.swift */; };
+		D3B096DA1A8A43639099F280 /* NextIntervalLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2EE4109FB254184AE58E99E /* NextIntervalLabel.swift */; };
 		742A80C38BAB206209CC4213 /* WelcomeStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B387012391C6BC0360436B50 /* WelcomeStepView.swift */; };
 		75E31F36751D55F051D6FF34 /* ExerciseBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 434445F0717D4FC94E284CB8 /* ExerciseBlock.swift */; };
 		82BDAFFF1661ED2476DDCAD3 /* Detection in Frameworks */ = {isa = PBXBuildFile; productRef = F19E05A1FA932709D406DD8F /* Detection */; };
@@ -78,6 +79,7 @@
 		A81F2ED91290AD26CB5B672E /* AppCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
 		A866831BDFD42E80353C80D8 /* DisciplineLevelPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisciplineLevelPicker.swift; sourceTree = "<group>"; };
 		AF6724F4176D1F398DF9A697 /* LevelPill.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelPill.swift; sourceTree = "<group>"; };
+		C2EE4109FB254184AE58E99E /* NextIntervalLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NextIntervalLabel.swift; sourceTree = "<group>"; };
 		B1524D749BB78A875E5FD51F /* StandLockApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StandLockApp.swift; sourceTree = "<group>"; };
 		B387012391C6BC0360436B50 /* WelcomeStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeStepView.swift; sourceTree = "<group>"; };
 		C5BBDBF97CFAA5FF490CBD00 /* BreakOverlayWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakOverlayWindow.swift; sourceTree = "<group>"; };
@@ -127,6 +129,7 @@
 				434445F0717D4FC94E284CB8 /* ExerciseBlock.swift */,
 				AF6724F4176D1F398DF9A697 /* LevelPill.swift */,
 				99BB0E055C4BD25865AD3EE1 /* ManuscriptBreakView.swift */,
+				C2EE4109FB254184AE58E99E /* NextIntervalLabel.swift */,
 				43B1BE95A60D5294C770AEDE /* StatsFooter.swift */,
 				DEAF9C8AFAF33310B45445B2 /* TimerNumerals.swift */,
 				85C5398AE9D97E6B58618468 /* WordmarkView.swift */,
@@ -329,6 +332,7 @@
 				09F7858EAC29160F684A60DD /* GeneralSettingsView.swift in Sources */,
 				726D144CA2B3B5AF4D4503AE /* LevelPill.swift in Sources */,
 				D751E70A3ADA8406061C5A90 /* ManuscriptBreakView.swift in Sources */,
+				D3B096DA1A8A43639099F280 /* NextIntervalLabel.swift in Sources */,
 				F1A2B3C4D5E6F7081920A1B2 /* MediaController.swift in Sources */,
 				D4E5F6A7B8C9D0E1F2A3B4C6 /* MenuBarIcon.swift in Sources */,
 				1CCAA6FDBBB854DCBC1968EA /* MenuBarView.swift in Sources */,

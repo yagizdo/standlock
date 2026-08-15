@@ -10,9 +10,11 @@ final class MockScheduler: SchedulingEngine, @unchecked Sendable {
     var nextBreakTimeToReturn: Date?
     var nextBreakTimes: [UUID: Date] = [:]
     var breakDurationToReturn: TimeInterval = 300
+    var receivedCycleIndices: [(scheduleID: UUID, index: Int)] = []
 
-    func nextBreakTime(for schedule: Schedule, after date: Date) -> Date? {
-        nextBreakTimes[schedule.id] ?? nextBreakTimeToReturn
+    func nextBreakTime(for schedule: Schedule, after date: Date, cycleIndex: Int) -> Date? {
+        receivedCycleIndices.append((scheduleID: schedule.id, index: cycleIndex))
+        return nextBreakTimes[schedule.id] ?? nextBreakTimeToReturn
     }
     func breakDuration(for schedule: Schedule, breakIndex: Int) -> TimeInterval { breakDurationToReturn }
     func isWithinActiveWindow(_ schedule: Schedule, at date: Date) -> Bool { true }
@@ -31,16 +33,19 @@ final class MockLocker: LockPresenting, @unchecked Sendable {
     var lastDuration: TimeInterval?
     var lastPreferences: AppPreferences?
     var lastEscalationTier: Int?
+    var lastNextIntervalLabel: String?
     var isShowing = false
 
     func showOverlay(level: DisciplineLevel, duration: TimeInterval,
                      exercise: Exercise?, preferences: AppPreferences,
-                     statistics: BreakStatistics, escalationTier: Int) {
+                     statistics: BreakStatistics, escalationTier: Int,
+                     nextIntervalLabel: String?) {
         showOverlayCalled = true
         lastLevel = level
         lastDuration = duration
         lastPreferences = preferences
         lastEscalationTier = escalationTier
+        lastNextIntervalLabel = nextIntervalLabel
         isShowing = true
     }
 
@@ -56,6 +61,8 @@ func makeSchedule(
     level: DisciplineLevel = .gentle,
     breakInterval: TimeInterval = 60,
     breakDuration: TimeInterval = 10,
+    intervalCycle: [IntervalStep]? = nil,
+    repetitionRule: RepetitionRule? = nil,
     dailyBreakCap: Int? = nil,
     progressiveEnforcement: Bool = false
 ) -> Schedule {
@@ -65,6 +72,8 @@ func makeSchedule(
         windows: [TimeWindow(startHour: 0, startMinute: 0, endHour: 23, endMinute: 59)],
         breakInterval: breakInterval,
         breakDuration: breakDuration,
+        intervalCycle: intervalCycle,
+        repetitionRule: repetitionRule,
         disciplineLevel: level,
         dailyBreakCap: dailyBreakCap,
         progressiveEnforcement: progressiveEnforcement
@@ -1320,5 +1329,376 @@ struct BreakCoordinatorTests {
 
         coordinator.stop()
         listener.cancel()
+    }
+
+    // MARK: - Cycle Index Tests
+
+    private func lastCycleIndex(_ scheduler: MockScheduler, for schedule: Schedule) -> Int? {
+        scheduler.receivedCycleIndices.last(where: { $0.scheduleID == schedule.id })?.index
+    }
+
+    @Test @MainActor
+    func cycleAdvancesOnCompletedBreak() async {
+        let scheduler = MockScheduler()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        let detector = MockDetector()
+        let locker = MockLocker()
+
+        let coordinator = BreakCoordinator(scheduler: scheduler, detector: detector, locker: locker)
+        let schedule = makeSchedule(breakDuration: 5)
+
+        coordinator.start(with: [schedule], preferences: AppPreferences())
+        try? await Task.sleep(for: .milliseconds(300))
+        #expect(locker.showOverlayCalled)
+
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(600)
+        coordinator.completeActiveBreak()
+        try? await Task.sleep(for: .milliseconds(100))
+
+        #expect(lastCycleIndex(scheduler, for: schedule) == 1)
+        coordinator.stop()
+    }
+
+    @Test @MainActor
+    func cycleAdvancesOnSkippedActiveBreak() async {
+        let scheduler = MockScheduler()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        let detector = MockDetector()
+        let locker = MockLocker()
+
+        let coordinator = BreakCoordinator(scheduler: scheduler, detector: detector, locker: locker)
+        let schedule = makeSchedule(breakDuration: 5)
+
+        coordinator.start(with: [schedule], preferences: AppPreferences())
+        try? await Task.sleep(for: .milliseconds(300))
+        #expect(locker.showOverlayCalled)
+
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(600)
+        coordinator.skipActiveBreak()
+        try? await Task.sleep(for: .milliseconds(100))
+
+        #expect(lastCycleIndex(scheduler, for: schedule) == 1)
+        coordinator.stop()
+    }
+
+    @Test @MainActor
+    func cycleAdvancesOnEscapedBreak() async {
+        let scheduler = MockScheduler()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        let detector = MockDetector()
+        let locker = MockLocker()
+
+        let coordinator = BreakCoordinator(scheduler: scheduler, detector: detector, locker: locker)
+        let schedule = makeSchedule(breakDuration: 5)
+
+        coordinator.start(with: [schedule], preferences: AppPreferences())
+        try? await Task.sleep(for: .milliseconds(300))
+        #expect(locker.showOverlayCalled)
+
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(600)
+        coordinator.escapeActiveBreak()
+        try? await Task.sleep(for: .milliseconds(100))
+
+        #expect(lastCycleIndex(scheduler, for: schedule) == 1)
+        coordinator.stop()
+    }
+
+    @Test @MainActor
+    func cycleAdvancesOnIdleCountedBreak() async {
+        let scheduler = MockScheduler()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        let detector = MockDetector()
+        detector.contextToReturn = DetectionContext(idleDuration: 600)
+        let locker = MockLocker()
+
+        let coordinator = BreakCoordinator(scheduler: scheduler, detector: detector, locker: locker)
+        let schedule = makeSchedule(breakDuration: 300)
+        let prefs = AppPreferences(idleDetectionEnabled: true)
+
+        coordinator.start(with: [schedule], preferences: prefs)
+        // The armed timer captured its target at start; pushing the mock far out keeps the
+        // idle-counted break from re-firing in a tight loop during the sleep below.
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(600)
+        try? await Task.sleep(for: .milliseconds(300))
+
+        #expect(!locker.showOverlayCalled)
+        #expect(lastCycleIndex(scheduler, for: schedule) == 1)
+        coordinator.stop()
+    }
+
+    @Test @MainActor
+    func cycleAdvancesOnMenuSkipNextBreak() async {
+        let scheduler = MockScheduler()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(60)
+        let detector = MockDetector()
+        let locker = MockLocker()
+
+        let coordinator = BreakCoordinator(scheduler: scheduler, detector: detector, locker: locker)
+        let schedule = makeSchedule()
+
+        coordinator.start(with: [schedule], preferences: AppPreferences())
+        try? await Task.sleep(for: .milliseconds(50))
+
+        coordinator.skipNextBreak()
+        try? await Task.sleep(for: .milliseconds(100))
+
+        #expect(lastCycleIndex(scheduler, for: schedule) == 1)
+        coordinator.stop()
+    }
+
+    @Test @MainActor
+    func cycleAdvancesOnPostDeferralSkip() async {
+        let scheduler = MockScheduler()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        let detector = MockDetector()
+        detector.contextToReturn = DetectionContext(screenSharingActive: true)
+        let locker = MockLocker()
+
+        let coordinator = BreakCoordinator(
+            scheduler: scheduler, detector: detector, locker: locker,
+            deferralPollingInterval: 0.1
+        )
+        let schedule = makeSchedule()
+        let prefs = AppPreferences(
+            screenSharingDetectionEnabled: true,
+            screenSharingPostDeferral: .skipBreak
+        )
+
+        coordinator.start(with: [schedule], preferences: prefs)
+        try? await Task.sleep(for: .milliseconds(300))
+        #expect(!locker.showOverlayCalled)
+
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(600)
+        detector.contextToReturn = .clear
+        try? await Task.sleep(for: .milliseconds(300))
+
+        #expect(!locker.showOverlayCalled)
+        #expect(lastCycleIndex(scheduler, for: schedule) == 1)
+        coordinator.stop()
+    }
+
+    @Test @MainActor
+    func sleepWithoutOverlayDoesNotAdvanceCycle() async {
+        let scheduler = MockScheduler()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(60)
+        let detector = MockDetector()
+        let locker = MockLocker()
+
+        let coordinator = BreakCoordinator(scheduler: scheduler, detector: detector, locker: locker)
+        let schedule = makeSchedule()
+
+        coordinator.start(with: [schedule], preferences: AppPreferences())
+        try? await Task.sleep(for: .milliseconds(50))
+
+        coordinator.handleSystemSleep()
+        coordinator.handleSystemWake()
+        try? await Task.sleep(for: .milliseconds(100))
+
+        #expect(lastCycleIndex(scheduler, for: schedule) == 0)
+        coordinator.stop()
+    }
+
+    @Test @MainActor
+    func sleepWithOverlayAdvancesExactlyOnce() async {
+        let scheduler = MockScheduler()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        let detector = MockDetector()
+        let locker = MockLocker()
+
+        let coordinator = BreakCoordinator(scheduler: scheduler, detector: detector, locker: locker)
+        let schedule = makeSchedule(breakDuration: 5)
+
+        coordinator.start(with: [schedule], preferences: AppPreferences())
+        try? await Task.sleep(for: .milliseconds(300))
+        #expect(locker.isShowing)
+
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(600)
+        coordinator.handleSystemSleep()
+        // Sleep alone never reschedules; the wake is what lets the mock observe the index.
+        coordinator.handleSystemWake()
+        try? await Task.sleep(for: .milliseconds(100))
+
+        #expect(lastCycleIndex(scheduler, for: schedule) == 1)
+        coordinator.stop()
+    }
+
+    @Test @MainActor
+    func menuSkipDuringOverlayDoesNotDoubleAdvance() async {
+        let scheduler = MockScheduler()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        let detector = MockDetector()
+        let locker = MockLocker()
+
+        let coordinator = BreakCoordinator(scheduler: scheduler, detector: detector, locker: locker)
+        let schedule = makeSchedule(breakDuration: 5)
+
+        coordinator.start(with: [schedule], preferences: AppPreferences())
+        try? await Task.sleep(for: .milliseconds(300))
+        #expect(locker.isShowing)
+
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(600)
+        coordinator.skipNextBreak()
+        try? await Task.sleep(for: .milliseconds(100))
+
+        // The pending id was consumed when the overlay triggered, so the menu skip
+        // must not advance a second time.
+        #expect(lastCycleIndex(scheduler, for: schedule) == 1)
+        coordinator.stop()
+    }
+
+    @Test @MainActor
+    func rolloverResetsCycleAndRearmsTimer() async {
+        let scheduler = MockScheduler()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        let detector = MockDetector()
+        let locker = MockLocker()
+
+        let coordinator = BreakCoordinator(scheduler: scheduler, detector: detector, locker: locker)
+        let schedule = makeSchedule(breakDuration: 5)
+
+        coordinator.start(with: [schedule], preferences: AppPreferences())
+        try? await Task.sleep(for: .milliseconds(300))
+        #expect(locker.showOverlayCalled)
+
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(600)
+        coordinator.completeActiveBreak()
+        try? await Task.sleep(for: .milliseconds(100))
+        #expect(lastCycleIndex(scheduler, for: schedule) == 1)
+
+        // A timer armed for the 600 s target is still pending; the rollover must reset the
+        // cycle and re-arm anyway so the new day's first break is computed from index 0.
+        let callsBeforeRollover = scheduler.receivedCycleIndices.count
+        let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: Date())!
+        coordinator.refreshDailyRollover(now: tomorrow)
+        try? await Task.sleep(for: .milliseconds(100))
+
+        #expect(scheduler.receivedCycleIndices.count > callsBeforeRollover)
+        #expect(lastCycleIndex(scheduler, for: schedule) == 0)
+        coordinator.stop()
+    }
+
+    @Test @MainActor
+    func rolloverDuringDeferralKeepsThePendingBreak() async {
+        let scheduler = MockScheduler()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        let detector = MockDetector()
+        detector.contextToReturn = DetectionContext(screenSharingActive: true)
+        let locker = MockLocker()
+
+        let coordinator = BreakCoordinator(
+            scheduler: scheduler, detector: detector, locker: locker,
+            deferralPollingInterval: 0.1
+        )
+        let schedule = makeSchedule(breakDuration: 5)
+        let prefs = AppPreferences(screenSharingDetectionEnabled: true)
+
+        coordinator.start(with: [schedule], preferences: prefs)
+        try? await Task.sleep(for: .milliseconds(300))
+        #expect(!locker.showOverlayCalled)
+
+        // The day turns over while the poll is still waiting for the screen share to end.
+        // Re-arming here would cancel the poll and drop the deferred break silently.
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(600)
+        let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: Date())!
+        coordinator.refreshDailyRollover(now: tomorrow)
+
+        detector.contextToReturn = .clear
+        try? await Task.sleep(for: .milliseconds(300))
+
+        #expect(locker.showOverlayCalled)
+        coordinator.stop()
+    }
+
+    @Test @MainActor
+    func cycleIndicesIndependentPerSchedule() async {
+        let scheduler = MockScheduler()
+        let detector = MockDetector()
+        let locker = MockLocker()
+
+        let coordinator = BreakCoordinator(scheduler: scheduler, detector: detector, locker: locker)
+        let scheduleA = makeSchedule(breakDuration: 5)
+        let scheduleB = makeSchedule(breakDuration: 5)
+
+        scheduler.nextBreakTimes[scheduleA.id] = Date().addingTimeInterval(0.05)
+        scheduler.nextBreakTimes[scheduleB.id] = Date().addingTimeInterval(100)
+        coordinator.start(with: [scheduleA, scheduleB], preferences: AppPreferences())
+        try? await Task.sleep(for: .milliseconds(300))
+        #expect(locker.showOverlayCalled)
+
+        scheduler.nextBreakTimes[scheduleA.id] = Date().addingTimeInterval(600)
+        coordinator.completeActiveBreak()
+        try? await Task.sleep(for: .milliseconds(100))
+
+        #expect(lastCycleIndex(scheduler, for: scheduleA) == 1)
+        #expect(lastCycleIndex(scheduler, for: scheduleB) == 0)
+        coordinator.stop()
+    }
+
+    @Test @MainActor
+    func overlayReceivesNextIntervalLabel() async {
+        let scheduler = MockScheduler()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        let detector = MockDetector()
+        let locker = MockLocker()
+
+        let coordinator = BreakCoordinator(scheduler: scheduler, detector: detector, locker: locker)
+        let schedule = makeSchedule(breakDuration: 5, intervalCycle: [
+            IntervalStep(duration: 58 * 60, label: "Sitting"),
+            IntervalStep(duration: 28 * 60, label: "Standing"),
+        ])
+
+        coordinator.start(with: [schedule], preferences: AppPreferences())
+        try? await Task.sleep(for: .milliseconds(300))
+        // During the first break the upcoming work block is the cycle's second entry.
+        #expect(locker.lastNextIntervalLabel == "Standing")
+
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        coordinator.completeActiveBreak()
+        try? await Task.sleep(for: .milliseconds(300))
+        #expect(locker.lastNextIntervalLabel == "Sitting")
+
+        coordinator.stop()
+    }
+
+    @Test @MainActor
+    func overlayLabelNilWithoutCycle() async {
+        let scheduler = MockScheduler()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        let detector = MockDetector()
+        let locker = MockLocker()
+
+        let coordinator = BreakCoordinator(scheduler: scheduler, detector: detector, locker: locker)
+        let schedule = makeSchedule(breakDuration: 5)
+
+        coordinator.start(with: [schedule], preferences: AppPreferences())
+        try? await Task.sleep(for: .milliseconds(300))
+        #expect(locker.showOverlayCalled)
+        #expect(locker.lastNextIntervalLabel == nil)
+
+        coordinator.stop()
+    }
+
+    @Test @MainActor
+    func repetitionRuleDurationFollowsTracker() async {
+        let scheduler = MockScheduler()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        let detector = MockDetector()
+        let locker = MockLocker()
+
+        let coordinator = BreakCoordinator(scheduler: scheduler, detector: detector, locker: locker)
+        let schedule = makeSchedule(
+            repetitionRule: RepetitionRule(shortBreakCount: 1, shortBreakDuration: 300, longBreakDuration: 900)
+        )
+
+        coordinator.start(with: [schedule], preferences: AppPreferences())
+        try? await Task.sleep(for: .milliseconds(300))
+        #expect(locker.lastDuration == 300)
+
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        coordinator.completeActiveBreak()
+        try? await Task.sleep(for: .milliseconds(300))
+        #expect(locker.lastDuration == 900)
+
+        coordinator.stop()
     }
 }

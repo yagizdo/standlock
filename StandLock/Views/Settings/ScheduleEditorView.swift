@@ -190,6 +190,10 @@ private struct ScheduleRow: View {
     }
 
     private var intervalSummary: String {
+        if let cycle = schedule.intervalCycle, cycle.count >= 2 {
+            let minutes = cycle.map { String(Int($0.duration / 60)) }
+            return "every " + minutes.joined(separator: "/") + "m"
+        }
         let minutes = Int(schedule.breakInterval / 60)
         return "every \(minutes)m"
     }

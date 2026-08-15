@@ -60,6 +60,55 @@ struct ScheduleModelTests {
         #expect(decoded.dailyBreakCap == 10)
     }
 
+    @Test func scheduleJsonRoundTripWithIntervalCycle() throws {
+        let schedule = Schedule(
+            name: "Sit/Stand",
+            days: .weekdays,
+            windows: [TimeWindow(startHour: 9, startMinute: 0, endHour: 17, endMinute: 0)],
+            breakInterval: 58 * 60, breakDuration: 120,
+            intervalCycle: [
+                IntervalStep(duration: 58 * 60, label: "Sitting"),
+                IntervalStep(duration: 28 * 60, label: "Standing"),
+            ]
+        )
+        let data = try JSONEncoder().encode(schedule)
+        let decoded = try JSONDecoder().decode(Schedule.self, from: data)
+        #expect(decoded == schedule)
+        #expect(decoded.intervalCycle?.count == 2)
+        #expect(decoded.intervalCycle?[0].duration == TimeInterval(58 * 60))
+        #expect(decoded.intervalCycle?[1].label == "Standing")
+    }
+
+    @Test func scheduleJsonBackwardCompatibilityWithoutIntervalCycle() throws {
+        let original = Schedule(
+            name: "Old Schedule",
+            days: .weekdays,
+            windows: [TimeWindow(startHour: 9, startMinute: 0, endHour: 17, endMinute: 0)],
+            breakInterval: 2400, breakDuration: 600,
+            intervalCycle: [IntervalStep(duration: 2400)]
+        )
+        let data = try JSONEncoder().encode(original)
+        var json = try JSONSerialization.jsonObject(with: data) as! [String: Any]
+        json.removeValue(forKey: "intervalCycle")
+        let stripped = try JSONSerialization.data(withJSONObject: json)
+        let decoded = try JSONDecoder().decode(Schedule.self, from: stripped)
+        #expect(decoded.intervalCycle == nil)
+        #expect(decoded.breakInterval == 2400)
+        #expect(decoded.name == "Old Schedule")
+    }
+
+    @Test func intervalStepEncoding() throws {
+        let labeled = IntervalStep(duration: 1680, label: "Standing")
+        let labeledDecoded = try JSONDecoder().decode(IntervalStep.self, from: JSONEncoder().encode(labeled))
+        #expect(labeledDecoded == labeled)
+        #expect(labeledDecoded.label == "Standing")
+
+        let unlabeled = IntervalStep(duration: 3480)
+        let unlabeledDecoded = try JSONDecoder().decode(IntervalStep.self, from: JSONEncoder().encode(unlabeled))
+        #expect(unlabeledDecoded == unlabeled)
+        #expect(unlabeledDecoded.label == nil)
+    }
+
     @Test func repetitionRuleEncoding() throws {
         let rule = RepetitionRule(shortBreakCount: 4, shortBreakDuration: 300, longBreakDuration: 900)
         let data = try JSONEncoder().encode(rule)

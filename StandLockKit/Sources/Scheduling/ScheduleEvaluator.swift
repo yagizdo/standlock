@@ -16,24 +16,30 @@ public struct ScheduleEvaluator: SchedulingEngine, Sendable {
         return schedule.windows.contains { $0.contains(hour: hour, minute: minute) }
     }
 
-    public func nextBreakTime(for schedule: Schedule, after date: Date) -> Date? {
+    public func nextBreakTime(for schedule: Schedule, after date: Date, cycleIndex: Int) -> Date? {
         let calendar = Calendar.current
+        let interval = interval(for: schedule, cycleIndex: cycleIndex)
 
         if isWithinActiveWindow(schedule, at: date) {
-            let candidate = date.addingTimeInterval(schedule.breakInterval)
+            let candidate = date.addingTimeInterval(interval)
             if isWithinActiveWindow(schedule, at: candidate) {
                 return candidate
             }
             if let nextWindow = nextWindowStart(for: schedule, after: date, calendar: calendar) {
-                return nextWindow.addingTimeInterval(schedule.breakInterval)
+                return nextWindow.addingTimeInterval(interval)
             }
         }
 
         if let nextWindow = nextWindowStart(for: schedule, after: date, calendar: calendar) {
-            return nextWindow.addingTimeInterval(schedule.breakInterval)
+            return nextWindow.addingTimeInterval(interval)
         }
 
         return nil
+    }
+
+    private func interval(for schedule: Schedule, cycleIndex: Int) -> TimeInterval {
+        guard let cycle = schedule.intervalCycle, !cycle.isEmpty else { return schedule.breakInterval }
+        return cycle[cycleIndex % cycle.count].duration
     }
 
     public func breakDuration(for schedule: Schedule, breakIndex: Int) -> TimeInterval {
