@@ -36,14 +36,35 @@ struct StatisticsView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .onAppear { rebuildCache() }
         .onChange(of: coordinator.breakHistory.revision) { _ in rebuildCache() }
-        .onChange(of: selectedPeriod) { _ in
-            cachedStats = coordinator.breakHistory.aggregateStats(for: selectedPeriod)
+        .onChange(of: selectedPeriod) { _ in rebuildCache() }
+        .task { await rebuildAtDayBoundary() }
+    }
+
+    /// Both caches are windowed on "now", so they go stale if the panel stays open across
+    /// midnight -- nothing else invalidates them until the next break is recorded.
+    private func rebuildAtDayBoundary() async {
+        let calendar = Calendar.current
+        let midnight = DateComponents(hour: 0, minute: 0, second: 0)
+
+        while !Task.isCancelled {
+            let now = Date()
+            guard let nextDay = calendar.nextDate(after: now, matching: midnight,
+                                                  matchingPolicy: .nextTime) else { return }
+            try? await Task.sleep(for: .seconds(nextDay.timeIntervalSince(now) + 1))
+            guard !Task.isCancelled else { return }
+            rebuildCache()
         }
     }
 
     private func rebuildCache() {
-        cachedHeatmap = HeatmapData(history: coordinator.breakHistory, referenceDate: Date())
-        cachedStats = coordinator.breakHistory.aggregateStats(for: selectedPeriod)
+        let now = Date()
+        // Only the year tab renders the heatmap and building it walks 365 days. The previous
+        // one is left in place rather than cleared so returning to the tab has nothing to
+        // re-render from empty.
+        if selectedPeriod == .year {
+            cachedHeatmap = HeatmapData(history: coordinator.breakHistory, referenceDate: now)
+        }
+        cachedStats = coordinator.breakHistory.aggregateStats(for: selectedPeriod, referenceDate: now)
     }
 
     private var headerRow: some View {
