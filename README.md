@@ -20,6 +20,27 @@
 
 A macOS menu bar app that forces you to take stand-up breaks. It runs quietly in your menu bar, manages multiple schedules, and puts a full-screen overlay on every display when it's time. You pick how strict each schedule should be, and the app gets progressively harder to dismiss the more you skip.
 
+## Contents
+
+- [Why](#why)
+- [Features](#features)
+  - [Discipline Levels](#discipline-levels)
+  - [Escalation](#escalation)
+  - [Smart Scheduling](#smart-scheduling)
+  - [Context Awareness](#context-awareness)
+  - [Break Experience](#break-experience)
+  - [Break Statistics](#break-statistics)
+  - [Menu Bar](#menu-bar)
+  - [General](#general)
+- [Install](#install)
+  - [Requirements](#requirements)
+  - [GitHub Releases](#github-releases)
+  - [Homebrew](#homebrew)
+- [macOS Permissions](#macos-permissions)
+- [Building from Source](#building-from-source)
+  - [Deployment Target](#deployment-target)
+- [License](#license)
+
 ## Why
 
 Most break reminder apps show a notification you can swipe away in half a second. That doesn't work if you're deep in focus and keep ignoring it. StandLock takes a different approach: instead of asking nicely, it can actually block your screen. You choose the level of enforcement per schedule. Use Gentle mode during casual browsing and Strict mode during long coding sessions. The goal is to make skipping a break a conscious decision, not a reflex.

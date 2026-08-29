@@ -20,9 +20,9 @@ cask "standlock" do
       verified: "github.com/yagizdo/StandLock/"
   name "StandLock"
   desc "Stand reminder and break screen for macOS"
-  homepage "https://github.com/yagizdo/StandLock"
+  homepage "https://standlock.app"
 
-  depends_on macos: ">= :sequoia"
+  depends_on macos: ">= :ventura"
 
   app "StandLock.app"
 
