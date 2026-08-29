@@ -9,6 +9,12 @@ fi
 git clone "https://github.com/yagizdo/homebrew-tap.git" "$RUNNER_TEMP/homebrew-tap"
 cd "$RUNNER_TEMP/homebrew-tap"
 git remote set-url origin "https://x-access-token:${TAP_TOKEN}@github.com/yagizdo/homebrew-tap.git"
+
+# This script owns Casks/standlock.rb outright and rewrites it whole, so start
+# from whatever the tap has now. Rebasing a whole-file overwrite afterwards
+# conflicts on every line.
+git fetch origin
+git reset --hard origin/HEAD
 mkdir -p Casks
 
 cat > Casks/standlock.rb <<RUBY
@@ -20,9 +26,9 @@ cask "standlock" do
       verified: "github.com/yagizdo/StandLock/"
   name "StandLock"
   desc "Stand reminder and break screen for macOS"
-  homepage "https://github.com/yagizdo/StandLock"
+  homepage "https://standlock.app"
 
-  depends_on macos: ">= :sequoia"
+  depends_on macos: :ventura
 
   app "StandLock.app"
 
@@ -34,11 +40,12 @@ cask "standlock" do
 end
 RUBY
 
+ruby -c Casks/standlock.rb
+
 git config user.name "github-actions[bot]"
 git config user.email "github-actions[bot]@users.noreply.github.com"
 git add Casks/standlock.rb
 if ! git diff --cached --quiet; then
   git commit -m "chore: update standlock to ${VERSION}"
-  git pull --rebase
   git push
 fi

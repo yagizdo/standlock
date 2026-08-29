@@ -5,13 +5,13 @@ APP="$RUNNER_TEMP/export/StandLock.app"
 FW="$APP/Contents/Frameworks/Sparkle.framework"
 
 codesign --force --timestamp --options runtime \
-  --sign "$SIGNING_IDENTITY" "$FW/Versions/B/XPCServices/Downloader.xpc"
+  --sign "$SIGNING_IDENTITY" "$FW/Versions/Current/XPCServices/Downloader.xpc"
 codesign --force --timestamp --options runtime \
-  --sign "$SIGNING_IDENTITY" "$FW/Versions/B/XPCServices/Installer.xpc"
+  --sign "$SIGNING_IDENTITY" "$FW/Versions/Current/XPCServices/Installer.xpc"
 codesign --force --timestamp --options runtime \
-  --sign "$SIGNING_IDENTITY" "$FW/Versions/B/Updater.app"
+  --sign "$SIGNING_IDENTITY" "$FW/Versions/Current/Updater.app"
 codesign --force --timestamp --options runtime \
-  --sign "$SIGNING_IDENTITY" "$FW/Versions/B/Autoupdate"
+  --sign "$SIGNING_IDENTITY" "$FW/Versions/Current/Autoupdate"
 codesign --force --timestamp --options runtime \
   --sign "$SIGNING_IDENTITY" "$FW"
 codesign --force --timestamp --options runtime \

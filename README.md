@@ -1,4 +1,10 @@
+<div align="center">
+
+<img src="assets/icon.png" width="180" alt="StandLock">
+
 # StandLock
+
+**A macOS menu bar app that locks your screen until you stand up.**
 
 [![Version](https://img.shields.io/badge/version-0.3.0-blue)](https://github.com/yagizdo/StandLock/releases)
 [![Release](https://github.com/yagizdo/standlock/actions/workflows/release.yml/badge.svg)](https://github.com/yagizdo/standlock/actions/workflows/release.yml)
@@ -8,8 +14,32 @@
 [![Website](https://img.shields.io/badge/website-standlock.app-blue)](https://standlock.app?ref=github-readme)
 [![BuyMeACoffee](https://raw.githubusercontent.com/pachadotdev/buymeacoffee-badges/main/bmc-donate-yellow.svg)](https://buymeacoffee.com/yagizdo)
 
+<img src="assets/break-gentle.png" width="820" alt="StandLock break overlay with a countdown and an exercise suggestion">
+
+</div>
 
 A macOS menu bar app that forces you to take stand-up breaks. It runs quietly in your menu bar, manages multiple schedules, and puts a full-screen overlay on every display when it's time. You pick how strict each schedule should be, and the app gets progressively harder to dismiss the more you skip.
+
+## Contents
+
+- [Why](#why)
+- [Features](#features)
+  - [Discipline Levels](#discipline-levels)
+  - [Escalation](#escalation)
+  - [Smart Scheduling](#smart-scheduling)
+  - [Context Awareness](#context-awareness)
+  - [Break Experience](#break-experience)
+  - [Break Statistics](#break-statistics)
+  - [Menu Bar](#menu-bar)
+  - [General](#general)
+- [Install](#install)
+  - [Requirements](#requirements)
+  - [GitHub Releases](#github-releases)
+  - [Homebrew](#homebrew)
+- [macOS Permissions](#macos-permissions)
+- [Building from Source](#building-from-source)
+  - [Deployment Target](#deployment-target)
+- [License](#license)
 
 ## Why
 
@@ -27,9 +57,13 @@ Each schedule has its own discipline level. Pick one per schedule and change it 
 | Firm | Timed skip delay + type an escape phrase to dismiss |
 | Strict | Full input blocking, only an emergency key combo (Ctrl+Option+Command hold) exits |
 
+<img src="assets/break-firm.png" width="820" alt="Firm mode break screen asking you to type an escape phrase">
+
 ### Escalation
 
 Enable progressive enforcement on any schedule and each consecutive skip makes the next break harder to dismiss. Challenges range from dodging buttons and mini-games to typing embarrassing phrases with snarky app commentary. Complete a break (or let idle detection count one) and the tier resets.
+
+<img src="assets/escalation.gif" width="640" alt="The skip button moving away from the cursor as the escalation tier rises">
 
 ### Smart Scheduling
 
@@ -39,6 +73,8 @@ Enable progressive enforcement on any schedule and each consecutive skip makes t
 - Pomodoro-style repetition cycles with short/long break patterns
 - Alternating work intervals: a schedule can cycle through up to 6 intervals instead of one (e.g. 58 min sitting, then 28 min standing), each with an optional label the break screen shows as what's coming next
 - Configurable daily skip limits per discipline level
+
+<img src="assets/schedules.png" width="515" alt="Schedules window showing time windows, day selection and discipline level">
 
 ### Context Awareness
 
@@ -68,10 +104,12 @@ A dedicated Statistics tab in Settings tracks break history over time.
 - Break stats: completions, streak, and skips for today
 - Pause/resume controls
 
+<img src="assets/menubar.png" width="275" alt="Menu bar popover showing the countdown to the next break and today's stats">
+
 ### General
 
 - **Launch at login** via macOS login items
-- **Auto-update** checks every 4 hours via Sparkle, with an update banner in the menu bar
+- **Auto-update** via Sparkle, with an update banner in the menu bar. Off by default: turn on Automatic Updates in Settings and StandLock checks every 4 hours, otherwise use Check for Updates
 
 ## Install
 
@@ -117,12 +155,16 @@ Build and run the `StandLock` scheme in Xcode. The app lives in your menu bar.
 
 ### Deployment Target
 
-The minimum macOS version is declared in two source-of-truth files:
+The minimum macOS version is declared in four places, and they do not derive from each other:
 
 - `project.yml` -- app target (Xcode project is regenerated from this with `xcodegen generate`)
 - `StandLockKit/Package.swift` -- Swift package (separate platform list)
+- `scripts/generate-appcast.sh` -- `sparkle:minimumSystemVersion`, decides which installs Sparkle offers the update to
+- `scripts/update-homebrew-cask.sh` -- `depends_on macos:`, decides who `brew install` lets in
 
-When raising or lowering the deployment target, update both files and run `xcodegen generate` to refresh `StandLock.xcodeproj`. Direct edits to `StandLock.xcodeproj/project.pbxproj` are overwritten on the next regeneration.
+When raising or lowering the deployment target, update all four and run `xcodegen generate` to refresh `StandLock.xcodeproj`. Direct edits to `StandLock.xcodeproj/project.pbxproj` are overwritten on the next regeneration.
+
+The last two are easy to miss because nothing fails when they are wrong: the build succeeds, and users on the excluded versions are simply never offered the app. That is how 0.3.0 shipped telling Sparkle and Homebrew it needed macOS 15 while the binary reported `minos 13.0`.
 
 ## License
 
