@@ -1,13 +1,22 @@
+<div align="center">
+
+<img src="assets/icon.png" width="180" alt="StandLock">
+
 # StandLock
 
-[![Version](https://img.shields.io/badge/version-0.3.0-blue)](https://github.com/yagizdo/StandLock/releases)
+**A macOS menu bar app that locks your screen until you stand up.**
+
+[![Version](https://img.shields.io/badge/version-0.3.0-blue)](https://github.com/yagizdo/standlock/releases)
 [![Release](https://github.com/yagizdo/standlock/actions/workflows/release.yml/badge.svg)](https://github.com/yagizdo/standlock/actions/workflows/release.yml)
-[![macOS 13+](https://img.shields.io/badge/macOS-13%2B-brightgreen)](https://github.com/yagizdo/StandLock/releases/latest)
+[![macOS 13+](https://img.shields.io/badge/macOS-13%2B-brightgreen)](https://github.com/yagizdo/standlock/releases/latest)
 [![Homebrew](https://img.shields.io/badge/brew-yagizdo%2Ftap%2Fstandlock-orange)](https://github.com/yagizdo/homebrew-tap)
 [![License: MIT](https://img.shields.io/badge/license-MIT-purple)](LICENSE)
 [![Website](https://img.shields.io/badge/website-standlock.app-blue)](https://standlock.app?ref=github-readme)
 [![BuyMeACoffee](https://raw.githubusercontent.com/pachadotdev/buymeacoffee-badges/main/bmc-donate-yellow.svg)](https://buymeacoffee.com/yagizdo)
 
+<img src="assets/break-gentle.png" width="820" alt="StandLock break overlay with a countdown and an exercise suggestion">
+
+</div>
 
 A macOS menu bar app that forces you to take stand-up breaks. It runs quietly in your menu bar, manages multiple schedules, and puts a full-screen overlay on every display when it's time. You pick how strict each schedule should be, and the app gets progressively harder to dismiss the more you skip.
 
@@ -27,9 +36,13 @@ Each schedule has its own discipline level. Pick one per schedule and change it 
 | Firm | Timed skip delay + type an escape phrase to dismiss |
 | Strict | Full input blocking, only an emergency key combo (Ctrl+Option+Command hold) exits |
 
+<img src="assets/break-firm.png" width="820" alt="Firm mode break screen asking you to type an escape phrase">
+
 ### Escalation
 
 Enable progressive enforcement on any schedule and each consecutive skip makes the next break harder to dismiss. Challenges range from dodging buttons and mini-games to typing embarrassing phrases with snarky app commentary. Complete a break (or let idle detection count one) and the tier resets.
+
+<img src="assets/escalation.gif" width="700" alt="The skip button moving away from the cursor as the escalation tier rises">
 
 ### Smart Scheduling
 
@@ -39,6 +52,8 @@ Enable progressive enforcement on any schedule and each consecutive skip makes t
 - Pomodoro-style repetition cycles with short/long break patterns
 - Alternating work intervals: a schedule can cycle through up to 6 intervals instead of one (e.g. 58 min sitting, then 28 min standing), each with an optional label the break screen shows as what's coming next
 - Configurable daily skip limits per discipline level
+
+<img src="assets/schedules.png" width="560" alt="Schedules window showing time windows, day selection and discipline level">
 
 ### Context Awareness
 
@@ -67,6 +82,8 @@ A dedicated Statistics tab in Settings tracks break history over time.
 - Timer showing remaining time until next break (always-on or last-minutes countdown)
 - Break stats: completions, streak, and skips for today
 - Pause/resume controls
+
+<img src="assets/menubar.png" width="300" alt="Menu bar popover showing the countdown to the next break and today's stats">
 
 ### General
 

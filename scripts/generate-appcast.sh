@@ -33,7 +33,7 @@ cat > appcast.xml <<APPCAST
       <title>Version ${VERSION}</title>
       <sparkle:version>${BUILD_NUMBER}</sparkle:version>
       <sparkle:shortVersionString>${VERSION}</sparkle:shortVersionString>
-      <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+      <sparkle:minimumSystemVersion>13.0</sparkle:minimumSystemVersion>
       <pubDate>${PUB_DATE}</pubDate>
       <enclosure url="https://github.com/yagizdo/StandLock/releases/download/v${VERSION}/StandLock-${VERSION}.dmg"
                  sparkle:edSignature="${ED_SIGNATURE}"
