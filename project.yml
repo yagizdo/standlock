@@ -14,9 +14,10 @@ settings:
     ENABLE_HARDENED_RUNTIME: YES
     DEVELOPMENT_TEAM: F475N5N7V6
     # Info.plist reads these through $(MARKETING_VERSION) and
-    # $(CURRENT_PROJECT_VERSION). The release workflow overrides
-    # MARKETING_VERSION from the git tag; bump CURRENT_PROJECT_VERSION here
-    # before tagging, because Sparkle compares updates on it.
+    # $(CURRENT_PROJECT_VERSION). Both are placeholders for local builds only:
+    # the release workflow overrides MARKETING_VERSION from the git tag and
+    # CURRENT_PROJECT_VERSION from its run number. Nothing here needs bumping
+    # before a release.
     MARKETING_VERSION: "0.3.0"
     CURRENT_PROJECT_VERSION: "16"
 

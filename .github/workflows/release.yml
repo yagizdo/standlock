@@ -40,14 +40,26 @@ jobs:
       - name: Extract version from tag
         run: echo "VERSION=${GITHUB_REF_NAME#v}" >> "$GITHUB_ENV"
 
-      - name: Extract build number from project.yml
+      - name: Determine build number
         run: |
           set -euo pipefail
-          BUILD_NUM=$(sed -n 's/^ *CURRENT_PROJECT_VERSION: *"\{0,1\}\([0-9][0-9]*\)"\{0,1\} *$/\1/p' project.yml | head -1)
-          if [ -z "$BUILD_NUM" ]; then
-            echo "::error::CURRENT_PROJECT_VERSION not found in project.yml"
+          BUILD_NUM="${{ github.run_number }}"
+
+          # Sparkle decides whether an update is newer by comparing this
+          # number, so it must never go backwards or repeat. run_number has
+          # matched the shipped build since v0.2.2 (9) through v0.3.0 (16),
+          # but it restarts if this workflow is renamed or recreated, which
+          # would strand every existing install on the version it has. Refuse
+          # to build rather than publish an update nobody can receive.
+          PREV=$(curl -sL --fail --max-time 30 \
+            "https://github.com/${GITHUB_REPOSITORY}/releases/latest/download/appcast.xml" \
+            | sed -n 's/.*<sparkle:version>\([0-9][0-9]*\)<.*/\1/p' | head -1) || PREV=""
+
+          if [ -n "$PREV" ] && [ "$BUILD_NUM" -le "$PREV" ]; then
+            echo "::error::build number ${BUILD_NUM} is not greater than the published ${PREV}. Sparkle would ignore this release. If the Release workflow was renamed or recreated, set CURRENT_PROJECT_VERSION explicitly instead of using run_number."
             exit 1
           fi
+          echo "build number ${BUILD_NUM} (previously published: ${PREV:-none})"
           echo "BUILD_NUMBER=${BUILD_NUM}" >> "$GITHUB_ENV"
 
       # ── Signing & Notarization Setup ──
