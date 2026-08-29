@@ -8,10 +8,11 @@ on:
 permissions:
   contents: write
 
-# Two tags pushed close together would otherwise race in the tap and could
-# leave the cask pinned to the older release.
+# Deliberately keyed on the repository, not the ref: the point is to stop two
+# different tags racing each other in the tap, and a per-ref group would give
+# them separate lanes and no serialisation at all.
 concurrency:
-  group: release-${{ github.ref }}
+  group: release
   cancel-in-progress: false
 
 env:
@@ -41,6 +42,9 @@ jobs:
         run: echo "VERSION=${GITHUB_REF_NAME#v}" >> "$GITHUB_ENV"
 
       - name: Determine build number
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
         run: |
           set -euo pipefail
           BUILD_NUM="${{ github.run_number }}"
@@ -51,15 +55,27 @@ jobs:
           # but it restarts if this workflow is renamed or recreated, which
           # would strand every existing install on the version it has. Refuse
           # to build rather than publish an update nobody can receive.
-          PREV=$(curl -sL --fail --max-time 30 \
-            "https://github.com/${GITHUB_REPOSITORY}/releases/latest/download/appcast.xml" \
-            | sed -n 's/.*<sparkle:version>\([0-9][0-9]*\)<.*/\1/p' | head -1) || PREV=""
+          # Re-running a failed run keeps the same run_number but the release,
+          # and its appcast, may already be published -- comparing against it
+          # would compare this build against itself and never pass. Skip only
+          # on an actual re-run: run_attempt alone is not enough (the release
+          # may not exist yet), and an existing release alone is not enough
+          # either (release notes drafted before tagging would match on the
+          # first attempt and disarm the guard when it is most needed).
+          echo "build number ${BUILD_NUM}"
+          if [ "${RUN_ATTEMPT}" -gt 1 ] && gh release view "v${VERSION}" >/dev/null 2>&1; then
+            echo "release v${VERSION} already exists on run attempt ${RUN_ATTEMPT}; skipping the monotonicity check"
+          else
+            PREV=$(curl -sL --fail --max-time 30 \
+              "https://github.com/${GITHUB_REPOSITORY}/releases/latest/download/appcast.xml" \
+              | sed -n 's/.*<sparkle:version>\([0-9][0-9]*\)<.*/\1/p' | head -1) || PREV=""
 
-          if [ -n "$PREV" ] && [ "$BUILD_NUM" -le "$PREV" ]; then
-            echo "::error::build number ${BUILD_NUM} is not greater than the published ${PREV}. Sparkle would ignore this release. If the Release workflow was renamed or recreated, set CURRENT_PROJECT_VERSION explicitly instead of using run_number."
-            exit 1
+            if [ -n "$PREV" ] && [ "$BUILD_NUM" -le "$PREV" ]; then
+              echo "::error::build number ${BUILD_NUM} is not greater than the published ${PREV}, so Sparkle would ignore this release. run_number restarts when the workflow is renamed or recreated; if that happened, pin CURRENT_PROJECT_VERSION in this step instead of using run_number."
+              exit 1
+            fi
+            echo "previously published build: ${PREV:-none}"
           fi
-          echo "build number ${BUILD_NUM} (previously published: ${PREV:-none})"
           echo "BUILD_NUMBER=${BUILD_NUM}" >> "$GITHUB_ENV"
 
       # ── Signing & Notarization Setup ──
@@ -142,7 +158,7 @@ jobs:
             exit 1
           fi
           if [ "$BUILT_BUILD" != "$BUILD_NUMBER" ]; then
-            echo "::error::app reports build ${BUILT_BUILD} but project.yml says ${BUILD_NUMBER}"
+            echo "::error::app reports build ${BUILT_BUILD} but the workflow supplied ${BUILD_NUMBER}"
             exit 1
           fi
           if [ -z "$BUILT_NAME" ]; then
