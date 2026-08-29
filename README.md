@@ -109,7 +109,7 @@ A dedicated Statistics tab in Settings tracks break history over time.
 ### General
 
 - **Launch at login** via macOS login items
-- **Auto-update** checks every 4 hours via Sparkle, with an update banner in the menu bar
+- **Auto-update** via Sparkle, with an update banner in the menu bar. Off by default: turn on Automatic Updates in Settings and StandLock checks every 4 hours, otherwise use Check for Updates
 
 ## Install
 

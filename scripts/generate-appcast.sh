@@ -43,3 +43,6 @@ cat > appcast.xml <<APPCAST
   </channel>
 </rss>
 APPCAST
+
+xmllint --noout appcast.xml
+echo "appcast.xml: version ${BUILD_NUMBER}, minimum macOS 13.0"
