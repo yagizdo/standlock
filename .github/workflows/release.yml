@@ -44,6 +44,7 @@ jobs:
       - name: Determine build number
         env:
           GH_TOKEN: ${{ github.token }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
         run: |
           set -euo pipefail
           BUILD_NUM="${{ github.run_number }}"
@@ -56,10 +57,14 @@ jobs:
           # to build rather than publish an update nobody can receive.
           # Re-running a failed run keeps the same run_number but the release,
           # and its appcast, may already be published -- comparing against it
-          # would compare this build against itself and never pass. A release
-          # that already exists for this tag means exactly that, so skip.
-          if gh release view "v${VERSION}" >/dev/null 2>&1; then
-            echo "release v${VERSION} already exists; this is a re-run, skipping the monotonicity check"
+          # would compare this build against itself and never pass. Skip only
+          # on an actual re-run: run_attempt alone is not enough (the release
+          # may not exist yet), and an existing release alone is not enough
+          # either (release notes drafted before tagging would match on the
+          # first attempt and disarm the guard when it is most needed).
+          echo "build number ${BUILD_NUM}"
+          if [ "${RUN_ATTEMPT}" -gt 1 ] && gh release view "v${VERSION}" >/dev/null 2>&1; then
+            echo "release v${VERSION} already exists on run attempt ${RUN_ATTEMPT}; skipping the monotonicity check"
           else
             PREV=$(curl -sL --fail --max-time 30 \
               "https://github.com/${GITHUB_REPOSITORY}/releases/latest/download/appcast.xml" \
@@ -71,7 +76,6 @@ jobs:
             fi
             echo "previously published build: ${PREV:-none}"
           fi
-          echo "build number ${BUILD_NUM} (previously published: ${PREV:-none})"
           echo "BUILD_NUMBER=${BUILD_NUM}" >> "$GITHUB_ENV"
 
       # ── Signing & Notarization Setup ──
