@@ -28,10 +28,17 @@ public final class BreakCoordinator {
     /// to advance that schedule's cycle; cleared whenever the timer is cancelled or the break
     /// becomes active, so a slot can never advance twice.
     private var pendingBreakScheduleID: UUID?
+    /// When the pending slot is due. Kept so a skip that is not allowed to reset the interval
+    /// can measure the next one from the slot it skipped instead of from the moment of the skip.
+    private var pendingBreakDate: Date?
     /// True only while the deferral poll loop owns `breakTimer`. That loop is suspended between
     /// polls, so anything that re-arms the timer cancels it and drops the deferred break.
     private var isDeferringBreak = false
     public var exercises: [Exercise] = []
+
+    /// Floor between a skip and the break it schedules, for the case where the anchored slot
+    /// has already gone by.
+    private static let minimumLeadTime: TimeInterval = 60
 
     private let deferralPollingInterval: TimeInterval
     private let eventContinuation: AsyncStream<CoordinatorEvent>.Continuation
@@ -180,12 +187,13 @@ public final class BreakCoordinator {
         if let id = pendingBreakScheduleID {
             cycleIndices[id, default: 0] += 1
         }
+        let anchor = skipAnchor(slot: pendingBreakDate)
         clearPendingBreak()
         updateStatistics {
             $0.breaksSkipped += 1
             $0.currentStreak = 0
         }
-        scheduleNextBreak()
+        scheduleNextBreak(searchFrom: anchor)
     }
 
     public func skipActiveBreak() {
@@ -201,9 +209,10 @@ public final class BreakCoordinator {
             $0.breaksSkipped += 1
             $0.currentStreak = 0
         }
+        let anchor = skipAnchor(slot: event.scheduledAt)
         currentBreak = nil
         currentSchedule = nil
-        scheduleNextBreak()
+        scheduleNextBreak(searchFrom: anchor)
     }
 
     public func escapeActiveBreak() {
@@ -241,6 +250,12 @@ public final class BreakCoordinator {
 
     // MARK: - Escalation
 
+    /// Nil keeps the default `now` anchor. A slot date is returned only when the user has turned
+    /// off `resetIntervalOnSkip`, which is what makes a skip cost the time it saved.
+    private func skipAnchor(slot: Date?) -> Date? {
+        preferences.resetIntervalOnSkip ? nil : slot
+    }
+
     private func currentTier(for schedule: Schedule) -> Int {
         guard schedule.progressiveEnforcement else { return 0 }
         let maxTier = schedule.disciplineLevel.enforcementPolicy(preferences: preferences).tiers.count - 1
@@ -253,6 +268,7 @@ public final class BreakCoordinator {
     /// concludes the poll that was waiting on it.
     private func clearPendingBreak() {
         pendingBreakScheduleID = nil
+        pendingBreakDate = nil
         isDeferringBreak = false
     }
 
@@ -260,7 +276,10 @@ public final class BreakCoordinator {
     /// date describes one consistent moment. Without it the rollover here would re-read the real
     /// clock and undo a caller-injected day change, since `resetDailyIfNeeded` fires in both
     /// directions.
-    private func scheduleNextBreak(now: Date = Date()) {
+    /// `searchFrom` is the moment the next interval is measured from. It differs from `now` only
+    /// when `resetIntervalOnSkip` is off, where the skipped slot stays the anchor so a skip
+    /// neither buys work time nor pulls the next break closer.
+    private func scheduleNextBreak(now: Date = Date(), searchFrom: Date? = nil) {
         breakTimer?.cancel()
         breakTimer = nil
         rolloverIfNeeded(now: now)
@@ -270,7 +289,7 @@ public final class BreakCoordinator {
         for schedule in activeSchedules where schedule.isEnabled {
             if let cap = schedule.dailyBreakCap,
                (dailyBreakCounts[schedule.id] ?? 0) >= cap { continue }
-            if let next = scheduler.nextBreakTime(for: schedule, after: now,
+            if let next = scheduler.nextBreakTime(for: schedule, after: searchFrom ?? now,
                                                   cycleIndex: cycleIndices[schedule.id, default: 0]) {
                 if earliest == nil || next < earliest!.date {
                     earliest = (next, schedule)
@@ -279,17 +298,23 @@ public final class BreakCoordinator {
         }
 
         guard let target = earliest else { return }
+        // An anchored slot can already have gone by; a break must never open right on top of the
+        // skip that scheduled it. The unanchored path keeps its exact slot, short ones included.
+        let fireDate = searchFrom == nil
+            ? target.date
+            : max(target.date, now.addingTimeInterval(Self.minimumLeadTime))
         pendingBreakScheduleID = target.schedule.id
-        eventContinuation.yield(.nextBreakScheduled(target.date))
+        pendingBreakDate = fireDate
+        eventContinuation.yield(.nextBreakScheduled(fireDate))
 
         breakTimer = Task {
-            let delay = target.date.timeIntervalSince(Date())
+            let delay = fireDate.timeIntervalSince(Date())
             let leadTime: TimeInterval = 3
             let earlyDelay = max(0, delay - leadTime)
             if earlyDelay > 0 { try? await Task.sleep(for: .seconds(earlyDelay)) }
             guard !Task.isCancelled else { return }
             let context = await self.detector.currentContext()
-            let remaining = target.date.timeIntervalSince(Date())
+            let remaining = fireDate.timeIntervalSince(Date())
             if remaining > 0 { try? await Task.sleep(for: .seconds(remaining)) }
             guard !Task.isCancelled else { return }
             await self.triggerBreak(for: target.schedule, context: context)
@@ -334,6 +359,7 @@ public final class BreakCoordinator {
             // The deferred slot is still pending, so a menu skip during the poll loop
             // must conclude it for this schedule.
             pendingBreakScheduleID = schedule.id
+            pendingBreakDate = Date()
             isDeferringBreak = true
             eventContinuation.yield(.breakDeferred(deferral, nextAttempt: Date().addingTimeInterval(deferralPollingInterval)))
             updateStatistics { $0.breaksDeferred += 1 }

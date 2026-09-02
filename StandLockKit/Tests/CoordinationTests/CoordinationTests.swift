@@ -11,9 +11,11 @@ final class MockScheduler: SchedulingEngine, @unchecked Sendable {
     var nextBreakTimes: [UUID: Date] = [:]
     var breakDurationToReturn: TimeInterval = 300
     var receivedCycleIndices: [(scheduleID: UUID, index: Int)] = []
+    var receivedAfterDates: [Date] = []
 
     func nextBreakTime(for schedule: Schedule, after date: Date, cycleIndex: Int) -> Date? {
         receivedCycleIndices.append((scheduleID: schedule.id, index: cycleIndex))
+        receivedAfterDates.append(date)
         return nextBreakTimes[schedule.id] ?? nextBreakTimeToReturn
     }
     func breakDuration(for schedule: Schedule, breakIndex: Int) -> TimeInterval { breakDurationToReturn }
@@ -1701,4 +1703,44 @@ struct BreakCoordinatorTests {
 
         coordinator.stop()
     }
+
+    @Test @MainActor
+    func skipKeepsTheSlotAnchorWhenResetIsOff() async {
+        let scheduler = MockScheduler()
+        let slot = Date().addingTimeInterval(300)
+        scheduler.nextBreakTimeToReturn = slot
+        let coordinator = BreakCoordinator(scheduler: scheduler, detector: MockDetector(), locker: MockLocker())
+
+        coordinator.start(with: [makeSchedule()], preferences: AppPreferences(resetIntervalOnSkip: false))
+        try? await Task.sleep(for: .milliseconds(50))
+
+        coordinator.skipNextBreak()
+        try? await Task.sleep(for: .milliseconds(50))
+
+        // The skipped slot, not the moment of the skip, measures the next interval.
+        let anchor = scheduler.receivedAfterDates.last ?? .distantPast
+        #expect(abs(anchor.timeIntervalSince(slot)) < 5)
+
+        coordinator.stop()
+    }
+
+    @Test @MainActor
+    func skipRestartsTheIntervalWhenResetIsOn() async {
+        let scheduler = MockScheduler()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(300)
+        let coordinator = BreakCoordinator(scheduler: scheduler, detector: MockDetector(), locker: MockLocker())
+
+        coordinator.start(with: [makeSchedule()], preferences: AppPreferences())
+        try? await Task.sleep(for: .milliseconds(50))
+
+        let skippedAt = Date()
+        coordinator.skipNextBreak()
+        try? await Task.sleep(for: .milliseconds(50))
+
+        let anchor = scheduler.receivedAfterDates.last ?? .distantPast
+        #expect(abs(anchor.timeIntervalSince(skippedAt)) < 5)
+
+        coordinator.stop()
+    }
+
 }
