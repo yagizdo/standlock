@@ -204,8 +204,7 @@ public final class BreakCoordinator {
         clearPendingBreak()
         if locker.isShowing {
             locker.dismissOverlay()
-            if var event = currentBreak {
-                event.outcome = .skipped
+            if let event = currentBreak {
                 eventContinuation.yield(.breakSkipped(event))
                 updateStatistics {
                     $0.breaksSkipped += 1
@@ -233,8 +232,7 @@ public final class BreakCoordinator {
     }
 
     public func skipActiveBreak() {
-        guard var event = currentBreak else { return }
-        event.outcome = .skipped
+        guard let event = currentBreak else { return }
         if let scheduleID = currentBreak?.scheduleId {
             let maxTier = (currentSchedule?.disciplineLevel.enforcementPolicy(preferences: preferences).tiers.count ?? 5) - 1
             escalationTiers[scheduleID, default: 0] = min(escalationTiers[scheduleID, default: 0] + 1, maxTier)
@@ -252,8 +250,7 @@ public final class BreakCoordinator {
     }
 
     public func escapeActiveBreak() {
-        guard var event = currentBreak else { return }
-        event.outcome = .escaped
+        guard let event = currentBreak else { return }
         if let scheduleID = currentBreak?.scheduleId {
             let maxTier = (currentSchedule?.disciplineLevel.enforcementPolicy(preferences: preferences).tiers.count ?? 5) - 1
             escalationTiers[scheduleID, default: 0] = min(escalationTiers[scheduleID, default: 0] + 1, maxTier)
@@ -357,11 +354,6 @@ public final class BreakCoordinator {
         }
     }
 
-    private func triggerBreak(for schedule: Schedule) async {
-        let context = await detector.currentContext()
-        await triggerBreak(for: schedule, context: context)
-    }
-
     private func triggerBreak(for schedule: Schedule, context: DetectionContext) async {
         // The pending break is now active; a menu skip from here on must not advance again.
         clearPendingBreak()
@@ -371,8 +363,7 @@ public final class BreakCoordinator {
             if context.idleDuration >= breakDuration {
                 let idleEvent = BreakEvent(
                     scheduledAt: Date(), duration: breakDuration,
-                    level: schedule.disciplineLevel, scheduleId: schedule.id,
-                    outcome: .idleCounted
+                    level: schedule.disciplineLevel, scheduleId: schedule.id
                 )
                 if var tracker = repetitionTrackers[schedule.id] {
                     tracker.recordBreak()
@@ -480,15 +471,13 @@ public final class BreakCoordinator {
     }
 
     private func completeBreak(event: BreakEvent, schedule: Schedule) {
-        var completed = event
-        completed.outcome = .completed
         escalationTiers[schedule.id] = 0
         locker.dismissOverlay()
         if var tracker = repetitionTrackers[schedule.id] {
             tracker.recordBreak()
             repetitionTrackers[schedule.id] = tracker
         }
-        eventContinuation.yield(.breakCompleted(completed))
+        eventContinuation.yield(.breakCompleted(event))
         updateStatistics {
             $0.breaksCompleted += 1
             $0.currentStreak += 1

@@ -17,17 +17,5 @@ public struct DetectionContext: Sendable {
         self.idleDuration = idleDuration
     }
 
-    public var shouldDefer: Bool {
-        cameraActive || microphoneActive || calendarEventActive || screenSharingActive
-    }
-
-    public var deferralReason: DeferralReason? {
-        if cameraActive { return .cameraActive }
-        if microphoneActive { return .microphoneActive }
-        if calendarEventActive { return .calendarEvent }
-        if screenSharingActive { return .screenSharing }
-        return nil
-    }
-
     public static let clear = DetectionContext()
 }

@@ -19,8 +19,6 @@ struct CompositeDetectorTests {
         #expect(!context.calendarEventActive)
         #expect(!context.screenSharingActive)
         #expect(context.idleDuration == 0)
-        #expect(!context.shouldDefer)
-        #expect(context.deferralReason == nil)
     }
 
     @Test func cameraActiveDefers() async {
@@ -33,8 +31,9 @@ struct CompositeDetectorTests {
         )
         let context = await detector.currentContext()
         #expect(context.cameraActive)
-        #expect(context.shouldDefer)
-        #expect(context.deferralReason == .cameraActive)
+        #expect(!context.microphoneActive)
+        #expect(!context.calendarEventActive)
+        #expect(!context.screenSharingActive)
     }
 
     @Test func microphoneActiveDefers() async {
@@ -47,8 +46,9 @@ struct CompositeDetectorTests {
         )
         let context = await detector.currentContext()
         #expect(context.microphoneActive)
-        #expect(context.shouldDefer)
-        #expect(context.deferralReason == .microphoneActive)
+        #expect(!context.cameraActive)
+        #expect(!context.calendarEventActive)
+        #expect(!context.screenSharingActive)
     }
 
     @Test func calendarActiveDefers() async {
@@ -61,8 +61,9 @@ struct CompositeDetectorTests {
         )
         let context = await detector.currentContext()
         #expect(context.calendarEventActive)
-        #expect(context.shouldDefer)
-        #expect(context.deferralReason == .calendarEvent)
+        #expect(!context.cameraActive)
+        #expect(!context.microphoneActive)
+        #expect(!context.screenSharingActive)
     }
 
     @Test func screenSharingDefers() async {
@@ -75,8 +76,9 @@ struct CompositeDetectorTests {
         )
         let context = await detector.currentContext()
         #expect(context.screenSharingActive)
-        #expect(context.shouldDefer)
-        #expect(context.deferralReason == .screenSharing)
+        #expect(!context.cameraActive)
+        #expect(!context.microphoneActive)
+        #expect(!context.calendarEventActive)
     }
 
     @Test func idleDurationPassesThrough() async {
@@ -105,8 +107,6 @@ struct CompositeDetectorTests {
         #expect(context.calendarEventActive)
         #expect(!context.screenSharingActive)
         #expect(context.idleDuration == 30)
-        #expect(context.shouldDefer)
-        #expect(context.deferralReason == .cameraActive)
     }
 
     @Test func privacyIndicatorWithMicrophoneIsNotScreenSharing() async {
@@ -120,7 +120,6 @@ struct CompositeDetectorTests {
         let context = await detector.currentContext()
         #expect(!context.screenSharingActive)
         #expect(context.microphoneActive)
-        #expect(context.deferralReason == .microphoneActive)
     }
 
     @Test func privacyIndicatorWithCameraIsNotScreenSharing() async {
@@ -133,7 +132,7 @@ struct CompositeDetectorTests {
         )
         let context = await detector.currentContext()
         #expect(!context.screenSharingActive)
-        #expect(context.deferralReason == .cameraActive)
+        #expect(context.cameraActive)
     }
 
     @Test func hiddenPrivacyIndicatorIsNotScreenSharing() async {
@@ -146,6 +145,8 @@ struct CompositeDetectorTests {
         )
         let context = await detector.currentContext()
         #expect(!context.screenSharingActive)
-        #expect(!context.shouldDefer)
+        #expect(!context.cameraActive)
+        #expect(!context.microphoneActive)
+        #expect(!context.calendarEventActive)
     }
 }

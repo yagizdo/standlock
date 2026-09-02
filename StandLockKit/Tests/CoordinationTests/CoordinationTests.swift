@@ -367,9 +367,6 @@ struct BreakCoordinatorTests {
 
         #expect(locker.dismissOverlayCalled)
         #expect(skippedEvents.count == 1)
-        if case .skipped = skippedEvents.first?.outcome {} else {
-            Issue.record("Expected outcome .skipped")
-        }
         #expect(lastStats?.breaksSkipped == 1)
         #expect(lastStats?.currentStreak == 0)
 
@@ -665,9 +662,6 @@ struct BreakCoordinatorTests {
 
         #expect(locker.dismissOverlayCalled)
         #expect(escapedEvents.count == 1)
-        if case .escaped = escapedEvents.first?.outcome {} else {
-            Issue.record("Expected outcome .escaped")
-        }
         #expect(lastStats?.breaksEscaped == 1)
         #expect(lastStats?.weeklyEscapeCount == 1)
 
@@ -704,9 +698,6 @@ struct BreakCoordinatorTests {
 
         #expect(locker.dismissOverlayCalled)
         #expect(completedEvents.count == 1)
-        if case .completed = completedEvents.first?.outcome {} else {
-            Issue.record("Expected outcome .completed")
-        }
         #expect(lastStats?.breaksCompleted == 1)
         #expect(lastStats?.currentStreak == 1)
 
@@ -1106,9 +1097,6 @@ struct BreakCoordinatorTests {
         #expect(locker.dismissOverlayCalled)
         #expect(!locker.isShowing)
         #expect(skippedEvents.count == 1)
-        if case .skipped = skippedEvents.first?.outcome {} else {
-            Issue.record("Expected outcome .skipped")
-        }
         #expect(lastStats?.breaksSkipped == 1)
         #expect(lastStats?.currentStreak == 0)
 
@@ -1197,9 +1185,6 @@ struct BreakCoordinatorTests {
         #expect(locker.dismissOverlayCalled)
         #expect(!locker.isShowing)
         #expect(skippedEvents.count == 1)
-        if case .skipped = skippedEvents.first?.outcome {} else {
-            Issue.record("Expected outcome .skipped")
-        }
         #expect(lastStats?.breaksSkipped == 1)
         #expect(lastStats?.currentStreak == 0)
 

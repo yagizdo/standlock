@@ -6,25 +6,14 @@ public struct BreakEvent: Sendable, Identifiable {
     public let duration: TimeInterval
     public let level: DisciplineLevel
     public let scheduleId: UUID
-    public var outcome: BreakOutcome
 
     public init(
         id: UUID = UUID(), scheduledAt: Date, duration: TimeInterval,
-        level: DisciplineLevel, scheduleId: UUID,
-        outcome: BreakOutcome = .pending
+        level: DisciplineLevel, scheduleId: UUID
     ) {
         self.id = id; self.scheduledAt = scheduledAt; self.duration = duration
-        self.level = level; self.scheduleId = scheduleId; self.outcome = outcome
+        self.level = level; self.scheduleId = scheduleId
     }
-}
-
-public enum BreakOutcome: Sendable {
-    case pending
-    case completed
-    case skipped
-    case escaped
-    case deferred(reason: DeferralReason)
-    case idleCounted
 }
 
 public enum DeferralReason: String, Sendable, Codable {
