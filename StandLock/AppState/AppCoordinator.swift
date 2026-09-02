@@ -176,16 +176,30 @@ final class AppCoordinator: ObservableObject {
             savePreferences()
         }
 
-        var schedulesChanged = false
-        if !permissionChecker.strictModeAvailable {
-            for i in schedules.indices where schedules[i].disciplineLevel == .strict {
-                schedules[i].disciplineLevel = .gentle
-                schedulesChanged = true
-            }
-        }
-        if schedulesChanged {
-            saveSchedules()
+        // Strict is gated at the point the schedules reach the coordinator, never written back
+        // to the stored ones. A permission read is instantaneous and can be briefly false --
+        // a login-item cold start before TCC is warm, an event tap that fails for reasons other
+        // than permission, a checkbox toggled off and back on. Persisting the downgrade turned
+        // any of those into silent, unrecoverable config loss.
+        let strictAvailable = permissionChecker.strictModeAvailable
+        guard lastStrictModeAvailable != strictAvailable else { return }
+        lastStrictModeAvailable = strictAvailable
+        if coordinator != nil,
+           schedules.contains(where: { $0.isEnabled && $0.disciplineLevel == .strict }) {
             restartCoordinator()
+        }
+    }
+
+    private var lastStrictModeAvailable: Bool?
+
+    /// Enabled schedules with Strict reduced to Gentle while the permissions it needs are missing.
+    private func enforceableSchedules() -> [Schedule] {
+        let strictAvailable = permissionChecker.strictModeAvailable
+        return schedules.filter(\.isEnabled).map { schedule in
+            guard !strictAvailable, schedule.disciplineLevel == .strict else { return schedule }
+            var downgraded = schedule
+            downgraded.disciplineLevel = .gentle
+            return downgraded
         }
     }
 
@@ -249,7 +263,7 @@ final class AppCoordinator: ObservableObject {
             breakCoordinator?.escapeActiveBreak()
         }
 
-        breakCoordinator.start(with: schedules.filter(\.isEnabled),
+        breakCoordinator.start(with: enforceableSchedules(),
                                preferences: preferences,
                                statistics: todayStats)
 
