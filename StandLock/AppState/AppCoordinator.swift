@@ -47,6 +47,7 @@ final class AppCoordinator: ObservableObject {
     let permissionChecker = PermissionChecker()
 
     private var coordinator: BreakCoordinator?
+    private var calendarDetector: CalendarDetector?
     private let overlayController = OverlayWindowController()
     private var eventListenerTask: Task<Void, Never>?
     private var progressTimer: Task<Void, Never>?
@@ -159,6 +160,9 @@ final class AppCoordinator: ObservableObject {
         guard let data = try? JSONEncoder().encode(preferences) else { return }
         UserDefaults.standard.set(data, forKey: "preferences")
         coordinator?.updatePreferences(preferences)
+        // The look-ahead window lives in the detector, not in the preferences the coordinator
+        // holds, so it has to be pushed separately or the stepper only lands on the next restart.
+        calendarDetector?.lookAheadMinutes = preferences.calendarLookAheadMinutes
         updateMenuBarTimer()
     }
 
@@ -192,13 +196,17 @@ final class AppCoordinator: ObservableObject {
 
     private var lastStrictModeAvailable: Bool?
 
-    /// Enabled schedules with Strict reduced to Gentle while the permissions it needs are missing.
+    /// Enabled schedules with Strict reduced to Firm while the permissions it needs are missing.
+    /// Firm, not Gentle: Strict is chosen for maximum friction, and Gentle's first tier is a
+    /// plain skip button, so a permission blip would hand the user a break they can dismiss
+    /// instantly. Firm keeps real friction (delay plus phrase) and needs no permission at all --
+    /// only Strict installs the event tap, in `OverlayWindowController.showOverlay`.
     private func enforceableSchedules() -> [Schedule] {
         let strictAvailable = permissionChecker.strictModeAvailable
         return schedules.filter(\.isEnabled).map { schedule in
             guard !strictAvailable, schedule.disciplineLevel == .strict else { return schedule }
             var downgraded = schedule
-            downgraded.disciplineLevel = .gentle
+            downgraded.disciplineLevel = .firm
             return downgraded
         }
     }
@@ -241,12 +249,12 @@ final class AppCoordinator: ObservableObject {
 
     // MARK: - Coordinator Lifecycle
 
-    private func startCoordinator() {
+    private func startCoordinator(restoring state: EnforcementState = EnforcementState()) {
         stopCoordinator()
         let scheduler = ScheduleEvaluator()
-        let detector = CompositeDetector(
-            calendar: CalendarDetector(lookAheadMinutes: preferences.calendarLookAheadMinutes)
-        )
+        let calendarDetector = CalendarDetector(lookAheadMinutes: preferences.calendarLookAheadMinutes)
+        self.calendarDetector = calendarDetector
+        let detector = CompositeDetector(calendar: calendarDetector)
         let breakCoordinator = BreakCoordinator(
             scheduler: scheduler, detector: detector, locker: overlayController
         )
@@ -265,7 +273,8 @@ final class AppCoordinator: ObservableObject {
 
         breakCoordinator.start(with: enforceableSchedules(),
                                preferences: preferences,
-                               statistics: todayStats)
+                               statistics: todayStats,
+                               restoring: state)
 
         eventListenerTask = Task {
             for await event in breakCoordinator.events {
@@ -279,17 +288,45 @@ final class AppCoordinator: ObservableObject {
         eventListenerTask = nil
         coordinator?.stop()
         coordinator = nil
+        calendarDetector = nil
         overlayController.onSkip = nil
         overlayController.onComplete = nil
         overlayController.onEscape = nil
+        clearActiveBreakState()
+        deferralReason = nil
+    }
+
+    /// Nobody else can clear the published break state once the coordinator is gone: `stop()`
+    /// pulls the overlay down without yielding an event, and the listener that would have
+    /// carried one is cancelled just above. Leaving it set made the menu bar report a break in
+    /// progress with no overlay on screen -- and kept the quick actions disabled -- until the
+    /// next break fired. Reachable by editing a schedule while a break is up.
+    private func clearActiveBreakState() {
+        isBreakActive = false
+        currentBreakRemaining = 0
+        breakProgress = 0
+        menuBarTimerText = nil
     }
 
     private func restartCoordinator() {
+        // Captured before the teardown: every counter below lives on the coordinator instance,
+        // so a rebuild would otherwise re-arm the daily cap from zero and restart the interval
+        // cycle -- editing a schedule at noon quietly undid the morning's enforcement.
+        let carried = coordinator?.captureEnforcementState() ?? EnforcementState()
+        // A pause is a user decision with a deadline, not coordinator bookkeeping. The rebuilt
+        // coordinator starts unpaused and arms a break straight away, so the time still owed has
+        // to be re-applied -- otherwise editing a schedule ends a pause the user asked for, and
+        // the next break lands during the hour they meant to keep clear. Re-applying it yields
+        // `schedulePaused`, which restores the published flags below through `handleEvent`.
+        let pauseRemaining = pausedUntil?.timeIntervalSinceNow
         stopCoordinator()
         isPaused = false
         pausedUntil = nil
         if !schedules.filter(\.isEnabled).isEmpty {
-            startCoordinator()
+            startCoordinator(restoring: carried)
+            if let pauseRemaining, pauseRemaining > 0 {
+                coordinator?.pause(for: pauseRemaining)
+            }
         } else {
             nextBreakTime = nil
             breakScheduledAt = nil
@@ -320,10 +357,7 @@ final class AppCoordinator: ObservableObject {
             breakProgress = 1.0
 
         case .breakCompleted, .breakSkipped, .breakEscaped:
-            isBreakActive = false
-            currentBreakRemaining = 0
-            breakProgress = 0
-            menuBarTimerText = nil
+            clearActiveBreakState()
 
         case .breakDeferred(let reason, _):
             deferralReason = reason

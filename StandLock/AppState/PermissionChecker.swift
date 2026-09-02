@@ -218,6 +218,19 @@ final class PermissionChecker: ObservableObject {
 
     var idleDetectionAvailable: Bool { inputMonitoringGranted }
     var strictModeAvailable: Bool { accessibilityGranted && inputMonitoringGranted }
+
+    /// Why Strict cannot run right now, or nil when it can. Shared by the level picker and the
+    /// schedule list so the two never drift into describing the same block differently.
+    var strictModeBlockedReason: String? {
+        if strictModeAvailable { return nil }
+        if !accessibilityGranted && !inputMonitoringGranted {
+            return "Strict mode requires Accessibility and Input Monitoring permissions."
+        }
+        if !accessibilityGranted {
+            return "Strict mode requires Accessibility permission to block input during breaks."
+        }
+        return "Strict mode requires Input Monitoring permission for the escape key combo."
+    }
     var calendarIntegrationAvailable: Bool { CalendarDetector.isAuthorized(calendarStatus) }
 
     func gatedToggle(
@@ -246,6 +259,15 @@ final class PermissionChecker: ObservableObject {
     private func openSystemSettings(for permission: PermissionType) {
         for url in permission.settingsURLs {
             if NSWorkspace.shared.open(url) { return }
+        }
+    }
+
+    /// Opens whichever of the two Strict permissions is still missing.
+    func requestStrictPermission() {
+        if !accessibilityGranted {
+            requestAccessibility()
+        } else {
+            requestInputMonitoring()
         }
     }
 

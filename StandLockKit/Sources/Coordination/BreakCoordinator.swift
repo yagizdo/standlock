@@ -4,6 +4,26 @@ import Scheduling
 import Detection
 import Locking
 
+/// Per-schedule counters that have to outlive a coordinator rebuild. Editing a schedule tears
+/// the coordinator down and builds a new one, and every counter here lives on the instance: a
+/// fresh one re-arms `dailyBreakCap` from zero, sends `intervalCycle` back to its first entry,
+/// drops progressive enforcement to the base tier and forgets how far into the short-break run
+/// the user was. A day change still clears all of it, in `rolloverIfNeeded`.
+public struct EnforcementState: Sendable {
+    public var dailyBreakCounts: [UUID: Int]
+    public var escalationTiers: [UUID: Int]
+    public var cycleIndices: [UUID: Int]
+    public var repetitionIndices: [UUID: Int]
+
+    public init(dailyBreakCounts: [UUID: Int] = [:], escalationTiers: [UUID: Int] = [:],
+                cycleIndices: [UUID: Int] = [:], repetitionIndices: [UUID: Int] = [:]) {
+        self.dailyBreakCounts = dailyBreakCounts
+        self.escalationTiers = escalationTiers
+        self.cycleIndices = cycleIndices
+        self.repetitionIndices = repetitionIndices
+    }
+}
+
 @MainActor
 public final class BreakCoordinator {
     private let scheduler: any SchedulingEngine
@@ -58,16 +78,32 @@ public final class BreakCoordinator {
     /// Pass previously persisted `statistics` so a relaunch during the day keeps today's
     /// counters instead of restarting them from zero.
     public func start(with schedules: [Schedule], preferences: AppPreferences,
-                      statistics: BreakStatistics = BreakStatistics()) {
+                      statistics: BreakStatistics = BreakStatistics(),
+                      restoring state: EnforcementState = EnforcementState()) {
         self.activeSchedules = schedules
         self.preferences = preferences
         self.statistics = statistics
+        dailyBreakCounts = state.dailyBreakCounts
+        escalationTiers = state.escalationTiers
+        cycleIndices = state.cycleIndices
         for schedule in schedules {
             if let rule = schedule.repetitionRule {
-                repetitionTrackers[schedule.id] = RepetitionTracker(rule: rule)
+                repetitionTrackers[schedule.id] = RepetitionTracker(
+                    rule: rule, currentBreakIndex: state.repetitionIndices[schedule.id] ?? 0
+                )
             }
         }
         scheduleNextBreak()
+    }
+
+    /// Read this before `stop()`, which clears `escalationTiers` on its way out.
+    public func captureEnforcementState() -> EnforcementState {
+        EnforcementState(
+            dailyBreakCounts: dailyBreakCounts,
+            escalationTiers: escalationTiers,
+            cycleIndices: cycleIndices,
+            repetitionIndices: repetitionTrackers.mapValues(\.currentBreakIndex)
+        )
     }
 
     public func stop() {

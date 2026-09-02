@@ -1744,3 +1744,84 @@ struct BreakCoordinatorTests {
     }
 
 }
+
+@Suite("BreakCoordinator EnforcementState")
+@MainActor
+struct BreakCoordinatorEnforcementStateTests {
+
+    /// Runs one break on a fresh coordinator and returns the counters it accumulated, which is
+    /// what `AppCoordinator.restartCoordinator` captures before tearing the coordinator down.
+    private func stateAfterOneBreak(_ schedule: Schedule) async -> EnforcementState {
+        let scheduler = MockScheduler()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        let coordinator = BreakCoordinator(
+            scheduler: scheduler, detector: MockDetector(), locker: MockLocker()
+        )
+        coordinator.start(with: [schedule], preferences: AppPreferences())
+        try? await Task.sleep(for: .milliseconds(300))
+        coordinator.completeActiveBreak()
+        let state = coordinator.captureEnforcementState()
+        coordinator.stop()
+        return state
+    }
+
+    @Test func dailyCapSurvivesRebuild() async {
+        let schedule = makeSchedule(dailyBreakCap: 1)
+        let state = await stateAfterOneBreak(schedule)
+        #expect(state.dailyBreakCounts[schedule.id] == 1)
+
+        let scheduler = MockScheduler()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        let rebuilt = BreakCoordinator(
+            scheduler: scheduler, detector: MockDetector(), locker: MockLocker()
+        )
+        rebuilt.start(with: [schedule], preferences: AppPreferences(), restoring: state)
+
+        // The cap check short-circuits before the scheduler is consulted, so an untouched
+        // scheduler is the signal that the exhausted cap was carried over.
+        #expect(scheduler.receivedCycleIndices.isEmpty)
+        rebuilt.stop()
+    }
+
+    @Test func dailyCapReArmsWithoutRestore() async {
+        let schedule = makeSchedule(dailyBreakCap: 1)
+        _ = await stateAfterOneBreak(schedule)
+
+        let scheduler = MockScheduler()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        let rebuilt = BreakCoordinator(
+            scheduler: scheduler, detector: MockDetector(), locker: MockLocker()
+        )
+        rebuilt.start(with: [schedule], preferences: AppPreferences())
+
+        #expect(!scheduler.receivedCycleIndices.isEmpty)
+        rebuilt.stop()
+    }
+
+    @Test func cycleIndexSurvivesRebuild() async {
+        let schedule = makeSchedule(intervalCycle: [
+            IntervalStep(duration: 60, label: "Focus"),
+            IntervalStep(duration: 120, label: "Deep"),
+        ])
+        let state = await stateAfterOneBreak(schedule)
+        #expect(state.cycleIndices[schedule.id] == 1)
+
+        let scheduler = MockScheduler()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(60)
+        let rebuilt = BreakCoordinator(
+            scheduler: scheduler, detector: MockDetector(), locker: MockLocker()
+        )
+        rebuilt.start(with: [schedule], preferences: AppPreferences(), restoring: state)
+
+        #expect(scheduler.receivedCycleIndices.first?.index == 1)
+        rebuilt.stop()
+    }
+
+    @Test func repetitionIndexSurvivesRebuild() async {
+        let schedule = makeSchedule(repetitionRule: RepetitionRule(
+            shortBreakCount: 3, shortBreakDuration: 10, longBreakDuration: 60
+        ))
+        let state = await stateAfterOneBreak(schedule)
+        #expect(state.repetitionIndices[schedule.id] == 1)
+    }
+}

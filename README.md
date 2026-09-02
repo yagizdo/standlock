@@ -140,7 +140,7 @@ StandLock requests only the permissions it needs, and only when you use a featur
 | **Calendar** | Optional. Reads your calendar events to automatically defer breaks during meetings. Never modifies your calendar. |
 | **Camera & Microphone** | Not accessed directly. StandLock checks whether another app is using the camera or mic to detect active meetings and defer breaks accordingly. |
 
-You can revoke any permission at any time in **System Settings > Privacy & Security**. When a permission is revoked, features that depend on it are auto-disabled: Strict mode switches schedules back to Gentle, idle detection turns off, and calendar integration is skipped. No crashes, no broken state.
+You can revoke any permission at any time in **System Settings > Privacy & Security**. When a permission is revoked, features that depend on it degrade instead of breaking: Strict schedules run as Firm until the permission is back, keeping their Strict setting and showing the reason in the schedule list; idle detection turns off; and calendar integration is skipped. No crashes, no broken state.
 
 ## Building from Source
 
