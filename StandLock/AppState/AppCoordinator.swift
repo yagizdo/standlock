@@ -47,6 +47,15 @@ final class AppCoordinator: ObservableObject {
     let permissionChecker = PermissionChecker()
 
     private var coordinator: BreakCoordinator?
+    /// Survives the coordinator-less interval between a teardown and the next build.
+    /// Disabling the last schedule leaves no coordinator to capture from, so without
+    /// this the counters were lost the moment the enabled set emptied.
+    private var carriedEnforcementState = EnforcementState()
+    /// The day the carry was taken on. `rolloverIfNeeded` clears the counters on the
+    /// coordinator, but there is no coordinator to run it while every schedule is off, so a
+    /// carry that outlives the day is dropped here -- otherwise re-enabling a schedule the
+    /// next morning restores yesterday's exhausted cap.
+    private var carriedEnforcementDay = Date()
     private var calendarDetector: CalendarDetector?
     private let overlayController = OverlayWindowController()
     private var eventListenerTask: Task<Void, Never>?
@@ -304,11 +313,19 @@ final class AppCoordinator: ObservableObject {
         menuBarTimerText = nil
     }
 
+    private func carriedStateForToday() -> EnforcementState {
+        guard Calendar.current.isDateInToday(carriedEnforcementDay) else { return EnforcementState() }
+        return carriedEnforcementState
+    }
+
     private func restartCoordinator() {
         // Captured before the teardown: every counter below lives on the coordinator instance,
         // so a rebuild would otherwise re-arm the daily cap from zero and restart the interval
         // cycle -- editing a schedule at noon quietly undid the morning's enforcement.
-        let carried = coordinator?.captureEnforcementState() ?? EnforcementState()
+        if let coordinator {
+            carriedEnforcementState = coordinator.captureEnforcementState()
+            carriedEnforcementDay = Date()
+        }
         // A pause is a user decision with a deadline, not coordinator bookkeeping. The rebuilt
         // coordinator starts unpaused and arms a break straight away, so the time still owed has
         // to be re-applied -- otherwise editing a schedule ends a pause the user asked for, and
@@ -319,7 +336,7 @@ final class AppCoordinator: ObservableObject {
         isPaused = false
         pausedUntil = nil
         if !schedules.filter(\.isEnabled).isEmpty {
-            startCoordinator(restoring: carried)
+            startCoordinator(restoring: carriedStateForToday())
             if let pauseRemaining, pauseRemaining > 0 {
                 coordinator?.pause(for: pauseRemaining)
             }
@@ -416,7 +433,7 @@ final class AppCoordinator: ObservableObject {
         if let coordinator {
             coordinator.resume()
         } else if !schedules.filter(\.isEnabled).isEmpty {
-            startCoordinator()
+            startCoordinator(restoring: carriedStateForToday())
         }
     }
 

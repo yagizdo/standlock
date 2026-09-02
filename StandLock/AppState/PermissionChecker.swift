@@ -251,7 +251,7 @@ final class PermissionChecker: ObservableObject {
         )
     }
 
-    private func openSystemSettings(for permission: PermissionType) {
+    func openSystemSettings(for permission: PermissionType) {
         for url in permission.settingsURLs {
             if NSWorkspace.shared.open(url) { return }
         }

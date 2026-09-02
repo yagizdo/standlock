@@ -119,9 +119,7 @@ struct DetectionSettingsView: View {
         }
         .alert("Calendar Permission Required", isPresented: $showCalendarPermissionAlert) {
             Button("Open System Settings") {
-                for url in PermissionType.calendar.settingsURLs {
-                    if NSWorkspace.shared.open(url) { break }
-                }
+                permissionChecker.openSystemSettings(for: .calendar)
             }
             Button("Cancel", role: .cancel) {}
         } message: {
@@ -129,9 +127,7 @@ struct DetectionSettingsView: View {
         }
         .alert("Accessibility Permission Required", isPresented: $showAccessibilityAlert) {
             Button("Open System Settings") {
-                for url in PermissionType.accessibility.settingsURLs {
-                    if NSWorkspace.shared.open(url) { break }
-                }
+                permissionChecker.openSystemSettings(for: .accessibility)
             }
             Button("Cancel", role: .cancel) {}
         } message: {

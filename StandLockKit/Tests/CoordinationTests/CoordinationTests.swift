@@ -1770,7 +1770,6 @@ struct BreakCoordinatorEnforcementStateTests {
 
     @Test func dailyCapReArmsWithoutRestore() async {
         let schedule = makeSchedule(dailyBreakCap: 1)
-        _ = await stateAfterOneBreak(schedule)
 
         let scheduler = MockScheduler()
         scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
@@ -1803,10 +1802,25 @@ struct BreakCoordinatorEnforcementStateTests {
     }
 
     @Test func repetitionIndexSurvivesRebuild() async {
+        // `shortBreakCount: 1` is what makes the restore observable: at a restored index of 1 the
+        // tracker owes the long break, so the duration handed to the locker differs from the one a
+        // tracker starting at 0 would produce.
         let schedule = makeSchedule(repetitionRule: RepetitionRule(
-            shortBreakCount: 3, shortBreakDuration: 10, longBreakDuration: 60
+            shortBreakCount: 1, shortBreakDuration: 10, longBreakDuration: 60
         ))
         let state = await stateAfterOneBreak(schedule)
         #expect(state.repetitionIndices[schedule.id] == 1)
+
+        let scheduler = MockScheduler()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        let locker = MockLocker()
+        let rebuilt = BreakCoordinator(
+            scheduler: scheduler, detector: MockDetector(), locker: locker
+        )
+        rebuilt.start(with: [schedule], preferences: AppPreferences(), restoring: state)
+        try? await Task.sleep(for: .milliseconds(300))
+
+        #expect(locker.lastDuration == 60)
+        rebuilt.stop()
     }
 }
