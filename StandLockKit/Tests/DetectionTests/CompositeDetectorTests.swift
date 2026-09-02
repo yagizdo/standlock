@@ -10,7 +10,7 @@ struct CompositeDetectorTests {
             cameraCheck: { false },
             microphoneCheck: { false },
             calendarCheck: { false },
-            screenSharingCheck: { false },
+            privacyIndicatorCheck: { false },
             idleCheck: { 0 }
         )
         let context = await detector.currentContext()
@@ -28,7 +28,7 @@ struct CompositeDetectorTests {
             cameraCheck: { true },
             microphoneCheck: { false },
             calendarCheck: { false },
-            screenSharingCheck: { false },
+            privacyIndicatorCheck: { false },
             idleCheck: { 0 }
         )
         let context = await detector.currentContext()
@@ -42,7 +42,7 @@ struct CompositeDetectorTests {
             cameraCheck: { false },
             microphoneCheck: { true },
             calendarCheck: { false },
-            screenSharingCheck: { false },
+            privacyIndicatorCheck: { false },
             idleCheck: { 0 }
         )
         let context = await detector.currentContext()
@@ -56,7 +56,7 @@ struct CompositeDetectorTests {
             cameraCheck: { false },
             microphoneCheck: { false },
             calendarCheck: { true },
-            screenSharingCheck: { false },
+            privacyIndicatorCheck: { false },
             idleCheck: { 0 }
         )
         let context = await detector.currentContext()
@@ -70,7 +70,7 @@ struct CompositeDetectorTests {
             cameraCheck: { false },
             microphoneCheck: { false },
             calendarCheck: { false },
-            screenSharingCheck: { true },
+            privacyIndicatorCheck: { true },
             idleCheck: { 0 }
         )
         let context = await detector.currentContext()
@@ -84,7 +84,7 @@ struct CompositeDetectorTests {
             cameraCheck: { false },
             microphoneCheck: { false },
             calendarCheck: { false },
-            screenSharingCheck: { false },
+            privacyIndicatorCheck: { false },
             idleCheck: { 120.5 }
         )
         let context = await detector.currentContext()
@@ -96,7 +96,7 @@ struct CompositeDetectorTests {
             cameraCheck: { true },
             microphoneCheck: { true },
             calendarCheck: { true },
-            screenSharingCheck: { false },
+            privacyIndicatorCheck: { false },
             idleCheck: { 30 }
         )
         let context = await detector.currentContext()
@@ -107,5 +107,45 @@ struct CompositeDetectorTests {
         #expect(context.idleDuration == 30)
         #expect(context.shouldDefer)
         #expect(context.deferralReason == .cameraActive)
+    }
+
+    @Test func privacyIndicatorWithMicrophoneIsNotScreenSharing() async {
+        let detector = CompositeDetector(
+            cameraCheck: { false },
+            microphoneCheck: { true },
+            calendarCheck: { false },
+            privacyIndicatorCheck: { true },
+            idleCheck: { 0 }
+        )
+        let context = await detector.currentContext()
+        #expect(!context.screenSharingActive)
+        #expect(context.microphoneActive)
+        #expect(context.deferralReason == .microphoneActive)
+    }
+
+    @Test func privacyIndicatorWithCameraIsNotScreenSharing() async {
+        let detector = CompositeDetector(
+            cameraCheck: { true },
+            microphoneCheck: { false },
+            calendarCheck: { false },
+            privacyIndicatorCheck: { true },
+            idleCheck: { 0 }
+        )
+        let context = await detector.currentContext()
+        #expect(!context.screenSharingActive)
+        #expect(context.deferralReason == .cameraActive)
+    }
+
+    @Test func hiddenPrivacyIndicatorIsNotScreenSharing() async {
+        let detector = CompositeDetector(
+            cameraCheck: { false },
+            microphoneCheck: { false },
+            calendarCheck: { false },
+            privacyIndicatorCheck: { false },
+            idleCheck: { 0 }
+        )
+        let context = await detector.currentContext()
+        #expect(!context.screenSharingActive)
+        #expect(!context.shouldDefer)
     }
 }

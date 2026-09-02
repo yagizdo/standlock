@@ -244,7 +244,17 @@ final class PermissionChecker: ObservableObject {
         case .accessibility: available = strictModeAvailable
         case .calendar: available = calendarIntegrationAvailable
         }
-        return Binding(
+        return gatedToggle(for: preference, available: available, onDenied: onDenied)
+    }
+
+    /// Screen sharing detection needs accessibility access on its own, without the
+    /// input monitoring that strict mode also requires, so it gates on a plain flag.
+    func gatedToggle(
+        for preference: Binding<Bool>,
+        available: Bool,
+        onDenied: @escaping () -> Void
+    ) -> Binding<Bool> {
+        Binding(
             get: { available && preference.wrappedValue },
             set: { newValue in
                 if newValue && !available {
