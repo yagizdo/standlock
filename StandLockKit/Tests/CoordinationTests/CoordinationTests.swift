@@ -1823,4 +1823,105 @@ struct BreakCoordinatorEnforcementStateTests {
         #expect(locker.lastDuration == 60)
         rebuilt.stop()
     }
+
+    /// Arms a slot without letting it fire, which is the state a schedule edit or a Strict
+    /// permission flap tears down mid-interval.
+    private func stateWithPendingSlot(_ schedule: Schedule, at date: Date) -> EnforcementState {
+        let scheduler = MockScheduler()
+        scheduler.nextBreakTimeToReturn = date
+        let coordinator = BreakCoordinator(
+            scheduler: scheduler, detector: MockDetector(), locker: MockLocker()
+        )
+        coordinator.start(with: [schedule], preferences: AppPreferences())
+        let state = coordinator.captureEnforcementState()
+        coordinator.stop()
+        return state
+    }
+
+    @Test func pendingSlotSurvivesRebuild() {
+        let schedule = makeSchedule()
+        let slot = Date().addingTimeInterval(300)
+        let state = stateWithPendingSlot(schedule, at: slot)
+        #expect(state.pendingBreakDate == slot)
+        #expect(state.pendingBreakScheduleID == schedule.id)
+
+        let scheduler = MockScheduler()
+        // A full interval away, which is what a rebuild would otherwise arm.
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(600)
+        let rebuilt = BreakCoordinator(
+            scheduler: scheduler, detector: MockDetector(), locker: MockLocker()
+        )
+        rebuilt.start(with: [schedule], preferences: AppPreferences(), restoring: state)
+
+        #expect(rebuilt.captureEnforcementState().pendingBreakDate == slot)
+        rebuilt.stop()
+    }
+
+    @Test func pendingSlotReArmsFromNowWithoutRestore() {
+        let schedule = makeSchedule()
+        let fresh = Date().addingTimeInterval(600)
+
+        let scheduler = MockScheduler()
+        scheduler.nextBreakTimeToReturn = fresh
+        let rebuilt = BreakCoordinator(
+            scheduler: scheduler, detector: MockDetector(), locker: MockLocker()
+        )
+        rebuilt.start(with: [schedule], preferences: AppPreferences())
+
+        #expect(rebuilt.captureEnforcementState().pendingBreakDate == fresh)
+        rebuilt.stop()
+    }
+
+    @Test func aShorterIntervalBeatsTheCarriedSlot() {
+        let schedule = makeSchedule()
+        let state = stateWithPendingSlot(schedule, at: Date().addingTimeInterval(300))
+
+        let scheduler = MockScheduler()
+        let shortened = Date().addingTimeInterval(60)
+        scheduler.nextBreakTimeToReturn = shortened
+        let rebuilt = BreakCoordinator(
+            scheduler: scheduler, detector: MockDetector(), locker: MockLocker()
+        )
+        rebuilt.start(with: [schedule], preferences: AppPreferences(), restoring: state)
+
+        #expect(rebuilt.captureEnforcementState().pendingBreakDate == shortened)
+        rebuilt.stop()
+    }
+
+    @Test func aCarriedSlotThatHasGoneByIsDropped() {
+        let schedule = makeSchedule()
+        var state = stateWithPendingSlot(schedule, at: Date().addingTimeInterval(300))
+        // Every schedule off over lunch, then back on: the slot the coordinator held is long gone.
+        state.pendingBreakDate = Date().addingTimeInterval(-3600)
+
+        let scheduler = MockScheduler()
+        let fresh = Date().addingTimeInterval(600)
+        scheduler.nextBreakTimeToReturn = fresh
+        let rebuilt = BreakCoordinator(
+            scheduler: scheduler, detector: MockDetector(), locker: MockLocker()
+        )
+        rebuilt.start(with: [schedule], preferences: AppPreferences(), restoring: state)
+
+        #expect(rebuilt.captureEnforcementState().pendingBreakDate == fresh)
+        rebuilt.stop()
+    }
+
+    @Test func aCarriedSlotForADeletedScheduleIsDropped() {
+        let deleted = makeSchedule()
+        let state = stateWithPendingSlot(deleted, at: Date().addingTimeInterval(300))
+        let remaining = makeSchedule()
+
+        let scheduler = MockScheduler()
+        let fresh = Date().addingTimeInterval(600)
+        scheduler.nextBreakTimeToReturn = fresh
+        let rebuilt = BreakCoordinator(
+            scheduler: scheduler, detector: MockDetector(), locker: MockLocker()
+        )
+        rebuilt.start(with: [remaining], preferences: AppPreferences(), restoring: state)
+
+        let armed = rebuilt.captureEnforcementState()
+        #expect(armed.pendingBreakDate == fresh)
+        #expect(armed.pendingBreakScheduleID == remaining.id)
+        rebuilt.stop()
+    }
 }

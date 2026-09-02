@@ -14,13 +14,23 @@ public struct EnforcementState: Sendable {
     public var escalationTiers: [UUID: Int]
     public var cycleIndices: [UUID: Int]
     public var repetitionIndices: [UUID: Int]
+    /// The slot the outgoing coordinator had armed, with the schedule it belongs to. The
+    /// interval is measured from whenever the rebuilt coordinator starts, so without this any
+    /// restart -- a schedule edit, a Strict permission reading that flaps -- pushes the break
+    /// out by however far into the interval the user already was. The id travels with the date
+    /// because the slot decides which schedule's break fires, not only when.
+    public var pendingBreakScheduleID: UUID?
+    public var pendingBreakDate: Date?
 
     public init(dailyBreakCounts: [UUID: Int] = [:], escalationTiers: [UUID: Int] = [:],
-                cycleIndices: [UUID: Int] = [:], repetitionIndices: [UUID: Int] = [:]) {
+                cycleIndices: [UUID: Int] = [:], repetitionIndices: [UUID: Int] = [:],
+                pendingBreakScheduleID: UUID? = nil, pendingBreakDate: Date? = nil) {
         self.dailyBreakCounts = dailyBreakCounts
         self.escalationTiers = escalationTiers
         self.cycleIndices = cycleIndices
         self.repetitionIndices = repetitionIndices
+        self.pendingBreakScheduleID = pendingBreakScheduleID
+        self.pendingBreakDate = pendingBreakDate
     }
 }
 
@@ -54,6 +64,10 @@ public final class BreakCoordinator {
     /// True only while the deferral poll loop owns `breakTimer`. That loop is suspended between
     /// polls, so anything that re-arms the timer cancels it and drops the deferred break.
     private var isDeferringBreak = false
+    /// A slot carried in from the coordinator this one replaces, consumed by the first
+    /// `scheduleNextBreak` after `start`. Kept apart from `pendingBreakDate` so it can re-arm
+    /// once and only once: a slot left in play would pin every later break to the same date.
+    private var restoredPendingBreak: (scheduleID: UUID, date: Date)?
     public var exercises: [Exercise] = []
 
     /// Floor between a skip and the break it schedules, for the case where the anchored slot
@@ -93,6 +107,9 @@ public final class BreakCoordinator {
                 )
             }
         }
+        if let id = state.pendingBreakScheduleID, let date = state.pendingBreakDate {
+            restoredPendingBreak = (id, date)
+        }
         scheduleNextBreak()
     }
 
@@ -102,7 +119,9 @@ public final class BreakCoordinator {
             dailyBreakCounts: dailyBreakCounts,
             escalationTiers: escalationTiers,
             cycleIndices: cycleIndices,
-            repetitionIndices: repetitionTrackers.mapValues(\.currentBreakIndex)
+            repetitionIndices: repetitionTrackers.mapValues(\.currentBreakIndex),
+            pendingBreakScheduleID: pendingBreakScheduleID,
+            pendingBreakDate: pendingBreakDate
         )
     }
 
@@ -305,6 +324,11 @@ public final class BreakCoordinator {
         isDeferringBreak = false
     }
 
+    private func isCapReached(_ schedule: Schedule) -> Bool {
+        guard let cap = schedule.dailyBreakCap else { return false }
+        return (dailyBreakCounts[schedule.id] ?? 0) >= cap
+    }
+
     /// `now` governs both the rollover check and the search for the next break, so an injected
     /// date describes one consistent moment. Without it the rollover here would re-read the real
     /// clock and undo a caller-injected day change, since `resetDailyIfNeeded` fires in both
@@ -319,9 +343,21 @@ public final class BreakCoordinator {
         guard !isPaused else { return }
 
         var earliest: (date: Date, schedule: Schedule)?
+        // The carried slot competes with the freshly computed ones instead of overriding them,
+        // so a schedule whose interval the user just shortened still wins with its earlier date.
+        // A slot already in the past is dropped: it belongs to a gap the coordinator sat out --
+        // every schedule disabled, then re-enabled -- and re-arming it would fire on the spot.
+        if let restored = restoredPendingBreak {
+            restoredPendingBreak = nil
+            if restored.date > now,
+               let schedule = activeSchedules.first(where: {
+                   $0.id == restored.scheduleID && $0.isEnabled
+               }), !isCapReached(schedule) {
+                earliest = (restored.date, schedule)
+            }
+        }
         for schedule in activeSchedules where schedule.isEnabled {
-            if let cap = schedule.dailyBreakCap,
-               (dailyBreakCounts[schedule.id] ?? 0) >= cap { continue }
+            if isCapReached(schedule) { continue }
             if let next = scheduler.nextBreakTime(for: schedule, after: searchFrom ?? now,
                                                   cycleIndex: cycleIndices[schedule.id, default: 0]) {
                 if earliest == nil || next < earliest!.date {
