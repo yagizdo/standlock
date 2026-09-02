@@ -5,7 +5,6 @@ struct DetectionSettingsView: View {
     @EnvironmentObject private var coordinator: AppCoordinator
     @EnvironmentObject private var permissionChecker: PermissionChecker
     @State private var showCalendarPermissionAlert = false
-    @State private var showInputMonitoringAlert = false
     @State private var showAccessibilityAlert = false
 
     var body: some View {
@@ -29,7 +28,7 @@ struct DetectionSettingsView: View {
             Section("Calendar") {
                 Toggle(isOn: permissionChecker.gatedToggle(
                     for: $coordinator.preferences.calendarDetectionEnabled,
-                    requires: .calendar,
+                    available: permissionChecker.calendarIntegrationAvailable,
                     onDenied: { showCalendarPermissionAlert = true }
                 )) {
                     Label {
@@ -99,11 +98,7 @@ struct DetectionSettingsView: View {
                     }
                 }
 
-                Toggle(isOn: permissionChecker.gatedToggle(
-                    for: $coordinator.preferences.idleDetectionEnabled,
-                    requires: .inputMonitoring,
-                    onDenied: { showInputMonitoringAlert = true }
-                )) {
+                Toggle(isOn: $coordinator.preferences.idleDetectionEnabled) {
                     Label {
                         VStack(alignment: .leading, spacing: 2) {
                             Text("Idle as Break")
@@ -141,16 +136,6 @@ struct DetectionSettingsView: View {
             Button("Cancel", role: .cancel) {}
         } message: {
             Text("Screen Sharing detection reads the macOS privacy indicator, which requires Accessibility access. Grant it in System Settings to enable this feature.")
-        }
-        .alert("Input Monitoring Required", isPresented: $showInputMonitoringAlert) {
-            Button("Open System Settings") {
-                for url in PermissionType.inputMonitoring.settingsURLs {
-                    if NSWorkspace.shared.open(url) { break }
-                }
-            }
-            Button("Cancel", role: .cancel) {}
-        } message: {
-            Text("This feature requires Input Monitoring permission. Grant it in System Settings to enable.")
         }
     }
 

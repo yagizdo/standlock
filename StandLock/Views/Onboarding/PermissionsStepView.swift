@@ -20,7 +20,7 @@ struct PermissionsStepView: View {
                 permissionCard(
                     icon: "keyboard",
                     name: "Input Monitoring",
-                    description: "Enables idle detection and the escape key combo.",
+                    description: "Enables the escape key combo that ends a Strict break.",
                     status: checker.inputMonitoringStatus,
                     action: { checker.requestInputMonitoring() },
                     restartAction: { checker.relaunchApp() }

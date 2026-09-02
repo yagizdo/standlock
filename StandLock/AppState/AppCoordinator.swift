@@ -168,10 +168,6 @@ final class AppCoordinator: ObservableObject {
 
     private func syncPreferencesWithPermissions() {
         var prefsChanged = false
-        if preferences.idleDetectionEnabled && !permissionChecker.idleDetectionAvailable {
-            preferences.idleDetectionEnabled = false
-            prefsChanged = true
-        }
         if preferences.calendarDetectionEnabled && !permissionChecker.calendarIntegrationAvailable {
             preferences.calendarDetectionEnabled = false
             prefsChanged = true

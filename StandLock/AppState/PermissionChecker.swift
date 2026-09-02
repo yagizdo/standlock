@@ -216,7 +216,6 @@ final class PermissionChecker: ObservableObject {
 
     // MARK: - Feature Gates
 
-    var idleDetectionAvailable: Bool { inputMonitoringGranted }
     var strictModeAvailable: Bool { accessibilityGranted && inputMonitoringGranted }
 
     /// Why Strict cannot run right now, or nil when it can. Shared by the level picker and the
@@ -233,22 +232,8 @@ final class PermissionChecker: ObservableObject {
     }
     var calendarIntegrationAvailable: Bool { CalendarDetector.isAuthorized(calendarStatus) }
 
-    func gatedToggle(
-        for preference: Binding<Bool>,
-        requires permission: PermissionType,
-        onDenied: @escaping () -> Void
-    ) -> Binding<Bool> {
-        let available: Bool
-        switch permission {
-        case .inputMonitoring: available = idleDetectionAvailable
-        case .accessibility: available = strictModeAvailable
-        case .calendar: available = calendarIntegrationAvailable
-        }
-        return gatedToggle(for: preference, available: available, onDenied: onDenied)
-    }
-
-    /// Screen sharing detection needs accessibility access on its own, without the
-    /// input monitoring that strict mode also requires, so it gates on a plain flag.
+    /// Each caller passes its own availability flag: the permission a detection needs is not
+    /// always the one its settings section implies.
     func gatedToggle(
         for preference: Binding<Bool>,
         available: Bool,

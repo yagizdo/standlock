@@ -131,16 +131,16 @@ brew install --cask yagizdo/tap/standlock
 
 ## macOS Permissions
 
-StandLock requests only the permissions it needs, and only when you use a feature that requires them.
+StandLock asks for a permission only when you use the feature that needs it. It does check Accessibility and Input Monitoring at launch so the permissions screen reflects what macOS actually reports; the system's own preflight answer for Input Monitoring can go stale after you grant it.
 
 | Permission | Why |
 |------------|-----|
 | **Accessibility** | Required for Strict mode. Blocks keyboard and mouse input during breaks by installing a system-level event tap. Without this, Strict mode cannot enforce breaks. Also required for screen sharing detection, which reads the macOS privacy indicator. |
-| **Input Monitoring** | Required for Strict mode (alongside Accessibility). Also lets StandLock detect idle time accurately so it won't interrupt you right after you've already been away from the keyboard. |
+| **Input Monitoring** | Required for Strict mode (alongside Accessibility). Powers the escape key combo that ends a Strict break. Idle detection does not need it. |
 | **Calendar** | Optional. Reads your calendar events to automatically defer breaks during meetings. Never modifies your calendar. |
 | **Camera & Microphone** | Not accessed directly. StandLock checks whether another app is using the camera or mic to detect active meetings and defer breaks accordingly. |
 
-You can revoke any permission at any time in **System Settings > Privacy & Security**. When a permission is revoked, features that depend on it degrade instead of breaking: Strict schedules run as Firm until the permission is back, keeping their Strict setting and showing the reason in the schedule list; idle detection and screen sharing detection turn off; and calendar integration is skipped. No crashes, no broken state.
+You can revoke any permission at any time in **System Settings > Privacy & Security**. When a permission is revoked, features that depend on it degrade instead of breaking: Strict schedules run as Firm until the permission is back, keeping their Strict setting and showing the reason in the schedule list; screen sharing detection turns off; and calendar integration is skipped. No crashes, no broken state.
 
 ## Building from Source
 
