@@ -129,11 +129,6 @@ struct ScheduleModelTests {
         #expect(!allClear.shouldDefer)
         #expect(allClear.deferralReason == nil)
 
-        // Focus mode alone does NOT trigger shouldDefer
-        let focusOnly = DetectionContext(focusModeActive: true)
-        #expect(!focusOnly.shouldDefer)
-        #expect(focusOnly.deferralReason == .focusMode)
-
         let micActive = DetectionContext(microphoneActive: true)
         #expect(micActive.shouldDefer)
         #expect(micActive.deferralReason == .microphoneActive)
@@ -216,7 +211,6 @@ struct ScheduleModelTests {
             calendarDetectionEnabled: false,
             calendarLookAheadMinutes: 10,
             screenSharingDetectionEnabled: false,
-            focusModeDetection: .ignore,
             idleDetectionEnabled: false,
             pauseMediaDuringBreak: false,
             resetIntervalOnSkip: false

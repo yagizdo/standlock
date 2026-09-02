@@ -25,7 +25,7 @@ struct DetectionSettingsView: View {
                 )
             }
 
-            Section("Calendar & Focus") {
+            Section("Calendar") {
                 Toggle(isOn: permissionChecker.gatedToggle(
                     for: $coordinator.preferences.calendarDetectionEnabled,
                     requires: .calendar,
@@ -74,13 +74,6 @@ struct DetectionSettingsView: View {
                     .pickerStyle(.segmented)
                     .padding(.leading, 24)
                 }
-
-                detectionRow(
-                    title: "Focus Mode",
-                    description: "Defer breaks when Focus mode is active",
-                    systemImage: "moon",
-                    behavior: $coordinator.preferences.focusModeDetection
-                )
             }
 
             Section("Media & Idle") {

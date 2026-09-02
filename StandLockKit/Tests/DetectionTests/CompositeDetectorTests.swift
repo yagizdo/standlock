@@ -11,7 +11,6 @@ struct CompositeDetectorTests {
             microphoneCheck: { false },
             calendarCheck: { false },
             screenSharingCheck: { false },
-            focusModeCheck: { false },
             idleCheck: { 0 }
         )
         let context = await detector.currentContext()
@@ -19,7 +18,6 @@ struct CompositeDetectorTests {
         #expect(!context.microphoneActive)
         #expect(!context.calendarEventActive)
         #expect(!context.screenSharingActive)
-        #expect(!context.focusModeActive)
         #expect(context.idleDuration == 0)
         #expect(!context.shouldDefer)
         #expect(context.deferralReason == nil)
@@ -31,7 +29,6 @@ struct CompositeDetectorTests {
             microphoneCheck: { false },
             calendarCheck: { false },
             screenSharingCheck: { false },
-            focusModeCheck: { false },
             idleCheck: { 0 }
         )
         let context = await detector.currentContext()
@@ -46,7 +43,6 @@ struct CompositeDetectorTests {
             microphoneCheck: { true },
             calendarCheck: { false },
             screenSharingCheck: { false },
-            focusModeCheck: { false },
             idleCheck: { 0 }
         )
         let context = await detector.currentContext()
@@ -61,7 +57,6 @@ struct CompositeDetectorTests {
             microphoneCheck: { false },
             calendarCheck: { true },
             screenSharingCheck: { false },
-            focusModeCheck: { false },
             idleCheck: { 0 }
         )
         let context = await detector.currentContext()
@@ -76,7 +71,6 @@ struct CompositeDetectorTests {
             microphoneCheck: { false },
             calendarCheck: { false },
             screenSharingCheck: { true },
-            focusModeCheck: { false },
             idleCheck: { 0 }
         )
         let context = await detector.currentContext()
@@ -85,28 +79,12 @@ struct CompositeDetectorTests {
         #expect(context.deferralReason == .screenSharing)
     }
 
-    @Test func focusModeAloneDoesNotDefer() async {
-        let detector = CompositeDetector(
-            cameraCheck: { false },
-            microphoneCheck: { false },
-            calendarCheck: { false },
-            screenSharingCheck: { false },
-            focusModeCheck: { true },
-            idleCheck: { 0 }
-        )
-        let context = await detector.currentContext()
-        #expect(context.focusModeActive)
-        #expect(!context.shouldDefer)
-        #expect(context.deferralReason == .focusMode)
-    }
-
     @Test func idleDurationPassesThrough() async {
         let detector = CompositeDetector(
             cameraCheck: { false },
             microphoneCheck: { false },
             calendarCheck: { false },
             screenSharingCheck: { false },
-            focusModeCheck: { false },
             idleCheck: { 120.5 }
         )
         let context = await detector.currentContext()
@@ -119,7 +97,6 @@ struct CompositeDetectorTests {
             microphoneCheck: { true },
             calendarCheck: { true },
             screenSharingCheck: { false },
-            focusModeCheck: { true },
             idleCheck: { 30 }
         )
         let context = await detector.currentContext()
@@ -127,7 +104,6 @@ struct CompositeDetectorTests {
         #expect(context.microphoneActive)
         #expect(context.calendarEventActive)
         #expect(!context.screenSharingActive)
-        #expect(context.focusModeActive)
         #expect(context.idleDuration == 30)
         #expect(context.shouldDefer)
         #expect(context.deferralReason == .cameraActive)

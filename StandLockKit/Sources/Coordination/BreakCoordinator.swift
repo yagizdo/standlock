@@ -466,7 +466,6 @@ public final class BreakCoordinator {
         if context.microphoneActive && preferences.microphoneDetection == .deferBreak { return .microphoneActive }
         if context.calendarEventActive && preferences.calendarDetectionEnabled { return .calendarEvent }
         if context.screenSharingActive && preferences.screenSharingDetectionEnabled { return .screenSharing }
-        if context.focusModeActive && preferences.focusModeDetection == .deferBreak { return .focusMode }
         return nil
     }
 
@@ -477,7 +476,6 @@ public final class BreakCoordinator {
     private func shouldReduce(context: DetectionContext) -> DisciplineLevel? {
         if context.cameraActive && preferences.cameraDetection == .reduceToGentle { return .gentle }
         if context.microphoneActive && preferences.microphoneDetection == .reduceToGentle { return .gentle }
-        if context.focusModeActive && preferences.focusModeDetection == .reduceToGentle { return .gentle }
         return nil
     }
 

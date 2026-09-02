@@ -81,7 +81,6 @@ Enable progressive enforcement on any schedule and each consecutive skip makes t
 - Defers breaks during meetings (camera/microphone active) or screen sharing
 - Integrates with Calendar to skip during upcoming events
 - Detects idle time: if you've already been away long enough, the break counts as completed
-- Honors macOS Focus modes
 - Each detection can be set to defer the break, reduce to Gentle, or ignore it entirely
 
 ### Break Experience
