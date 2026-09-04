@@ -44,6 +44,6 @@ Branch from `main` and keep each PR to one change. Write commit subjects in the 
 
 ## AI tools
 
-Use them if they help. Read and understand every line before you submit it, because you are the one I will be talking to in review. Keep AI out of the git metadata: no "Generated with Claude Code" style lines in commits or PR descriptions, and no `Co-Authored-By:` trailers naming an AI tool. GitHub turns those trailers into contributor credits, and that list is for people. Mentioning in the PR description that you used an AI tool is fine, but you don't have to.
+Use them if they help. Read and understand every line before you submit it, because you are the one I will be talking to in review. Keep AI out of the git metadata: no "Generated with Claude Code" style lines in commits or PR descriptions, and no `Co-Authored-By:` trailers naming an AI tool. GitHub turns those trailers into contributor credits, and that list is for people. Mentioning in the PR description that you used an AI tool is fine, but you don't have to. [AGENTS.md](AGENTS.md) carries the same rules in a form coding agents pick up on their own.
 
 Contributions are licensed under the [MIT License](LICENSE).
