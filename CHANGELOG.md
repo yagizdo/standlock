@@ -1,5 +1,14 @@
 # Changelog
 
+## StandLock v0.3.1
+
+**Bug Fixes**
+- Calendar Access can be granted again. The notarized build was signed without the calendar entitlement, so clicking Grant in Settings never showed the macOS prompt and StandLock never appeared under Privacy & Security > Calendars (#42, d5079fb, 429f9b3). Thanks @florian-grassl!
+- No more crash on macOS 13 Ventura when requesting Calendar access. The usage description for the pre-Sonoma calendar API was missing, and macOS terminates an app that asks without one (93fc6a5)
+- Ventura and Sonoma users are now offered updates and can install through Homebrew. The update feed and the cask claimed macOS 15 while the app has required 13 since 0.3.0 (9873261)
+
+**Full Changelog:** https://github.com/yagizdo/StandLock/compare/v0.3.0...v0.3.1
+
 ## StandLock v0.3.0
 
 **Features**
