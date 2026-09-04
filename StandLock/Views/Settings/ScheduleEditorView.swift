@@ -109,7 +109,15 @@ private struct ScheduleRow: View {
     let onToggle: (Bool) -> Void
     let onEdit: () -> Void
     let onDelete: () -> Void
+    @EnvironmentObject private var checker: PermissionChecker
     @State private var showDeleteConfirmation = false
+
+    /// The stored level stays Strict and the badge keeps saying so; what changes is how the
+    /// break is enforced. Without this line the settings window claims Strict while the break
+    /// behaves as Firm, with nothing on screen explaining the gap.
+    private var strictIsInactive: Bool {
+        schedule.isEnabled && schedule.disciplineLevel == .strict && !checker.strictModeAvailable
+    }
 
     var body: some View {
         HStack(spacing: 12) {
@@ -135,6 +143,20 @@ private struct ScheduleRow: View {
                 }
                 .font(.caption)
                 .foregroundStyle(.secondary)
+
+                if strictIsInactive {
+                    HStack(spacing: 4) {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                        Text("Strict inactive, running as Firm")
+                        Button("Grant") {
+                            checker.requestStrictPermission()
+                        }
+                        .buttonStyle(.link)
+                    }
+                    .font(.caption)
+                    .foregroundStyle(.orange)
+                    .help(checker.strictModeBlockedReason ?? "")
+                }
             }
 
             Spacer()

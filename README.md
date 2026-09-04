@@ -72,17 +72,17 @@ Enable progressive enforcement on any schedule and each consecutive skip makes t
 - Day selection: weekdays, weekends, every day, or custom
 - Pomodoro-style repetition cycles with short/long break patterns
 - Alternating work intervals: a schedule can cycle through up to 6 intervals instead of one (e.g. 58 min sitting, then 28 min standing), each with an optional label the break screen shows as what's coming next
-- Configurable daily skip limits per discipline level
+- Configurable daily skip limits per discipline level, set in Settings › General (Strict has none)
 
 <img src="assets/schedules.png" width="515" alt="Schedules window showing time windows, day selection and discipline level">
 
 ### Context Awareness
 
-- Defers breaks during meetings (camera/microphone active) or screen sharing
+- Defers breaks during meetings (camera or microphone active) and while an app is capturing your screen
+- Screen capture is read from the macOS privacy indicator, which stands for the camera and the microphone as well, so a screen shared while your mic is live is deferred as a call instead
 - Integrates with Calendar to skip during upcoming events
 - Detects idle time: if you've already been away long enough, the break counts as completed
-- Honors macOS Focus modes
-- Each detection can be set to defer the break, reduce to Gentle, or ignore it entirely
+- Camera and microphone detection can defer the break, reduce it to Gentle, or be ignored; calendar, screen sharing and idle detection are on or off
 
 ### Break Experience
 
@@ -131,16 +131,16 @@ brew install --cask yagizdo/tap/standlock
 
 ## macOS Permissions
 
-StandLock requests only the permissions it needs, and only when you use a feature that requires them.
+StandLock asks for a permission only when you use the feature that needs it. It does check Accessibility and Input Monitoring at launch so the permissions screen reflects what macOS actually reports; the system's own preflight answer for Input Monitoring can go stale after you grant it.
 
 | Permission | Why |
 |------------|-----|
-| **Accessibility** | Required for Strict mode. Blocks keyboard and mouse input during breaks by installing a system-level event tap. Without this, Strict mode cannot enforce breaks. |
-| **Input Monitoring** | Required for Strict mode (alongside Accessibility). Also lets StandLock detect idle time accurately so it won't interrupt you right after you've already been away from the keyboard. |
+| **Accessibility** | Required for Strict mode. Blocks keyboard and mouse input during breaks by installing a system-level event tap. Without this, Strict mode cannot enforce breaks. Also required for screen sharing detection, which reads the macOS privacy indicator. |
+| **Input Monitoring** | Required for Strict mode (alongside Accessibility). Powers the escape key combo that ends a Strict break. Idle detection does not need it. |
 | **Calendar** | Optional. Reads your calendar events to automatically defer breaks during meetings. Never modifies your calendar. |
 | **Camera & Microphone** | Not accessed directly. StandLock checks whether another app is using the camera or mic to detect active meetings and defer breaks accordingly. |
 
-You can revoke any permission at any time in **System Settings > Privacy & Security**. When a permission is revoked, features that depend on it are auto-disabled: Strict mode switches schedules back to Gentle, idle detection turns off, and calendar integration is skipped. No crashes, no broken state.
+You can revoke any permission at any time in **System Settings > Privacy & Security**. When a permission is revoked, features that depend on it degrade instead of breaking: Strict schedules run as Firm until the permission is back, keeping their Strict setting and showing the reason in the schedule list; screen sharing detection turns off; and calendar integration is skipped. No crashes, no broken state.
 
 ## Building from Source
 
