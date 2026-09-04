@@ -39,6 +39,7 @@ A macOS menu bar app that forces you to take stand-up breaks. It runs quietly in
 - [macOS Permissions](#macos-permissions)
 - [Building from Source](#building-from-source)
   - [Deployment Target](#deployment-target)
+- [Contributing](#contributing)
 - [License](#license)
 
 ## Why
@@ -147,7 +148,6 @@ You can revoke any permission at any time in **System Settings > Privacy & Secur
 ```bash
 git clone https://github.com/yagizdo/StandLock.git
 cd StandLock
-xcodegen generate   # required after pulling -- regenerates StandLock.xcodeproj from project.yml
 open StandLock.xcodeproj
 ```
 
@@ -165,6 +165,10 @@ The minimum macOS version is declared in four places, and they do not derive fro
 When raising or lowering the deployment target, update all four and run `xcodegen generate` to refresh `StandLock.xcodeproj`. Direct edits to `StandLock.xcodeproj/project.pbxproj` are overwritten on the next regeneration.
 
 The last two are easy to miss because nothing fails when they are wrong: the build succeeds, and users on the excluded versions are simply never offered the app. That is how 0.3.0 shipped telling Sparkle and Homebrew it needed macOS 15 while the binary reported `minos 13.0`.
+
+## Contributing
+
+Bug fix: open a PR. Feature or behaviour change: open an issue first. Setup, tests and PR expectations are in [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 
