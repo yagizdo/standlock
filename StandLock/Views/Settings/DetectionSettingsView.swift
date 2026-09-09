@@ -5,7 +5,6 @@ struct DetectionSettingsView: View {
     @EnvironmentObject private var coordinator: AppCoordinator
     @EnvironmentObject private var permissionChecker: PermissionChecker
     @State private var showCalendarPermissionAlert = false
-    @State private var showAccessibilityAlert = false
 
     var body: some View {
         Form {
@@ -53,18 +52,11 @@ struct DetectionSettingsView: View {
                     .padding(.leading, 24)
                 }
 
-                Toggle(isOn: permissionChecker.gatedToggle(
-                    for: $coordinator.preferences.screenSharingDetectionEnabled,
-                    available: permissionChecker.accessibilityGranted,
-                    onDenied: { showAccessibilityAlert = true }
-                )) {
+                Toggle(isOn: $coordinator.preferences.screenSharingDetectionEnabled) {
                     Label {
                         VStack(alignment: .leading, spacing: 2) {
                             Text("Screen Sharing")
-                            Text("Defer breaks while an app captures your screen")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                            Text("Sharing with the microphone live is deferred as a call instead.")
+                            Text("Defer breaks during screen sharing or recording")
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                         }
@@ -73,8 +65,7 @@ struct DetectionSettingsView: View {
                     }
                 }
 
-                if permissionChecker.accessibilityGranted
-                    && coordinator.preferences.screenSharingDetectionEnabled {
+                if coordinator.preferences.screenSharingDetectionEnabled {
                     Picker("After sharing ends", selection: $coordinator.preferences.screenSharingPostDeferral) {
                         Text("Start break").tag(PostDeferralBehavior.triggerBreak)
                         Text("Skip break").tag(PostDeferralBehavior.skipBreak)
@@ -124,14 +115,6 @@ struct DetectionSettingsView: View {
             Button("Cancel", role: .cancel) {}
         } message: {
             Text("Calendar Integration requires calendar access. Grant it in System Settings to enable this feature.")
-        }
-        .alert("Accessibility Permission Required", isPresented: $showAccessibilityAlert) {
-            Button("Open System Settings") {
-                permissionChecker.openSystemSettings(for: .accessibility)
-            }
-            Button("Cancel", role: .cancel) {}
-        } message: {
-            Text("Screen Sharing detection reads the macOS privacy indicator, which requires Accessibility access. Grant it in System Settings to enable this feature.")
         }
     }
 

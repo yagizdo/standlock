@@ -78,8 +78,7 @@ Enable progressive enforcement on any schedule and each consecutive skip makes t
 
 ### Context Awareness
 
-- Defers breaks during meetings (camera or microphone active) and while an app is capturing your screen
-- Screen capture is read from the macOS privacy indicator, which stands for the camera and the microphone as well, so a screen shared while your mic is live is deferred as a call instead
+- Defers breaks during meetings (camera or microphone active), screen recordings and remote screen sharing sessions
 - Integrates with Calendar to skip during upcoming events
 - Detects idle time: if you've already been away long enough, the break counts as completed
 - Camera and microphone detection can defer the break, reduce it to Gentle, or be ignored; calendar, screen sharing and idle detection are on or off
@@ -135,12 +134,12 @@ StandLock asks for a permission only when you use the feature that needs it. It 
 
 | Permission | Why |
 |------------|-----|
-| **Accessibility** | Required for Strict mode. Blocks keyboard and mouse input during breaks by installing a system-level event tap. Without this, Strict mode cannot enforce breaks. Also required for screen sharing detection, which reads the macOS privacy indicator. |
+| **Accessibility** | Required for Strict mode. Blocks keyboard and mouse input during breaks by installing a system-level event tap. Without this, Strict mode cannot enforce breaks. |
 | **Input Monitoring** | Required for Strict mode (alongside Accessibility). Powers the escape key combo that ends a Strict break. Idle detection does not need it. |
 | **Calendar** | Optional. Reads your calendar events to automatically defer breaks during meetings. Never modifies your calendar. |
 | **Camera & Microphone** | Not accessed directly. StandLock checks whether another app is using the camera or mic to detect active meetings and defer breaks accordingly. |
 
-You can revoke any permission at any time in **System Settings > Privacy & Security**. When a permission is revoked, features that depend on it degrade instead of breaking: Strict schedules run as Firm until the permission is back, keeping their Strict setting and showing the reason in the schedule list; screen sharing detection turns off; and calendar integration is skipped. No crashes, no broken state.
+You can revoke any permission at any time in **System Settings > Privacy & Security**. When a permission is revoked, features that depend on it degrade instead of breaking: Strict schedules run as Firm until the permission is back, keeping their Strict setting and showing the reason in the schedule list, and calendar integration is skipped. No crashes, no broken state.
 
 ## Building from Source
 

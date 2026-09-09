@@ -10,7 +10,7 @@ struct CompositeDetectorTests {
             cameraCheck: { false },
             microphoneCheck: { false },
             calendarCheck: { false },
-            privacyIndicatorCheck: { false },
+            screenSharingCheck: { false },
             idleCheck: { 0 }
         )
         let context = await detector.currentContext()
@@ -26,7 +26,7 @@ struct CompositeDetectorTests {
             cameraCheck: { true },
             microphoneCheck: { false },
             calendarCheck: { false },
-            privacyIndicatorCheck: { false },
+            screenSharingCheck: { false },
             idleCheck: { 0 }
         )
         let context = await detector.currentContext()
@@ -41,7 +41,7 @@ struct CompositeDetectorTests {
             cameraCheck: { false },
             microphoneCheck: { true },
             calendarCheck: { false },
-            privacyIndicatorCheck: { false },
+            screenSharingCheck: { false },
             idleCheck: { 0 }
         )
         let context = await detector.currentContext()
@@ -56,7 +56,7 @@ struct CompositeDetectorTests {
             cameraCheck: { false },
             microphoneCheck: { false },
             calendarCheck: { true },
-            privacyIndicatorCheck: { false },
+            screenSharingCheck: { false },
             idleCheck: { 0 }
         )
         let context = await detector.currentContext()
@@ -71,7 +71,7 @@ struct CompositeDetectorTests {
             cameraCheck: { false },
             microphoneCheck: { false },
             calendarCheck: { false },
-            privacyIndicatorCheck: { true },
+            screenSharingCheck: { true },
             idleCheck: { 0 }
         )
         let context = await detector.currentContext()
@@ -86,7 +86,7 @@ struct CompositeDetectorTests {
             cameraCheck: { false },
             microphoneCheck: { false },
             calendarCheck: { false },
-            privacyIndicatorCheck: { false },
+            screenSharingCheck: { false },
             idleCheck: { 120.5 }
         )
         let context = await detector.currentContext()
@@ -98,7 +98,7 @@ struct CompositeDetectorTests {
             cameraCheck: { true },
             microphoneCheck: { true },
             calendarCheck: { true },
-            privacyIndicatorCheck: { false },
+            screenSharingCheck: { false },
             idleCheck: { 30 }
         )
         let context = await detector.currentContext()
@@ -107,46 +107,5 @@ struct CompositeDetectorTests {
         #expect(context.calendarEventActive)
         #expect(!context.screenSharingActive)
         #expect(context.idleDuration == 30)
-    }
-
-    @Test func privacyIndicatorWithMicrophoneIsNotScreenSharing() async {
-        let detector = CompositeDetector(
-            cameraCheck: { false },
-            microphoneCheck: { true },
-            calendarCheck: { false },
-            privacyIndicatorCheck: { true },
-            idleCheck: { 0 }
-        )
-        let context = await detector.currentContext()
-        #expect(!context.screenSharingActive)
-        #expect(context.microphoneActive)
-    }
-
-    @Test func privacyIndicatorWithCameraIsNotScreenSharing() async {
-        let detector = CompositeDetector(
-            cameraCheck: { true },
-            microphoneCheck: { false },
-            calendarCheck: { false },
-            privacyIndicatorCheck: { true },
-            idleCheck: { 0 }
-        )
-        let context = await detector.currentContext()
-        #expect(!context.screenSharingActive)
-        #expect(context.cameraActive)
-    }
-
-    @Test func hiddenPrivacyIndicatorIsNotScreenSharing() async {
-        let detector = CompositeDetector(
-            cameraCheck: { false },
-            microphoneCheck: { false },
-            calendarCheck: { false },
-            privacyIndicatorCheck: { false },
-            idleCheck: { 0 }
-        )
-        let context = await detector.currentContext()
-        #expect(!context.screenSharingActive)
-        #expect(!context.cameraActive)
-        #expect(!context.microphoneActive)
-        #expect(!context.calendarEventActive)
     }
 }
