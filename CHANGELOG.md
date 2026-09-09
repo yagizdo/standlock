@@ -1,5 +1,25 @@
 # Changelog
 
+## StandLock v0.4.0
+
+**Features**
+- The menu bar now flags a Strict schedule that is running as Firm. Without Accessibility or Input Monitoring, Strict cannot enforce a break, and the menu bar used to print an unqualified "Strict" that read like the real thing (459eda4)
+- Daily skip limits for Gentle and Firm are editable in Settings › General. Strict still has no limit (9c86f86)
+
+**Bug Fixes**
+- The calendar look-ahead setting works now. It filtered out every event that had not started yet, so the window could never change the outcome, and the stepper's value only reached the detector after a restart (3d09b8c)
+- Editing a schedule no longer pushes the next break away. Every rebuild re-measured the interval from that moment, so repeated edits, or a Strict permission reading that flapped, could postpone a break indefinitely (2c40135, 3d09b8c)
+- Editing a schedule no longer leaves the app believing a break is on screen when none is, and no longer re-arms the daily cap from zero, restarts the interval cycle or cancels a pause (3d09b8c)
+- Turning your only enabled schedule off and back on no longer clears today's counters and re-arms the daily skip cap from zero (a606759)
+- Idle detection no longer asks for Input Monitoring. Its toggle sat behind a permission the feature never uses, and the preference was switched off whenever that permission was missing (c7db216)
+- A Strict schedule keeps its level while Accessibility or Input Monitoring is missing. It runs as Firm and says so in the schedule list, instead of being silently rewritten to Gentle (b1a6dd9, 3d09b8c)
+- Removed the Focus mode setting. It read a macOS key that has not been written since macOS 11, so on macOS 13 and later it never deferred a break or reduced one to Gentle (3392f3f)
+
+**Notes**
+- The calendar look-ahead now also defers a break that would fire shortly before a meeting starts, not only one during a meeting. A gap between two meetings shorter than the look-ahead value stops producing a break.
+
+**Full Changelog:** https://github.com/yagizdo/StandLock/compare/v0.3.1...v0.4.0
+
 ## StandLock v0.3.1
 
 **Bug Fixes**
