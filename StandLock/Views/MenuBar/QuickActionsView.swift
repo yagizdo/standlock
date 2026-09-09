@@ -3,6 +3,7 @@ import StandLockCore
 
 struct QuickActionsView: View {
     @EnvironmentObject private var coordinator: AppCoordinator
+    @EnvironmentObject private var checker: PermissionChecker
 
     private var activeSchedule: Schedule? {
         coordinator.schedules.first(where: \.isEnabled)
@@ -64,17 +65,26 @@ struct QuickActionsView: View {
     }
 
     private func scheduleInfo(_ schedule: Schedule) -> some View {
-        HStack(spacing: 8) {
-            Text(levelIcon(schedule.disciplineLevel))
+        // The menu bar names the level with nothing else around it, so an unqualified "Strict"
+        // here is the one place the downgrade could pass for the real thing.
+        let strictIsInactive = checker.strictIsInactive(for: schedule)
+        return HStack(spacing: 8) {
+            Text(strictIsInactive ? "⚠️" : levelIcon(schedule.disciplineLevel))
                 .font(.caption)
             VStack(alignment: .leading, spacing: 1) {
                 Text(schedule.name)
                     .font(.caption)
                     .fontWeight(.medium)
                     .lineLimit(1)
-                Text(schedule.disciplineLevel.displayName)
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
+                if strictIsInactive {
+                    Text("Strict inactive, running as Firm")
+                        .font(.caption2)
+                        .foregroundStyle(.orange)
+                } else {
+                    Text(schedule.disciplineLevel.displayName)
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                }
             }
             Spacer()
         }

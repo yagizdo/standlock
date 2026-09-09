@@ -112,13 +112,6 @@ private struct ScheduleRow: View {
     @EnvironmentObject private var checker: PermissionChecker
     @State private var showDeleteConfirmation = false
 
-    /// The stored level stays Strict and the badge keeps saying so; what changes is how the
-    /// break is enforced. Without this line the settings window claims Strict while the break
-    /// behaves as Firm, with nothing on screen explaining the gap.
-    private var strictIsInactive: Bool {
-        schedule.isEnabled && schedule.disciplineLevel == .strict && !checker.strictModeAvailable
-    }
-
     var body: some View {
         HStack(spacing: 12) {
             Toggle("", isOn: Binding(
@@ -144,7 +137,10 @@ private struct ScheduleRow: View {
                 .font(.caption)
                 .foregroundStyle(.secondary)
 
-                if strictIsInactive {
+                // The stored level stays Strict and the badge keeps saying so; what changes is
+                // how the break is enforced. Without this row the settings window claims Strict
+                // while the break behaves as Firm, with nothing on screen explaining the gap.
+                if checker.strictIsInactive(for: schedule) {
                     HStack(spacing: 4) {
                         Image(systemName: "exclamationmark.triangle.fill")
                         Text("Strict inactive, running as Firm")

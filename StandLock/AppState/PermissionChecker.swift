@@ -2,6 +2,7 @@ import SwiftUI
 import EventKit
 import ApplicationServices
 import Detection
+import StandLockCore
 
 enum PermissionStatus {
     case granted, notGranted, denied, needsRestart
@@ -230,6 +231,12 @@ final class PermissionChecker: ObservableObject {
         }
         return "Strict mode requires Input Monitoring permission for the escape key combo."
     }
+    /// True when the schedule reads Strict but the break will run as Firm. Shared by the
+    /// schedule list and the menu bar so neither can leave the downgrade unmentioned.
+    func strictIsInactive(for schedule: Schedule) -> Bool {
+        schedule.isEnabled && schedule.disciplineLevel == .strict && !strictModeAvailable
+    }
+
     var calendarIntegrationAvailable: Bool { CalendarDetector.isAuthorized(calendarStatus) }
 
     /// Each caller passes its own availability flag: the permission a detection needs is not
