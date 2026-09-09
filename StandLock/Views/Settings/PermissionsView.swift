@@ -8,7 +8,7 @@ struct PermissionsView: View {
             Section {
                 PermissionRow(
                     title: "Input Monitoring",
-                    description: "Enables idle detection and the escape key combo.",
+                    description: "Enables the escape key combo that ends a Strict break.",
                     systemImage: "keyboard",
                     status: checker.inputMonitoringStatus,
                     settingsURLs: PermissionType.inputMonitoring.settingsURLs,

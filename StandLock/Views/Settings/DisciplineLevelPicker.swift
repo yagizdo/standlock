@@ -1,4 +1,3 @@
-import AppKit
 import SwiftUI
 import StandLockCore
 
@@ -6,16 +5,6 @@ struct DisciplineLevelPicker: View {
     @Binding var selection: DisciplineLevel
     @EnvironmentObject private var checker: PermissionChecker
     @State private var showPermissionAlert = false
-
-    private var missingPermissionMessage: String {
-        if !checker.accessibilityGranted && !checker.inputMonitoringGranted {
-            return "Strict mode requires Accessibility and Input Monitoring permissions."
-        } else if !checker.accessibilityGranted {
-            return "Strict mode requires Accessibility permission to block input during breaks."
-        } else {
-            return "Strict mode requires Input Monitoring permission for the escape key combo."
-        }
-    }
 
     var body: some View {
         HStack(spacing: 12) {
@@ -36,19 +25,11 @@ struct DisciplineLevelPicker: View {
         }
         .alert("Permission Required", isPresented: $showPermissionAlert) {
             Button("Open System Settings") {
-                if !checker.accessibilityGranted {
-                    for url in PermissionType.accessibility.settingsURLs {
-                        if NSWorkspace.shared.open(url) { break }
-                    }
-                } else {
-                    for url in PermissionType.inputMonitoring.settingsURLs {
-                        if NSWorkspace.shared.open(url) { break }
-                    }
-                }
+                checker.requestStrictPermission()
             }
             Button("Cancel", role: .cancel) {}
         } message: {
-            Text(missingPermissionMessage)
+            Text(checker.strictModeBlockedReason ?? "")
         }
     }
 }

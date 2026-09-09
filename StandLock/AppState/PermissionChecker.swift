@@ -2,6 +2,7 @@ import SwiftUI
 import EventKit
 import ApplicationServices
 import Detection
+import StandLockCore
 
 enum PermissionStatus {
     case granted, notGranted, denied, needsRestart
@@ -216,22 +217,36 @@ final class PermissionChecker: ObservableObject {
 
     // MARK: - Feature Gates
 
-    var idleDetectionAvailable: Bool { inputMonitoringGranted }
     var strictModeAvailable: Bool { accessibilityGranted && inputMonitoringGranted }
+
+    /// Why Strict cannot run right now, or nil when it can. Shared by the level picker and the
+    /// schedule list so the two never drift into describing the same block differently.
+    var strictModeBlockedReason: String? {
+        if strictModeAvailable { return nil }
+        if !accessibilityGranted && !inputMonitoringGranted {
+            return "Strict mode requires Accessibility and Input Monitoring permissions."
+        }
+        if !accessibilityGranted {
+            return "Strict mode requires Accessibility permission to block input during breaks."
+        }
+        return "Strict mode requires Input Monitoring permission for the escape key combo."
+    }
+    /// True when the schedule reads Strict but the break will run as Firm. Shared by the
+    /// schedule list and the menu bar so neither can leave the downgrade unmentioned.
+    func strictIsInactive(for schedule: Schedule) -> Bool {
+        schedule.isEnabled && schedule.disciplineLevel == .strict && !strictModeAvailable
+    }
+
     var calendarIntegrationAvailable: Bool { CalendarDetector.isAuthorized(calendarStatus) }
 
+    /// Each caller passes its own availability flag: the permission a detection needs is not
+    /// always the one its settings section implies.
     func gatedToggle(
         for preference: Binding<Bool>,
-        requires permission: PermissionType,
+        available: Bool,
         onDenied: @escaping () -> Void
     ) -> Binding<Bool> {
-        let available: Bool
-        switch permission {
-        case .inputMonitoring: available = idleDetectionAvailable
-        case .accessibility: available = strictModeAvailable
-        case .calendar: available = calendarIntegrationAvailable
-        }
-        return Binding(
+        Binding(
             get: { available && preference.wrappedValue },
             set: { newValue in
                 if newValue && !available {
@@ -243,9 +258,18 @@ final class PermissionChecker: ObservableObject {
         )
     }
 
-    private func openSystemSettings(for permission: PermissionType) {
+    func openSystemSettings(for permission: PermissionType) {
         for url in permission.settingsURLs {
             if NSWorkspace.shared.open(url) { return }
+        }
+    }
+
+    /// Opens whichever of the two Strict permissions is still missing.
+    func requestStrictPermission() {
+        if !accessibilityGranted {
+            requestAccessibility()
+        } else {
+            requestInputMonitoring()
         }
     }
 

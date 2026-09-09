@@ -74,8 +74,48 @@ struct GeneralSettingsView: View {
                     }
                 }
             }
+
+            Section("Discipline") {
+                skipLimitStepper(
+                    title: "Gentle Daily Skip Limit",
+                    icon: "hand.raised",
+                    value: $coordinator.preferences.gentleDailySkipLimit
+                )
+
+                skipLimitStepper(
+                    title: "Firm Daily Skip Limit",
+                    icon: "timer",
+                    value: $coordinator.preferences.firmDailySkipLimit
+                )
+
+                Label {
+                    Text("Strict has no skip limit; only the emergency escape combo ends a break early.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                } icon: {
+                    Image(systemName: "lock.shield")
+                }
+            }
         }
         .formStyle(.grouped)
+    }
+
+    private func skipLimitStepper(title: String, icon: String, value: Binding<Int>) -> some View {
+        Stepper(value: value, in: 1...20) {
+            Label {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(title)
+                    Text("\(value.wrappedValue) skips per day before breaks stop being dismissible")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            } icon: {
+                Image(systemName: icon)
+            }
+        }
+        .onChange(of: value.wrappedValue) { _ in
+            coordinator.savePreferences()
+        }
     }
 
     private func setLaunchAtStartup(_ enabled: Bool) {

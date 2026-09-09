@@ -5,7 +5,6 @@ struct DetectionSettingsView: View {
     @EnvironmentObject private var coordinator: AppCoordinator
     @EnvironmentObject private var permissionChecker: PermissionChecker
     @State private var showCalendarPermissionAlert = false
-    @State private var showInputMonitoringAlert = false
 
     var body: some View {
         Form {
@@ -25,10 +24,10 @@ struct DetectionSettingsView: View {
                 )
             }
 
-            Section("Calendar & Focus") {
+            Section("Calendar") {
                 Toggle(isOn: permissionChecker.gatedToggle(
                     for: $coordinator.preferences.calendarDetectionEnabled,
-                    requires: .calendar,
+                    available: permissionChecker.calendarIntegrationAvailable,
                     onDenied: { showCalendarPermissionAlert = true }
                 )) {
                     Label {
@@ -74,13 +73,6 @@ struct DetectionSettingsView: View {
                     .pickerStyle(.segmented)
                     .padding(.leading, 24)
                 }
-
-                detectionRow(
-                    title: "Focus Mode",
-                    description: "Defer breaks when Focus mode is active",
-                    systemImage: "moon",
-                    behavior: $coordinator.preferences.focusModeDetection
-                )
             }
 
             Section("Media & Idle") {
@@ -97,11 +89,7 @@ struct DetectionSettingsView: View {
                     }
                 }
 
-                Toggle(isOn: permissionChecker.gatedToggle(
-                    for: $coordinator.preferences.idleDetectionEnabled,
-                    requires: .inputMonitoring,
-                    onDenied: { showInputMonitoringAlert = true }
-                )) {
+                Toggle(isOn: $coordinator.preferences.idleDetectionEnabled) {
                     Label {
                         VStack(alignment: .leading, spacing: 2) {
                             Text("Idle as Break")
@@ -122,23 +110,11 @@ struct DetectionSettingsView: View {
         }
         .alert("Calendar Permission Required", isPresented: $showCalendarPermissionAlert) {
             Button("Open System Settings") {
-                for url in PermissionType.calendar.settingsURLs {
-                    if NSWorkspace.shared.open(url) { break }
-                }
+                permissionChecker.openSystemSettings(for: .calendar)
             }
             Button("Cancel", role: .cancel) {}
         } message: {
             Text("Calendar Integration requires calendar access. Grant it in System Settings to enable this feature.")
-        }
-        .alert("Input Monitoring Required", isPresented: $showInputMonitoringAlert) {
-            Button("Open System Settings") {
-                for url in PermissionType.inputMonitoring.settingsURLs {
-                    if NSWorkspace.shared.open(url) { break }
-                }
-            }
-            Button("Cancel", role: .cancel) {}
-        } message: {
-            Text("This feature requires Input Monitoring permission. Grant it in System Settings to enable.")
         }
     }
 

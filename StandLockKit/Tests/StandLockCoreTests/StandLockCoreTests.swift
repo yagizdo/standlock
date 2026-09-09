@@ -118,27 +118,6 @@ struct ScheduleModelTests {
         #expect(decoded.longBreakDuration == 900)
     }
 
-    // MARK: - DetectionContext
-
-    @Test func detectionContextShouldDefer() {
-        let cameraActive = DetectionContext(cameraActive: true)
-        #expect(cameraActive.shouldDefer)
-        #expect(cameraActive.deferralReason == .cameraActive)
-
-        let allClear = DetectionContext.clear
-        #expect(!allClear.shouldDefer)
-        #expect(allClear.deferralReason == nil)
-
-        // Focus mode alone does NOT trigger shouldDefer
-        let focusOnly = DetectionContext(focusModeActive: true)
-        #expect(!focusOnly.shouldDefer)
-        #expect(focusOnly.deferralReason == .focusMode)
-
-        let micActive = DetectionContext(microphoneActive: true)
-        #expect(micActive.shouldDefer)
-        #expect(micActive.deferralReason == .microphoneActive)
-    }
-
     // MARK: - BreakStatistics
 
     @Test func breakStatisticsCompletionRate() {
@@ -216,7 +195,6 @@ struct ScheduleModelTests {
             calendarDetectionEnabled: false,
             calendarLookAheadMinutes: 10,
             screenSharingDetectionEnabled: false,
-            focusModeDetection: .ignore,
             idleDetectionEnabled: false,
             pauseMediaDuringBreak: false,
             resetIntervalOnSkip: false

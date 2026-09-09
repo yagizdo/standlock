@@ -28,7 +28,7 @@ cask "standlock" do
   desc "Stand reminder and break screen for macOS"
   homepage "https://standlock.app"
 
-  depends_on macos: :ventura
+  depends_on macos: ">= :ventura"
 
   app "StandLock.app"
 
