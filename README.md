@@ -111,6 +111,7 @@ A dedicated Statistics tab in Settings tracks break history over time.
 
 - **Launch at login** via macOS login items
 - **Auto-update** via Sparkle, with an update banner in the menu bar. Off by default: turn on Automatic Updates in Settings and StandLock checks every 4 hours, otherwise use Check for Updates
+- **Language**: English and Turkish. Settings › General has a picker that switches the interface without a restart; System follows your Mac's language
 
 ## Install
 

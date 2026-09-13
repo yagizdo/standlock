@@ -1,5 +1,24 @@
 # Changelog
 
+## StandLock v0.5.0
+
+**Features**
+- StandLock speaks Turkish. The interface, the break screens, the exercise suggestions and every escalation challenge are translated (ffc3d27, 6b7a022, 595e3e1, 33171ed, 6656b64)
+- A Language picker in Settings › General switches the interface in place, with no restart. System follows your Mac's language (5e1f868, 89e271b)
+
+**Bug Fixes**
+- Statistics no longer crashes on a non-Gregorian calendar. The year heatmap numbered the months with your calendar but labelled them from a twelve-month Gregorian list, so the thirteenth month of a Coptic, Ethiopic or Hebrew leap year ran off the end of the list (47c9024)
+- Editing a schedule no longer empties the menu bar progress ring. The break itself stayed put, but the ring re-measured its interval from the moment of the edit, so changing a discipline level twenty seconds before a break drained the icon and refilled it over those twenty seconds. The same reset hit a break re-armed after wake or unlock (002026e)
+
+**Improvements**
+- Opening a Settings window from the menu bar popover now dismisses the popover instead of leaving it up behind the window (89e271b, e1d8aff)
+- Weekday abbreviations and month names in Settings and Statistics follow your locale instead of being fixed to English (6b7a022)
+
+**Notes**
+- Choosing a language also writes it into StandLock's own preferences, so the app menu and the updater follow it from the next launch. Switching back to System removes it again.
+
+**Full Changelog:** https://github.com/yagizdo/StandLock/compare/v0.4.0...v0.5.0
+
 ## StandLock v0.4.0
 
 **Features**
