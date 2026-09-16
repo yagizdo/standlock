@@ -1330,7 +1330,7 @@ private struct RoastChallengeDismissView: View {
                         )
                         .onAppear { isFieldFocused = true }
                         .onChange(of: typedText) { newValue in
-                            if newValue.count - previousText.count > 1 {
+                            guard acceptsPhraseInput(previous: previousText, new: newValue) else {
                                 typedText = previousText
                                 return
                             }
@@ -1482,7 +1482,7 @@ private struct PhraseDismissView: View {
                 )
                 .onAppear { isFieldFocused = true }
                 .onChange(of: typedPhrase) { newValue in
-                    if newValue.count - previousPhrase.count > 1 {
+                    guard acceptsPhraseInput(previous: previousPhrase, new: newValue) else {
                         typedPhrase = previousPhrase
                         return
                     }

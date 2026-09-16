@@ -52,3 +52,42 @@ struct PhraseMatchingTests {
             .caseInsensitiveCompare("Bu molayı atlamayı seçiyorum") != .orderedSame)
     }
 }
+
+@Suite("Phrase Input Acceptance")
+struct PhraseInputAcceptanceTests {
+
+    @Test func oneNewCharacterIsAccepted() {
+        #expect(acceptsPhraseInput(previous: "I choose", new: "I choose "))
+    }
+
+    @Test func deletingIsAccepted() {
+        #expect(acceptsPhraseInput(previous: "I choose to skip", new: "I choose"))
+        #expect(acceptsPhraseInput(previous: "你好吗", new: ""))
+    }
+
+    /// The bug this function exists to fix. SwiftUI's `TextField` binding never sees
+    /// an input method's marked text, only the commit, so Pinyin turns `nihao` into
+    /// 你好 in a single two-character update. The old rule -- reject any growth past
+    /// one character -- reverted that, which left every Chinese escape phrase
+    /// impossible to type and locked the user inside the break.
+    @Test func inputMethodCommitIsAccepted() {
+        #expect(acceptsPhraseInput(previous: "", new: "你好"))
+        #expect(acceptsPhraseInput(previous: "我的", new: "我的腿是装"))
+    }
+
+    @Test func pastedChinesePhraseIsRejected() {
+        #expect(!acceptsPhraseInput(previous: "", new: "反正我更喜欢坐着"))
+    }
+
+    @Test func pastedEnglishPhraseIsRejected() {
+        #expect(!acceptsPhraseInput(previous: "", new: "I choose to skip this break"))
+    }
+
+    /// The boundary is load-bearing in both directions: a normal input method commit
+    /// has to fit under it, and the shortest escape phrase the app ships in any
+    /// language -- 反正我更喜欢坐着, eight characters -- has to sit above it.
+    @Test func theJumpBoundaryIsFourCharacters() {
+        #expect(acceptsPhraseInput(previous: "", new: "我的腿是"))
+        #expect(!acceptsPhraseInput(previous: "", new: "我的腿是装"))
+    }
+}
