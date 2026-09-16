@@ -693,6 +693,16 @@
         }
       }
     },
+    "Calendars" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Takvimler"
+          }
+        }
+      }
+    },
     "Calf Raises" : {
       "comment" : "Exercise title",
       "extractionState" : "manual",
