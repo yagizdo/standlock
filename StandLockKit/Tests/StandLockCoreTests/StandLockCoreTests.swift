@@ -355,3 +355,31 @@ struct ScheduleModelTests {
         #expect(decoded.name == "Old Schedule")
     }
 }
+
+@Suite("AppPreferences Calendar Selection")
+struct AppPreferencesCalendarSelectionTests {
+
+    @Test func defaultsToAllCalendars() {
+        let prefs = AppPreferences()
+        #expect(prefs.calendarSelectionMode == .all)
+        #expect(prefs.selectedCalendarIdentifiers.isEmpty)
+    }
+
+    @Test func calendarSelectionJsonRoundTrip() throws {
+        let prefs = AppPreferences(
+            calendarSelectionMode: .selected,
+            selectedCalendarIdentifiers: ["work", "personal"]
+        )
+        let data = try JSONEncoder().encode(prefs)
+        let decoded = try JSONDecoder().decode(AppPreferences.self, from: data)
+        #expect(decoded.calendarSelectionMode == .selected)
+        #expect(decoded.selectedCalendarIdentifiers == ["work", "personal"])
+        #expect(decoded == prefs)
+    }
+
+    @Test func decodesWithoutCalendarSelectionAsAllCalendars() throws {
+        let decoded = try JSONDecoder().decode(AppPreferences.self, from: Data("{}".utf8))
+        #expect(decoded.calendarSelectionMode == .all)
+        #expect(decoded.selectedCalendarIdentifiers.isEmpty)
+    }
+}

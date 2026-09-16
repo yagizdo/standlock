@@ -57,7 +57,10 @@ final class AppCoordinator: ObservableObject {
     /// carry that outlives the day is dropped here -- otherwise re-enabling a schedule the
     /// next morning restores yesterday's exhausted cap.
     private var carriedEnforcementDay = Date()
-    private var calendarDetector: CalendarDetector?
+    /// One store shared by the Settings list and the coordinator, so it survives the coordinator
+    /// rebuilds that follow a schedule edit.
+    private let calendarDetector = CalendarDetector()
+    @Published private(set) var availableCalendars: [CalendarInfo] = []
     private let overlayController: OverlayWindowController
     private var eventListenerTask: Task<Void, Never>?
     private var progressTimer: Task<Void, Never>?
@@ -65,12 +68,17 @@ final class AppCoordinator: ObservableObject {
     private var onboardingWindow: NSWindow?
     private var onboardingWindowDelegate: OnboardingWindowCloseDelegate?
     private var permissionSyncCancellable: AnyCancellable?
+    private var calendarStatusCancellable: AnyCancellable?
+    /// Tracks the calendar grant so the store is reset exactly on the false -> true transition.
+    private var lastCalendarAuthorized = false
 
     init() {
         permissionChecker = PermissionChecker(languageStore: languageStore)
         overlayController = OverlayWindowController(languageStore: languageStore)
         loadExercises()
         loadData()
+        applyCalendarPreferences()
+        refreshAvailableCalendars()
         syncPreferencesWithPermissions()
         startProgressTimer()
         observeSystemSleep()
@@ -78,6 +86,13 @@ final class AppCoordinator: ObservableObject {
             .receive(on: RunLoop.main)
             .sink { [weak self] _ in
                 self?.syncPreferencesWithPermissions()
+            }
+        lastCalendarAuthorized = permissionChecker.calendarIntegrationAvailable
+        calendarStatusCancellable = permissionChecker.$calendarStatus
+            .receive(on: RunLoop.main)
+            .removeDuplicates()
+            .sink { [weak self] _ in
+                self?.handleCalendarAuthorizationChange()
             }
         Task { await permissionChecker.pollContinuously() }
         if !schedules.isEmpty {
@@ -172,10 +187,33 @@ final class AppCoordinator: ObservableObject {
         guard let data = try? JSONEncoder().encode(preferences) else { return }
         UserDefaults.standard.set(data, forKey: "preferences")
         coordinator?.updatePreferences(preferences)
-        // The look-ahead window lives in the detector, not in the preferences the coordinator
-        // holds, so it has to be pushed separately or the stepper only lands on the next restart.
-        calendarDetector?.lookAheadMinutes = preferences.calendarLookAheadMinutes
+        // The look-ahead window and the calendar selection live in the detector, not in the
+        // preferences the coordinator holds, so they have to be pushed separately or they only
+        // land on the next coordinator rebuild.
+        applyCalendarPreferences()
         updateMenuBarTimer()
+    }
+
+    /// The Settings list reads this; refreshed on launch and whenever permissions change.
+    func refreshAvailableCalendars() {
+        availableCalendars = calendarDetector.availableCalendars()
+    }
+
+    /// The detector owns the look-ahead and the calendar selection, so both have to be pushed
+    /// into it whenever the preferences change or a coordinator is built.
+    private func applyCalendarPreferences() {
+        calendarDetector.lookAheadMinutes = preferences.calendarLookAheadMinutes
+        calendarDetector.calendarSelectionMode = preferences.calendarSelectionMode
+        calendarDetector.selectedCalendarIdentifiers = Set(preferences.selectedCalendarIdentifiers)
+    }
+
+    private func handleCalendarAuthorizationChange() {
+        let authorized = permissionChecker.calendarIntegrationAvailable
+        if authorized && !lastCalendarAuthorized {
+            calendarDetector.resetStore()
+        }
+        lastCalendarAuthorized = authorized
+        refreshAvailableCalendars()
     }
 
     private func syncPreferencesWithPermissions() {
@@ -260,8 +298,7 @@ final class AppCoordinator: ObservableObject {
     private func startCoordinator(restoring state: EnforcementState = EnforcementState()) {
         stopCoordinator()
         let scheduler = ScheduleEvaluator()
-        let calendarDetector = CalendarDetector(lookAheadMinutes: preferences.calendarLookAheadMinutes)
-        self.calendarDetector = calendarDetector
+        applyCalendarPreferences()
         let detector = CompositeDetector(calendar: calendarDetector)
         let breakCoordinator = BreakCoordinator(
             scheduler: scheduler, detector: detector, locker: overlayController
@@ -296,7 +333,6 @@ final class AppCoordinator: ObservableObject {
         eventListenerTask = nil
         coordinator?.stop()
         coordinator = nil
-        calendarDetector = nil
         overlayController.onSkip = nil
         overlayController.onComplete = nil
         overlayController.onEscape = nil

@@ -367,6 +367,16 @@
         }
       }
     },
+    "All calendars" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tüm takvimler"
+          }
+        }
+      }
+    },
     "All day" : {
       "localizations" : {
         "tr" : {
@@ -2254,6 +2264,16 @@
         }
       }
     },
+    "No calendars found" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Takvim bulunamadı"
+          }
+        }
+      }
+    },
     "No schedules configured" : {
       "localizations" : {
         "tr" : {
@@ -2320,6 +2340,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tek makara. Tek düğme. Bahane yok."
+          }
+        }
+      }
+    },
+    "Only checked calendars defer breaks" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yalnızca işaretli takvimler molaları erteler"
           }
         }
       }
@@ -2922,6 +2952,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Çoook yakındı. Evrenin acımasız bir mizah anlayışı var."
+          }
+        }
+      }
+    },
+    "Specific calendars" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Belirli takvimler"
           }
         }
       }

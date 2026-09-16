@@ -76,3 +76,26 @@ struct CalendarDetectorWindowTests {
         #expect(!overlaps(start: -6 * 3600, end: 18 * 3600, isAllDay: true))
     }
 }
+
+@Suite("CalendarDetector.isCalendarIncluded")
+struct CalendarDetectorCalendarSelectionTests {
+
+    @Test func allCalendarsModeIncludesEverything() {
+        #expect(CalendarDetector.isCalendarIncluded("personal", mode: .all, selected: []))
+        #expect(CalendarDetector.isCalendarIncluded("work", mode: .all, selected: ["work"]))
+        #expect(CalendarDetector.isCalendarIncluded(nil, mode: .all, selected: []))
+    }
+
+    @Test func selectedModeIncludesOnlySelectedCalendars() {
+        #expect(CalendarDetector.isCalendarIncluded("work", mode: .selected, selected: ["work"]))
+        #expect(!CalendarDetector.isCalendarIncluded("personal", mode: .selected, selected: ["work"]))
+    }
+
+    @Test func selectedModeExcludesEventWithoutCalendar() {
+        #expect(!CalendarDetector.isCalendarIncluded(nil, mode: .selected, selected: ["work"]))
+    }
+
+    @Test func selectedModeWithEmptySelectionIncludesNothing() {
+        #expect(!CalendarDetector.isCalendarIncluded("work", mode: .selected, selected: []))
+    }
+}

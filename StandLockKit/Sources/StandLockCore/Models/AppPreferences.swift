@@ -16,6 +16,10 @@ public struct AppPreferences: Codable, Sendable, Equatable {
     public var microphoneDetection: DetectionBehavior
     public var calendarDetectionEnabled: Bool
     public var calendarLookAheadMinutes: Int
+    /// Whether every calendar defers breaks or only the ones picked in Settings. The default
+    /// keeps today's behaviour, so nothing changes for anyone who never opens the list.
+    public var calendarSelectionMode: CalendarSelectionMode
+    public var selectedCalendarIdentifiers: [String]
     public var screenSharingDetectionEnabled: Bool
     public var screenSharingPostDeferral: PostDeferralBehavior
     public var idleDetectionEnabled: Bool
@@ -37,6 +41,8 @@ public struct AppPreferences: Codable, Sendable, Equatable {
         microphoneDetection: DetectionBehavior = .deferBreak,
         calendarDetectionEnabled: Bool = true,
         calendarLookAheadMinutes: Int = 5,
+        calendarSelectionMode: CalendarSelectionMode = .all,
+        selectedCalendarIdentifiers: [String] = [],
         screenSharingDetectionEnabled: Bool = true,
         screenSharingPostDeferral: PostDeferralBehavior = .triggerBreak,
         idleDetectionEnabled: Bool = true,
@@ -54,6 +60,8 @@ public struct AppPreferences: Codable, Sendable, Equatable {
         self.microphoneDetection = microphoneDetection
         self.calendarDetectionEnabled = calendarDetectionEnabled
         self.calendarLookAheadMinutes = calendarLookAheadMinutes
+        self.calendarSelectionMode = calendarSelectionMode
+        self.selectedCalendarIdentifiers = selectedCalendarIdentifiers
         self.screenSharingDetectionEnabled = screenSharingDetectionEnabled
         self.screenSharingPostDeferral = screenSharingPostDeferral
         self.idleDetectionEnabled = idleDetectionEnabled
@@ -68,7 +76,7 @@ public struct AppPreferences: Codable, Sendable, Equatable {
         case firmSkipDelay, firmEscapePhrase, firmDailySkipLimit
         case strictEscapeHoldDuration
         case cameraDetection, microphoneDetection
-        case calendarDetectionEnabled, calendarLookAheadMinutes
+        case calendarDetectionEnabled, calendarLookAheadMinutes, calendarSelectionMode, selectedCalendarIdentifiers
         case screenSharingDetectionEnabled, screenSharingPostDeferral
         case idleDetectionEnabled
         case pauseMediaDuringBreak
@@ -87,6 +95,8 @@ public struct AppPreferences: Codable, Sendable, Equatable {
         microphoneDetection = try c.decodeIfPresent(DetectionBehavior.self, forKey: .microphoneDetection) ?? .deferBreak
         calendarDetectionEnabled = try c.decodeIfPresent(Bool.self, forKey: .calendarDetectionEnabled) ?? true
         calendarLookAheadMinutes = try c.decodeIfPresent(Int.self, forKey: .calendarLookAheadMinutes) ?? 5
+        calendarSelectionMode = try c.decodeIfPresent(CalendarSelectionMode.self, forKey: .calendarSelectionMode) ?? .all
+        selectedCalendarIdentifiers = try c.decodeIfPresent([String].self, forKey: .selectedCalendarIdentifiers) ?? []
         screenSharingDetectionEnabled = try c.decodeIfPresent(Bool.self, forKey: .screenSharingDetectionEnabled) ?? true
         screenSharingPostDeferral = try c.decodeIfPresent(PostDeferralBehavior.self, forKey: .screenSharingPostDeferral) ?? .triggerBreak
         idleDetectionEnabled = try c.decodeIfPresent(Bool.self, forKey: .idleDetectionEnabled) ?? true
@@ -106,4 +116,9 @@ public enum DetectionBehavior: String, Codable, Sendable, CaseIterable {
 public enum PostDeferralBehavior: String, Codable, Sendable {
     case triggerBreak
     case skipBreak
+}
+
+public enum CalendarSelectionMode: String, Codable, Sendable {
+    case all
+    case selected
 }
