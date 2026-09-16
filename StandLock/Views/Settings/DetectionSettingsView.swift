@@ -120,6 +120,16 @@ struct DetectionSettingsView: View {
         .onChange(of: coordinator.preferences) { _ in
             coordinator.savePreferences()
         }
+        .onChange(of: coordinator.preferences.calendarSelectionMode) { mode in
+            // Pre-check every calendar when the choice flips to a specific selection, so it
+            // starts as a no-op the user then narrows down. Leaving this in the list's task
+            // would re-tick everything each time the Settings tab is reopened.
+            guard mode == .selected,
+                  coordinator.preferences.selectedCalendarIdentifiers.isEmpty else { return }
+            coordinator.refreshAvailableCalendars()
+            coordinator.preferences.selectedCalendarIdentifiers =
+                coordinator.availableCalendars.map(\.id)
+        }
         .alert("Calendar Permission Required", isPresented: $showCalendarPermissionAlert) {
             Button("Open System Settings") {
                 permissionChecker.openSystemSettings(for: .calendar)
@@ -189,15 +199,7 @@ struct DetectionSettingsView: View {
             }
         }
         .padding(.leading, 24)
-        .task {
-            coordinator.refreshAvailableCalendars()
-            // Pre-check every calendar so switching to a specific selection changes nothing
-            // until something is unticked. An existing choice is left alone when reopened.
-            if coordinator.preferences.selectedCalendarIdentifiers.isEmpty {
-                coordinator.preferences.selectedCalendarIdentifiers =
-                    coordinator.availableCalendars.map(\.id)
-            }
-        }
+        .task { coordinator.refreshAvailableCalendars() }
     }
 
     private func calendarBinding(for calendar: CalendarInfo) -> Binding<Bool> {
