@@ -40,6 +40,12 @@
             "state" : "translated",
             "value" : "StandLock, Katı modda molalar sırasında klavye ve fare girdisini engellemek için erişilebilirliği kullanır."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "StandLock 使用辅助功能，在强制模式的休息期间屏蔽键盘和鼠标输入。"
+          }
         }
       }
     },
@@ -58,6 +64,12 @@
             "state" : "translated",
             "value" : "StandLock, toplantılarda molaları ertelemek için takviminizi okur."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "StandLock 读取你的日历，以便在会议期间推迟休息。"
+          }
         }
       }
     },
@@ -75,6 +87,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "StandLock, toplantılarda molaları ertelemek için takviminizi okur."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "StandLock 读取你的日历，以便在会议期间推迟休息。"
           }
         }
       }
