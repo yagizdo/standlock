@@ -63,4 +63,5 @@ progress.md
 .claude/reports
 .claude/rules
 .claude/commands
-docs/
+docs/*
+!docs/l10n/

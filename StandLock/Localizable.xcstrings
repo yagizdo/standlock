@@ -300,6 +300,12 @@
             "state" : "translated",
             "value" : "✕"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "✕"
+          }
         }
       }
     },
@@ -636,7 +642,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "你确定吗"
+            "value" : "你真的确定要跳过吗"
           }
         }
       }
@@ -732,6 +738,12 @@
             "state" : "translated",
             "value" : "Bir dahakine bol şans!"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下次好运！"
+          }
         }
       }
     },
@@ -744,6 +756,12 @@
             "state" : "translated",
             "value" : "Yeniden denemeniz cesurca"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "还敢再来一次，勇气可嘉"
+          }
         }
       }
     },
@@ -755,6 +773,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sıkıcı. Bir tane daha yazın."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无聊。换一句。"
           }
         }
       }
@@ -963,6 +987,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kısa bir ara. Büyük fark."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "停一下，差很多"
           }
         }
       }
@@ -1260,6 +1290,12 @@
             "state" : "translated",
             "value" : "Art arda atlama saptandı"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "检测到连续跳过"
+          }
         }
       }
     },
@@ -1335,6 +1371,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ctrl+Z duruşunuzu düzeltmez"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ctrl+Z 救不了你的坐姿"
           }
         }
       }
@@ -1592,6 +1634,12 @@
             "state" : "translated",
             "value" : "Ya hep ya hiç... yani hiç ya da hiç"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "要么翻倍要么归零……其实只有归零"
+          }
         }
       }
     },
@@ -1780,6 +1828,12 @@
             "state" : "translated",
             "value" : "Artık yazı tura bile iş görürdü"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "现在扔硬币都比你准"
+          }
         }
       }
     },
@@ -1791,6 +1845,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "İşlemciler bile soğuma molası ister"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CPU 都要散热"
           }
         }
       }
@@ -1851,6 +1911,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Egzersiz mi? Ben ekstra patates sandım"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你说运动我听成薯条"
           }
         }
       }
@@ -1934,6 +2000,12 @@
             "state" : "translated",
             "value" : "Şanslı hissediyor musunuz?"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "觉得自己手气好？"
+          }
         }
       }
     },
@@ -1946,6 +2018,12 @@
             "state" : "translated",
             "value" : "Düğme azaldı, hâlâ bulamadınız mı?"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "按钮变少了，还是找不到？"
+          }
         }
       }
     },
@@ -1957,6 +2035,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Atlamak için doğru düğmeyi bulun"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "找到正确的按钮才能跳过"
           }
         }
       }
@@ -1986,6 +2070,12 @@
             "state" : "translated",
             "value" : "Peki. Sadece şunu yazın:"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "行。那就打这句："
+          }
         }
       }
     },
@@ -1998,6 +2088,12 @@
             "state" : "translated",
             "value" : "Peki. Son çevirme."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "行。最后一次。"
+          }
         }
       }
     },
@@ -2009,6 +2105,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Peki. Sandığımdan da umutsuzsunuz. Atlamanız sizin olsun."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "行吧。你比我想的还没救。跳过拿去吧。"
           }
         }
       }
@@ -2039,6 +2141,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sıkı"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "严格"
           }
         }
       }
@@ -2084,6 +2192,12 @@
             "state" : "translated",
             "value" : "Tüm girişi engeller, acil çıkış tuş birleşimi vardır"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "完全屏蔽输入，仅紧急组合键可退出"
+          }
         }
       }
     },
@@ -2095,6 +2209,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tam ekran kaplama ve anında atlama düğmesi"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "全屏遮罩，带可立即点击的跳过按钮"
           }
         }
       }
@@ -2123,6 +2243,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Esnek"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "宽松"
           }
         }
       }
@@ -2168,6 +2294,12 @@
             "state" : "translated",
             "value" : "Gerçekten etkileyici"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "输成这样也不容易"
+          }
         }
       }
     },
@@ -2179,6 +2311,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Gerçekten etkileyici. Peki, git."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "是真有点厉害。行，去吧。"
           }
         }
       }
@@ -2208,6 +2346,12 @@
             "state" : "translated",
             "value" : "git commit -m \"çimene dokundum\""
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "git commit -m \"摸过草了\""
+          }
         }
       }
     },
@@ -2223,6 +2367,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Git biraz çimene dokun"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "去外面摸摸草"
           }
         }
       }
@@ -2286,6 +2436,12 @@
             "state" : "translated",
             "value" : "Kendinizi kapatıp açmayı denediniz mi?"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "试过把自己重启吗"
+          }
         }
       }
     },
@@ -2332,6 +2488,12 @@
             "state" : "translated",
             "value" : "Bunu zaten biliyordum. Sıradaki."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "这我早知道了。下一句。"
+          }
         }
       }
     },
@@ -2343,6 +2505,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kısa bir yürüyüş yerine erken sırt ağrısını seçiyorum"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我宁愿腰疼也不走路"
           }
         }
       }
@@ -2356,6 +2524,12 @@
             "state" : "translated",
             "value" : "Bu molayı atlamayı seçiyorum"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我选择跳过这次休息"
+          }
         }
       }
     },
@@ -2367,6 +2541,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Oturmayı rekabetçi bir spor sayıyorum"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "久坐是我的竞技项目"
           }
         }
       }
@@ -2380,6 +2560,12 @@
             "state" : "translated",
             "value" : "Zaten oturmayı tercih ederim"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "反正我更喜欢坐着"
+          }
         }
       }
     },
@@ -2391,6 +2577,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bacak gününü atladım, diğer günleri de"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我跳过练腿日和其他日"
           }
         }
       }
@@ -2420,6 +2612,12 @@
             "state" : "translated",
             "value" : "Sağlık önerilerini nazik tavsiyeler sayıyorum"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "养生建议我一律当参考"
+          }
         }
       }
     },
@@ -2432,6 +2630,12 @@
             "state" : "translated",
             "value" : "Bacaklarıma dekoratif mobilya gibi davranıyorum"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我把腿当装饰家具用"
+          }
         }
       }
     },
@@ -2443,6 +2647,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mola vermektense kendimi rezil etmeyi yeğlerim"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我宁愿丢脸也不休息"
           }
         }
       }
@@ -2472,6 +2682,12 @@
             "state" : "translated",
             "value" : "Ayağa kalkmaya alerjim var"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我对站起来严重过敏"
+          }
         }
       }
     },
@@ -2483,6 +2699,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bu fotoğraftayım ve hoşuma gitmiyor"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "图里有我，不开心"
           }
         }
       }
@@ -2496,6 +2718,12 @@
             "state" : "translated",
             "value" : "Lafım kalmadı. Atlama sizindir, tam bir efsanesiniz."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我骂不动了。跳过批准，你真是个人才。"
+          }
         }
       }
     },
@@ -2507,6 +2735,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Otuz saniye ayakta duramayacak kadar tembelim"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我懒得站起来三十秒"
           }
         }
       }
@@ -2570,6 +2804,12 @@
             "state" : "translated",
             "value" : "Etkileyici. Bir tane bile yok."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "厉害。一个都没中。"
+          }
         }
       }
     },
@@ -2598,6 +2838,12 @@
             "state" : "translated",
             "value" : "Benim omurgamda çalışıyor"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在我腰上是好的"
+          }
         }
       }
     },
@@ -2610,6 +2856,12 @@
             "state" : "translated",
             "value" : "Artık tam anlamıyla 50/50"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "现在真的是一半一半"
+          }
         }
       }
     },
@@ -2621,6 +2873,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Jackpot. Of."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中头奖了。啧。"
           }
         }
       }
@@ -2666,6 +2924,12 @@
             "state" : "translated",
             "value" : "Son şans. Baskı yok."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最后一次机会。别有压力。"
+          }
         }
       }
     },
@@ -2677,6 +2941,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sonuncu. İyi değerlendirin."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最后一句。好好写。"
           }
         }
       }
@@ -2737,6 +3007,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "LGTM. Şimdi ayağa kalkın."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "LGTM，站起来吧"
           }
         }
       }
@@ -2864,6 +3140,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Belki ayağa kalkmak bundan kolaydır"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "也许站起来比这个容易"
           }
         }
       }
@@ -3009,6 +3291,12 @@
             "state" : "translated",
             "value" : "Bunların çoğu kırmızı. Söylemiş olayım."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "这里面大多数是红的。随口一说。"
+          }
         }
       }
     },
@@ -3020,6 +3308,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sandalyemle ciddi bir ilişkimiz var"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我和椅子已经结婚了"
           }
         }
       }
@@ -3033,6 +3327,12 @@
             "state" : "translated",
             "value" : "Doktorum şu an çok hayal kırıklığına uğrardı"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我的医生现在会很失望"
+          }
         }
       }
     },
@@ -3044,6 +3344,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bacaklarım dekoratif"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我的腿只是装饰品"
           }
         }
       }
@@ -3057,6 +3363,12 @@
             "state" : "translated",
             "value" : "Bacaklarım ne işe yaradığını unuttu"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我的腿已经忘了怎么用"
+          }
         }
       }
     },
@@ -3069,6 +3381,12 @@
             "state" : "translated",
             "value" : "Duruşum bir yardım çığlığı"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我的坐姿是求救信号"
+          }
         }
       }
     },
@@ -3080,6 +3398,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Omurgam şikâyet etti ama ben kulak asmadım"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "腰椎投诉我已读不回"
           }
         }
       }
@@ -3126,6 +3450,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Never gonna give you up"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你已被瑞克摇"
           }
         }
       }
@@ -3251,6 +3581,12 @@
             "state" : "translated",
             "value" : "Daha bitmedi."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "还没完呢。"
+          }
         }
       }
     },
@@ -3262,6 +3598,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tamam tamam, kazandınız. Ya da kaybettiniz. Bakış açısına göre değişir."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "好好好，你赢了。或者输了。看你怎么算。"
           }
         }
       }
@@ -3275,6 +3617,12 @@
             "state" : "translated",
             "value" : "Molalar öylece atlanmaz"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "休息哪能说跳就跳"
+          }
         }
       }
     },
@@ -3287,6 +3635,12 @@
             "state" : "translated",
             "value" : "Bunlardan biri gerçekten çalışıyor..."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "其中有一个真的能用……"
+          }
         }
       }
     },
@@ -3298,6 +3652,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tek makara. Tek düğme. Bahane yok."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "一个轮盘。一个按钮。没借口。"
           }
         }
       }
@@ -3392,6 +3752,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Gecikmeli atlama ve çıkış için cümle yazma"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "遮罩延迟跳过，需输入句子才能退出"
           }
         }
       }
@@ -3723,6 +4089,12 @@
             "state" : "translated",
             "value" : "Makaralar biraz yavaşladı. Rica ederim."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "轮盘现在慢了一点。不用谢。"
+          }
         }
       }
     },
@@ -3849,6 +4221,12 @@
             "state" : "translated",
             "value" : "Bunu görmüştüm"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "早就猜到了"
+          }
         }
       }
     },
@@ -3910,6 +4288,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ekran süresi: saatler. Mola süresi: reddedildi."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "屏幕数小时，休息零次"
           }
         }
       }
@@ -4205,6 +4589,12 @@
             "state" : "translated",
             "value" : "Demek ayağa kalkmaktansa kumar oynamayı yeğliyorsunuz"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "所以你宁可赌一把也不站起来"
+          }
         }
       }
     },
@@ -4216,6 +4606,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Çoook yakındı. Evrenin acımasız bir mizah anlayışı var."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "就差一点点。宇宙的幽默感真狠。"
           }
         }
       }
@@ -4385,6 +4781,12 @@
             "state" : "translated",
             "value" : "En büyük korkum ayakta durmak"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "站着是我最大的恐惧"
+          }
         }
       }
     },
@@ -4414,6 +4816,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ayakta durmak: şaşırtıcı biçimde ölümcül değil"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "站着居然不致命"
           }
         }
       }
@@ -4523,6 +4931,12 @@
             "state" : "translated",
             "value" : "Hâlâ şanslı hissediyor musunuz?"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "还觉得自己有手气？"
+          }
         }
       }
     },
@@ -4534,6 +4948,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Hâlâ devam mı? Vay."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "还在打？可以啊。"
           }
         }
       }
@@ -4563,6 +4983,12 @@
             "state" : "translated",
             "value" : "Kazanmak için her makarayı Atla'da durdurun"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "每个轮盘都停在“跳过”上才算赢"
+          }
         }
       }
     },
@@ -4591,6 +5017,12 @@
             "state" : "translated",
             "value" : "Şimdi esneyin, sonra hata ayıklarsınız"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "先拉伸，再调试"
+          }
         }
       }
     },
@@ -4602,6 +5034,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Katı"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "强制"
           }
         }
       }
@@ -4700,6 +5138,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "sudo stand up"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "sudo 站起来"
           }
         }
       }
@@ -4815,6 +5259,12 @@
             "state" : "translated",
             "value" : "Bilmediğim bir şey söyleyin."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "说点我不知道的。"
+          }
         }
       }
     },
@@ -4826,6 +5276,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sandalye bir yere kaçmıyor"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "椅子又不会跑"
           }
         }
       }
@@ -4839,6 +5295,12 @@
             "state" : "translated",
             "value" : "Kasa hep kazanır"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "庄家永远赢"
+          }
         }
       }
     },
@@ -4851,6 +5313,12 @@
             "state" : "translated",
             "value" : "Her şey yolunda."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "一切正常"
+          }
         }
       }
     },
@@ -4862,6 +5330,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bu iş utanç verici olmaya başladı"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "这就有点尴尬了"
           }
         }
       }
@@ -4975,6 +5449,12 @@
             "state" : "translated",
             "value" : "İki denemenizi aldı ama tamam."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "花了两次，不过也行。"
+          }
         }
       }
     },
@@ -5007,6 +5487,12 @@
             "state" : "translated",
             "value" : "İki düğme. Bahane yok."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "两个按钮。没借口了。"
+          }
         }
       }
     },
@@ -5018,6 +5504,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "İki bitti, sıfır utanç. Bir tane daha."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "两句了，脸都不红。再来一句。"
           }
         }
       }
@@ -5031,6 +5523,12 @@
             "state" : "translated",
             "value" : "İki dakika. Hayatta kalırsınız."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "两分钟，死不了"
+          }
         }
       }
     },
@@ -5043,6 +5541,12 @@
             "state" : "translated",
             "value" : "Üçte iki fena değil... aslında burada fena."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "三中二不算差……好吧在这儿很差。"
+          }
         }
       }
     },
@@ -5054,6 +5558,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Of. Peki, git."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "啧。行，去吧。"
           }
         }
       }
@@ -5335,6 +5845,12 @@
             "state" : "translated",
             "value" : "Vay. Üçü de. Boşa gitti."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "哇。三次。全白费了。"
+          }
         }
       }
     },
@@ -5397,6 +5913,12 @@
             "state" : "translated",
             "value" : "Yine mi yanlış? Şaşırtıcı."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "又错了？真意外。"
+          }
         }
       }
     },
@@ -5427,6 +5949,12 @@
             "state" : "translated",
             "value" : "Bunu gerçekten yazdınız mı? Tembelliğe etkileyici bir bağlılık."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你还真打了？对懒这件事是真下功夫。"
+          }
         }
       }
     },
@@ -5438,6 +5966,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Atlamak mı istiyorsunuz? Hak edin."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "想跳过？先过这一关。"
           }
         }
       }
@@ -5451,6 +5985,12 @@
             "state" : "translated",
             "value" : "Başarısız olmaya gerçekten kararlısınız"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你对失败是真执着"
+          }
         }
       }
     },
@@ -5462,6 +6002,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Hâlâ burada mısınız?"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你还在这儿？"
           }
         }
       }
