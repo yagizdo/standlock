@@ -162,7 +162,7 @@ struct ManuscriptBreakView: View {
     @ViewBuilder
     private func vignetteOverlays(size: CGSize) -> some View {
         RadialGradient(
-            colors: [Color.black.opacity(0.05), Color.clear],
+            colors: [palette.wash.opacity(0.05), Color.clear],
             center: .topLeading,
             startRadius: 0,
             endRadius: size.width * 0.7
@@ -170,7 +170,7 @@ struct ManuscriptBreakView: View {
         .allowsHitTesting(false)
 
         RadialGradient(
-            colors: [Color.black.opacity(0.05), Color.clear],
+            colors: [palette.wash.opacity(0.05), Color.clear],
             center: .bottomTrailing,
             startRadius: 0,
             endRadius: size.width * 0.7

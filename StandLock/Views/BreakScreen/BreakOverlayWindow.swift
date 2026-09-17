@@ -12,8 +12,8 @@ final class BreakOverlayWindow: NSWindow {
         level = .screenSaver
         collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .stationary, .ignoresCycle]
         isOpaque = true
-        // The controller assigns exactly this immediately after construction. Leaving
-        // a white default here is what flashed a white frame before a dark overlay drew.
+        // Leaving a white default here is what flashed a white frame before a dark
+        // overlay drew.
         backgroundColor = NSColor(palette.paper)
         hasShadow = false
         isMovable = false

@@ -908,6 +908,8 @@
       }
     },
     "Dark" : {
+      "comment" : "AppTheme.nameKey",
+      "extractionState" : "manual",
       "localizations" : {
         "tr" : {
           "stringUnit" : {
@@ -1958,6 +1960,8 @@
       }
     },
     "Light" : {
+      "comment" : "AppTheme.nameKey",
+      "extractionState" : "manual",
       "localizations" : {
         "tr" : {
           "stringUnit" : {

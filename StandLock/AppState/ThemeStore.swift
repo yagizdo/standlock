@@ -54,14 +54,19 @@ final class ThemeStore: ObservableObject {
     /// live, which is why this store needs no notification observer: Settings, the
     /// menu bar panel and onboarding are drawn with system colours and follow along
     /// on their own.
+    ///
+    /// The test is whether the stored id resolves, not whether one is present, so an
+    /// id left behind by a build that shipped a theme this one does not goes back to
+    /// following the Mac rather than pinning whatever `current` fell back to.
     func applyAppearance() {
-        NSApp.appearance = selection == nil ? nil : NSAppearance(named: current.appearance)
+        let isExplicit = selection.map { id in available.contains { $0.id == id } } ?? false
+        NSApp.appearance = isExplicit ? NSAppearance(named: current.appearance) : nil
     }
 
-    /// Safe to read `effectiveAppearance` here because it is only consulted when
-    /// `selection` is `nil`, which is exactly when `applyAppearance` has left
-    /// `NSApp.appearance` unset and `effectiveAppearance` still reports the Mac's
-    /// own appearance rather than one we forced.
+    /// Read on every `current` read, since it is an eager argument to `resolveTheme`,
+    /// but only used when the selection does not resolve. That is exactly the case
+    /// where `applyAppearance` has left `NSApp.appearance` unset, so
+    /// `effectiveAppearance` reports the Mac's own appearance rather than one we forced.
     private static func systemPrefersDark() -> Bool {
         NSApp.effectiveAppearance.bestMatch(from: [.aqua, .darkAqua]) == .darkAqua
     }
