@@ -1,5 +1,16 @@
 # Changelog
 
+## StandLock v0.6.0
+
+**Features**
+- Calendar integration can now be narrowed to the calendars you choose. Settings › Detection gains an All calendars / Specific calendars switch; every calendar starts ticked, so nothing changes until you untick one (closes #48, a5bec45). Thanks @tim-hilde!
+- An Appearance setting in Settings › General: System, Light or Dark. System is the default and follows your Mac, and each discipline level gets its own dark break palette (closes #55, e77aee1).
+
+**Notes**
+- The break overlay used to render light whatever your Mac was set to. It now follows the Appearance setting, so a Mac in dark appearance gets dark break screens from this version on. Choose Light in Settings › General to keep the old look.
+
+**Full Changelog:** https://github.com/yagizdo/StandLock/compare/v0.5.0...v0.6.0
+
 ## StandLock v0.5.0
 
 **Features**

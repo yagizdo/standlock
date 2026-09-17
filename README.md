@@ -80,9 +80,9 @@ Enable progressive enforcement on any schedule and each consecutive skip makes t
 ### Context Awareness
 
 - Defers breaks during meetings (camera or microphone active), screen recordings and remote screen sharing sessions
-- Integrates with Calendar to skip during upcoming events
+- Integrates with Calendar to skip during upcoming events, either every calendar or only the ones you pick
 - Detects idle time: if you've already been away long enough, the break counts as completed
-- Camera and microphone detection can defer the break, reduce it to Gentle, or be ignored; calendar, screen sharing and idle detection are on or off
+- Camera and microphone detection can defer the break, reduce it to Gentle, or be ignored; screen sharing and idle detection are on or off, and calendar integration adds a choice of which calendars count
 
 ### Break Experience
 
@@ -111,6 +111,7 @@ A dedicated Statistics tab in Settings tracks break history over time.
 
 - **Launch at login** via macOS login items
 - **Auto-update** via Sparkle, with an update banner in the menu bar. Off by default: turn on Automatic Updates in Settings and StandLock checks every 4 hours, otherwise use Check for Updates
+- **Appearance**: System, Light or Dark in Settings › General. System is the default and follows your Mac, including the break overlay
 - **Language**: English and Turkish. Settings › General has a picker that switches the interface without a restart; System follows your Mac's language
 
 ## Install
