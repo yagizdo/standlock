@@ -498,7 +498,7 @@ private struct CrateOpeningDismissView: View {
                                 .overlay(
                                     Text(LocalizedStringKey(isGreen ? "Skip" : "\u{2715}"))
                                         .font(BreakTypography.label(size: isGreen ? 13 : 16, weight: .medium))
-                                        .foregroundStyle(.white)
+                                        .foregroundStyle(isGreen ? palette.onAccent : .white)
                                 )
                         }
                     }
@@ -907,7 +907,7 @@ private struct SlotMachineDismissView: View {
             .overlay(
                 Text(LocalizedStringKey(symbol.label))
                     .font(BreakTypography.label(size: symbol.isWin ? 13 : 18, weight: .medium))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(symbol.isWin ? palette.onAccent : .white)
             )
     }
 
@@ -1177,10 +1177,10 @@ private struct EmergencyEscapeView: View {
     private func keycap(_ glyph: String, active: Bool = false) -> some View {
         Text(glyph)
             .font(BreakTypography.keycap())
-            .foregroundStyle(active ? .white : palette.inkFaint.opacity(0.45))
+            .foregroundStyle(active ? palette.onAccent : palette.inkFaint.opacity(0.45))
             .frame(minWidth: 20, minHeight: 18)
             .padding(.horizontal, 5)
-            .background(RoundedRectangle(cornerRadius: 4).fill(active ? palette.accent : Color.black.opacity(0.04)))
+            .background(RoundedRectangle(cornerRadius: 4).fill(active ? palette.accent : palette.wash.opacity(0.04)))
             .overlay(RoundedRectangle(cornerRadius: 4).strokeBorder(active ? palette.accent.opacity(0.3) : palette.paperEdge.opacity(0.4), lineWidth: 1))
             .animation(.easeOut(duration: 0.15), value: active)
     }
@@ -1322,7 +1322,7 @@ private struct RoastChallengeDismissView: View {
                         .frame(width: 400, height: 38)
                         .background(
                             RoundedRectangle(cornerRadius: 6)
-                                .fill(Color.black.opacity(0.04))
+                                .fill(palette.wash.opacity(0.04))
                         )
                         .overlay(
                             RoundedRectangle(cornerRadius: 6)
@@ -1474,7 +1474,7 @@ private struct PhraseDismissView: View {
                 .frame(width: 400, height: 38)
                 .background(
                     RoundedRectangle(cornerRadius: 6)
-                        .fill(Color.black.opacity(0.04))
+                        .fill(palette.wash.opacity(0.04))
                 )
                 .overlay(
                     RoundedRectangle(cornerRadius: 6)
@@ -1629,12 +1629,12 @@ private struct KeyComboDismissView: View {
     private func keycap(_ glyph: String, active: Bool = false) -> some View {
         Text(glyph)
             .font(BreakTypography.keycap())
-            .foregroundStyle(active ? .white : palette.ink)
+            .foregroundStyle(active ? palette.onAccent : palette.ink)
             .frame(minWidth: 26, minHeight: 24)
             .padding(.horizontal, 8)
             .background(
                 RoundedRectangle(cornerRadius: 4)
-                    .fill(active ? palette.accent : Color.black.opacity(0.05))
+                    .fill(active ? palette.accent : palette.wash.opacity(0.05))
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 4)
