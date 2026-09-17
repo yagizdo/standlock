@@ -63,4 +63,7 @@ progress.md
 .claude/reports
 .claude/rules
 .claude/commands
+.claude/settings.local.json
+.claude/work
+.claude/worktrees
 docs/
