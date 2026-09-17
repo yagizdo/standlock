@@ -12,6 +12,7 @@
 		09F7858EAC29160F684A60DD /* GeneralSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05EBBE0E51300DF74842F753 /* GeneralSettingsView.swift */; };
 		10EB4FC225CCCB669122BFED /* MediaController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5586791BF5D81FC7CE5AE185 /* MediaController.swift */; };
 		18504F805D34BF50C5E6729A /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 109FDEA57D0C0F3D6F9C1809 /* Sparkle */; };
+		1895F27AD369A832CA280556 /* AppTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37C6854B70D7BA6C7DDE4D09 /* AppTheme.swift */; };
 		1CCAA6FDBBB854DCBC1968EA /* MenuBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A2D12AD9D89928096A633C /* MenuBarView.swift */; };
 		1D8C2A5E77A5D5D5F9C7EFDC /* StatisticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EABC17E13A353DC207277A7 /* StatisticsView.swift */; };
 		2030E658A07F36AC7B1141D5 /* MenuBarIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2FA6CDE8744BCE072FEDAF9 /* MenuBarIcon.swift */; };
@@ -65,6 +66,7 @@
 		303422D10B9C319038D63E32 /* SoftwareUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoftwareUpdate.swift; sourceTree = "<group>"; };
 		33012BFC809E077C2D638165 /* NextIntervalLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NextIntervalLabel.swift; sourceTree = "<group>"; };
 		35EA7054F16243AE0575478E /* LanguageStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageStore.swift; sourceTree = "<group>"; };
+		37C6854B70D7BA6C7DDE4D09 /* AppTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTheme.swift; sourceTree = "<group>"; };
 		42215A75B39382916D51D614 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		434445F0717D4FC94E284CB8 /* ExerciseBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseBlock.swift; sourceTree = "<group>"; };
 		43B1BE95A60D5294C770AEDE /* StatsFooter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsFooter.swift; sourceTree = "<group>"; };
@@ -169,6 +171,7 @@
 			isa = PBXGroup;
 			children = (
 				A81F2ED91290AD26CB5B672E /* AppCoordinator.swift */,
+				37C6854B70D7BA6C7DDE4D09 /* AppTheme.swift */,
 				35EA7054F16243AE0575478E /* LanguageStore.swift */,
 				5586791BF5D81FC7CE5AE185 /* MediaController.swift */,
 				4462E8D161113596647BD19E /* OverlayWindowController.swift */,
@@ -341,6 +344,7 @@
 				E390B98931E7EE42E14FF2BD /* ActionArea.swift in Sources */,
 				4FCB9EE133A8300CC965E687 /* AppCoordinator.swift in Sources */,
 				9D77F7B7F12048E4399B8B25 /* AppDelegate.swift in Sources */,
+				1895F27AD369A832CA280556 /* AppTheme.swift in Sources */,
 				44D9EB3E27CF114DDF7E3735 /* BreakOverlayWindow.swift in Sources */,
 				FF4C7AAB3CFF56C574A3EAA2 /* BreakPalette.swift in Sources */,
 				AB84ADC15C8263AFD995E8B5 /* BreakTypography.swift in Sources */,
