@@ -20,6 +20,7 @@
 		2200215D71D0CABD7DD45E92 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 94B7BAAC1837524EF3DD6B90 /* Assets.xcassets */; };
 		2CD0D3C3CF795626E50A5EAA /* StandLockApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1524D749BB78A875E5FD51F /* StandLockApp.swift */; };
 		44D9EB3E27CF114DDF7E3735 /* BreakOverlayWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5BBDBF97CFAA5FF490CBD00 /* BreakOverlayWindow.swift */; };
+		45EEC3830A30A1175EBD1FCE /* ThemeStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8180C020203FB970C798C84E /* ThemeStore.swift */; };
 		4A537C55B992DF62814F9857 /* QuickActionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2436E0F3F20FE12F920ADE7 /* QuickActionsView.swift */; };
 		4F9FCDEAA10641DE215D0663 /* StandLockCore in Frameworks */ = {isa = PBXBuildFile; productRef = 72A6FAE1CB69E8D0DE33B641 /* StandLockCore */; };
 		4FCB9EE133A8300CC965E687 /* AppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A81F2ED91290AD26CB5B672E /* AppCoordinator.swift */; };
@@ -80,6 +81,7 @@
 		6AF14D6C0FE257CA354FAE8B /* WeekdaySymbols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekdaySymbols.swift; sourceTree = "<group>"; };
 		7259326030030D8F49258219 /* QuickSetupStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickSetupStepView.swift; sourceTree = "<group>"; };
 		7A85E4C082C8E3C5083ABAEB /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		8180C020203FB970C798C84E /* ThemeStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeStore.swift; sourceTree = "<group>"; };
 		85C5398AE9D97E6B58618468 /* WordmarkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordmarkView.swift; sourceTree = "<group>"; };
 		94B7BAAC1837524EF3DD6B90 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		94F9B9151DFEA710D1211B70 /* ScheduleEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleEditorView.swift; sourceTree = "<group>"; };
@@ -176,6 +178,7 @@
 				5586791BF5D81FC7CE5AE185 /* MediaController.swift */,
 				4462E8D161113596647BD19E /* OverlayWindowController.swift */,
 				FE0E2C708B760F809144B756 /* PermissionChecker.swift */,
+				8180C020203FB970C798C84E /* ThemeStore.swift */,
 			);
 			path = AppState;
 			sourceTree = "<group>";
@@ -374,6 +377,7 @@
 				2CD0D3C3CF795626E50A5EAA /* StandLockApp.swift in Sources */,
 				1D8C2A5E77A5D5D5F9C7EFDC /* StatisticsView.swift in Sources */,
 				D588F2EB46E9B8124422C5EE /* StatsFooter.swift in Sources */,
+				45EEC3830A30A1175EBD1FCE /* ThemeStore.swift in Sources */,
 				51FC83BD2349C694BF8C11DD /* TimerNumerals.swift in Sources */,
 				D6924A301B93814466C9327F /* WeekdaySymbols.swift in Sources */,
 				742A80C38BAB206209CC4213 /* WelcomeStepView.swift in Sources */,

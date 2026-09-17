@@ -45,6 +45,7 @@ final class AppCoordinator: ObservableObject {
     @Published var breakHistory: BreakHistory = BreakHistory()
 
     let languageStore = LanguageStore()
+    let themeStore = ThemeStore()
     let permissionChecker: PermissionChecker
 
     private var coordinator: BreakCoordinator?
@@ -75,6 +76,9 @@ final class AppCoordinator: ObservableObject {
     init() {
         permissionChecker = PermissionChecker(languageStore: languageStore)
         overlayController = OverlayWindowController(languageStore: languageStore)
+        // Before the first window appears, so a stored Light or Dark choice is already
+        // in force rather than repainting a frame after launch.
+        themeStore.applyAppearance()
         loadExercises()
         loadData()
         applyCalendarPreferences()
