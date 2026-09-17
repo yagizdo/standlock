@@ -28,6 +28,7 @@ struct StandLockApp: App {
                 SettingsView(selectedTab: $appCoordinator.selectedSettingsTab, updater: appDelegate.updaterController.updater)
                     .environmentObject(appCoordinator)
                     .environmentObject(appCoordinator.permissionChecker)
+                    .environmentObject(appCoordinator.themeStore)
             }
         }
         .commands {

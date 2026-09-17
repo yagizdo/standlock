@@ -397,6 +397,16 @@
         }
       }
     },
+    "Appearance" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Görünüm"
+          }
+        }
+      }
+    },
     "Are you sure about that?" : {
       "localizations" : {
         "tr" : {
@@ -893,6 +903,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Günlük atlama sınırına ulaşıldı"
+          }
+        }
+      }
+    },
+    "Dark" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Koyu"
           }
         }
       }
@@ -1933,6 +1953,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "LGTM. Şimdi ayağa kalkın."
+          }
+        }
+      }
+    },
+    "Light" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Açık"
           }
         }
       }
@@ -3318,6 +3348,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sistem"
+          }
+        }
+      }
+    },
+    "System follows your Mac's appearance" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sistem, Mac'inizin görünümünü izler"
           }
         }
       }
