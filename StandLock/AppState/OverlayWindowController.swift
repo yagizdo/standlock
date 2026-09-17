@@ -11,6 +11,7 @@ final class OverlayWindowController: LockPresenting {
     private var focusTimer: Timer?
     private let mediaController = MediaController()
     private let languageStore: LanguageStore
+    private let themeStore: ThemeStore
     private(set) var isShowing: Bool = false
 
     private var currentLevel: DisciplineLevel?
@@ -27,8 +28,9 @@ final class OverlayWindowController: LockPresenting {
     var onComplete: (() -> Void)?
     var onEscape: (() -> Void)?
 
-    nonisolated init(languageStore: LanguageStore) {
+    nonisolated init(languageStore: LanguageStore, themeStore: ThemeStore) {
         self.languageStore = languageStore
+        self.themeStore = themeStore
     }
 
     func showOverlay(
@@ -51,12 +53,14 @@ final class OverlayWindowController: LockPresenting {
         currentEscalationTier = escalationTier
         currentNextIntervalLabel = nextIntervalLabel
 
-        let palette = BreakPalette.for(level)
+        // Read once per overlay. That is what makes each break pick up the current
+        // appearance without this controller subscribing to the store.
+        let theme = themeStore.current
+        let palette = theme.palette(for: level)
         for screen in NSScreen.screens {
-            let window = BreakOverlayWindow(screen: screen)
-            window.backgroundColor = NSColor(palette.paper)
+            let window = BreakOverlayWindow(screen: screen, palette: palette, theme: theme)
             let contentView = ManuscriptBreakView(
-                level: level, totalDuration: duration,
+                level: level, theme: theme, totalDuration: duration,
                 exercise: exercise, preferences: preferences,
                 statistics: statistics, escalationTier: escalationTier,
                 nextIntervalLabel: nextIntervalLabel,

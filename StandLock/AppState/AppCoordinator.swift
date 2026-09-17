@@ -75,7 +75,7 @@ final class AppCoordinator: ObservableObject {
 
     init() {
         permissionChecker = PermissionChecker(languageStore: languageStore)
-        overlayController = OverlayWindowController(languageStore: languageStore)
+        overlayController = OverlayWindowController(languageStore: languageStore, themeStore: themeStore)
         // Before the first window appears, so a stored Light or Dark choice is already
         // in force rather than repainting a frame after launch.
         themeStore.applyAppearance()

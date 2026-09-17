@@ -16,14 +16,6 @@ struct BreakPalette {
     /// white there; dark themes need dark ink, because their accents are light.
     let onAccent: Color
 
-    static func `for`(_ level: DisciplineLevel) -> BreakPalette {
-        switch level {
-        case .gentle: .gentle
-        case .firm: .firm
-        case .strict: .strict
-        }
-    }
-
     static let gentle = BreakPalette(
         paper: Color(hex: 0xE7ECF1),
         paperEdge: Color(hex: 0xD0D9E2),
