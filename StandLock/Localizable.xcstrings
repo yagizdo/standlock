@@ -2806,22 +2806,22 @@
         }
       }
     },
+    "Short break" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kısa mola"
+          }
+        }
+      }
+    },
     "Short breaks: %lld" : {
       "localizations" : {
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kısa mola sayısı: %lld"
-          }
-        }
-      }
-    },
-    "Short: %lldm" : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kısa: %lld dk"
           }
         }
       }

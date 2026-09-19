@@ -339,6 +339,64 @@ struct BreakCoordinatorTests {
     }
 
     @Test @MainActor
+    func shortBreakIsNotSwallowedByShortIdle() async {
+        let scheduler = MockScheduler()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        let detector = MockDetector()
+        detector.contextToReturn = DetectionContext(idleDuration: 45)
+        let locker = MockLocker()
+
+        let coordinator = BreakCoordinator(scheduler: scheduler, detector: detector, locker: locker)
+        let schedule = makeSchedule(breakDuration: 30)
+        let prefs = AppPreferences(idleDetectionEnabled: true)
+
+        var completedEvents: [CoordinatorEvent] = []
+        let listener = Task {
+            for await event in coordinator.events {
+                if case .breakCompleted = event { completedEvents.append(event) }
+            }
+        }
+
+        coordinator.start(with: [schedule], preferences: prefs)
+        try? await Task.sleep(for: .milliseconds(300))
+
+        #expect(locker.showOverlayCalled)
+        #expect(completedEvents.isEmpty)
+
+        coordinator.stop()
+        listener.cancel()
+    }
+
+    @Test @MainActor
+    func shortBreakStillCountsAfterMinuteIdle() async {
+        let scheduler = MockScheduler()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        let detector = MockDetector()
+        detector.contextToReturn = DetectionContext(idleDuration: 90)
+        let locker = MockLocker()
+
+        let coordinator = BreakCoordinator(scheduler: scheduler, detector: detector, locker: locker)
+        let schedule = makeSchedule(breakDuration: 30)
+        let prefs = AppPreferences(idleDetectionEnabled: true)
+
+        var completedEvents: [CoordinatorEvent] = []
+        let listener = Task {
+            for await event in coordinator.events {
+                if case .breakCompleted = event { completedEvents.append(event) }
+            }
+        }
+
+        coordinator.start(with: [schedule], preferences: prefs)
+        try? await Task.sleep(for: .milliseconds(300))
+
+        #expect(!locker.showOverlayCalled)
+        #expect(!completedEvents.isEmpty)
+
+        coordinator.stop()
+        listener.cancel()
+    }
+
+    @Test @MainActor
     func skipActiveBreakDismissesAndResetsStreak() async {
         let scheduler = MockScheduler()
         scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
