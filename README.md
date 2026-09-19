@@ -81,7 +81,7 @@ Enable progressive enforcement on any schedule and each consecutive skip makes t
 
 - Defers breaks during meetings (camera or microphone active), screen recordings and remote screen sharing sessions
 - Integrates with Calendar to skip during upcoming events, either every calendar or only the ones you pick
-- Detects idle time: if you've already been away long enough, the break counts as completed
+- Detects idle time: if you've already been away for at least a minute (or the full break length, if longer), the break counts as completed
 - Camera and microphone detection can defer the break, reduce it to Gentle, or be ignored; screen sharing and idle detection are on or off, and calendar integration adds a choice of which calendars count
 
 ### Break Experience
