@@ -396,7 +396,8 @@ public final class BreakCoordinator {
         rolloverIfNeeded()
         if preferences.idleDetectionEnabled {
             let breakDuration = currentBreakDuration(for: schedule)
-            // A break under a minute must not be swallowed by a glance away from the keyboard: idle counts as a break only once it reaches a minute, or the full break when that is longer.
+            // A break under a minute must not be swallowed by a glance away from the keyboard:
+            // idle counts as a break only once it reaches a minute, or the full break when longer.
             if context.idleDuration >= max(breakDuration, 60) {
                 let idleEvent = BreakEvent(
                     scheduledAt: Date(), duration: breakDuration,
