@@ -83,10 +83,16 @@ final class LanguageStore: ObservableObject {
     }
 
     /// The language's own name for itself, e.g. `"tr"` -> "Türkçe".
+    ///
+    /// Resolved from the whole identifier rather than its language code, so a script
+    /// tag survives: `zh-Hans` reads 简体中文, where `localizedString(forLanguageCode:)`
+    /// answers a bare 中文 for every Chinese variant alike. Latin-script languages
+    /// are unaffected -- both calls return "Türkçe" and "English".
     func displayName(for code: String) -> String {
         let locale = Locale(identifier: code)
-        guard let name = locale.localizedString(forLanguageCode: code) else { return code }
-        guard let first = name.first else { return code }
+        let name = locale.localizedString(forIdentifier: code)
+            ?? locale.localizedString(forLanguageCode: code)
+        guard let name, let first = name.first else { return code }
         return String(first).uppercased(with: locale) + name.dropFirst()
     }
 }

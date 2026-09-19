@@ -11,12 +11,24 @@
             "state" : "translated",
             "value" : "   ·   "
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "   ·   "
+          }
         }
       }
     },
     " · " : {
       "localizations" : {
         "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " · "
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : " · "
@@ -31,12 +43,24 @@
             "state" : "translated",
             "value" : ":"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : ":"
+          }
         }
       }
     },
     "·" : {
       "localizations" : {
         "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "·"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "·"
@@ -51,6 +75,12 @@
             "state" : "translated",
             "value" : "%@ ve gerçekten ciddiyim"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@我是认真的"
+          }
         }
       }
     },
@@ -61,12 +91,24 @@
             "state" : "translated",
             "value" : "%@ İzni Verildi"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@权限已授予"
+          }
         }
       }
     },
     "%lld" : {
       "localizations" : {
         "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "%lld"
@@ -81,6 +123,12 @@
             "state" : "translated",
             "value" : "%lld tamamlandı"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已完成 %lld 次"
+          }
         }
       }
     },
@@ -90,6 +138,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%lld günde mola verildi"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 天有休息"
           }
         }
       }
@@ -101,6 +155,12 @@
             "state" : "translated",
             "value" : "üst üste %lld"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "连续 %lld 次"
+          }
         }
       }
     },
@@ -110,6 +170,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "bugün %lld atlandı"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "今天跳过 %lld 次"
           }
         }
       }
@@ -121,6 +187,12 @@
             "state" : "translated",
             "value" : "Günde %lld atlamadan sonra molalar kapatılamaz olur"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "每天跳过 %lld 次后，休息将无法关闭"
+          }
         }
       }
     },
@@ -131,12 +203,24 @@
             "state" : "translated",
             "value" : "%lld sn"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 秒"
+          }
         }
       }
     },
     "•" : {
       "localizations" : {
         "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "•"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "•"
@@ -151,6 +235,12 @@
             "state" : "translated",
             "value" : "© 2026 Yılmaz Yağız Dokumacı. MIT Lisansı."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "© 2026 Yılmaz Yağız Dokumacı. MIT 许可证。"
+          }
         }
       }
     },
@@ -160,6 +250,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "× %lld sn"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "× %lld 秒"
           }
         }
       }
@@ -171,12 +267,24 @@
             "state" : "translated",
             "value" : "⌘,"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⌘,"
+          }
         }
       }
     },
     "⌘Q" : {
       "localizations" : {
         "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⌘Q"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "⌘Q"
@@ -192,6 +300,12 @@
             "state" : "translated",
             "value" : "✕"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "✕"
+          }
         }
       }
     },
@@ -201,6 +315,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "1 saat"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 小时"
           }
         }
       }
@@ -212,6 +332,12 @@
             "state" : "translated",
             "value" : "1 dk"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 分钟"
+          }
         }
       }
     },
@@ -221,6 +347,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "2 saat"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2 小时"
           }
         }
       }
@@ -232,6 +364,12 @@
             "state" : "translated",
             "value" : "2 dk"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2 分钟"
+          }
         }
       }
     },
@@ -241,6 +379,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "3 dk"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3 分钟"
           }
         }
       }
@@ -252,6 +396,12 @@
             "state" : "translated",
             "value" : "5 dk"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "5 分钟"
+          }
         }
       }
     },
@@ -262,12 +412,24 @@
             "state" : "translated",
             "value" : "5 dakikalık molalar"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "5 分钟休息"
+          }
         }
       }
     },
     "09:00 – 17:00" : {
       "localizations" : {
         "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "09:00 – 17:00"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "09:00 – 17:00"
@@ -284,6 +446,12 @@
             "state" : "translated",
             "value" : "20-20-20 Kuralı"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "20-20-20 法则"
+          }
         }
       }
     },
@@ -293,6 +461,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "30 dakika"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "30 分钟"
           }
         }
       }
@@ -304,6 +478,12 @@
             "state" : "translated",
             "value" : "Hakkında"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "关于"
+          }
         }
       }
     },
@@ -313,6 +493,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "StandLock Hakkında"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "关于 StandLock"
           }
         }
       }
@@ -324,6 +510,12 @@
             "state" : "translated",
             "value" : "Erişilebilirlik"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "辅助功能"
+          }
         }
       }
     },
@@ -333,6 +525,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Etkin Günler"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "生效日"
           }
         }
       }
@@ -344,6 +542,12 @@
             "state" : "translated",
             "value" : "Mola vermeye başlamak için bir program ekleyin."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "添加一个日程即可开始休息。"
+          }
         }
       }
     },
@@ -353,6 +557,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Program Ekle"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "添加日程"
           }
         }
       }
@@ -364,6 +574,12 @@
             "state" : "translated",
             "value" : "Paylaşım bittikten sonra"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "共享结束后"
+          }
         }
       }
     },
@@ -373,6 +589,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tüm takvimler"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "所有日历"
           }
         }
       }
@@ -384,6 +606,12 @@
             "state" : "translated",
             "value" : "Tüm gün"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "全天"
+          }
         }
       }
     },
@@ -393,6 +621,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kalan süreyi simgenin yanında hep göster"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "始终在图标旁显示剩余时间"
           }
         }
       }
@@ -414,6 +648,12 @@
             "state" : "translated",
             "value" : "Bundan emin misiniz?"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你真的确定要跳过吗"
+          }
         }
       }
     },
@@ -423,6 +663,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "\"%@\" silinsin mi?"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "确定要删除“%@”吗？"
           }
         }
       }
@@ -436,6 +682,12 @@
             "state" : "translated",
             "value" : "Kol Çevirme"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "手臂绕环"
+          }
         }
       }
     },
@@ -445,6 +697,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Otomatik Güncellemeler"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自动更新"
           }
         }
       }
@@ -456,6 +714,12 @@
             "state" : "translated",
             "value" : "Davranış"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "行为"
+          }
         }
       }
     },
@@ -465,6 +729,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "En İyi Seri"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最长连续天数"
           }
         }
       }
@@ -478,6 +748,12 @@
             "state" : "translated",
             "value" : "Bir dahakine bol şans!"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下次好运！"
+          }
         }
       }
     },
@@ -489,6 +765,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Yeniden denemeniz cesurca"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "还敢再来一次，勇气可嘉"
           }
         }
       }
@@ -502,6 +784,12 @@
             "state" : "translated",
             "value" : "Sıkıcı. Bir tane daha yazın."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无聊。换一句。"
+          }
         }
       }
     },
@@ -514,6 +802,12 @@
             "state" : "translated",
             "value" : "Kare Nefes"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "箱式呼吸"
+          }
         }
       }
     },
@@ -523,6 +817,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mola Etkinliği"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "休息活动"
           }
         }
       }
@@ -534,6 +834,12 @@
             "state" : "translated",
             "value" : "Mola süresi"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "休息时长"
+          }
         }
       }
     },
@@ -543,6 +849,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mola sıklığı"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "休息间隔"
           }
         }
       }
@@ -554,6 +866,12 @@
             "state" : "translated",
             "value" : "45 dakikada bir mola"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "每 45 分钟休息一次"
+          }
         }
       }
     },
@@ -563,6 +881,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mola sürüyor"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "休息进行中"
           }
         }
       }
@@ -574,6 +898,12 @@
             "state" : "translated",
             "value" : "Mola İstatistikleri"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "休息统计"
+          }
         }
       }
     },
@@ -583,6 +913,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mola Süresi"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "休息总时长"
           }
         }
       }
@@ -594,6 +930,12 @@
             "state" : "translated",
             "value" : "Mola bekliyor"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "休息等待中"
+          }
         }
       }
     },
@@ -604,6 +946,12 @@
             "state" : "translated",
             "value" : "Molalar"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "休息"
+          }
         }
       }
     },
@@ -613,6 +961,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Molalar bu aralıkları sırayla döner."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "休息会按顺序循环这些间隔。"
           }
         }
       }
@@ -626,6 +980,12 @@
             "state" : "translated",
             "value" : "4 saniye nefes alın, 4 saniye tutun, 4 saniye verin, 4 saniye bekleyin. 3 kez tekrarlayın."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "吸气 4 秒，屏息 4 秒，呼气 4 秒，屏息 4 秒。重复 3 次。"
+          }
         }
       }
     },
@@ -638,6 +998,12 @@
             "state" : "translated",
             "value" : "Kısa bir ara. Büyük fark."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "停一下，差很多"
+          }
         }
       }
     },
@@ -648,6 +1014,12 @@
             "state" : "translated",
             "value" : "Takvim"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "日历"
+          }
         }
       }
     },
@@ -657,6 +1029,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Takvim Erişimi"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "日历访问权限"
           }
         }
       }
@@ -670,6 +1048,12 @@
             "state" : "translated",
             "value" : "Takvim etkinliği sürüyor"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "日历事件进行中"
+          }
         }
       }
     },
@@ -679,6 +1063,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Takvim Entegrasyonu"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "日历集成"
           }
         }
       }
@@ -690,6 +1080,12 @@
             "state" : "translated",
             "value" : "Takvim Entegrasyonu takvim erişimi gerektirir. Bu özelliği açmak için Sistem Ayarları'ndan izin verin."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "日历集成需要日历访问权限。请在“系统设置”中授予，以启用此功能。"
+          }
         }
       }
     },
@@ -700,6 +1096,12 @@
             "state" : "translated",
             "value" : "Takvim İzni Gerekli"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "需要日历权限"
+          }
         }
       }
     },
@@ -709,6 +1111,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Takvimler"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "日历"
           }
         }
       }
@@ -722,6 +1130,12 @@
             "state" : "translated",
             "value" : "Parmak Ucu Yükselme"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "提踵"
+          }
         }
       }
     },
@@ -731,6 +1145,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kamera Algılama"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "摄像头检测"
           }
         }
       }
@@ -744,6 +1164,12 @@
             "state" : "translated",
             "value" : "Kamera kullanımda"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "摄像头使用中"
+          }
         }
       }
     },
@@ -754,6 +1180,12 @@
             "state" : "translated",
             "value" : "Vazgeç"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取消"
+          }
         }
       }
     },
@@ -763,6 +1195,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Güncellemeleri Denetle…"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "检查更新…"
           }
         }
       }
@@ -776,6 +1214,12 @@
             "state" : "translated",
             "value" : "Göğüs Açma"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "扩胸"
+          }
         }
       }
     },
@@ -787,6 +1231,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ellerinizi arkanızda kenetleyin, kollarınızı düzleştirin ve göğsünüzü açarak hafifçe kaldırın."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "双手在背后交扣，伸直手臂，一边打开胸部一边轻轻抬起手臂。"
           }
         }
       }
@@ -800,6 +1250,12 @@
             "state" : "translated",
             "value" : "Gözlerinizi hafifçe kapatıp gevşeyin. Göz kaslarınız 20 saniye tamamen dinlensin."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "轻轻闭上眼睛放松。让眼部肌肉完全休息 20 秒。"
+          }
         }
       }
     },
@@ -810,6 +1266,12 @@
             "state" : "translated",
             "value" : "Tamamlanan"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已完成"
+          }
         }
       }
     },
@@ -819,6 +1281,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tamamlanma"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "完成率"
           }
         }
       }
@@ -832,6 +1300,12 @@
             "state" : "translated",
             "value" : "Art arda atlama saptandı"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "检测到连续跳过"
+          }
         }
       }
     },
@@ -841,6 +1315,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Devam"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "继续"
           }
         }
       }
@@ -852,6 +1332,12 @@
             "state" : "translated",
             "value" : "StandLock yeniden başlatılamadı. Lütfen uygulamayı elle yeniden açın."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法重新启动 StandLock。请手动重新打开应用。"
+          }
         }
       }
     },
@@ -862,6 +1348,12 @@
             "state" : "translated",
             "value" : "Hareketsizliği alınmış mola say"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "将无操作计为已完成的休息"
+          }
         }
       }
     },
@@ -871,6 +1363,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Geri Sayım Başlangıcı"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "倒计时开始"
           }
         }
       }
@@ -884,6 +1382,12 @@
             "state" : "translated",
             "value" : "Ctrl+Z duruşunuzu düzeltmez"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ctrl+Z 救不了你的坐姿"
+          }
         }
       }
     },
@@ -894,6 +1398,12 @@
             "state" : "translated",
             "value" : "Özel"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自定义"
+          }
         }
       }
     },
@@ -903,6 +1413,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Günlük atlama sınırına ulaşıldı"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已达到每日跳过上限"
           }
         }
       }
@@ -928,6 +1444,12 @@
             "state" : "translated",
             "value" : "Derin Nefes"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "深呼吸"
+          }
         }
       }
     },
@@ -937,6 +1459,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Molayı ertele"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "推迟休息"
           }
         }
       }
@@ -948,6 +1476,12 @@
             "state" : "translated",
             "value" : "Takvim etkinliklerinde molaları ertele"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在日历事件期间推迟休息"
+          }
         }
       }
     },
@@ -957,6 +1491,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Takvim etkinliklerinde molaları erteler."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在日历事件期间推迟休息。"
           }
         }
       }
@@ -968,6 +1508,12 @@
             "state" : "translated",
             "value" : "Ekran paylaşımı veya kaydı sırasında molaları ertele"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在屏幕共享或录制期间推迟休息"
+          }
         }
       }
     },
@@ -977,6 +1523,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kamera etkinken molaları ertele (görüntülü görüşmeler)"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "摄像头使用中时推迟休息（视频通话）"
           }
         }
       }
@@ -988,6 +1540,12 @@
             "state" : "translated",
             "value" : "Mikrofon etkinken molaları ertele (sesli görüşmeler)"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "麦克风使用中时推迟休息（语音通话）"
+          }
         }
       }
     },
@@ -997,6 +1555,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sil"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "删除"
           }
         }
       }
@@ -1008,6 +1572,12 @@
             "state" : "translated",
             "value" : "Programı Sil"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "删除日程"
+          }
         }
       }
     },
@@ -1017,6 +1587,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Algılama"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "检测"
           }
         }
       }
@@ -1028,6 +1604,12 @@
             "state" : "translated",
             "value" : "Disiplin"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "约束"
+          }
         }
       }
     },
@@ -1037,6 +1619,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Disiplin Seviyesi"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "约束级别"
           }
         }
       }
@@ -1050,6 +1638,12 @@
             "state" : "translated",
             "value" : "10 yavaş vücut ağırlığı squat yapın. Sırtınızı düz, dizlerinizi parmak uçlarınızın gerisinde tutun."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "做 10 次缓慢的徒手深蹲。保持背部挺直，膝盖不要超过脚尖。"
+          }
         }
       }
     },
@@ -1062,6 +1656,12 @@
             "state" : "translated",
             "value" : "Ya hep ya hiç... yani hiç ya da hiç"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "要么翻倍要么归零……其实只有归零"
+          }
         }
       }
     },
@@ -1071,6 +1671,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "örn. 3 kısa mola, sonra 1 uzun mola"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "例如：3 次短休息，然后 1 次长休息"
           }
         }
       }
@@ -1082,6 +1688,12 @@
             "state" : "translated",
             "value" : "örn. Çalışma Saatleri"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "例如：工作时间"
+          }
         }
       }
     },
@@ -1091,6 +1703,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Her izin bir özelliği açar. Şimdi ya da sonra Ayarlar'dan izin verebilirsiniz."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "每项权限都会解锁一项功能。你可以现在授予，也可以稍后在“设置”中授予。"
           }
         }
       }
@@ -1102,6 +1720,12 @@
             "state" : "translated",
             "value" : "Düzenle"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "编辑"
+          }
         }
       }
     },
@@ -1111,6 +1735,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Programı Düzenle"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "编辑日程"
           }
         }
       }
@@ -1122,6 +1752,12 @@
             "state" : "translated",
             "value" : "Acil Durum"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "紧急"
+          }
         }
       }
     },
@@ -1131,6 +1767,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bu haftaki acil çıkışlar"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "本周紧急退出次数"
           }
         }
       }
@@ -1142,6 +1784,12 @@
             "state" : "translated",
             "value" : "Katı modun molalarda girdiyi tümüyle engellemesini sağlar."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "让强制模式在休息期间完全屏蔽输入。"
+          }
         }
       }
     },
@@ -1151,6 +1799,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Katı modun klavye ve fare girdisini tümüyle engellemesini sağlar."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "让强制模式完全屏蔽键盘和鼠标输入。"
           }
         }
       }
@@ -1162,6 +1816,12 @@
             "state" : "translated",
             "value" : "Katı molayı bitiren çıkış tuş birleşimini etkinleştirir."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "启用结束强制休息的退出组合键。"
+          }
         }
       }
     },
@@ -1171,6 +1831,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bitiş"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "结束"
           }
         }
       }
@@ -1184,6 +1850,12 @@
             "state" : "translated",
             "value" : "Artık yazı tura bile iş görürdü"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "现在扔硬币都比你准"
+          }
         }
       }
     },
@@ -1196,6 +1868,12 @@
             "state" : "translated",
             "value" : "İşlemciler bile soğuma molası ister"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CPU 都要散热"
+          }
         }
       }
     },
@@ -1205,6 +1883,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "her %@dk"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "每 %@ 分钟"
           }
         }
       }
@@ -1216,6 +1900,12 @@
             "state" : "translated",
             "value" : "Her gün"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "每天"
+          }
         }
       }
     },
@@ -1225,6 +1915,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Her Gün"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "每天"
           }
         }
       }
@@ -1238,6 +1934,12 @@
             "state" : "translated",
             "value" : "Egzersiz mi? Ben ekstra patates sandım"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你说运动我听成薯条"
+          }
         }
       }
     },
@@ -1249,6 +1951,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kollarınızı uzatıp bileklerinizi her yöne 10 kez çevirin."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "伸直手臂，转动手腕画圈，每个方向各 10 次。"
           }
         }
       }
@@ -1262,6 +1970,12 @@
             "state" : "translated",
             "value" : "Kollarınızı yana açıp giderek büyüyen küçük daireler çizin. 10 ileri, 10 geri."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "向两侧伸直手臂，画小圈并逐渐加大幅度。向前 10 次，向后 10 次。"
+          }
         }
       }
     },
@@ -1274,6 +1988,12 @@
             "state" : "translated",
             "value" : "Göz Dinlendirme"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "眼部休息"
+          }
         }
       }
     },
@@ -1283,6 +2003,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Açılış öğesi güncellenemedi: %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法更新登录项：%@"
           }
         }
       }
@@ -1296,6 +2022,12 @@
             "state" : "translated",
             "value" : "Şanslı hissediyor musunuz?"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "觉得自己手气好？"
+          }
         }
       }
     },
@@ -1307,6 +2039,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Düğme azaldı, hâlâ bulamadınız mı?"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "按钮变少了，还是找不到？"
           }
         }
       }
@@ -1320,6 +2058,12 @@
             "state" : "translated",
             "value" : "Atlamak için doğru düğmeyi bulun"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "找到正确的按钮才能跳过"
+          }
         }
       }
     },
@@ -1329,6 +2073,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Peki, git →"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "行吧，去吧 →"
           }
         }
       }
@@ -1342,6 +2092,12 @@
             "state" : "translated",
             "value" : "Peki. Sadece şunu yazın:"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "行。那就打这句："
+          }
         }
       }
     },
@@ -1353,6 +2109,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Peki. Son çevirme."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "行。最后一次。"
           }
         }
       }
@@ -1366,6 +2128,12 @@
             "state" : "translated",
             "value" : "Peki. Sandığımdan da umutsuzsunuz. Atlamanız sizin olsun."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "行吧。你比我想的还没救。跳过拿去吧。"
+          }
         }
       }
     },
@@ -1377,6 +2145,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Parmak Esnetme"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "手指伸展"
           }
         }
       }
@@ -1390,6 +2164,12 @@
             "state" : "translated",
             "value" : "Sıkı"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "严格"
+          }
         }
       }
     },
@@ -1400,6 +2180,12 @@
             "state" : "translated",
             "value" : "Sıkı Günlük Atlama Sınırı"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "严格模式每日跳过上限"
+          }
         }
       }
     },
@@ -1409,6 +2195,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "tuşlarını %lld saniye basılı tutun."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 秒退出。"
           }
         }
       }
@@ -1422,6 +2214,12 @@
             "state" : "translated",
             "value" : "Tüm girişi engeller, acil çıkış tuş birleşimi vardır"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "完全屏蔽输入，仅紧急组合键可退出"
+          }
         }
       }
     },
@@ -1434,6 +2232,12 @@
             "state" : "translated",
             "value" : "Tam ekran kaplama ve anında atlama düğmesi"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "全屏遮罩，带可立即点击的跳过按钮"
+          }
         }
       }
     },
@@ -1443,6 +2247,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Genel"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通用"
           }
         }
       }
@@ -1456,6 +2266,12 @@
             "state" : "translated",
             "value" : "Esnek"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "宽松"
+          }
         }
       }
     },
@@ -1466,6 +2282,12 @@
             "state" : "translated",
             "value" : "Esnek Günlük Atlama Sınırı"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "宽松模式每日跳过上限"
+          }
         }
       }
     },
@@ -1475,6 +2297,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Esnek mod"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "宽松模式"
           }
         }
       }
@@ -1488,6 +2316,12 @@
             "state" : "translated",
             "value" : "Gerçekten etkileyici"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "输成这样也不容易"
+          }
         }
       }
     },
@@ -1500,6 +2334,12 @@
             "state" : "translated",
             "value" : "Gerçekten etkileyici. Peki, git."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "是真有点厉害。行，去吧。"
+          }
         }
       }
     },
@@ -1509,6 +2349,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Başla"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "开始使用"
           }
         }
       }
@@ -1521,6 +2367,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "git commit -m \"çimene dokundum\""
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "git commit -m \"摸过草了\""
           }
         }
       }
@@ -1538,6 +2390,12 @@
             "state" : "translated",
             "value" : "Git biraz çimene dokun"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "去外面摸摸草"
+          }
         }
       }
     },
@@ -1548,6 +2406,12 @@
             "state" : "translated",
             "value" : "İzin Ver"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "授予"
+          }
         }
       }
     },
@@ -1557,6 +2421,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kullanımınıza uyan izinleri verin. StandLock hiçbiri olmadan da çalışır."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "按你的使用方式授予权限。即使一项都不授予，StandLock 也能运行。"
           }
         }
       }
@@ -1570,6 +2440,12 @@
             "state" : "translated",
             "value" : "Arka Bacak Esnetme"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "腘绳肌伸展"
+          }
         }
       }
     },
@@ -1581,6 +2457,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kendinizi kapatıp açmayı denediniz mi?"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "试过把自己重启吗"
           }
         }
       }
@@ -1594,6 +2476,12 @@
             "state" : "translated",
             "value" : "Kalça Çevirme"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "髋部绕环"
+          }
         }
       }
     },
@@ -1603,6 +2491,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Çıkmak için"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "按住"
           }
         }
       }
@@ -1616,6 +2510,12 @@
             "state" : "translated",
             "value" : "Bunu zaten biliyordum. Sıradaki."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "这我早知道了。下一句。"
+          }
         }
       }
     },
@@ -1627,6 +2527,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kısa bir yürüyüş yerine erken sırt ağrısını seçiyorum"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我宁愿腰疼也不走路"
           }
         }
       }
@@ -1640,6 +2546,12 @@
             "state" : "translated",
             "value" : "Bu molayı atlamayı seçiyorum"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我选择跳过这次休息"
+          }
         }
       }
     },
@@ -1651,6 +2563,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Oturmayı rekabetçi bir spor sayıyorum"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "久坐是我的竞技项目"
           }
         }
       }
@@ -1664,6 +2582,12 @@
             "state" : "translated",
             "value" : "Zaten oturmayı tercih ederim"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "反正我更喜欢坐着"
+          }
         }
       }
     },
@@ -1676,6 +2600,12 @@
             "state" : "translated",
             "value" : "Bacak gününü atladım, diğer günleri de"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我跳过练腿日和其他日"
+          }
         }
       }
     },
@@ -1685,6 +2615,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bundan sonra zamanın sonuna dek her molayı vereceğime yemin ederim"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我郑重发誓从今以后绝不跳过任何休息"
           }
         }
       }
@@ -1698,6 +2634,12 @@
             "state" : "translated",
             "value" : "Sağlık önerilerini nazik tavsiyeler sayıyorum"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "养生建议我一律当参考"
+          }
         }
       }
     },
@@ -1709,6 +2651,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bacaklarıma dekoratif mobilya gibi davranıyorum"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我把腿当装饰家具用"
           }
         }
       }
@@ -1722,6 +2670,12 @@
             "state" : "translated",
             "value" : "Mola vermektense kendimi rezil etmeyi yeğlerim"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我宁愿丢脸也不休息"
+          }
         }
       }
     },
@@ -1731,6 +2685,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sonra yapılandıracağım"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "稍后再设置"
           }
         }
       }
@@ -1744,6 +2704,12 @@
             "state" : "translated",
             "value" : "Ayağa kalkmaya alerjim var"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我对站起来严重过敏"
+          }
         }
       }
     },
@@ -1755,6 +2721,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bu fotoğraftayım ve hoşuma gitmiyor"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "图里有我，不开心"
           }
         }
       }
@@ -1768,6 +2740,12 @@
             "state" : "translated",
             "value" : "Lafım kalmadı. Atlama sizindir, tam bir efsanesiniz."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我骂不动了。跳过批准，你真是个人才。"
+          }
         }
       }
     },
@@ -1780,6 +2758,12 @@
             "state" : "translated",
             "value" : "Otuz saniye ayakta duramayacak kadar tembelim"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我懒得站起来三十秒"
+          }
         }
       }
     },
@@ -1789,6 +2773,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Boşta Kalmayı Mola Say"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无操作计为休息"
           }
         }
       }
@@ -1802,6 +2792,12 @@
             "state" : "translated",
             "value" : "Yakınında merdiven varsa bir kat inip çıkın. Kısa bir hareket enerjinizi yükseltir."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "附近有楼梯的话，上下走一层。短暂的活动能提升精力。"
+          }
         }
       }
     },
@@ -1811,6 +2807,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Yoksay"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "忽略"
           }
         }
       }
@@ -1824,6 +2826,12 @@
             "state" : "translated",
             "value" : "Etkileyici. Bir tane bile yok."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "厉害。一个都没中。"
+          }
         }
       }
     },
@@ -1833,6 +2841,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Girdi İzleme"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "输入监控"
           }
         }
       }
@@ -1846,6 +2860,12 @@
             "state" : "translated",
             "value" : "Benim omurgamda çalışıyor"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在我腰上是好的"
+          }
         }
       }
     },
@@ -1857,6 +2877,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Artık tam anlamıyla 50/50"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "现在真的是一半一半"
           }
         }
       }
@@ -1870,6 +2896,12 @@
             "state" : "translated",
             "value" : "Jackpot. Of."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中头奖了。啧。"
+          }
         }
       }
     },
@@ -1880,6 +2912,12 @@
             "state" : "translated",
             "value" : "Etiket (isteğe bağlı, örn. Oturma)"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "标签（可选，例如：久坐）"
+          }
         }
       }
     },
@@ -1889,6 +2927,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dil"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "语言"
           }
         }
       }
@@ -1902,6 +2946,12 @@
             "state" : "translated",
             "value" : "Son şans. Baskı yok."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最后一次机会。别有压力。"
+          }
         }
       }
     },
@@ -1914,6 +2964,12 @@
             "state" : "translated",
             "value" : "Sonuncu. İyi değerlendirin."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最后一句。好好写。"
+          }
         }
       }
     },
@@ -1923,6 +2979,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Daha Sonra"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "稍后"
           }
         }
       }
@@ -1934,6 +2996,12 @@
             "state" : "translated",
             "value" : "Açılışta Başlat"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "开机时启动"
+          }
         }
       }
     },
@@ -1943,6 +3011,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Az"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "少"
           }
         }
       }
@@ -1955,6 +3029,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "LGTM. Şimdi ayağa kalkın."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "LGTM，站起来吧"
           }
         }
       }
@@ -1978,6 +3058,12 @@
             "state" : "translated",
             "value" : "LOCK"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "LOCK"
+          }
         }
       }
     },
@@ -1987,6 +3073,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Uzun mola: %lld dk"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "长休息：%lld 分钟"
           }
         }
       }
@@ -2000,6 +3092,12 @@
             "state" : "translated",
             "value" : "20 saniye boyunca 6 metre uzaktaki bir şeye bakın. Bu, dijital göz yorgunluğunu belirgin biçimde azaltır."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "看向 6 米外的物体，持续 20 秒。这能明显减轻电子屏幕造成的眼疲劳。"
+          }
         }
       }
     },
@@ -2009,6 +3107,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "İleri bakış: %lld dk"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "提前查看：%lld 分钟"
           }
         }
       }
@@ -2021,6 +3125,12 @@
             "state" : "translated",
             "value" : "dk"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "分"
+          }
         }
       }
     },
@@ -2031,6 +3141,12 @@
             "state" : "translated",
             "value" : "Molaları zamanla atlaması zorlaştır"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "让休息随着时间越来越难跳过"
+          }
         }
       }
     },
@@ -2040,6 +3156,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Atlanan her molayı kapatması daha zor hale getirir"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "每跳过一次休息，下一次就更难关闭"
           }
         }
       }
@@ -2053,6 +3175,12 @@
             "state" : "translated",
             "value" : "Belki ayağa kalkmak bundan kolaydır"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "也许站起来比这个容易"
+          }
         }
       }
     },
@@ -2062,6 +3190,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Medya ve Boşta"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "媒体与无操作"
           }
         }
       }
@@ -2073,6 +3207,12 @@
             "state" : "translated",
             "value" : "Menü Çubuğu Görünümü"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "菜单栏显示"
+          }
         }
       }
     },
@@ -2082,6 +3222,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mikrofon Algılama"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "麦克风检测"
           }
         }
       }
@@ -2095,6 +3241,12 @@
             "state" : "translated",
             "value" : "Mikrofon kullanımda"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "麦克风使用中"
+          }
         }
       }
     },
@@ -2105,6 +3257,12 @@
             "state" : "translated",
             "value" : "dk"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "分钟"
+          }
         }
       }
     },
@@ -2114,6 +3272,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Pazartesi – Cuma"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "周一 – 周五"
           }
         }
       }
@@ -2127,6 +3291,12 @@
             "state" : "translated",
             "value" : "Ay"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "本月"
+          }
         }
       }
     },
@@ -2136,6 +3306,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Çok"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "多"
           }
         }
       }
@@ -2149,6 +3325,12 @@
             "state" : "translated",
             "value" : "Bunların çoğu kırmızı. Söylemiş olayım."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "这里面大多数是红的。随口一说。"
+          }
         }
       }
     },
@@ -2160,6 +3342,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sandalyemle ciddi bir ilişkimiz var"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我和椅子已经结婚了"
           }
         }
       }
@@ -2173,6 +3361,12 @@
             "state" : "translated",
             "value" : "Doktorum şu an çok hayal kırıklığına uğrardı"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我的医生现在会很失望"
+          }
         }
       }
     },
@@ -2184,6 +3378,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bacaklarım dekoratif"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我的腿只是装饰品"
           }
         }
       }
@@ -2197,6 +3397,12 @@
             "state" : "translated",
             "value" : "Bacaklarım ne işe yaradığını unuttu"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我的腿已经忘了怎么用"
+          }
         }
       }
     },
@@ -2208,6 +3414,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Duruşum bir yardım çığlığı"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我的坐姿是求救信号"
           }
         }
       }
@@ -2221,6 +3433,12 @@
             "state" : "translated",
             "value" : "Omurgam şikâyet etti ama ben kulak asmadım"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "腰椎投诉我已读不回"
+          }
         }
       }
     },
@@ -2230,6 +3448,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ad"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "名称"
           }
         }
       }
@@ -2243,6 +3467,12 @@
             "state" : "translated",
             "value" : "Boyun Çevirme"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "颈部绕环"
+          }
         }
       }
     },
@@ -2255,6 +3485,12 @@
             "state" : "translated",
             "value" : "Never gonna give you up"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你已被瑞克摇"
+          }
         }
       }
     },
@@ -2264,6 +3500,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Yeni Program"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新建日程"
           }
         }
       }
@@ -2275,6 +3517,12 @@
             "state" : "translated",
             "value" : "Sonraki mola %@"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下次休息：%@"
+          }
         }
       }
     },
@@ -2284,6 +3532,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "SIRADAKİ: %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下一个：%@"
           }
         }
       }
@@ -2295,6 +3549,12 @@
             "state" : "translated",
             "value" : "Etkin program yok"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "没有启用的日程"
+          }
         }
       }
     },
@@ -2304,6 +3564,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Program Yok"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "没有日程"
           }
         }
       }
@@ -2315,6 +3581,12 @@
             "state" : "translated",
             "value" : "Takvim bulunamadı"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未找到日历"
+          }
         }
       }
     },
@@ -2324,6 +3596,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Yapılandırılmış program yok"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "尚未设置日程"
           }
         }
       }
@@ -2337,6 +3615,12 @@
             "state" : "translated",
             "value" : "Daha bitmedi."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "还没完呢。"
+          }
         }
       }
     },
@@ -2348,6 +3632,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tamam tamam, kazandınız. Ya da kaybettiniz. Bakış açısına göre değişir."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "好好好，你赢了。或者输了。看你怎么算。"
           }
         }
       }
@@ -2361,6 +3651,12 @@
             "state" : "translated",
             "value" : "Molalar öylece atlanmaz"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "休息哪能说跳就跳"
+          }
         }
       }
     },
@@ -2372,6 +3668,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bunlardan biri gerçekten çalışıyor..."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "其中有一个真的能用……"
           }
         }
       }
@@ -2385,6 +3687,12 @@
             "state" : "translated",
             "value" : "Tek makara. Tek düğme. Bahane yok."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "一个轮盘。一个按钮。没借口。"
+          }
         }
       }
     },
@@ -2394,6 +3702,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Yalnızca işaretli takvimler molaları erteler"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "只有勾选的日历会推迟休息"
           }
         }
       }
@@ -2405,6 +3719,12 @@
             "state" : "translated",
             "value" : "Ayarları Aç"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打开设置"
+          }
         }
       }
     },
@@ -2415,6 +3735,12 @@
             "state" : "translated",
             "value" : "Oturum açtığınızda StandLock'u başlat"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "登录时打开 StandLock"
+          }
         }
       }
     },
@@ -2424,6 +3750,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sistem Ayarları'nı Aç"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打开“系统设置”"
           }
         }
       }
@@ -2437,6 +3769,12 @@
             "state" : "translated",
             "value" : "Yukarı Uzanma"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "举臂伸展"
+          }
         }
       }
     },
@@ -2449,6 +3787,12 @@
             "state" : "translated",
             "value" : "Gecikmeli atlama ve çıkış için cümle yazma"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "遮罩延迟跳过，需输入句子才能退出"
+          }
         }
       }
     },
@@ -2458,6 +3802,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mola başlayınca ses çalmayı duraklat"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "休息开始时暂停音频播放"
           }
         }
       }
@@ -2469,6 +3819,12 @@
             "state" : "translated",
             "value" : "Medyayı Duraklat"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "暂停媒体"
+          }
         }
       }
     },
@@ -2478,6 +3834,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Programı Duraklat"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "暂停日程"
           }
         }
       }
@@ -2489,6 +3851,12 @@
             "state" : "translated",
             "value" : "Duraklatıldı"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已暂停"
+          }
         }
       }
     },
@@ -2498,6 +3866,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@ kadar duraklatıldı"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "暂停至 %@"
           }
         }
       }
@@ -2509,6 +3883,12 @@
             "state" : "translated",
             "value" : "Dönem"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "时间范围"
+          }
         }
       }
     },
@@ -2519,6 +3899,12 @@
             "state" : "translated",
             "value" : "İzin Gerekli"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "需要权限"
+          }
         }
       }
     },
@@ -2528,6 +3914,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "İzinler"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "权限"
           }
         }
       }
@@ -2541,6 +3933,12 @@
             "state" : "translated",
             "value" : "Bir ayağınızı alçak bir yüzeye koyun, bacağınızı düz tutup öne eğilin. Her iki tarafta 15 saniye bekleyin."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "把一只脚放在较低的平面上，保持腿部伸直，身体前倾。每侧保持 15 秒。"
+          }
         }
       }
     },
@@ -2552,6 +3950,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ellerinizi kalçanıza koyup geniş daireler çizin. 10 saat yönünde, 10 tersine."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "双手叉腰，大幅度转动髋部画圈。顺时针 10 次，逆时针 10 次。"
           }
         }
       }
@@ -2565,6 +3969,12 @@
             "state" : "translated",
             "value" : "Duruş Kontrolü"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "姿势检查"
+          }
         }
       }
     },
@@ -2574,6 +3984,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kademeli Zorlama"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "逐级加强"
           }
         }
       }
@@ -2587,6 +4003,12 @@
             "state" : "translated",
             "value" : "Ön Bacak Esnetme"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "股四头肌伸展"
+          }
         }
       }
     },
@@ -2597,6 +4019,12 @@
             "state" : "translated",
             "value" : "Hızlı Kurulum"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "快速设置"
+          }
         }
       }
     },
@@ -2606,6 +4034,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "StandLock'tan Çık"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "退出 StandLock"
           }
         }
       }
@@ -2619,6 +4053,12 @@
             "state" : "translated",
             "value" : "İki kolunuzu başınızın üstüne kaldırın, parmaklarınızı kenetleyip yukarı uzanın. 15 saniye bekleyin."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "双臂举过头顶，十指交扣，向上伸展。保持 15 秒。"
+          }
         }
       }
     },
@@ -2630,6 +4070,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bir kolunuzu yukarı kaldırıp karşı tarafa eğilin. 10 saniye bekleyin, sonra taraf değiştirin."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "一只手臂举过头顶，身体向另一侧倾斜。保持 10 秒，然后换边。"
           }
         }
       }
@@ -2643,6 +4089,12 @@
             "state" : "translated",
             "value" : "Omuzlarınızı kulaklarınıza doğru kaldırın, 3 saniye tutun, sonra bırakın. 10 kez tekrarlayın."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "把肩膀向耳朵方向耸起，保持 3 秒，然后放松。重复 10 次。"
+          }
         }
       }
     },
@@ -2652,6 +4104,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Esnek'e düşür"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "降为宽松模式"
           }
         }
       }
@@ -2665,6 +4123,12 @@
             "state" : "translated",
             "value" : "Makaralar biraz yavaşladı. Rica ederim."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "轮盘现在慢了一点。不用谢。"
+          }
         }
       }
     },
@@ -2674,6 +4138,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tekrar Döngüsü"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重复循环"
           }
         }
       }
@@ -2685,6 +4155,12 @@
             "state" : "translated",
             "value" : "Yeniden Başlat"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重新启动"
+          }
         }
       }
     },
@@ -2694,6 +4170,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Yeniden Başlatma Başarısız"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重新启动失败"
           }
         }
       }
@@ -2705,6 +4187,12 @@
             "state" : "translated",
             "value" : "Şimdi Yeniden Başlat"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "立即重新启动"
+          }
         }
       }
     },
@@ -2714,6 +4202,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Programı Sürdür"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "恢复日程"
           }
         }
       }
@@ -2727,6 +4221,12 @@
             "state" : "translated",
             "value" : "Omuzlarınızı 10 kez öne, sonra 10 kez arkaya çevirin. Hareketleri yavaş ve kontrollü tutun."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "肩膀向前绕环 10 次，再向后绕环 10 次。动作保持缓慢、可控。"
+          }
         }
       }
     },
@@ -2736,6 +4236,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kaydet"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "存储"
           }
         }
       }
@@ -2749,6 +4255,12 @@
             "state" : "translated",
             "value" : "Bunu görmüştüm"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "早就猜到了"
+          }
         }
       }
     },
@@ -2759,6 +4271,12 @@
             "state" : "translated",
             "value" : "Programlar"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "日程"
+          }
         }
       }
     },
@@ -2768,6 +4286,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ekran Paylaşımı"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "屏幕共享"
           }
         }
       }
@@ -2781,6 +4305,12 @@
             "state" : "translated",
             "value" : "Ekran paylaşımı sürüyor"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "屏幕共享进行中"
+          }
         }
       }
     },
@@ -2793,6 +4323,12 @@
             "state" : "translated",
             "value" : "Ekran süresi: saatler. Mola süresi: reddedildi."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "屏幕数小时，休息零次"
+          }
         }
       }
     },
@@ -2802,6 +4338,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ayarlar..."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "设置..."
           }
         }
       }
@@ -2813,6 +4355,12 @@
             "state" : "translated",
             "value" : "Kısa mola sayısı: %lld"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "短休息次数：%lld"
+          }
         }
       }
     },
@@ -2822,6 +4370,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kısa: %lld dk"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "短休息：%lld 分钟"
           }
         }
       }
@@ -2835,6 +4389,12 @@
             "state" : "translated",
             "value" : "Omuz Çevirme"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "肩部绕环"
+          }
         }
       }
     },
@@ -2847,6 +4407,12 @@
             "state" : "translated",
             "value" : "Omuz Silkme"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "耸肩"
+          }
         }
       }
     },
@@ -2857,6 +4423,12 @@
             "state" : "translated",
             "value" : "Tam Çalışma Sayacını Göster"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "显示完整工作计时"
+          }
         }
       }
     },
@@ -2866,6 +4438,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Molaya son dakikalarda sayacı göster"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "仅在休息前的最后几分钟显示计时"
           }
         }
       }
@@ -2879,6 +4457,12 @@
             "state" : "translated",
             "value" : "Yana Esnetme"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "体侧伸展"
+          }
         }
       }
     },
@@ -2891,6 +4475,12 @@
             "state" : "translated",
             "value" : "Oturun ya da ayakta durun, bir elinizi karşı dizinize koyup gövdenizi nazikçe çevirin. Her iki tarafta 10 saniye bekleyin."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "坐着或站着，把一只手放在对侧膝盖上，轻轻扭转躯干。每侧保持 10 秒。"
+          }
         }
       }
     },
@@ -2900,6 +4490,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Atla"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "跳过"
           }
         }
       }
@@ -2911,6 +4507,12 @@
             "state" : "translated",
             "value" : "Atlama %lld sn sonra"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 秒后可跳过"
+          }
         }
       }
     },
@@ -2920,6 +4522,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Molayı atla"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "跳过休息"
           }
         }
       }
@@ -2931,6 +4539,12 @@
             "state" : "translated",
             "value" : "Sonraki Molayı Atla"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "跳过下次休息"
+          }
         }
       }
     },
@@ -2940,6 +4554,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bu molayı atla →"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "跳过这次休息 →"
           }
         }
       }
@@ -2951,6 +4571,12 @@
             "state" : "translated",
             "value" : "Bu mola atlansın mı?"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "跳过这次休息？"
+          }
         }
       }
     },
@@ -2960,6 +4586,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Atlanan"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已跳过"
           }
         }
       }
@@ -2973,6 +4605,12 @@
             "state" : "translated",
             "value" : "Başınızı yavaşça daire çizerek çevirin: 5 kez saat yönünde, 5 kez tersine."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "缓慢转动头部画圈，顺时针 5 次，逆时针 5 次。"
+          }
         }
       }
     },
@@ -2984,6 +4622,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Demek ayağa kalkmaktansa kumar oynamayı yeğliyorsunuz"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "所以你宁可赌一把也不站起来"
           }
         }
       }
@@ -2997,6 +4641,12 @@
             "state" : "translated",
             "value" : "Çoook yakındı. Evrenin acımasız bir mizah anlayışı var."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "就差一点点。宇宙的幽默感真狠。"
+          }
         }
       }
     },
@@ -3007,6 +4657,12 @@
             "state" : "translated",
             "value" : "Belirli takvimler"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "指定日历"
+          }
         }
       }
     },
@@ -3016,6 +4672,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Çevir →"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "转动 →"
           }
         }
       }
@@ -3029,6 +4691,12 @@
             "state" : "translated",
             "value" : "Omurga Dönüşü"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "脊柱扭转"
+          }
         }
       }
     },
@@ -3041,12 +4709,24 @@
             "state" : "translated",
             "value" : "Parmaklarınızı iyice açın, 5 saniye tutun, sonra yumruk yapın. 8 kez tekrarlayın."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "把手指尽量张开，保持 5 秒，然后握拳。重复 8 次。"
+          }
         }
       }
     },
     "STAND" : {
       "localizations" : {
         "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "STAND"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "STAND"
@@ -3063,6 +4743,12 @@
             "state" : "translated",
             "value" : "Başınız, omuzlarınız ve kalçanız değecek şekilde duvara yaslanın. Bu duruşu 15 saniye koruyun."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "背靠墙站立，让头部、肩膀和臀部都贴住墙面。保持这个姿势 15 秒。"
+          }
         }
       }
     },
@@ -3074,6 +4760,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ayakta yavaşça parmak ucunuza yükselin, sonra inin. 15 kez tekrarlayın."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "站立，缓慢踮起脚尖，然后落回。重复 15 次。"
           }
         }
       }
@@ -3087,6 +4779,12 @@
             "state" : "translated",
             "value" : "Tek ayak üstünde durun, arkadan diğer ayağınızı tutup topuğunuzu kalçanıza doğru çekin. Her iki tarafta 15 saniye bekleyin."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "单腿站立，在身后抓住另一只脚，把脚跟拉向臀部。每侧保持 15 秒。"
+          }
         }
       }
     },
@@ -3098,6 +4796,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ayağa kalkıp yavaşça öne eğilerek parmak uçlarınıza dokunun. 10 saniye bekleyin, sonra yavaşça doğrulun."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "站起来，缓慢向前弯腰去触碰脚尖。保持 10 秒，然后慢慢起身。"
           }
         }
       }
@@ -3111,6 +4815,12 @@
             "state" : "translated",
             "value" : "En büyük korkum ayakta durmak"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "站着是我最大的恐惧"
+          }
         }
       }
     },
@@ -3122,6 +4832,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ayakta Squat"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "站立深蹲"
           }
         }
       }
@@ -3135,12 +4851,24 @@
             "state" : "translated",
             "value" : "Ayakta durmak: şaşırtıcı biçimde ölümcül değil"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "站着居然不致命"
+          }
         }
       }
     },
     "StandLock" : {
       "localizations" : {
         "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "StandLock"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "StandLock"
@@ -3155,6 +4883,12 @@
             "state" : "translated",
             "value" : "Bu izni uygulamak için StandLock'un yeniden başlatılması gerekiyor."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "StandLock 需要重新启动才能应用此权限。"
+          }
         }
       }
     },
@@ -3164,6 +4898,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Başlangıç"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "开始"
           }
         }
       }
@@ -3175,6 +4915,12 @@
             "state" : "translated",
             "value" : "Molayı başlat"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "开始休息"
+          }
         }
       }
     },
@@ -3185,6 +4931,12 @@
             "state" : "translated",
             "value" : "Önerilen bir programla başlayın ya da kendinizinkini sonra yapılandırın."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "先用推荐的日程开始，之后再设置自己的。"
+          }
         }
       }
     },
@@ -3194,6 +4946,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "İstatistikler"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "统计"
           }
         }
       }
@@ -3207,6 +4965,12 @@
             "state" : "translated",
             "value" : "Hâlâ şanslı hissediyor musunuz?"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "还觉得自己有手气？"
+          }
         }
       }
     },
@@ -3219,6 +4983,12 @@
             "state" : "translated",
             "value" : "Hâlâ devam mı? Vay."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "还在打？可以啊。"
+          }
         }
       }
     },
@@ -3228,6 +4998,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Durdur"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "停止"
           }
         }
       }
@@ -3241,6 +5017,12 @@
             "state" : "translated",
             "value" : "Kazanmak için her makarayı Atla'da durdurun"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "每个轮盘都停在“跳过”上才算赢"
+          }
         }
       }
     },
@@ -3250,6 +5032,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Seri"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "连续天数"
           }
         }
       }
@@ -3263,6 +5051,12 @@
             "state" : "translated",
             "value" : "Şimdi esneyin, sonra hata ayıklarsınız"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "先拉伸，再调试"
+          }
         }
       }
     },
@@ -3275,6 +5069,12 @@
             "state" : "translated",
             "value" : "Katı"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "强制"
+          }
         }
       }
     },
@@ -3285,6 +5085,12 @@
             "state" : "translated",
             "value" : "Katı'da atlama sınırı yoktur; molayı yalnızca acil çıkış tuş birleşimi erken bitirir."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "强制模式没有跳过上限；只有紧急退出组合键才能提前结束休息。"
+          }
         }
       }
     },
@@ -3294,6 +5100,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Katı devre dışı, Sıkı olarak çalışıyor"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "强制模式未生效，按严格模式运行"
           }
         }
       }
@@ -3307,6 +5119,12 @@
             "state" : "translated",
             "value" : "Katı mod, Erişilebilirlik ve Girdi İzleme izinlerini gerektirir."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "强制模式需要“辅助功能”和“输入监控”权限。"
+          }
         }
       }
     },
@@ -3318,6 +5136,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Katı mod, molalarda girdiyi engellemek için Erişilebilirlik izni gerektirir."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "强制模式需要“辅助功能”权限才能在休息期间屏蔽输入。"
           }
         }
       }
@@ -3331,6 +5155,12 @@
             "state" : "translated",
             "value" : "Katı mod, çıkış tuş birleşimi için Girdi İzleme izni gerektirir."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "强制模式需要“输入监控”权限才能使用退出组合键。"
+          }
         }
       }
     },
@@ -3343,6 +5173,12 @@
             "state" : "translated",
             "value" : "sudo stand up"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "sudo 站起来"
+          }
         }
       }
     },
@@ -3352,6 +5188,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sistem"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "系统"
           }
         }
       }
@@ -3373,6 +5215,12 @@
             "state" : "translated",
             "value" : "Sistem, Mac'inizin dilini izler"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“系统”跟随 Mac 的语言"
+          }
         }
       }
     },
@@ -3384,6 +5232,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "5 derin nefes alın: 4 saniye içinize çekin, 4 saniye tutun, 4 saniye verin."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "做 5 次深呼吸：吸气 4 秒，屏息 4 秒，呼气 4 秒。"
           }
         }
       }
@@ -3397,6 +5251,12 @@
             "state" : "translated",
             "value" : "Odanızda ya da ofisinizde kısa bir yürüyüş yapın. Bacaklarınızı hareket ettirin, kanınız dolaşsın."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在房间或办公室里走一小圈。活动双腿，促进血液循环。"
+          }
         }
       }
     },
@@ -3406,6 +5266,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Çalışırken sağlıklı ayakta mola verin"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "工作时站起来，健康地休息一下"
           }
         }
       }
@@ -3419,6 +5285,12 @@
             "state" : "translated",
             "value" : "Merdiveni Kullan"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "走楼梯"
+          }
         }
       }
     },
@@ -3430,6 +5302,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bilmediğim bir şey söyleyin."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "说点我不知道的。"
           }
         }
       }
@@ -3443,6 +5321,12 @@
             "state" : "translated",
             "value" : "Sandalye bir yere kaçmıyor"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "椅子又不会跑"
+          }
         }
       }
     },
@@ -3454,6 +5338,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kasa hep kazanır"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "庄家永远赢"
           }
         }
       }
@@ -3467,6 +5357,12 @@
             "state" : "translated",
             "value" : "Her şey yolunda."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "一切正常"
+          }
         }
       }
     },
@@ -3479,6 +5375,12 @@
             "state" : "translated",
             "value" : "Bu iş utanç verici olmaya başladı"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "这就有点尴尬了"
+          }
         }
       }
     },
@@ -3488,6 +5390,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bu Hafta"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "本周"
           }
         }
       }
@@ -3499,6 +5407,12 @@
             "state" : "translated",
             "value" : "Zaman Aralıkları"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "时间区间"
+          }
         }
       }
     },
@@ -3509,6 +5423,12 @@
             "state" : "translated",
             "value" : "Zamanlama"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "时间设置"
+          }
         }
       }
     },
@@ -3518,6 +5438,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "–"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "至"
           }
         }
       }
@@ -3531,6 +5457,12 @@
             "state" : "translated",
             "value" : "Bugün"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "今天"
+          }
         }
       }
     },
@@ -3542,6 +5474,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Öne Eğilme"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "体前屈触脚尖"
           }
         }
       }
@@ -3555,6 +5493,12 @@
             "state" : "translated",
             "value" : "İki denemenizi aldı ama tamam."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "花了两次，不过也行。"
+          }
         }
       }
     },
@@ -3564,6 +5508,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tekrar dene →"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "再试一次 →"
           }
         }
       }
@@ -3581,6 +5531,12 @@
             "state" : "translated",
             "value" : "İki düğme. Bahane yok."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "两个按钮。没借口了。"
+          }
         }
       }
     },
@@ -3592,6 +5548,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "İki bitti, sıfır utanç. Bir tane daha."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "两句了，脸都不红。再来一句。"
           }
         }
       }
@@ -3605,6 +5567,12 @@
             "state" : "translated",
             "value" : "İki dakika. Hayatta kalırsınız."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "两分钟，死不了"
+          }
         }
       }
     },
@@ -3616,6 +5584,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Üçte iki fena değil... aslında burada fena."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "三中二不算差……好吧在这儿很差。"
           }
         }
       }
@@ -3629,6 +5603,12 @@
             "state" : "translated",
             "value" : "Of. Peki, git."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "啧。行，去吧。"
+          }
         }
       }
     },
@@ -3638,6 +5618,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Güncelle"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "更新"
           }
         }
       }
@@ -3649,6 +5635,12 @@
             "state" : "translated",
             "value" : "Güncelleme mevcut"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "有可用更新"
+          }
         }
       }
     },
@@ -3658,6 +5650,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Varsayılan Programı Kullan"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用默认日程"
           }
         }
       }
@@ -3669,6 +5667,12 @@
             "state" : "translated",
             "value" : "v%@ mevcut"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "有 v%@ 可用"
+          }
         }
       }
     },
@@ -3679,6 +5683,12 @@
             "state" : "translated",
             "value" : "Sürüm %@ (Yapı %@)"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "版本 %@（构建 %@）"
+          }
         }
       }
     },
@@ -3688,6 +5698,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Video ve Ses"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "视频与音频"
           }
         }
       }
@@ -3701,6 +5717,12 @@
             "state" : "translated",
             "value" : "Odada Yürü"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在房间里走走"
+          }
         }
       }
     },
@@ -3712,6 +5734,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mutfağa gidip bir bardak su için. Su içmek odaklanmayı artırır."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "走到厨房喝满满一杯水。补足水分有助于集中注意力。"
           }
         }
       }
@@ -3725,6 +5753,12 @@
             "state" : "translated",
             "value" : "Pencereye gidip 20 saniye uzaktaki bir şeye bakın. Bu, göz kaslarınızı gevşetir."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "走到窗边，看向远处的物体 20 秒。这有助于放松眼部肌肉。"
+          }
         }
       }
     },
@@ -3737,6 +5771,12 @@
             "state" : "translated",
             "value" : "Su Molası"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "喝水休息"
+          }
         }
       }
     },
@@ -3747,6 +5787,12 @@
             "state" : "translated",
             "value" : "Ayağa kalkmanın daha kolay olacağını ikimiz de biliyoruz."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我们都清楚，站起来其实更省事。"
+          }
         }
       }
     },
@@ -3756,6 +5802,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Web Sitesi"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "网站"
           }
         }
       }
@@ -3769,6 +5821,12 @@
             "state" : "translated",
             "value" : "Hafta"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "本周"
+          }
         }
       }
     },
@@ -3779,6 +5837,12 @@
             "state" : "translated",
             "value" : "Hafta İçi"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "工作日"
+          }
         }
       }
     },
@@ -3788,6 +5852,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Hafta Sonu"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "周末"
           }
         }
       }
@@ -3801,6 +5871,12 @@
             "state" : "translated",
             "value" : "Pencereye Bak"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "远眺窗外"
+          }
         }
       }
     },
@@ -3812,6 +5888,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Vay. Üçü de. Boşa gitti."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "哇。三次。全白费了。"
           }
         }
       }
@@ -3825,6 +5907,12 @@
             "state" : "translated",
             "value" : "Bilek Çevirme"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "手腕绕环"
+          }
         }
       }
     },
@@ -3835,6 +5923,12 @@
             "state" : "translated",
             "value" : "Devam etmek için %@ yazın"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "输入 %@ 以继续"
+          }
         }
       }
     },
@@ -3844,6 +5938,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kapatmak için %@ yazın"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "输入 %@ 以关闭"
           }
         }
       }
@@ -3857,6 +5957,12 @@
             "state" : "translated",
             "value" : "Yine mi yanlış? Şaşırtıcı."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "又错了？真意外。"
+          }
         }
       }
     },
@@ -3868,6 +5974,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Yıl"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "今年"
           }
         }
       }
@@ -3881,6 +5993,12 @@
             "state" : "translated",
             "value" : "Bunu gerçekten yazdınız mı? Tembelliğe etkileyici bir bağlılık."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你还真打了？对懒这件事是真下功夫。"
+          }
         }
       }
     },
@@ -3892,6 +6010,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Atlamak mı istiyorsunuz? Hak edin."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "想跳过？先过这一关。"
           }
         }
       }
@@ -3905,6 +6029,12 @@
             "state" : "translated",
             "value" : "Başarısız olmaya gerçekten kararlısınız"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你对失败是真执着"
+          }
         }
       }
     },
@@ -3916,6 +6046,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Hâlâ burada mısınız?"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你还在这儿？"
           }
         }
       }

@@ -74,6 +74,14 @@ final class OverlayWindowController: LockPresenting {
         }
         isShowing = true
 
+        // Activate the app, not just the window. A menu bar app stays .accessory and
+        // inactive, and an inactive app gets no input method: the escape phrase field
+        // then receives raw keystrokes, so Pinyin types `nihao` instead of 你好 and no
+        // Chinese, Japanese or Korean phrase can ever be entered. `hideOverlay`
+        // restores .accessory.
+        NSApp.setActivationPolicy(.regular)
+        NSApp.activate(ignoringOtherApps: true)
+
         if level == .strict {
             startEventTap(preferences: preferences)
         }
