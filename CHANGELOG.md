@@ -1,5 +1,12 @@
 # Changelog
 
+## StandLock v0.7.0
+
+**Features**
+- Break duration and the Repetition Cycle short break now accept decimal minutes, down to 0.1 (six seconds). Idle detection only counts a break as taken once you've been away for at least a minute, or the full break length if longer, so a quick glance away no longer swallows a break under a minute (fixes #59, 593a385)
+
+**Full Changelog:** https://github.com/yagizdo/StandLock/compare/v0.6.0...v0.7.0
+
 ## StandLock v0.6.0
 
 **Features**
