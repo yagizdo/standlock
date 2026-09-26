@@ -1,5 +1,16 @@
 # Changelog
 
+## StandLock v0.7.1
+
+**Bug Fixes**
+- A break no longer runs past its length when your Mac is busy. The countdown took a second off each time it woke up, so every late wake-up made the lock longer; it now counts down to a fixed end time (#63, 8aa4229)
+- The escape phrase field gets your typing without a click first. Keys typed during a break used to go to the app behind the break screen; StandLock now comes to the front when a break starts (#63, 8aa4229)
+
+**Notes**
+- StandLock shows up in the app switcher (Cmd-Tab) while a break is on screen and leaves it when the break ends.
+
+**Full Changelog:** https://github.com/yagizdo/StandLock/compare/v0.7.0...v0.7.1
+
 ## StandLock v0.7.0
 
 **Features**
