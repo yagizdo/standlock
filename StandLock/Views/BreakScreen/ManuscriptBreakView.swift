@@ -179,10 +179,11 @@ struct ManuscriptBreakView: View {
     }
 
     private func startCountdown() async {
+        let end = Date().addingTimeInterval(remainingSeconds)
         while remainingSeconds > 0 {
             try? await Task.sleep(for: .seconds(1))
             guard !Task.isCancelled else { return }
-            remainingSeconds -= 1
+            remainingSeconds = breakSecondsRemaining(until: end)
         }
         if !reduceMotion {
             withAnimation(.easeOut(duration: 0.3)) {
