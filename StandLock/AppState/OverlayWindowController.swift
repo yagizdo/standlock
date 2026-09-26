@@ -23,6 +23,7 @@ final class OverlayWindowController: LockPresenting {
     private var currentNextIntervalLabel: String?
     private var breakStartDate: Date?
     private var lastScreenChangeHandled: Date = .distantPast
+    private var policyBeforeOverlay: NSApplication.ActivationPolicy = .accessory
 
     var onSkip: (() -> Void)?
     var onComplete: (() -> Void)?
@@ -78,7 +79,9 @@ final class OverlayWindowController: LockPresenting {
         // inactive, and an inactive app gets no input method: the escape phrase field
         // then receives raw keystrokes, so Pinyin types `nihao` instead of 你好 and no
         // Chinese, Japanese or Korean phrase can ever be entered. `dismissOverlay`
-        // restores .accessory.
+        // restores the policy saved here; the `dismissOverlay` call above has already
+        // put back any earlier one, so this is the policy from before the break.
+        policyBeforeOverlay = NSApp.activationPolicy()
         NSApp.setActivationPolicy(.regular)
         NSApp.activate(ignoringOtherApps: true)
 
@@ -116,13 +119,10 @@ final class OverlayWindowController: LockPresenting {
             window.orderOut(nil)
         }
 
-        let hasOtherVisibleWindows = NSApp.windows.contains { window in
-            window.isVisible && !(window is BreakOverlayWindow)
-        }
-
-        if !hasOtherVisibleWindows {
-            NSApp.setActivationPolicy(.accessory)
-        }
+        // Put back what `showOverlay` saved instead of looking for other visible windows:
+        // `NSApp.windows` always holds the menu bar item's visible NSStatusBarWindow, so
+        // that check kept the app .regular, with a Dock icon and focus, after every break.
+        NSApp.setActivationPolicy(policyBeforeOverlay)
     }
 
     private func startEventTap(preferences: AppPreferences) {
