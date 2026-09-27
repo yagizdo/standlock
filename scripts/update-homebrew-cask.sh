@@ -22,8 +22,7 @@ cask "standlock" do
   version "${VERSION}"
   sha256 "${SHA256}"
 
-  url "https://github.com/yagizdo/StandLock/releases/download/v#{version}/StandLock-#{version}.dmg",
-      verified: "github.com/yagizdo/StandLock/"
+  url "https://github.com/yagizdo/StandLock/releases/download/v#{version}/StandLock-#{version}.dmg"
   name "StandLock"
   desc "Stand reminder and break screen for macOS"
   homepage "https://standlock.app"
