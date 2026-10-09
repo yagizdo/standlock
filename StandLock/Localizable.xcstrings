@@ -638,6 +638,12 @@
             "state" : "translated",
             "value" : "Görünüm"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "外观"
+          }
         }
       }
     },
@@ -1431,6 +1437,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Koyu"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "深色"
           }
         }
       }
@@ -3048,6 +3060,12 @@
             "state" : "translated",
             "value" : "Açık"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "浅色"
+          }
         }
       }
     },
@@ -4355,6 +4373,12 @@
             "state" : "translated",
             "value" : "Kısa mola"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "短休息"
+          }
         }
       }
     },
@@ -5198,6 +5222,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sistem, Mac'inizin görünümünü izler"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“系统”跟随 Mac 的外观"
           }
         }
       }
