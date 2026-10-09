@@ -36,6 +36,11 @@ public struct BreakScreenPreferences: Codable, Sendable, Equatable {
         message = try c.decodeIfPresent(String.self, forKey: .message) ?? ""
     }
 
+    /// The message as the break screen shows it; empty means no message line.
+    public var displayMessage: String {
+        message.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
     /// Nil unless both hexes parse. Soft and faint ink sit 20% and 50% toward the paper,
     /// and the paper edge 10% toward black, matching the built-in palettes.
     public var customColors: CustomBreakColors? {
@@ -47,8 +52,7 @@ public struct BreakScreenPreferences: Codable, Sendable, Equatable {
             paperEdge: paper.mixed(with: .black, amount: 0.1),
             ink: ink,
             inkSoft: ink.mixed(with: paper, amount: 0.2),
-            inkFaint: ink.mixed(with: paper, amount: 0.5),
-            isDark: paper.isDark
+            inkFaint: ink.mixed(with: paper, amount: 0.5)
         )
     }
 }

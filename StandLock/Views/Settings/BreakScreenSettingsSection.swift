@@ -27,8 +27,8 @@ struct BreakScreenSettingsSection: View {
             }
 
             if let customColors = breakScreen.customColors {
-                ColorPicker("Background", selection: colorBinding(\.backgroundHex, fallback: .white), supportsOpacity: false)
-                ColorPicker("Text", selection: colorBinding(\.textHex, fallback: .black), supportsOpacity: false)
+                colorRow("Background", \.backgroundHex, fallback: .white)
+                colorRow("Text", \.textHex, fallback: .black)
 
                 if customColors.paper.contrastRatio(with: customColors.ink) < 4.5 {
                     Label("Text may be hard to read on this background", systemImage: "exclamationmark.triangle")
@@ -39,7 +39,7 @@ struct BreakScreenSettingsSection: View {
 
             BreakScreenPreviewCard(
                 look: BreakScreenLook.resolve(theme: themeStore.current, level: .gentle, breakScreen: breakScreen),
-                message: breakScreen.message,
+                message: breakScreen.displayMessage,
                 statistics: breakScreen.showsStatistics ? coordinator.todayStats : nil
             )
 
@@ -83,15 +83,44 @@ struct BreakScreenSettingsSection: View {
         )
     }
 
+    /// A hex code field for typing or pasting a known colour, next to the system picker.
+    private func colorRow(
+        _ title: LocalizedStringKey,
+        _ keyPath: WritableKeyPath<BreakScreenPreferences, String?>,
+        fallback: HexColor
+    ) -> some View {
+        LabeledContent(title) {
+            HStack(spacing: 8) {
+                // Commits on Return or when focus leaves; an invalid code puts the previous one back.
+                TextField("Hex Code", value: hexBinding(keyPath, fallback: fallback), format: HexColorFormat())
+                    .labelsHidden()
+                    .font(.body.monospaced())
+                    .frame(width: 80)
+                ColorPicker(title, selection: colorBinding(keyPath, fallback: fallback), supportsOpacity: false)
+                    .labelsHidden()
+            }
+        }
+    }
+
+    private func hexBinding(
+        _ keyPath: WritableKeyPath<BreakScreenPreferences, String?>, fallback: HexColor
+    ) -> Binding<HexColor> {
+        Binding(
+            get: { HexColor(hex: coordinator.preferences.breakScreen[keyPath: keyPath] ?? "") ?? fallback },
+            set: { coordinator.preferences.breakScreen[keyPath: keyPath] = $0.hex }
+        )
+    }
+
     private func colorBinding(
         _ keyPath: WritableKeyPath<BreakScreenPreferences, String?>, fallback: HexColor
     ) -> Binding<Color> {
-        Binding(
-            get: { Color(HexColor(hex: coordinator.preferences.breakScreen[keyPath: keyPath] ?? "") ?? fallback) },
+        let hex = hexBinding(keyPath, fallback: fallback)
+        return Binding(
+            get: { Color(hex.wrappedValue) },
             set: {
                 // A colour with no sRGB conversion keeps the stored hex unchanged.
                 guard let rgb = HexColor($0) else { return }
-                coordinator.preferences.breakScreen[keyPath: keyPath] = rgb.hex
+                hex.wrappedValue = rgb
             }
         )
     }

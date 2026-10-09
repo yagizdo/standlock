@@ -2559,6 +2559,22 @@
         }
       }
     },
+    "Hex Code" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hex Kodu"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "十六进制代码"
+          }
+        }
+      }
+    },
     "Hip Circles" : {
       "comment" : "Exercise title",
       "extractionState" : "manual",

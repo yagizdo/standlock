@@ -41,6 +41,11 @@ struct BreakScreenPreferencesTests {
         #expect(decoded.breakScreen.textHex == nil)
     }
 
+    @Test func displayMessageTrimsWhitespace() {
+        #expect(BreakScreenPreferences(message: "  Drink water \n").displayMessage == "Drink water")
+        #expect(BreakScreenPreferences(message: " \n ").displayMessage.isEmpty)
+    }
+
     @Test func customColorsNeedBothValidHexes() {
         #expect(BreakScreenPreferences(backgroundHex: "#102030").customColors == nil)
         #expect(BreakScreenPreferences(backgroundHex: "#ZZZZZZ", textHex: "#F0E0D0").customColors == nil)

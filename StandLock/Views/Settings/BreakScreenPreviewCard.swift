@@ -5,12 +5,9 @@ import StandLockCore
 /// before the next break does.
 struct BreakScreenPreviewCard: View {
     let look: BreakScreenLook
+    /// Already trimmed, as `BreakScreenPreferences.displayMessage` gives it.
     let message: String
     let statistics: BreakStatistics?
-
-    private var trimmedMessage: String {
-        message.trimmingCharacters(in: .whitespacesAndNewlines)
-    }
 
     var body: some View {
         VStack(spacing: 10) {
@@ -20,8 +17,8 @@ struct BreakScreenPreviewCard: View {
                 .font(BreakTypography.timerNumerals(size: 44))
                 .foregroundStyle(look.palette.ink)
 
-            if !trimmedMessage.isEmpty {
-                Text(verbatim: trimmedMessage)
+            if !message.isEmpty {
+                Text(verbatim: message)
                     .font(BreakTypography.exerciseBody())
                     .foregroundStyle(look.palette.inkSoft)
                     .lineLimit(1)

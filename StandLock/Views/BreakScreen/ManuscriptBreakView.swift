@@ -47,7 +47,7 @@ struct ManuscriptBreakView: View {
     private var palette: BreakPalette { look.palette }
 
     private var message: String {
-        preferences.breakScreen.message.trimmingCharacters(in: .whitespacesAndNewlines)
+        preferences.breakScreen.displayMessage
     }
 
     var body: some View {

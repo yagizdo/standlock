@@ -8,21 +8,21 @@ public struct CustomBreakColors: Equatable, Sendable {
     public let ink: HexColor
     public let inkSoft: HexColor
     public let inkFaint: HexColor
-    public let isDark: Bool
+
+    /// Whether the background reads as dark, which picks the light or dark base theme.
+    public var isDark: Bool { paper.isDark }
 
     public init(
         paper: HexColor,
         paperEdge: HexColor,
         ink: HexColor,
         inkSoft: HexColor,
-        inkFaint: HexColor,
-        isDark: Bool
+        inkFaint: HexColor
     ) {
         self.paper = paper
         self.paperEdge = paperEdge
         self.ink = ink
         self.inkSoft = inkSoft
         self.inkFaint = inkFaint
-        self.isDark = isDark
     }
 }
