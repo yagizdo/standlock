@@ -22,6 +22,7 @@
 		44D9EB3E27CF114DDF7E3735 /* BreakOverlayWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5BBDBF97CFAA5FF490CBD00 /* BreakOverlayWindow.swift */; };
 		45EEC3830A30A1175EBD1FCE /* ThemeStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8180C020203FB970C798C84E /* ThemeStore.swift */; };
 		4A537C55B992DF62814F9857 /* QuickActionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2436E0F3F20FE12F920ADE7 /* QuickActionsView.swift */; };
+		4B8B1109D2B1AC920AF4656C /* HexColor+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FBAA74EE852DF8AA45C0909 /* HexColor+SwiftUI.swift */; };
 		4F9FCDEAA10641DE215D0663 /* StandLockCore in Frameworks */ = {isa = PBXBuildFile; productRef = 72A6FAE1CB69E8D0DE33B641 /* StandLockCore */; };
 		4FCB9EE133A8300CC965E687 /* AppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A81F2ED91290AD26CB5B672E /* AppCoordinator.swift */; };
 		51FC83BD2349C694BF8C11DD /* TimerNumerals.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEAF9C8AFAF33310B45445B2 /* TimerNumerals.swift */; };
@@ -33,6 +34,7 @@
 		726D144CA2B3B5AF4D4503AE /* LevelPill.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF6724F4176D1F398DF9A697 /* LevelPill.swift */; };
 		742A80C38BAB206209CC4213 /* WelcomeStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B387012391C6BC0360436B50 /* WelcomeStepView.swift */; };
 		75E31F36751D55F051D6FF34 /* ExerciseBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 434445F0717D4FC94E284CB8 /* ExerciseBlock.swift */; };
+		7BF1946EE4BC2EF26F5CE641 /* BreakScreenLook.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB803AB21175A8E54B5A2191 /* BreakScreenLook.swift */; };
 		82BDAFFF1661ED2476DDCAD3 /* Detection in Frameworks */ = {isa = PBXBuildFile; productRef = F19E05A1FA932709D406DD8F /* Detection */; };
 		8392C29716F63661BC5BBF34 /* LocalizedRoot.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCAC5A6BBBB241EEA90944F4 /* LocalizedRoot.swift */; };
 		89532644D109DAC0E1C69BED /* PermissionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6382F8157622B1D11845645E /* PermissionsView.swift */; };
@@ -73,6 +75,7 @@
 		43B1BE95A60D5294C770AEDE /* StatsFooter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsFooter.swift; sourceTree = "<group>"; };
 		4462E8D161113596647BD19E /* OverlayWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayWindowController.swift; sourceTree = "<group>"; };
 		4CD0B4059D699DF8BDF99889 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
+		4FBAA74EE852DF8AA45C0909 /* HexColor+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HexColor+SwiftUI.swift"; sourceTree = "<group>"; };
 		512EB234C46341A2816AAE12 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		52A2D12AD9D89928096A633C /* MenuBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarView.swift; sourceTree = "<group>"; };
 		540564FDDCA36A0411155BC1 /* StandLock.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = StandLock.entitlements; sourceTree = "<group>"; };
@@ -97,6 +100,7 @@
 		C2FA6CDE8744BCE072FEDAF9 /* MenuBarIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarIcon.swift; sourceTree = "<group>"; };
 		C5BBDBF97CFAA5FF490CBD00 /* BreakOverlayWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakOverlayWindow.swift; sourceTree = "<group>"; };
 		CD5052FB7ADFF1C72A819672 /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
+		DB803AB21175A8E54B5A2191 /* BreakScreenLook.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakScreenLook.swift; sourceTree = "<group>"; };
 		DC6421DB3A1D7F3131B3B7F4 /* StandLockKit */ = {isa = PBXFileReference; lastKnownFileType = folder; name = StandLockKit; path = StandLockKit; sourceTree = SOURCE_ROOT; };
 		DD06AD45022B6D147E26C4A6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		DEAF9C8AFAF33310B45445B2 /* TimerNumerals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerNumerals.swift; sourceTree = "<group>"; };
@@ -139,8 +143,10 @@
 				E5A68046037D0CAAE70C0F88 /* ActionArea.swift */,
 				C5BBDBF97CFAA5FF490CBD00 /* BreakOverlayWindow.swift */,
 				9C3B7E68FDF3C989BA50F367 /* BreakPalette.swift */,
+				DB803AB21175A8E54B5A2191 /* BreakScreenLook.swift */,
 				99FB6FBBABD55844628B8DA3 /* BreakTypography.swift */,
 				434445F0717D4FC94E284CB8 /* ExerciseBlock.swift */,
+				4FBAA74EE852DF8AA45C0909 /* HexColor+SwiftUI.swift */,
 				AF6724F4176D1F398DF9A697 /* LevelPill.swift */,
 				99BB0E055C4BD25865AD3EE1 /* ManuscriptBreakView.swift */,
 				33012BFC809E077C2D638165 /* NextIntervalLabel.swift */,
@@ -351,11 +357,13 @@
 				1895F27AD369A832CA280556 /* AppTheme.swift in Sources */,
 				44D9EB3E27CF114DDF7E3735 /* BreakOverlayWindow.swift in Sources */,
 				FF4C7AAB3CFF56C574A3EAA2 /* BreakPalette.swift in Sources */,
+				7BF1946EE4BC2EF26F5CE641 /* BreakScreenLook.swift in Sources */,
 				AB84ADC15C8263AFD995E8B5 /* BreakTypography.swift in Sources */,
 				DABDEC6CA937B88679850A3E /* DetectionSettingsView.swift in Sources */,
 				676678D8A09155A2AEEFA18C /* DisciplineLevelPicker.swift in Sources */,
 				75E31F36751D55F051D6FF34 /* ExerciseBlock.swift in Sources */,
 				09F7858EAC29160F684A60DD /* GeneralSettingsView.swift in Sources */,
+				4B8B1109D2B1AC920AF4656C /* HexColor+SwiftUI.swift in Sources */,
 				959469674E2A16E84F15F50B /* LanguageStore.swift in Sources */,
 				726D144CA2B3B5AF4D4503AE /* LevelPill.swift in Sources */,
 				8392C29716F63661BC5BBF34 /* LocalizedRoot.swift in Sources */,

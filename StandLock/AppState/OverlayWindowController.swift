@@ -56,12 +56,13 @@ final class OverlayWindowController: LockPresenting {
 
         // Read once per overlay. That is what makes each break pick up the current
         // appearance without this controller subscribing to the store.
-        let theme = themeStore.current
-        let palette = theme.palette(for: level)
+        let look = BreakScreenLook.resolve(
+            theme: themeStore.current, level: level, breakScreen: preferences.breakScreen
+        )
         for screen in NSScreen.screens {
-            let window = BreakOverlayWindow(screen: screen, palette: palette, theme: theme)
+            let window = BreakOverlayWindow(screen: screen, palette: look.palette, appearance: look.appearance)
             let contentView = ManuscriptBreakView(
-                level: level, theme: theme, totalDuration: duration,
+                level: level, look: look, totalDuration: duration,
                 exercise: exercise, preferences: preferences,
                 statistics: statistics, escalationTier: escalationTier,
                 nextIntervalLabel: nextIntervalLabel,

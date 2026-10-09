@@ -2,7 +2,7 @@ import AppKit
 import SwiftUI
 
 final class BreakOverlayWindow: NSWindow {
-    convenience init(screen: NSScreen, palette: BreakPalette, theme: AppTheme) {
+    convenience init(screen: NSScreen, palette: BreakPalette, appearance: NSAppearance.Name) {
         self.init(
             contentRect: screen.frame,
             styleMask: [.borderless, .fullSizeContentView],
@@ -18,7 +18,7 @@ final class BreakOverlayWindow: NSWindow {
         hasShadow = false
         isMovable = false
         hidesOnDeactivate = false
-        appearance = NSAppearance(named: theme.appearance)
+        self.appearance = NSAppearance(named: appearance)
     }
 
     override var canBecomeKey: Bool { true }
