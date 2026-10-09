@@ -84,6 +84,8 @@ struct GeneralSettingsView: View {
                 }
             }
 
+            BreakScreenSettingsSection()
+
             Section("Menu Bar Display") {
                 Toggle(isOn: $coordinator.preferences.showFullWorkTimer) {
                     Label {

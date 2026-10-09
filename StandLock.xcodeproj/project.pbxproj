@@ -27,7 +27,9 @@
 		4FCB9EE133A8300CC965E687 /* AppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A81F2ED91290AD26CB5B672E /* AppCoordinator.swift */; };
 		51FC83BD2349C694BF8C11DD /* TimerNumerals.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEAF9C8AFAF33310B45445B2 /* TimerNumerals.swift */; };
 		525A004E07BB31DB91651F08 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = CD5052FB7ADFF1C72A819672 /* InfoPlist.xcstrings */; };
+		55FC13A7837D7E1349D0FD88 /* BreakScreenSettingsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF28ED37577405AD41518961 /* BreakScreenSettingsSection.swift */; };
 		5AC2660FDBB66F4B523FC1E2 /* ScheduleEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94F9B9151DFEA710D1211B70 /* ScheduleEditorView.swift */; };
+		60CC12D31EA4AABEAA2F6BF2 /* BreakScreenPreviewCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E67B79CF3D1B0C360EC60E94 /* BreakScreenPreviewCard.swift */; };
 		676678D8A09155A2AEEFA18C /* DisciplineLevelPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = A866831BDFD42E80353C80D8 /* DisciplineLevelPicker.swift */; };
 		6AF974084F51158A71D9EA47 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512EB234C46341A2816AAE12 /* SettingsView.swift */; };
 		6F9C00664AAD42633900A642 /* Exercises.json in Resources */ = {isa = PBXBuildFile; fileRef = 2063FDE70AFCC135664A8FD4 /* Exercises.json */; };
@@ -108,8 +110,10 @@
 		E2436E0F3F20FE12F920ADE7 /* QuickActionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickActionsView.swift; sourceTree = "<group>"; };
 		E2E6E6102A1900D1FAB2A856 /* DetectionSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetectionSettingsView.swift; sourceTree = "<group>"; };
 		E5A68046037D0CAAE70C0F88 /* ActionArea.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionArea.swift; sourceTree = "<group>"; };
+		E67B79CF3D1B0C360EC60E94 /* BreakScreenPreviewCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakScreenPreviewCard.swift; sourceTree = "<group>"; };
 		EE28EF9957F31C9560EE4439 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		FE0E2C708B760F809144B756 /* PermissionChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionChecker.swift; sourceTree = "<group>"; };
+		FF28ED37577405AD41518961 /* BreakScreenSettingsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakScreenSettingsSection.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -161,6 +165,8 @@
 			isa = PBXGroup;
 			children = (
 				4CD0B4059D699DF8BDF99889 /* AboutView.swift */,
+				E67B79CF3D1B0C360EC60E94 /* BreakScreenPreviewCard.swift */,
+				FF28ED37577405AD41518961 /* BreakScreenSettingsSection.swift */,
 				E2E6E6102A1900D1FAB2A856 /* DetectionSettingsView.swift */,
 				A866831BDFD42E80353C80D8 /* DisciplineLevelPicker.swift */,
 				05EBBE0E51300DF74842F753 /* GeneralSettingsView.swift */,
@@ -358,6 +364,8 @@
 				44D9EB3E27CF114DDF7E3735 /* BreakOverlayWindow.swift in Sources */,
 				FF4C7AAB3CFF56C574A3EAA2 /* BreakPalette.swift in Sources */,
 				7BF1946EE4BC2EF26F5CE641 /* BreakScreenLook.swift in Sources */,
+				60CC12D31EA4AABEAA2F6BF2 /* BreakScreenPreviewCard.swift in Sources */,
+				55FC13A7837D7E1349D0FD88 /* BreakScreenSettingsSection.swift in Sources */,
 				AB84ADC15C8263AFD995E8B5 /* BreakTypography.swift in Sources */,
 				DABDEC6CA937B88679850A3E /* DetectionSettingsView.swift in Sources */,
 				676678D8A09155A2AEEFA18C /* DisciplineLevelPicker.swift in Sources */,
