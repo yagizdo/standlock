@@ -40,8 +40,8 @@ public struct BreakScreenPreferences: Codable, Sendable, Equatable {
     /// and the paper edge 10% toward black, matching the built-in palettes.
     public var customColors: CustomBreakColors? {
         guard let backgroundHex, let textHex,
-              let paper = RGBColor(hex: backgroundHex),
-              let ink = RGBColor(hex: textHex) else { return nil }
+              let paper = HexColor(hex: backgroundHex),
+              let ink = HexColor(hex: textHex) else { return nil }
         return CustomBreakColors(
             paper: paper,
             paperEdge: paper.mixed(with: .black, amount: 0.1),

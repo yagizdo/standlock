@@ -50,9 +50,9 @@ struct BreakScreenPreferencesTests {
         let light = try #require(BreakScreenPreferences(backgroundHex: "#FFFFFF", textHex: "#000000").customColors)
         #expect(light.paper == .white)
         #expect(light.ink == .black)
-        #expect(light.inkSoft == RGBColor.black.mixed(with: .white, amount: 0.2))
-        #expect(light.inkFaint == RGBColor.black.mixed(with: .white, amount: 0.5))
-        #expect(light.paperEdge == RGBColor.white.mixed(with: .black, amount: 0.1))
+        #expect(light.inkSoft == HexColor.black.mixed(with: .white, amount: 0.2))
+        #expect(light.inkFaint == HexColor.black.mixed(with: .white, amount: 0.5))
+        #expect(light.paperEdge == HexColor.white.mixed(with: .black, amount: 0.1))
         #expect(light.isDark == false)
 
         let dark = try #require(BreakScreenPreferences(backgroundHex: "#000000", textHex: "#FFFFFF").customColors)

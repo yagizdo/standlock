@@ -4,13 +4,13 @@ import Foundation
 ///
 /// Luminance and contrast follow WCAG 2.2:
 /// https://www.w3.org/TR/WCAG22/#dfn-relative-luminance
-public struct RGBColor: Equatable, Sendable {
+public struct HexColor: Equatable, Sendable {
     public let red: Double
     public let green: Double
     public let blue: Double
 
-    public static let black = RGBColor(red: 0, green: 0, blue: 0)
-    public static let white = RGBColor(red: 1, green: 1, blue: 1)
+    public static let black = HexColor(red: 0, green: 0, blue: 0)
+    public static let white = HexColor(red: 1, green: 1, blue: 1)
 
     public init(red: Double, green: Double, blue: Double) {
         self.red = red
@@ -48,16 +48,16 @@ public struct RGBColor: Equatable, Sendable {
     }
 
     /// WCAG contrast ratio, from 1 (same luminance) to 21 (black on white). Order does not matter.
-    public func contrastRatio(with other: RGBColor) -> Double {
+    public func contrastRatio(with other: HexColor) -> Double {
         let a = relativeLuminance
         let b = other.relativeLuminance
         return (max(a, b) + 0.05) / (min(a, b) + 0.05)
     }
 
     /// Linear blend per channel; `amount` is clamped to `0...1` (0 is `self`, 1 is `other`).
-    public func mixed(with other: RGBColor, amount: Double) -> RGBColor {
+    public func mixed(with other: HexColor, amount: Double) -> HexColor {
         let t = min(max(amount, 0), 1)
-        return RGBColor(
+        return HexColor(
             red: red + (other.red - red) * t,
             green: green + (other.green - green) * t,
             blue: blue + (other.blue - blue) * t
