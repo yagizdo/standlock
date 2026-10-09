@@ -631,6 +631,16 @@
         }
       }
     },
+    "Appearance" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Görünüm"
+          }
+        }
+      }
+    },
     "Are you sure about that?" : {
       "localizations" : {
         "tr" : {
@@ -1409,6 +1419,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "已达到每日跳过上限"
+          }
+        }
+      }
+    },
+    "Dark" : {
+      "comment" : "AppTheme.nameKey",
+      "extractionState" : "manual",
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Koyu"
           }
         }
       }
@@ -3017,6 +3039,18 @@
         }
       }
     },
+    "Light" : {
+      "comment" : "AppTheme.nameKey",
+      "extractionState" : "manual",
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Açık"
+          }
+        }
+      }
+    },
     "LOCK" : {
       "localizations" : {
         "tr" : {
@@ -4314,6 +4348,16 @@
         }
       }
     },
+    "Short break" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kısa mola"
+          }
+        }
+      }
+    },
     "Short breaks: %lld" : {
       "localizations" : {
         "tr" : {
@@ -4326,22 +4370,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "短休息次数：%lld"
-          }
-        }
-      }
-    },
-    "Short: %lldm" : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kısa: %lld dk"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "短休息：%lld 分钟"
           }
         }
       }
@@ -5160,6 +5188,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "系统"
+          }
+        }
+      }
+    },
+    "System follows your Mac's appearance" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sistem, Mac'inizin görünümünü izler"
           }
         }
       }

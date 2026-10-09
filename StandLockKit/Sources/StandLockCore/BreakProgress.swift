@@ -14,6 +14,14 @@ public func calculateBreakProgress(
     return min(1.0, max(0.0, elapsed / total))
 }
 
+/// Whole seconds left on a break that ends at `end`.
+///
+/// Read from the clock, not counted down per tick: a tick that wakes late behind a busy
+/// main thread would otherwise add its delay to the break, and the lock outlasts its length.
+public func breakSecondsRemaining(until end: Date, now: Date = Date()) -> TimeInterval {
+    max(0, end.timeIntervalSince(now).rounded())
+}
+
 public func formatMenuBarTimer(
     secondsRemaining: TimeInterval,
     showFullTimer: Bool,

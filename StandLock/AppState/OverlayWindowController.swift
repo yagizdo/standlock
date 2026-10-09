@@ -11,6 +11,7 @@ final class OverlayWindowController: LockPresenting {
     private var focusTimer: Timer?
     private let mediaController = MediaController()
     private let languageStore: LanguageStore
+    private let themeStore: ThemeStore
     private(set) var isShowing: Bool = false
 
     private var currentLevel: DisciplineLevel?
@@ -22,13 +23,15 @@ final class OverlayWindowController: LockPresenting {
     private var currentNextIntervalLabel: String?
     private var breakStartDate: Date?
     private var lastScreenChangeHandled: Date = .distantPast
+    private var policyBeforeOverlay: NSApplication.ActivationPolicy = .accessory
 
     var onSkip: (() -> Void)?
     var onComplete: (() -> Void)?
     var onEscape: (() -> Void)?
 
-    nonisolated init(languageStore: LanguageStore) {
+    nonisolated init(languageStore: LanguageStore, themeStore: ThemeStore) {
         self.languageStore = languageStore
+        self.themeStore = themeStore
     }
 
     func showOverlay(
@@ -51,12 +54,14 @@ final class OverlayWindowController: LockPresenting {
         currentEscalationTier = escalationTier
         currentNextIntervalLabel = nextIntervalLabel
 
-        let palette = BreakPalette.for(level)
+        // Read once per overlay. That is what makes each break pick up the current
+        // appearance without this controller subscribing to the store.
+        let theme = themeStore.current
+        let palette = theme.palette(for: level)
         for screen in NSScreen.screens {
-            let window = BreakOverlayWindow(screen: screen)
-            window.backgroundColor = NSColor(palette.paper)
+            let window = BreakOverlayWindow(screen: screen, palette: palette, theme: theme)
             let contentView = ManuscriptBreakView(
-                level: level, totalDuration: duration,
+                level: level, theme: theme, totalDuration: duration,
                 exercise: exercise, preferences: preferences,
                 statistics: statistics, escalationTier: escalationTier,
                 nextIntervalLabel: nextIntervalLabel,
@@ -73,8 +78,10 @@ final class OverlayWindowController: LockPresenting {
         // Activate the app, not just the window. A menu bar app stays .accessory and
         // inactive, and an inactive app gets no input method: the escape phrase field
         // then receives raw keystrokes, so Pinyin types `nihao` instead of 你好 and no
-        // Chinese, Japanese or Korean phrase can ever be entered. `hideOverlay`
-        // restores .accessory.
+        // Chinese, Japanese or Korean phrase can ever be entered. `dismissOverlay`
+        // restores the policy saved here; the `dismissOverlay` call above has already
+        // put back any earlier one, so this is the policy from before the break.
+        policyBeforeOverlay = NSApp.activationPolicy()
         NSApp.setActivationPolicy(.regular)
         NSApp.activate(ignoringOtherApps: true)
 
@@ -112,13 +119,10 @@ final class OverlayWindowController: LockPresenting {
             window.orderOut(nil)
         }
 
-        let hasOtherVisibleWindows = NSApp.windows.contains { window in
-            window.isVisible && !(window is BreakOverlayWindow)
-        }
-
-        if !hasOtherVisibleWindows {
-            NSApp.setActivationPolicy(.accessory)
-        }
+        // Put back what `showOverlay` saved instead of looking for other visible windows:
+        // `NSApp.windows` always holds the menu bar item's visible NSStatusBarWindow, so
+        // that check kept the app .regular, with a Dock icon and focus, after every break.
+        NSApp.setActivationPolicy(policyBeforeOverlay)
     }
 
     private func startEventTap(preferences: AppPreferences) {

@@ -13,10 +13,10 @@ struct ScheduleFormView: View {
     @State private var customDays: Set<Weekday> = []
     @State private var windows: [TimeWindow] = [TimeWindow(startHour: 9, startMinute: 0, endHour: 17, endMinute: 0)]
     @State private var intervalRows: [IntervalRowModel] = [IntervalRowModel(minutes: 40)]
-    @State private var breakDurationMinutes: Int = 10
+    @State private var breakDurationMinutes: Double = 10
     @State private var useRepetition: Bool = false
     @State private var shortBreakCount: Int = 3
-    @State private var shortBreakMinutes: Int = 10
+    @State private var shortBreakMinutes: Double = 10
     @State private var longBreakMinutes: Int = 30
     @State private var disciplineLevel: DisciplineLevel = .gentle
     @State private var progressiveEnforcement: Bool = false
@@ -199,18 +199,7 @@ struct ScheduleFormView: View {
                     Text("Break duration")
                         .font(.caption)
                         .foregroundStyle(.secondary)
-                    HStack(spacing: 4) {
-                        TextField("", value: $breakDurationMinutes, format: .number)
-                            .textFieldStyle(.roundedBorder)
-                            .frame(width: 50)
-                            .onChange(of: breakDurationMinutes) { newValue in
-                                breakDurationMinutes = max(1, min(60, newValue))
-                            }
-                        Stepper("", value: $breakDurationMinutes, in: 1...60, step: 1)
-                            .labelsHidden()
-                        Text("min")
-                            .foregroundStyle(.secondary)
-                    }
+                    minutesField($breakDurationMinutes, upperBound: 60)
                 }
             }
 
@@ -235,7 +224,10 @@ struct ScheduleFormView: View {
 
                     HStack(spacing: 16) {
                         Stepper("Short breaks: \(shortBreakCount)", value: $shortBreakCount, in: 1...10)
-                        Stepper("Short: \(shortBreakMinutes)m", value: $shortBreakMinutes, in: 1...30)
+                        HStack(spacing: 4) {
+                            Text("Short break")
+                            minutesField($shortBreakMinutes, upperBound: 30)
+                        }
                     }
 
                     Stepper("Long break: \(longBreakMinutes)m", value: $longBreakMinutes, in: 5...60, step: 5)
@@ -294,6 +286,24 @@ struct ScheduleFormView: View {
         }
     }
 
+    /// Minutes field with a stepper. Accepts decimals so a break can be shorter
+    /// than a minute: 0.5 is thirty seconds, the floor 0.1 is six seconds.
+    private func minutesField(_ value: Binding<Double>, upperBound: Double) -> some View {
+        HStack(spacing: 4) {
+            TextField("", value: value, format: .number.precision(.fractionLength(0...2)))
+                .textFieldStyle(.roundedBorder)
+                .frame(width: 50)
+                .onChange(of: value.wrappedValue) { newValue in
+                    value.wrappedValue = max(0.1, min(upperBound, newValue))
+                }
+            // ponytail: step stays 1, so 0.5 steps to 1.5; typing is how you reach a fraction.
+            Stepper("", value: value, in: 0.1...upperBound, step: 1)
+                .labelsHidden()
+            Text("min")
+                .foregroundStyle(.secondary)
+        }
+    }
+
     private func loadSchedule() {
         guard let s = schedule else { return }
         name = s.name
@@ -303,7 +313,7 @@ struct ScheduleFormView: View {
         } else {
             intervalRows = [IntervalRowModel(minutes: Int(s.breakInterval / 60))]
         }
-        breakDurationMinutes = Int(s.breakDuration / 60)
+        breakDurationMinutes = s.breakDuration / 60
         disciplineLevel = s.disciplineLevel
         progressiveEnforcement = s.progressiveEnforcement
 
@@ -319,7 +329,7 @@ struct ScheduleFormView: View {
         if let rule = s.repetitionRule {
             useRepetition = true
             shortBreakCount = rule.shortBreakCount
-            shortBreakMinutes = Int(rule.shortBreakDuration / 60)
+            shortBreakMinutes = rule.shortBreakDuration / 60
             longBreakMinutes = Int(rule.longBreakDuration / 60)
         }
     }
@@ -335,7 +345,7 @@ struct ScheduleFormView: View {
         let repetitionRule: RepetitionRule? = useRepetition
             ? RepetitionRule(
                 shortBreakCount: shortBreakCount,
-                shortBreakDuration: TimeInterval(shortBreakMinutes * 60),
+                shortBreakDuration: (shortBreakMinutes * 60).rounded(),
                 longBreakDuration: TimeInterval(longBreakMinutes * 60)
             )
             : nil
@@ -358,7 +368,7 @@ struct ScheduleFormView: View {
             days: days,
             windows: windows,
             breakInterval: steps[0].duration,
-            breakDuration: TimeInterval(breakDurationMinutes * 60),
+            breakDuration: (breakDurationMinutes * 60).rounded(),
             intervalCycle: intervalCycle,
             repetitionRule: repetitionRule,
             disciplineLevel: disciplineLevel,

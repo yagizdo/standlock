@@ -1,5 +1,34 @@
 # Changelog
 
+## StandLock v0.7.1
+
+**Bug Fixes**
+- A break no longer runs past its length when your Mac is busy. The countdown took a second off each time it woke up, so every late wake-up made the lock longer; it now counts down to a fixed end time (#63, 8aa4229)
+- The escape phrase field gets your typing without a click first. Keys typed during a break used to go to the app behind the break screen; StandLock now comes to the front when a break starts (#63, 8aa4229)
+
+**Notes**
+- StandLock shows up in the app switcher (Cmd-Tab) while a break is on screen and leaves it when the break ends.
+
+**Full Changelog:** https://github.com/yagizdo/StandLock/compare/v0.7.0...v0.7.1
+
+## StandLock v0.7.0
+
+**Features**
+- Break duration and the Repetition Cycle short break now accept decimal minutes, down to 0.1 (six seconds). Idle detection only counts a break as taken once you've been away for at least a minute, or the full break length if longer, so a quick glance away no longer swallows a break under a minute (fixes #59, 593a385)
+
+**Full Changelog:** https://github.com/yagizdo/StandLock/compare/v0.6.0...v0.7.0
+
+## StandLock v0.6.0
+
+**Features**
+- Calendar integration can now be narrowed to the calendars you choose. Settings › Detection gains an All calendars / Specific calendars switch; every calendar starts ticked, so nothing changes until you untick one (closes #48, a5bec45). Thanks @tim-hilde!
+- An Appearance setting in Settings › General: System, Light or Dark. System is the default and follows your Mac, and each discipline level gets its own dark break palette (closes #55, e77aee1).
+
+**Notes**
+- The break overlay used to render light whatever your Mac was set to. It now follows the Appearance setting, so a Mac in dark appearance gets dark break screens from this version on. Choose Light in Settings › General to keep the old look.
+
+**Full Changelog:** https://github.com/yagizdo/StandLock/compare/v0.5.0...v0.6.0
+
 ## StandLock v0.5.0
 
 **Features**

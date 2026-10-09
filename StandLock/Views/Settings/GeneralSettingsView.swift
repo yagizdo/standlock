@@ -4,6 +4,7 @@ import ServiceManagement
 struct GeneralSettingsView: View {
     @EnvironmentObject private var coordinator: AppCoordinator
     @EnvironmentObject private var languageStore: LanguageStore
+    @EnvironmentObject private var themeStore: ThemeStore
     @State private var launchAtStartup = SMAppService.mainApp.status == .enabled
     @State private var errorMessage: String?
     @State private var isUpdating = false
@@ -54,6 +55,31 @@ struct GeneralSettingsView: View {
                         }
                     } icon: {
                         Image(systemName: "globe")
+                    }
+                }
+            }
+
+            Section("Appearance") {
+                Picker(selection: Binding(
+                    get: { themeStore.selection },
+                    set: { themeStore.select($0) }
+                )) {
+                    Text("System").tag(String?.none)
+                    // Built from the store's list, so a theme added later needs no
+                    // change here.
+                    ForEach(themeStore.available) { theme in
+                        Text(LocalizedStringKey(theme.nameKey)).tag(Optional(theme.id))
+                    }
+                } label: {
+                    Label {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Appearance")
+                            Text("System follows your Mac's appearance")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    } icon: {
+                        Image(systemName: "circle.lefthalf.filled")
                     }
                 }
             }

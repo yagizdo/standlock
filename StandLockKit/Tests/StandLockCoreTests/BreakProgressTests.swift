@@ -242,4 +242,19 @@ struct BreakProgressTests {
             newNextBreak: now.addingTimeInterval(60), now: now
         ) == now)
     }
+
+    // MARK: - breakSecondsRemaining
+
+    /// A tick that wakes late must not stretch the break: counting ticks turned a 9-minute
+    /// break into 18 when every tick took two seconds (#63).
+    @Test func lateTickCountsWallClockTime() {
+        let start = Date()
+        let end = start.addingTimeInterval(540)
+        #expect(breakSecondsRemaining(until: end, now: start.addingTimeInterval(2)) == TimeInterval(538))
+    }
+
+    @Test func pastEndReturnsZero() {
+        let now = Date()
+        #expect(breakSecondsRemaining(until: now.addingTimeInterval(-5), now: now) == TimeInterval(0))
+    }
 }
