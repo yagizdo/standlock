@@ -86,6 +86,14 @@ final class AppCoordinator: ObservableObject {
         syncPreferencesWithPermissions()
         startProgressTimer()
         observeSystemSleep()
+        // Quitting must not hand back a fresh interval, cap and tier on relaunch.
+        NotificationCenter.default.addObserver(
+            forName: NSApplication.willTerminateNotification, object: nil, queue: .main
+        ) { [weak self] _ in
+            MainActor.assumeIsolated {
+                self?.saveEnforcementState()
+            }
+        }
         permissionSyncCancellable = permissionChecker.objectWillChange
             .receive(on: RunLoop.main)
             .sink { [weak self] _ in
@@ -100,7 +108,7 @@ final class AppCoordinator: ObservableObject {
             }
         Task { await permissionChecker.pollContinuously() }
         if !schedules.isEmpty {
-            startCoordinator()
+            startCoordinator(restoring: carriedStateForToday())
         }
         if !hasCompletedOnboarding {
             Task { @MainActor in
@@ -138,6 +146,13 @@ final class AppCoordinator: ObservableObject {
             for i in schedules.indices { schedules[i].progressiveEnforcement = true }
             saveSchedules()
             savePreferences()
+        }
+
+        if let data = UserDefaults.standard.data(forKey: "enforcementState"),
+           let decoded = try? JSONDecoder().decode(EnforcementState.self, from: data),
+           let day = UserDefaults.standard.object(forKey: "enforcementStateDay") as? Date {
+            carriedEnforcementState = decoded
+            carriedEnforcementDay = day
         }
 
         if let data = UserDefaults.standard.data(forKey: "statistics"),
@@ -362,17 +377,31 @@ final class AppCoordinator: ObservableObject {
 
     private func carriedStateForToday() -> EnforcementState {
         guard Calendar.current.isDateInToday(carriedEnforcementDay) else { return EnforcementState() }
-        return carriedEnforcementState
+        // The coordinator carries a disabled schedule's slot without knowing whether the
+        // schedule still exists; a deleted one's slot stops here.
+        var state = carriedEnforcementState
+        let ids = Set(schedules.map(\.id))
+        state.pendingBreakDates = state.pendingBreakDates.filter { ids.contains($0.key) }
+        return state
+    }
+
+    /// Captures from the live coordinator when there is one. Without one -- every schedule off --
+    /// the carry from the last teardown is still the current state and is written as it is.
+    private func saveEnforcementState() {
+        if let coordinator {
+            carriedEnforcementState = coordinator.captureEnforcementState()
+            carriedEnforcementDay = Date()
+        }
+        guard let data = try? JSONEncoder().encode(carriedEnforcementState) else { return }
+        UserDefaults.standard.set(data, forKey: "enforcementState")
+        UserDefaults.standard.set(carriedEnforcementDay, forKey: "enforcementStateDay")
     }
 
     private func restartCoordinator() {
         // Captured before the teardown: every counter below lives on the coordinator instance,
         // so a rebuild would otherwise re-arm the daily cap from zero and restart the interval
         // cycle -- editing a schedule at noon quietly undid the morning's enforcement.
-        if let coordinator {
-            carriedEnforcementState = coordinator.captureEnforcementState()
-            carriedEnforcementDay = Date()
-        }
+        saveEnforcementState()
         // A pause is a user decision with a deadline, not coordinator bookkeeping. The rebuilt
         // coordinator starts unpaused and arms a break straight away, so the time still owed has
         // to be re-applied -- otherwise editing a schedule ends a pause the user asked for, and
