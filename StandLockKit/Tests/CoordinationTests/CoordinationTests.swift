@@ -1900,8 +1900,7 @@ struct BreakCoordinatorEnforcementStateTests {
         let schedule = makeSchedule()
         let slot = Date().addingTimeInterval(300)
         let state = stateWithPendingSlot(schedule, at: slot)
-        #expect(state.pendingBreakDate == slot)
-        #expect(state.pendingBreakScheduleID == schedule.id)
+        #expect(state.pendingBreakDates == [schedule.id: slot])
 
         let scheduler = MockScheduler()
         // A full interval away, which is what a rebuild would otherwise arm.
@@ -1911,7 +1910,7 @@ struct BreakCoordinatorEnforcementStateTests {
         )
         rebuilt.start(with: [schedule], preferences: AppPreferences(), restoring: state)
 
-        #expect(rebuilt.captureEnforcementState().pendingBreakDate == slot)
+        #expect(rebuilt.captureEnforcementState().pendingBreakDates == [schedule.id: slot])
         rebuilt.stop()
     }
 
@@ -1926,7 +1925,7 @@ struct BreakCoordinatorEnforcementStateTests {
         )
         rebuilt.start(with: [schedule], preferences: AppPreferences())
 
-        #expect(rebuilt.captureEnforcementState().pendingBreakDate == fresh)
+        #expect(rebuilt.captureEnforcementState().pendingBreakDates == [schedule.id: fresh])
         rebuilt.stop()
     }
 
@@ -1942,7 +1941,7 @@ struct BreakCoordinatorEnforcementStateTests {
         )
         rebuilt.start(with: [schedule], preferences: AppPreferences(), restoring: state)
 
-        #expect(rebuilt.captureEnforcementState().pendingBreakDate == shortened)
+        #expect(rebuilt.captureEnforcementState().pendingBreakDates == [schedule.id: shortened])
         rebuilt.stop()
     }
 
@@ -1950,7 +1949,7 @@ struct BreakCoordinatorEnforcementStateTests {
         let schedule = makeSchedule()
         var state = stateWithPendingSlot(schedule, at: Date().addingTimeInterval(300))
         // Every schedule off over lunch, then back on: the slot the coordinator held is long gone.
-        state.pendingBreakDate = Date().addingTimeInterval(-3600)
+        state.pendingBreakDates[schedule.id] = Date().addingTimeInterval(-3600)
 
         let scheduler = MockScheduler()
         let fresh = Date().addingTimeInterval(600)
@@ -1960,11 +1959,60 @@ struct BreakCoordinatorEnforcementStateTests {
         )
         rebuilt.start(with: [schedule], preferences: AppPreferences(), restoring: state)
 
-        #expect(rebuilt.captureEnforcementState().pendingBreakDate == fresh)
+        #expect(rebuilt.captureEnforcementState().pendingBreakDates == [schedule.id: fresh])
         rebuilt.stop()
     }
 
-    @Test func aCarriedSlotForADeletedScheduleIsDropped() {
+    @Test func aDisabledSchedulesSlotSurvivesUntilItIsReEnabled() {
+        let toggled = makeSchedule()
+        let other = makeSchedule()
+        let slot = Date().addingTimeInterval(300)
+        let armed = stateWithPendingSlot(toggled, at: slot)
+
+        // A full interval away, which is what any rebuild arms for a schedule with no carried slot.
+        let scheduler = MockScheduler()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(600)
+
+        // `toggled` switched off: the rebuild only sees `other`, and arms it.
+        let withoutToggled = BreakCoordinator(
+            scheduler: scheduler, detector: MockDetector(), locker: MockLocker()
+        )
+        withoutToggled.start(with: [other], preferences: AppPreferences(), restoring: armed)
+        let whileOff = withoutToggled.captureEnforcementState()
+        withoutToggled.stop()
+
+        // Switched back on: the break it was counting down to is still the next one.
+        let reEnabled = BreakCoordinator(
+            scheduler: scheduler, detector: MockDetector(), locker: MockLocker()
+        )
+        reEnabled.start(with: [toggled, other], preferences: AppPreferences(), restoring: whileOff)
+
+        #expect(reEnabled.captureEnforcementState().pendingBreakDates == [toggled.id: slot])
+        reEnabled.stop()
+    }
+
+    /// What `AppCoordinator` writes on quit and reads back on launch.
+    @Test func enforcementStateRoundTripsThroughJSON() throws {
+        let id = UUID()
+        let slot = Date(timeIntervalSinceReferenceDate: 800_000_000)
+        let state = EnforcementState(dailyBreakCounts: [id: 2], escalationTiers: [id: 1],
+                                     cycleIndices: [id: 3], repetitionIndices: [id: 4],
+                                     pendingBreakDates: [id: slot])
+
+        let decoded = try JSONDecoder().decode(
+            EnforcementState.self, from: JSONEncoder().encode(state)
+        )
+
+        #expect(decoded.dailyBreakCounts == [id: 2])
+        #expect(decoded.escalationTiers == [id: 1])
+        #expect(decoded.cycleIndices == [id: 3])
+        #expect(decoded.repetitionIndices == [id: 4])
+        #expect(decoded.pendingBreakDates == [id: slot])
+    }
+
+    /// The coordinator cannot tell a deleted schedule from a disabled one, so the slot is carried
+    /// on as dormant; `AppCoordinator.carriedStateForToday` prunes ids that no longer exist.
+    @Test func aCarriedSlotForADeletedScheduleIsNotArmed() {
         let deleted = makeSchedule()
         let state = stateWithPendingSlot(deleted, at: Date().addingTimeInterval(300))
         let remaining = makeSchedule()
@@ -1978,8 +2026,9 @@ struct BreakCoordinatorEnforcementStateTests {
         rebuilt.start(with: [remaining], preferences: AppPreferences(), restoring: state)
 
         let armed = rebuilt.captureEnforcementState()
-        #expect(armed.pendingBreakDate == fresh)
-        #expect(armed.pendingBreakScheduleID == remaining.id)
+        // Only one slot is ever armed: had the deleted schedule's earlier slot won, `remaining`
+        // would have no entry at all.
+        #expect(armed.pendingBreakDates[remaining.id] == fresh)
         rebuilt.stop()
     }
 }
