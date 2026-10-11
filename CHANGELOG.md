@@ -1,5 +1,22 @@
 # Changelog
 
+## StandLock v0.8.0
+
+**Features**
+- StandLock speaks Simplified Chinese. The interface, the break screens, the exercise suggestions and every escalation challenge are translated, and the Language picker in Settings › General lists it (closes #47, c147bfb)
+
+**Bug Fixes**
+- Turning a schedule off and on again no longer restarts its countdown when you have more than one schedule. The break stays due at the time it was set for (5aec21d)
+- Quitting and reopening StandLock no longer restarts the countdown, and it no longer clears today's skip count or the Progressive Enforcement tier. They carry over within the same day (5aec21d)
+
+**Improvements**
+- `brew install` and `brew upgrade` no longer print deprecation warnings for the StandLock cask (94609b3, 6075cde). Thanks @dobladov and @tim-hilde!
+
+**Notes**
+- If a break came due while a schedule was off or StandLock was closed, that break is dropped and a fresh interval starts, as before. Quitting during a break still ends the break.
+
+**Full Changelog:** https://github.com/yagizdo/StandLock/compare/v0.7.1...v0.8.0
+
 ## StandLock v0.7.1
 
 **Bug Fixes**
