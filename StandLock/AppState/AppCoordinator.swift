@@ -168,6 +168,7 @@ final class AppCoordinator: ObservableObject {
            let decoded = try? JSONDecoder().decode(BreakHistory.self, from: data) {
             breakHistory = decoded
         }
+        syncScheduledWeekdays()
         let cutoff = DailyBreakRecord.dateKey(
             from: Calendar.current.date(byAdding: .day, value: -400, to: Date())!
         )
@@ -200,6 +201,13 @@ final class AppCoordinator: ObservableObject {
     func saveSchedules() {
         guard let data = try? JSONEncoder().encode(schedules) else { return }
         UserDefaults.standard.set(data, forKey: "schedules")
+        syncScheduledWeekdays()
+    }
+
+    /// The streak reads this to tell a missed day from one no schedule runs on.
+    private func syncScheduledWeekdays() {
+        breakHistory.scheduledWeekdays = schedules.filter(\.isEnabled)
+            .reduce(into: Set<Weekday>()) { $0.formUnion($1.days.activeDays) }
     }
 
     func savePreferences() {

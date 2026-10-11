@@ -201,6 +201,40 @@ struct BreakHistoryTests {
         #expect(history.currentStreak(referenceDate: ref) == 1)
     }
 
+    // 2026-06-01 is a Monday.
+    private let weekdays: Set<Weekday> = [.monday, .tuesday, .wednesday, .thursday, .friday]
+
+    @Test func streakSkipsUnrecordedDaysNoScheduleCovers() {
+        var history = BreakHistory()
+        history.scheduledWeekdays = weekdays
+        history.upsert(makeRecord("2026-06-04", completed: 1))
+        history.upsert(makeRecord("2026-06-05", completed: 1))
+        // Saturday and Sunday have no record: the app was quit, or no break was due.
+        history.upsert(makeRecord("2026-06-08", completed: 1))
+
+        #expect(history.currentStreak(referenceDate: date("2026-06-08")) == 3)
+        #expect(history.bestStreak == 3)
+    }
+
+    @Test func streakStillBreaksOnUnrecordedScheduledDay() {
+        var history = BreakHistory()
+        history.scheduledWeekdays = weekdays
+        history.upsert(makeRecord("2026-06-04", completed: 1))
+        history.upsert(makeRecord("2026-06-08", completed: 1))
+
+        #expect(history.currentStreak(referenceDate: date("2026-06-08")) == 1)
+    }
+
+    @Test func streakWalkStopsAtOldestRecordWhenNoDayIsScheduled() {
+        var history = BreakHistory()
+        history.scheduledWeekdays = []
+        #expect(history.currentStreak(referenceDate: date("2026-06-08")) == 0)
+
+        history.upsert(makeRecord("2026-06-01", completed: 1))
+        history.upsert(makeRecord("2026-06-08", completed: 1))
+        #expect(history.currentStreak(referenceDate: date("2026-06-08")) == 2)
+    }
+
     @Test func bestStreakUpdatesOnUpsert() {
         var history = BreakHistory()
         history.upsert(makeRecord("2026-06-01", completed: 1))
