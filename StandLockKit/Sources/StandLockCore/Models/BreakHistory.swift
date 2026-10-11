@@ -30,6 +30,13 @@ public struct BreakHistory: Codable, Sendable {
     public var records: [String: DailyBreakRecord]
     public var bestStreak: Int
     public private(set) var revision: Int = 0
+    /// Weekdays at least one enabled schedule runs on. A past day without a record is only a
+    /// missed day if a break could have been due on it; the app sets this from its schedules.
+    /// Not persisted, like `revision`.
+    public var scheduledWeekdays: Set<Weekday> = Set(Weekday.allCases) {
+        // Lets a cached Statistics view see a schedule change without waiting for the next break.
+        didSet { if scheduledWeekdays != oldValue { revision += 1 } }
+    }
 
     private enum CodingKeys: String, CodingKey {
         case records, bestStreak
@@ -73,12 +80,15 @@ public struct BreakHistory: Codable, Sendable {
 
     public func currentStreak(referenceDate: Date = Date()) -> Int {
         let calendar = Calendar.current
+        // Skipped unrecorded days would otherwise walk back forever when no weekday is scheduled.
+        guard let oldestKey = records.keys.min() else { return 0 }
         var streak = 0
         var dayOffset = 0
 
         while true {
             guard let day = calendar.date(byAdding: .day, value: -dayOffset, to: referenceDate) else { break }
             let key = DailyBreakRecord.dateKey(from: day)
+            if key < oldestKey { break }
 
             if let record = records[key] {
                 if !record.hadActiveSchedule {
@@ -92,7 +102,8 @@ public struct BreakHistory: Codable, Sendable {
                 }
                 break
             } else {
-                if dayOffset == 0 {
+                let weekday = Weekday(rawValue: calendar.component(.weekday, from: day))
+                if dayOffset == 0 || weekday.map({ !scheduledWeekdays.contains($0) }) ?? false {
                     dayOffset += 1
                     continue
                 }
