@@ -1,5 +1,15 @@
 # Changelog
 
+## StandLock v0.8.1
+
+**Bug Fixes**
+- Days when none of your schedules run no longer break your day streak. A weekday-only schedule used to lose the streak every Monday; now only a scheduled day without a completed break ends it (8ab123d)
+
+**Notes**
+- After updating, your current streak can grow longer, because past days without a schedule stop counting against it. Past days are judged by the schedules you have today. Best streak is not recalculated.
+
+**Full Changelog:** https://github.com/yagizdo/StandLock/compare/v0.8.0...v0.8.1
+
 ## StandLock v0.8.0
 
 **Features**
