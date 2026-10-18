@@ -54,6 +54,9 @@ public final class BreakCoordinator {
     private var currentSchedule: Schedule?
     /// A break may be postponed once; the one that comes back after the call cannot be again.
     private var activeBreakCanPostpone = false
+    /// The break owed after a postpone, until it returns. The wait itself lives in `breakTimer`,
+    /// which lock, sleep and pause cancel; this is what lets them start it again.
+    private var postponedSchedule: Schedule?
     private var statistics: BreakStatistics = BreakStatistics()
     private var dailyBreakCounts: [UUID: Int] = [:]
     private var escalationTiers: [UUID: Int] = [:]
@@ -137,6 +140,7 @@ public final class BreakCoordinator {
         breakTimer?.cancel()
         breakTimer = nil
         clearPendingBreak()
+        postponedSchedule = nil
         if locker.isShowing { locker.dismissOverlay() }
         currentBreak = nil
         currentSchedule = nil
@@ -160,7 +164,7 @@ public final class BreakCoordinator {
     public func resume() {
         isPaused = false
         eventContinuation.yield(.scheduleResumed)
-        scheduleNextBreak()
+        rearm()
     }
 
     /// Rolls the daily counters over when the calendar day has changed. Safe to call often --
@@ -207,7 +211,7 @@ public final class BreakCoordinator {
         if isPaused {
             resume()
         } else {
-            scheduleNextBreak()
+            rearm()
         }
     }
 
@@ -221,7 +225,7 @@ public final class BreakCoordinator {
         if isPaused {
             resume()
         } else {
-            scheduleNextBreak()
+            rearm()
         }
     }
 
@@ -251,6 +255,7 @@ public final class BreakCoordinator {
         }
         let anchor = skipAnchor(slot: pendingBreakDate)
         clearPendingBreak()
+        postponedSchedule = nil
         updateStatistics {
             $0.breaksSkipped += 1
             $0.currentStreak = 0
@@ -303,11 +308,17 @@ public final class BreakCoordinator {
         locker.dismissOverlay()
         currentBreak = nil
         currentSchedule = nil
+        postponedSchedule = schedule
+        eventContinuation.yield(.breakDeferred(.postponed, nextAttempt: Date().addingTimeInterval(deferralPollingInterval)))
+        updateStatistics { $0.breaksDeferred += 1 }
+        startPostponeWait(for: schedule)
+    }
+
+    private func startPostponeWait(for schedule: Schedule) {
+        breakTimer?.cancel()
         // Keeps `refreshDailyRollover` from re-arming over the wait. The pending slot stays nil:
         // `triggerBreak` already advanced the cycle, and a set ID would let a menu skip advance it again.
         isDeferringBreak = true
-        eventContinuation.yield(.breakDeferred(.postponed, nextAttempt: Date().addingTimeInterval(deferralPollingInterval)))
-        updateStatistics { $0.breaksDeferred += 1 }
         breakTimer = Task {
             var clearSince: Date?
             while !Task.isCancelled {
@@ -324,6 +335,7 @@ public final class BreakCoordinator {
                 clearSince = since
                 if Date().timeIntervalSince(since) >= self.preferences.postponeReturnDelay {
                     self.clearPendingBreak()
+                    self.postponedSchedule = nil
                     self.presentBreak(for: schedule, context: context, canPostpone: false)
                     return
                 }
@@ -361,6 +373,14 @@ public final class BreakCoordinator {
     }
 
     // MARK: - Private
+
+    private func rearm() {
+        if let schedule = postponedSchedule {
+            startPostponeWait(for: schedule)
+        } else {
+            scheduleNextBreak()
+        }
+    }
 
     /// The pending slot and the deferral flag always end together: whoever concludes a slot
     /// concludes the poll that was waiting on it.

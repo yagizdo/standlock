@@ -2262,4 +2262,91 @@ struct BreakCoordinatorPostponeTests {
         coordinator.stop()
         listener.cancel()
     }
+
+    @Test
+    func postponedBreakSurvivesScreenLock() async {
+        let (coordinator, _, _, locker, _) = await startWithActiveBreak()
+        #expect(locker.isShowing)
+
+        var lastStats: BreakStatistics?
+        let listener = Task {
+            for await event in coordinator.events {
+                if case .statisticsUpdated(let s) = event { lastStats = s }
+            }
+        }
+
+        coordinator.postponeActiveBreak()
+        coordinator.handleScreenLock()
+        coordinator.handleScreenUnlock()
+        locker.showOverlayCalled = false
+
+        try? await Task.sleep(for: .milliseconds(600))
+        #expect(locker.showOverlayCalled)
+        #expect(locker.lastCanPostpone == false)
+        #expect(lastStats?.breaksSkipped == 0)
+
+        coordinator.stop()
+        listener.cancel()
+    }
+
+    @Test
+    func postponedBreakSurvivesSleep() async {
+        let (coordinator, _, _, locker, _) = await startWithActiveBreak()
+        #expect(locker.isShowing)
+
+        var lastStats: BreakStatistics?
+        let listener = Task {
+            for await event in coordinator.events {
+                if case .statisticsUpdated(let s) = event { lastStats = s }
+            }
+        }
+
+        coordinator.postponeActiveBreak()
+        coordinator.handleSystemSleep()
+        coordinator.handleSystemWake()
+        locker.showOverlayCalled = false
+
+        try? await Task.sleep(for: .milliseconds(600))
+        #expect(locker.showOverlayCalled)
+        #expect(locker.lastCanPostpone == false)
+        #expect(lastStats?.breaksSkipped == 0)
+
+        coordinator.stop()
+        listener.cancel()
+    }
+
+    @Test
+    func postponedBreakSurvivesPause() async {
+        let (coordinator, _, _, locker, _) = await startWithActiveBreak()
+        #expect(locker.isShowing)
+
+        coordinator.postponeActiveBreak()
+        coordinator.pause(for: 0.1)
+        locker.showOverlayCalled = false
+
+        try? await Task.sleep(for: .milliseconds(700))
+        #expect(locker.showOverlayCalled)
+        #expect(locker.lastCanPostpone == false)
+
+        coordinator.stop()
+    }
+
+    @Test
+    func menuSkipEndsPostponedBreakForGood() async {
+        let (coordinator, _, detector, locker, _) = await startWithActiveBreak()
+        #expect(locker.isShowing)
+
+        detector.contextToReturn = DetectionContext(microphoneActive: true)
+        coordinator.postponeActiveBreak()
+        coordinator.skipNextBreak()
+        coordinator.handleScreenLock()
+        coordinator.handleScreenUnlock()
+        locker.showOverlayCalled = false
+        detector.contextToReturn = .clear
+
+        try? await Task.sleep(for: .milliseconds(600))
+        #expect(!locker.showOverlayCalled)
+
+        coordinator.stop()
+    }
 }
