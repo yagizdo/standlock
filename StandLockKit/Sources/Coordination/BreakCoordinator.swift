@@ -48,9 +48,7 @@ public final class BreakCoordinator {
     /// Set while the screen is locked or the machine is asleep. Distinct from `isPaused`, which
     /// is the user-facing pause; suspension only blocks work being started behind a dark screen.
     private var isSuspended: Bool = false
-    private var currentBreak: BreakEvent? {
-        didSet { if currentBreak == nil { activeBreakCanPostpone = false } }
-    }
+    private var currentBreak: BreakEvent?
     private var currentSchedule: Schedule?
     /// A break may be postponed once; the one that comes back after the call cannot be again.
     private var activeBreakCanPostpone = false
