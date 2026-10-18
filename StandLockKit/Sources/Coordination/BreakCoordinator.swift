@@ -22,15 +22,24 @@ public struct EnforcementState: Codable, Sendable {
     /// which break fires, and because a disabled schedule's slot has to wait out the rebuilds
     /// that exclude it: switching a schedule off and on again must not buy a fresh interval.
     public var pendingBreakDates: [UUID: Date]
+    /// The schedule whose break was postponed and is still owed. Carried across a rebuild so a
+    /// schedule edit during the wait cannot drop the break, but left out of `CodingKeys`: a
+    /// postponed break does not survive a quit.
+    public var postponedScheduleID: UUID?
+
+    private enum CodingKeys: String, CodingKey {
+        case dailyBreakCounts, escalationTiers, cycleIndices, repetitionIndices, pendingBreakDates
+    }
 
     public init(dailyBreakCounts: [UUID: Int] = [:], escalationTiers: [UUID: Int] = [:],
                 cycleIndices: [UUID: Int] = [:], repetitionIndices: [UUID: Int] = [:],
-                pendingBreakDates: [UUID: Date] = [:]) {
+                pendingBreakDates: [UUID: Date] = [:], postponedScheduleID: UUID? = nil) {
         self.dailyBreakCounts = dailyBreakCounts
         self.escalationTiers = escalationTiers
         self.cycleIndices = cycleIndices
         self.repetitionIndices = repetitionIndices
         self.pendingBreakDates = pendingBreakDates
+        self.postponedScheduleID = postponedScheduleID
     }
 }
 
@@ -76,6 +85,9 @@ public final class BreakCoordinator {
     /// Carried slots of schedules this coordinator was not given, handed on untouched by
     /// `captureEnforcementState` so they are still there when the schedule is switched back on.
     private var dormantPendingBreaks: [UUID: Date] = [:]
+    /// A carried postponed break whose schedule this coordinator was not given, handed on the
+    /// same way as `dormantPendingBreaks`.
+    private var dormantPostponedScheduleID: UUID?
     public var exercises: [Exercise] = []
 
     /// Floor between a skip and the break it schedules, for the case where the anchored slot
@@ -116,7 +128,15 @@ public final class BreakCoordinator {
             }
         }
         restoredPendingBreaks = state.pendingBreakDates
-        scheduleNextBreak()
+        if let id = state.postponedScheduleID {
+            if let schedule = schedules.first(where: { $0.id == id && $0.isEnabled }) {
+                postponedSchedule = schedule
+                eventContinuation.yield(.breakDeferred(.postponed, nextAttempt: Date().addingTimeInterval(deferralPollingInterval)))
+            } else {
+                dormantPostponedScheduleID = id
+            }
+        }
+        rearm()
     }
 
     /// Read this before `stop()`, which clears `escalationTiers` on its way out.
@@ -130,7 +150,8 @@ public final class BreakCoordinator {
             escalationTiers: escalationTiers,
             cycleIndices: cycleIndices,
             repetitionIndices: repetitionTrackers.mapValues(\.currentBreakIndex),
-            pendingBreakDates: pendingBreakDates
+            pendingBreakDates: pendingBreakDates,
+            postponedScheduleID: postponedSchedule?.id ?? dormantPostponedScheduleID
         )
     }
 

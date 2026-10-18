@@ -2349,4 +2349,67 @@ struct BreakCoordinatorPostponeTests {
 
         coordinator.stop()
     }
+
+    /// Stands in for `AppCoordinator.restartCoordinator`: the old coordinator's state is
+    /// captured, it is stopped, and a fresh one starts from that state with a clear context.
+    private func rebuild(
+        from old: BreakCoordinator, with schedules: [Schedule]
+    ) -> (BreakCoordinator, MockLocker) {
+        let state = old.captureEnforcementState()
+        old.stop()
+        let scheduler = MockScheduler()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(600)
+        let locker = MockLocker()
+        let coordinator = BreakCoordinator(
+            scheduler: scheduler, detector: MockDetector(), locker: locker,
+            deferralPollingInterval: 0.05
+        )
+        coordinator.start(with: schedules, preferences: AppPreferences(postponeReturnDelay: 0.2),
+                          restoring: state)
+        return (coordinator, locker)
+    }
+
+    @Test
+    func postponedBreakSurvivesCoordinatorRebuild() async {
+        let (coordinator, _, detector, locker, schedule) = await startWithActiveBreak()
+        #expect(locker.isShowing)
+
+        detector.contextToReturn = DetectionContext(microphoneActive: true)
+        coordinator.postponeActiveBreak()
+        let (rebuilt, newLocker) = rebuild(from: coordinator, with: [schedule])
+
+        try? await Task.sleep(for: .milliseconds(600))
+        #expect(newLocker.showOverlayCalled)
+        #expect(newLocker.lastCanPostpone == false)
+
+        rebuilt.stop()
+    }
+
+    @Test
+    func postponedBreakWaitsOutDisabledSchedule() async {
+        let (coordinator, _, detector, locker, schedule) = await startWithActiveBreak()
+        #expect(locker.isShowing)
+
+        detector.contextToReturn = DetectionContext(microphoneActive: true)
+        coordinator.postponeActiveBreak()
+        let (withoutSchedule, idleLocker) = rebuild(from: coordinator, with: [])
+        try? await Task.sleep(for: .milliseconds(400))
+        #expect(!idleLocker.showOverlayCalled)
+
+        let (rebuilt, newLocker) = rebuild(from: withoutSchedule, with: [schedule])
+        try? await Task.sleep(for: .milliseconds(600))
+        #expect(newLocker.showOverlayCalled)
+        #expect(newLocker.lastCanPostpone == false)
+
+        rebuilt.stop()
+    }
+
+    @Test
+    func postponedBreakIsNotSavedAcrossRelaunch() throws {
+        let state = EnforcementState(postponedScheduleID: UUID())
+        let decoded = try JSONDecoder().decode(
+            EnforcementState.self, from: JSONEncoder().encode(state)
+        )
+        #expect(decoded.postponedScheduleID == nil)
+    }
 }
