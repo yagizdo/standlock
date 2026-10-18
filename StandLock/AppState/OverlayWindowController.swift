@@ -29,6 +29,7 @@ final class OverlayWindowController: LockPresenting {
     var onSkip: (() -> Void)?
     var onComplete: (() -> Void)?
     var onEscape: (() -> Void)?
+    var onPostpone: (() -> Void)?
 
     nonisolated init(languageStore: LanguageStore, themeStore: ThemeStore) {
         self.languageStore = languageStore
@@ -67,7 +68,9 @@ final class OverlayWindowController: LockPresenting {
                 exercise: exercise, preferences: preferences,
                 statistics: statistics, escalationTier: escalationTier,
                 nextIntervalLabel: nextIntervalLabel,
+                canPostpone: canPostpone,
                 onSkip: { [weak self] in self?.handleSkip() },
+                onPostpone: { [weak self] in self?.handlePostpone() },
                 onEscape: { [weak self] in self?.handleEscape() },
                 onComplete: { [weak self] in self?.handleComplete() }
             )
@@ -150,6 +153,12 @@ final class OverlayWindowController: LockPresenting {
         breakStartDate = nil
         dismissOverlay()
         onSkip?()
+    }
+
+    private func handlePostpone() {
+        breakStartDate = nil
+        dismissOverlay()
+        onPostpone?()
     }
 
     private func handleComplete() {
