@@ -36,18 +36,20 @@ final class MockLocker: LockPresenting, @unchecked Sendable {
     var lastPreferences: AppPreferences?
     var lastEscalationTier: Int?
     var lastNextIntervalLabel: String?
+    var lastCanPostpone: Bool?
     var isShowing = false
 
     func showOverlay(level: DisciplineLevel, duration: TimeInterval,
                      exercise: Exercise?, preferences: AppPreferences,
                      statistics: BreakStatistics, escalationTier: Int,
-                     nextIntervalLabel: String?) {
+                     nextIntervalLabel: String?, canPostpone: Bool) {
         showOverlayCalled = true
         lastLevel = level
         lastDuration = duration
         lastPreferences = preferences
         lastEscalationTier = escalationTier
         lastNextIntervalLabel = nextIntervalLabel
+        lastCanPostpone = canPostpone
         isShowing = true
     }
 
@@ -133,6 +135,27 @@ struct BreakCoordinatorTests {
 
         coordinator.stop()
         listener.cancel()
+    }
+
+    @Test @MainActor
+    func freshBreakOffersPostpone() async {
+        let scheduler = MockScheduler()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        let detector = MockDetector()
+        detector.contextToReturn = .clear
+        let locker = MockLocker()
+
+        let coordinator = BreakCoordinator(scheduler: scheduler, detector: detector, locker: locker)
+        let schedule = makeSchedule()
+        let prefs = AppPreferences(cameraDetection: .deferBreak)
+
+        coordinator.start(with: [schedule], preferences: prefs)
+        try? await Task.sleep(for: .milliseconds(300))
+
+        #expect(locker.showOverlayCalled)
+        #expect(locker.lastCanPostpone == true)
+
+        coordinator.stop()
     }
 
     @Test @MainActor
