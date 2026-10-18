@@ -48,8 +48,12 @@ public final class BreakCoordinator {
     /// Set while the screen is locked or the machine is asleep. Distinct from `isPaused`, which
     /// is the user-facing pause; suspension only blocks work being started behind a dark screen.
     private var isSuspended: Bool = false
-    private var currentBreak: BreakEvent?
+    private var currentBreak: BreakEvent? {
+        didSet { if currentBreak == nil { activeBreakCanPostpone = false } }
+    }
     private var currentSchedule: Schedule?
+    /// A break may be postponed once; the one that comes back after the call cannot be again.
+    private var activeBreakCanPostpone = false
     private var statistics: BreakStatistics = BreakStatistics()
     private var dailyBreakCounts: [UUID: Int] = [:]
     private var escalationTiers: [UUID: Int] = [:]
@@ -289,6 +293,44 @@ public final class BreakCoordinator {
         scheduleNextBreak()
     }
 
+    /// Closes the break screen without counting a skip and brings the same break back, at full
+    /// length, once camera and microphone have both been free for `postponeReturnDelay`. The
+    /// wait ignores the detection preferences: postponing is the user saying they are on a call.
+    public func postponeActiveBreak() {
+        guard currentBreak != nil, let schedule = currentSchedule, activeBreakCanPostpone else { return }
+        breakTimer?.cancel()
+        breakTimer = nil
+        locker.dismissOverlay()
+        currentBreak = nil
+        currentSchedule = nil
+        // Keeps `refreshDailyRollover` from re-arming over the wait. The pending slot stays nil:
+        // `triggerBreak` already advanced the cycle, and a set ID would let a menu skip advance it again.
+        isDeferringBreak = true
+        eventContinuation.yield(.breakDeferred(.postponed, nextAttempt: Date().addingTimeInterval(deferralPollingInterval)))
+        updateStatistics { $0.breaksDeferred += 1 }
+        breakTimer = Task {
+            var clearSince: Date?
+            while !Task.isCancelled {
+                try? await Task.sleep(for: .seconds(self.deferralPollingInterval))
+                guard !Task.isCancelled else { return }
+                let context = await self.detector.currentContext()
+                guard !Task.isCancelled else { return }
+                if context.cameraActive || context.microphoneActive {
+                    clearSince = nil
+                    self.eventContinuation.yield(.breakDeferred(.postponed, nextAttempt: Date().addingTimeInterval(self.deferralPollingInterval)))
+                    continue
+                }
+                let since = clearSince ?? Date()
+                clearSince = since
+                if Date().timeIntervalSince(since) >= self.preferences.postponeReturnDelay {
+                    self.clearPendingBreak()
+                    self.presentBreak(for: schedule, context: context, canPostpone: false)
+                    return
+                }
+            }
+        }
+    }
+
     public func completeActiveBreak() {
         guard let event = currentBreak, let schedule = currentSchedule else { return }
         completeBreak(event: event, schedule: schedule)
@@ -458,6 +500,14 @@ public final class BreakCoordinator {
             return
         }
 
+        dailyBreakCounts[schedule.id, default: 0] += 1
+        cycleIndices[schedule.id, default: 0] += 1
+        presentBreak(for: schedule, context: context, canPostpone: true)
+    }
+
+    /// Shows a break without counting it. A postponed break returns through here, so the daily
+    /// count and the cycle advance only once, in `triggerBreak`.
+    private func presentBreak(for schedule: Schedule, context: DetectionContext, canPostpone: Bool) {
         var effectiveLevel = schedule.disciplineLevel
         if let reduction = shouldReduce(context: context) {
             effectiveLevel = reduction
@@ -472,15 +522,14 @@ public final class BreakCoordinator {
         )
         currentBreak = breakEvent
         currentSchedule = schedule
-        dailyBreakCounts[schedule.id, default: 0] += 1
-        cycleIndices[schedule.id, default: 0] += 1
+        activeBreakCanPostpone = canPostpone
 
         eventContinuation.yield(.breakStarted(breakEvent))
         locker.showOverlay(level: effectiveLevel, duration: duration,
                            exercise: exercise, preferences: preferences,
                            statistics: statistics, escalationTier: tier,
                            nextIntervalLabel: nextIntervalLabel(for: schedule),
-                           canPostpone: true)
+                           canPostpone: canPostpone)
     }
 
     /// The cycle index was already advanced when this break triggered, so it points at the
