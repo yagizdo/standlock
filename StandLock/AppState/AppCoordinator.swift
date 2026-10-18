@@ -469,7 +469,7 @@ final class AppCoordinator: ObservableObject {
             clearActiveBreakState()
 
         case .breakDeferred(let reason, _):
-            clearActiveBreakState()
+            if isBreakActive { clearActiveBreakState() }
             deferralReason = reason
 
         case .schedulePaused(let until):
