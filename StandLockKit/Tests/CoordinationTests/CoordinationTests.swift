@@ -2437,6 +2437,25 @@ struct BreakCoordinatorPostponeTests {
     }
 
     @Test
+    func secondRebuildDuringPostponeKeepsDisabledScheduleSlot() async {
+        let disabledID = UUID()
+        let slot = Date().addingTimeInterval(600)
+        let (coordinator, _, detector, locker, schedule) = await startWithActiveBreak(
+            restoring: { _ in EnforcementState(pendingBreakDates: [disabledID: slot]) }
+        )
+        #expect(locker.isShowing)
+
+        detector.contextToReturn = DetectionContext(microphoneActive: true)
+        coordinator.postponeActiveBreak()
+        let (once, _) = rebuild(from: coordinator, with: [schedule])
+        let (twice, _) = rebuild(from: once, with: [schedule])
+
+        #expect(twice.captureEnforcementState().pendingBreakDates[disabledID] == slot)
+
+        twice.stop()
+    }
+
+    @Test
     func postponedBreakIsNotSavedAcrossRelaunch() throws {
         let state = EnforcementState(postponedScheduleID: UUID())
         let decoded = try JSONDecoder().decode(

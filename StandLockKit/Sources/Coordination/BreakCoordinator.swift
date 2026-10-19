@@ -141,7 +141,8 @@ public final class BreakCoordinator {
 
     /// Read this before `stop()`, which clears `escalationTiers` on its way out.
     public func captureEnforcementState() -> EnforcementState {
-        var pendingBreakDates = dormantPendingBreaks
+        // A restored postponed break skips `scheduleNextBreak`, so restored slots can still be unconsumed.
+        var pendingBreakDates = dormantPendingBreaks.merging(restoredPendingBreaks) { current, _ in current }
         if let id = pendingBreakScheduleID, let date = pendingBreakDate {
             pendingBreakDates[id] = date
         }
