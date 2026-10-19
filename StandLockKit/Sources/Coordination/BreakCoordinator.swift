@@ -351,6 +351,10 @@ public final class BreakCoordinator {
                     continue
                 }
                 let since = clearSince ?? Date()
+                if clearSince == nil {
+                    // Lets the menu bar count down to the return instead of sitting at 0:00.
+                    self.eventContinuation.yield(.nextBreakScheduled(since.addingTimeInterval(self.preferences.postponeReturnDelay)))
+                }
                 clearSince = since
                 if Date().timeIntervalSince(since) >= self.preferences.postponeReturnDelay {
                     self.clearPendingBreak()

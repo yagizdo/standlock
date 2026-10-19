@@ -2143,6 +2143,38 @@ struct BreakCoordinatorPostponeTests {
     }
 
     @Test
+    func postponedBreakAnnouncesReturnTimeOnceCallEnds() async {
+        let (coordinator, _, detector, _, _) = await startWithActiveBreak(
+            preferences: AppPreferences(postponeReturnDelay: 60)
+        )
+        detector.contextToReturn = DetectionContext(microphoneActive: true)
+        coordinator.postponeActiveBreak()
+
+        // Earlier events are buffered; only a date near the return delay is the countdown.
+        var returnDates: [Date] = []
+        let listener = Task {
+            for await event in coordinator.events {
+                if case .nextBreakScheduled(let date) = event,
+                   date.timeIntervalSinceNow > 30 { returnDates.append(date) }
+            }
+        }
+
+        try? await Task.sleep(for: .milliseconds(300))
+        #expect(returnDates.isEmpty)
+
+        let clearedAt = Date()
+        detector.contextToReturn = .clear
+        try? await Task.sleep(for: .milliseconds(300))
+        #expect(returnDates.count == 1)
+        if let date = returnDates.first {
+            #expect(abs(date.timeIntervalSince(clearedAt) - 60) < 1)
+        }
+
+        coordinator.stop()
+        listener.cancel()
+    }
+
+    @Test
     func postponeWaitsOnMicEvenWhenDetectionIgnored() async {
         let prefs = AppPreferences(cameraDetection: .ignore, microphoneDetection: .ignore,
                                    postponeReturnDelay: 0.2)
