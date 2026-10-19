@@ -88,6 +88,7 @@ Enable progressive enforcement on any schedule and each consecutive skip makes t
 
 - Full-screen overlay on every display with countdown timer
 - Exercise suggestions during breaks (stretches, water reminders, squats)
+- Postpone a break once when a call comes up: it returns at full length once the microphone and camera have been free for the delay set in Settings › Detection (1-10 min, default 2), and counts as deferred, not skipped
 - Pauses system media during breaks
 
 ### Break Statistics
