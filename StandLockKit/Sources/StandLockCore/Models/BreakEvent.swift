@@ -21,6 +21,7 @@ public enum DeferralReason: String, Sendable, Codable {
     case microphoneActive
     case calendarEvent
     case screenSharing
+    case postponed
 
     public var displayName: String {
         switch self {
@@ -28,6 +29,7 @@ public enum DeferralReason: String, Sendable, Codable {
         case .microphoneActive: "Microphone in use"
         case .calendarEvent: "Calendar event active"
         case .screenSharing: "Screen sharing active"
+        case .postponed: "Break postponed"
         }
     }
 }
