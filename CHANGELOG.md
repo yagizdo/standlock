@@ -1,5 +1,15 @@
 # Changelog
 
+## StandLock v0.9.0
+
+**Features**
+- A break that lands during a call can be postponed instead of skipped. Click Postpone on the break screen and the break comes back at full length once your microphone and camera have been free for 2 minutes. Postponing counts as a deferral, so it does not use up a skip, raise the Progressive Enforcement tier or break your streak. The wait is set in Settings › Detection (1 to 10 minutes), and the menu bar counts down to the break's return (closes #72, aa28f2e)
+
+**Notes**
+- Each break can be postponed once. A postponed break still comes back after a screen lock, sleep, a pause or a schedule edit, but not after you quit StandLock.
+
+**Full Changelog:** https://github.com/yagizdo/StandLock/compare/v0.8.1...v0.9.0
+
 ## StandLock v0.8.1
 
 **Bug Fixes**
