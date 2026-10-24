@@ -1,5 +1,16 @@
 # Changelog
 
+## StandLock v0.10.0
+
+**Features**
+- The break screen can be customized in a new Break Screen section in Settings › General. Pick your own background and text colours, by colour picker or hex code, and a live preview shows the result. One colour pair applies to Gentle, Firm and Strict, and each level keeps its own accent colour. A warning appears when the text may be hard to read on the background. You can also hide today's statistics at the bottom of the break screen and add a message that shows under the timer during every break (6522ac1)
+
+**Notes**
+- With custom colours on, the break screen uses them instead of following the Appearance setting.
+- If you go back to an older version and change any setting there, your Break Screen settings are lost.
+
+**Full Changelog:** https://github.com/yagizdo/StandLock/compare/v0.9.0...v0.10.0
+
 ## StandLock v0.9.0
 
 **Features**
