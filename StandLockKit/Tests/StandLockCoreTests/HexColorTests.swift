@@ -14,6 +14,13 @@ struct HexColorTests {
         }
     }
 
+    @Test func parsesTypedOrPastedHexWithSurroundingWhitespace() throws {
+        let expected = try #require(HexColor(hex: "#FF8000"))
+        for input in ["  #FF8000", "FF8000 \n", "\t#ff8000 "] {
+            #expect(HexColor(hex: input) == expected, "\(input) should parse")
+        }
+    }
+
     @Test func rejectsMalformedHex() {
         for input in ["", "#FFF", "#GGGGGG", "#FF80001", "+FFFFF", "#+FFFFF"] {
             #expect(HexColor(hex: input) == nil, "\(input) should not parse")

@@ -151,7 +151,7 @@ private struct HexColorField: View {
     }
 
     private func commit() {
-        if let parsed = try? HexColorFormat.Strategy().parse(text) {
+        if let parsed = HexColor(hex: text) {
             color = parsed
         }
         text = color.hex

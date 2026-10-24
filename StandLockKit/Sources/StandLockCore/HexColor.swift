@@ -18,9 +18,11 @@ public struct HexColor: Equatable, Sendable {
         self.blue = blue
     }
 
-    /// Parses `"#RRGGBB"` or `"RRGGBB"`, case-insensitive. Returns `nil` for anything else.
+    /// Parses `"#RRGGBB"` or `"RRGGBB"`, case-insensitive, ignoring surrounding whitespace so a
+    /// typed or pasted code works. Returns `nil` for anything else.
     public init?(hex: String) {
-        let digits = hex.hasPrefix("#") ? hex.dropFirst() : Substring(hex)
+        let trimmed = hex.trimmingCharacters(in: .whitespacesAndNewlines)
+        let digits = trimmed.hasPrefix("#") ? trimmed.dropFirst() : Substring(trimmed)
         // `UInt32(_:radix:)` alone accepts a leading "+", so check every character first.
         guard digits.count == 6,
               digits.allSatisfy(\.isHexDigit),
