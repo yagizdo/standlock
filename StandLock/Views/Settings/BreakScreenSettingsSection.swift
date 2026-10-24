@@ -91,12 +91,7 @@ struct BreakScreenSettingsSection: View {
     ) -> some View {
         LabeledContent(title) {
             HStack(spacing: 8) {
-                // Commits on Return or when focus leaves; an invalid code puts the previous one back.
-                TextField("Hex Code", value: hexBinding(keyPath, fallback: fallback), format: HexColorFormat())
-                    .labelsHidden()
-                    .textFieldStyle(.roundedBorder)
-                    .font(.body.monospaced())
-                    .frame(width: 80)
+                HexColorField(color: hexBinding(keyPath, fallback: fallback))
                 ColorPicker(title, selection: colorBinding(keyPath, fallback: fallback), supportsOpacity: false)
                     .labelsHidden()
             }
@@ -124,5 +119,41 @@ struct BreakScreenSettingsSection: View {
                 hex.wrappedValue = rgb
             }
         )
+    }
+}
+
+// MARK: - Hex Color Field
+
+/// Keeps the typed code in its own state so the coordinator's once-a-second updates cannot
+/// overwrite an unfinished edit. Commits on Return or when focus leaves; an invalid code
+/// puts the stored one back.
+private struct HexColorField: View {
+    @Binding var color: HexColor
+    @State private var text = ""
+    @FocusState private var isFocused: Bool
+
+    var body: some View {
+        TextField("Hex Code", text: $text)
+            .labelsHidden()
+            .textFieldStyle(.roundedBorder)
+            .font(.body.monospaced())
+            .frame(width: 80)
+            .focused($isFocused)
+            .onSubmit(commit)
+            .onChange(of: isFocused) { focused in
+                if !focused { commit() }
+            }
+            // The colour picker next to the field writes the binding directly.
+            .onChange(of: color) { newColor in
+                text = newColor.hex
+            }
+            .onAppear { text = color.hex }
+    }
+
+    private func commit() {
+        if let parsed = try? HexColorFormat.Strategy().parse(text) {
+            color = parsed
+        }
+        text = color.hex
     }
 }
