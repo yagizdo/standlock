@@ -729,6 +729,22 @@
         }
       }
     },
+    "Background" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arka Plan"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "背景"
+          }
+        }
+      }
+    },
     "Behavior" : {
       "localizations" : {
         "tr" : {
@@ -913,6 +929,22 @@
         }
       }
     },
+    "Break Message" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mola Mesajı"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "休息提示语"
+          }
+        }
+      }
+    },
     "Break postponed" : {
       "comment" : "DeferralReason.displayName",
       "extractionState" : "manual",
@@ -927,6 +959,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "休息已推迟"
+          }
+        }
+      }
+    },
+    "Break Screen" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mola Ekranı"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "休息屏幕"
           }
         }
       }
@@ -1447,6 +1495,22 @@
         }
       }
     },
+    "Custom Break Colors" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Özel Mola Renkleri"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自定义休息颜色"
+          }
+        }
+      }
+    },
     "Daily skip limit reached" : {
       "localizations" : {
         "tr" : {
@@ -1723,6 +1787,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "例如：3 次短休息，然后 1 次长休息"
+          }
+        }
+      }
+    },
+    "e.g. Drink some water" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "örn. Biraz su iç"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "例如：喝点水"
           }
         }
       }
@@ -2509,6 +2589,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "试过把自己重启吗"
+          }
+        }
+      }
+    },
+    "Hex Code" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hex Kodu"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "十六进制代码"
           }
         }
       }
@@ -4516,6 +4612,22 @@
         }
       }
     },
+    "Show Statistics" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İstatistikleri Göster"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "显示统计"
+          }
+        }
+      }
+    },
     "Show timer in the last minutes before break" : {
       "localizations" : {
         "tr" : {
@@ -4528,6 +4640,38 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "仅在休息前的最后几分钟显示计时"
+          }
+        }
+      }
+    },
+    "Show today's break counts at the bottom" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bugünkü mola sayılarını altta göster"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在底部显示今日休息次数"
+          }
+        }
+      }
+    },
+    "Shown under the timer during every break" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Her molada sayacın altında gösterilir"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "每次休息时显示在计时器下方"
           }
         }
       }
@@ -5402,6 +5546,38 @@
         }
       }
     },
+    "Text" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Metin"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文字"
+          }
+        }
+      }
+    },
+    "Text may be hard to read on this background" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Metin bu arka planda zor okunabilir"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文字在此背景上可能难以阅读"
+          }
+        }
+      }
+    },
     "The break comes back after your call" : {
       "localizations" : {
         "tr" : {
@@ -5762,6 +5938,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "使用默认日程"
+          }
+        }
+      }
+    },
+    "Use your own background and text colors" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kendi arka plan ve metin renklerini kullan"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用自定义背景色和文字颜色"
           }
         }
       }

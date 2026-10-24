@@ -3,7 +3,7 @@ import StandLockCore
 
 struct ManuscriptBreakView: View {
     let level: DisciplineLevel
-    let theme: AppTheme
+    let look: BreakScreenLook
     let totalDuration: TimeInterval
     let exercise: Exercise?
     let preferences: AppPreferences
@@ -22,7 +22,7 @@ struct ManuscriptBreakView: View {
     @State private var splashTexts: [String] = []
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
-    init(level: DisciplineLevel, theme: AppTheme,
+    init(level: DisciplineLevel, look: BreakScreenLook,
          totalDuration: TimeInterval, exercise: Exercise?,
          preferences: AppPreferences, statistics: BreakStatistics,
          escalationTier: Int = 0,
@@ -33,7 +33,7 @@ struct ManuscriptBreakView: View {
          onEscape: @escaping () -> Void,
          onComplete: @escaping () -> Void) {
         self.level = level
-        self.theme = theme
+        self.look = look
         self.totalDuration = totalDuration
         self.exercise = exercise
         self.preferences = preferences
@@ -50,7 +50,11 @@ struct ManuscriptBreakView: View {
         self._remainingSeconds = State(initialValue: totalDuration)
     }
 
-    private var palette: BreakPalette { theme.palette(for: level) }
+    private var palette: BreakPalette { look.palette }
+
+    private var message: String {
+        preferences.breakScreen.displayMessage
+    }
 
     var body: some View {
         GeometryReader { geometry in
@@ -77,6 +81,15 @@ struct ManuscriptBreakView: View {
                             viewportHeight: geometry.size.height,
                             reduceMotion: reduceMotion
                         )
+                        if !message.isEmpty {
+                            // Verbatim: user input must not become a string catalog lookup.
+                            Text(verbatim: message)
+                                .font(BreakTypography.exerciseBody())
+                                .foregroundStyle(palette.inkSoft)
+                                .multilineTextAlignment(.center)
+                                .lineLimit(2)
+                                .frame(maxWidth: 560)
+                        }
                         if let exercise {
                             ExerciseBlock(exercise: exercise, palette: palette)
                         }
@@ -96,8 +109,10 @@ struct ManuscriptBreakView: View {
 
                     Spacer()
 
-                    StatsFooter(statistics: statistics, palette: palette)
-                        .padding(.bottom, 44)
+                    if preferences.breakScreen.showsStatistics {
+                        StatsFooter(statistics: statistics, palette: palette)
+                            .padding(.bottom, 44)
+                    }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .opacity(isVisible ? 1 : 0)
@@ -121,7 +136,7 @@ struct ManuscriptBreakView: View {
             }
         }
         .ignoresSafeArea()
-        .preferredColorScheme(theme.colorScheme)
+        .preferredColorScheme(look.colorScheme)
         .onAppear {
             if escalationTierIndex >= 2 {
                 splashTexts = Array([

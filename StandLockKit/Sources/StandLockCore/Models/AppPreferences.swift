@@ -33,6 +33,8 @@ public struct AppPreferences: Codable, Sendable, Equatable {
     public var showFullWorkTimer: Bool
     public var menuBarCountdownMinutes: Int
 
+    public var breakScreen: BreakScreenPreferences
+
     public init(
         gentleDailySkipLimit: Int = 5,
         firmSkipDelay: TimeInterval = 10,
@@ -52,7 +54,8 @@ public struct AppPreferences: Codable, Sendable, Equatable {
         pauseMediaDuringBreak: Bool = true,
         resetIntervalOnSkip: Bool = true,
         showFullWorkTimer: Bool = false,
-        menuBarCountdownMinutes: Int = 1
+        menuBarCountdownMinutes: Int = 1,
+        breakScreen: BreakScreenPreferences = BreakScreenPreferences()
     ) {
         self.gentleDailySkipLimit = gentleDailySkipLimit
         self.firmSkipDelay = firmSkipDelay
@@ -73,6 +76,7 @@ public struct AppPreferences: Codable, Sendable, Equatable {
         self.resetIntervalOnSkip = resetIntervalOnSkip
         self.showFullWorkTimer = showFullWorkTimer
         self.menuBarCountdownMinutes = menuBarCountdownMinutes
+        self.breakScreen = breakScreen
     }
 
     private enum CodingKeys: String, CodingKey {
@@ -87,6 +91,7 @@ public struct AppPreferences: Codable, Sendable, Equatable {
         case pauseMediaDuringBreak
         case resetIntervalOnSkip
         case showFullWorkTimer, menuBarCountdownMinutes
+        case breakScreen
     }
 
     public init(from decoder: Decoder) throws {
@@ -110,6 +115,7 @@ public struct AppPreferences: Codable, Sendable, Equatable {
         resetIntervalOnSkip = try c.decodeIfPresent(Bool.self, forKey: .resetIntervalOnSkip) ?? true
         showFullWorkTimer = try c.decodeIfPresent(Bool.self, forKey: .showFullWorkTimer) ?? false
         menuBarCountdownMinutes = try c.decodeIfPresent(Int.self, forKey: .menuBarCountdownMinutes) ?? 1
+        breakScreen = try c.decodeIfPresent(BreakScreenPreferences.self, forKey: .breakScreen) ?? BreakScreenPreferences()
     }
 }
 
