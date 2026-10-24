@@ -291,6 +291,22 @@ struct ScheduleModelTests {
         #expect(decoded.firmEscapePhrase == AppPreferences.defaultFirmEscapePhrase)
     }
 
+    @Test func postponeReturnDelayDefaultsToTwoMinutes() throws {
+        #expect(AppPreferences().postponeReturnDelay == TimeInterval(120))
+        let decoded = try JSONDecoder().decode(AppPreferences.self, from: Data("{}".utf8))
+        #expect(decoded.postponeReturnDelay == TimeInterval(120))
+    }
+
+    @Test func postponeReturnDelayRoundTrips() throws {
+        let data = try JSONEncoder().encode(AppPreferences(postponeReturnDelay: 300))
+        let decoded = try JSONDecoder().decode(AppPreferences.self, from: data)
+        #expect(decoded.postponeReturnDelay == TimeInterval(300))
+    }
+
+    @Test func postponedReasonDisplayName() {
+        #expect(DeferralReason.postponed.displayName == "Break postponed")
+    }
+
     @Test func enforcementPolicyStrictUsesPreferences() {
         let prefs = AppPreferences(strictEscapeHoldDuration: 8)
         let policy = DisciplineLevel.strict.enforcementPolicy(preferences: prefs)

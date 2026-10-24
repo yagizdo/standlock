@@ -36,18 +36,20 @@ final class MockLocker: LockPresenting, @unchecked Sendable {
     var lastPreferences: AppPreferences?
     var lastEscalationTier: Int?
     var lastNextIntervalLabel: String?
+    var lastCanPostpone: Bool?
     var isShowing = false
 
     func showOverlay(level: DisciplineLevel, duration: TimeInterval,
                      exercise: Exercise?, preferences: AppPreferences,
                      statistics: BreakStatistics, escalationTier: Int,
-                     nextIntervalLabel: String?) {
+                     nextIntervalLabel: String?, canPostpone: Bool) {
         showOverlayCalled = true
         lastLevel = level
         lastDuration = duration
         lastPreferences = preferences
         lastEscalationTier = escalationTier
         lastNextIntervalLabel = nextIntervalLabel
+        lastCanPostpone = canPostpone
         isShowing = true
     }
 
@@ -133,6 +135,27 @@ struct BreakCoordinatorTests {
 
         coordinator.stop()
         listener.cancel()
+    }
+
+    @Test @MainActor
+    func freshBreakOffersPostpone() async {
+        let scheduler = MockScheduler()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        let detector = MockDetector()
+        detector.contextToReturn = .clear
+        let locker = MockLocker()
+
+        let coordinator = BreakCoordinator(scheduler: scheduler, detector: detector, locker: locker)
+        let schedule = makeSchedule()
+        let prefs = AppPreferences(cameraDetection: .deferBreak)
+
+        coordinator.start(with: [schedule], preferences: prefs)
+        try? await Task.sleep(for: .milliseconds(300))
+
+        #expect(locker.showOverlayCalled)
+        #expect(locker.lastCanPostpone == true)
+
+        coordinator.stop()
     }
 
     @Test @MainActor
@@ -2030,5 +2053,414 @@ struct BreakCoordinatorEnforcementStateTests {
         // would have no entry at all.
         #expect(armed.pendingBreakDates[remaining.id] == fresh)
         rebuilt.stop()
+    }
+}
+
+@Suite("BreakCoordinator Postpone")
+@MainActor
+struct BreakCoordinatorPostponeTests {
+
+    /// Starts a coordinator whose break is already on screen, opened on a clear context. The
+    /// scheduler is pushed far out afterwards so nothing but the postponed break can show again.
+    private func startWithActiveBreak(
+        preferences: AppPreferences = AppPreferences(postponeReturnDelay: 0.2),
+        statistics: BreakStatistics = BreakStatistics(),
+        restoring state: (Schedule) -> EnforcementState = { _ in EnforcementState() }
+    ) async -> (BreakCoordinator, MockScheduler, MockDetector, MockLocker, Schedule) {
+        let scheduler = MockScheduler()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        let detector = MockDetector()
+        let locker = MockLocker()
+        let coordinator = BreakCoordinator(
+            scheduler: scheduler, detector: detector, locker: locker,
+            deferralPollingInterval: 0.05
+        )
+        let schedule = makeSchedule()
+        coordinator.start(with: [schedule], preferences: preferences,
+                          statistics: statistics, restoring: state(schedule))
+        try? await Task.sleep(for: .milliseconds(300))
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(600)
+        return (coordinator, scheduler, detector, locker, schedule)
+    }
+
+    @Test
+    func postponeIsNotASkip() async {
+        var stats = BreakStatistics()
+        stats.currentStreak = 3
+        let (coordinator, _, _, locker, schedule) = await startWithActiveBreak(
+            preferences: AppPreferences(postponeReturnDelay: 0.2),
+            statistics: stats,
+            restoring: { EnforcementState(escalationTiers: [$0.id: 1]) }
+        )
+        #expect(locker.isShowing)
+
+        var postponedEvents = 0
+        var lastStats: BreakStatistics?
+        let listener = Task {
+            for await event in coordinator.events {
+                if case .breakDeferred(.postponed, _) = event { postponedEvents += 1 }
+                if case .statisticsUpdated(let s) = event { lastStats = s }
+            }
+        }
+
+        let tierBefore = coordinator.captureEnforcementState().escalationTiers[schedule.id]
+        coordinator.postponeActiveBreak()
+        try? await Task.sleep(for: .milliseconds(50))
+
+        #expect(locker.dismissOverlayCalled)
+        #expect(postponedEvents >= 1)
+        #expect(lastStats?.breaksSkipped == 0)
+        #expect(lastStats?.currentStreak == 3)
+        #expect(lastStats?.breaksDeferred == 1)
+        #expect(coordinator.captureEnforcementState().escalationTiers[schedule.id] == tierBefore)
+
+        coordinator.stop()
+        listener.cancel()
+    }
+
+    @Test
+    func postponedBreakWaitsWhileMicActive() async {
+        let (coordinator, _, detector, locker, schedule) = await startWithActiveBreak()
+        #expect(locker.isShowing)
+
+        detector.contextToReturn = DetectionContext(microphoneActive: true)
+        coordinator.postponeActiveBreak()
+        locker.showOverlayCalled = false
+
+        try? await Task.sleep(for: .milliseconds(500))
+        #expect(!locker.showOverlayCalled)
+
+        detector.contextToReturn = .clear
+        try? await Task.sleep(for: .milliseconds(100))
+        #expect(!locker.showOverlayCalled)
+
+        try? await Task.sleep(for: .milliseconds(400))
+        #expect(locker.showOverlayCalled)
+        #expect(locker.lastCanPostpone == false)
+        #expect(locker.lastDuration == schedule.breakDuration)
+
+        coordinator.stop()
+    }
+
+    @Test
+    func postponedBreakAnnouncesReturnTimeOnceCallEnds() async {
+        let (coordinator, _, detector, _, _) = await startWithActiveBreak(
+            preferences: AppPreferences(postponeReturnDelay: 60)
+        )
+        detector.contextToReturn = DetectionContext(microphoneActive: true)
+        coordinator.postponeActiveBreak()
+
+        // Earlier events are buffered; only a date near the return delay is the countdown.
+        var returnDates: [Date] = []
+        let listener = Task {
+            for await event in coordinator.events {
+                if case .nextBreakScheduled(let date) = event,
+                   date.timeIntervalSinceNow > 30 { returnDates.append(date) }
+            }
+        }
+
+        try? await Task.sleep(for: .milliseconds(300))
+        #expect(returnDates.isEmpty)
+
+        let clearedAt = Date()
+        detector.contextToReturn = .clear
+        try? await Task.sleep(for: .milliseconds(300))
+        #expect(returnDates.count == 1)
+        if let date = returnDates.first {
+            #expect(abs(date.timeIntervalSince(clearedAt) - 60) < 1)
+        }
+
+        coordinator.stop()
+        listener.cancel()
+    }
+
+    @Test
+    func postponeWaitsOnMicEvenWhenDetectionIgnored() async {
+        let prefs = AppPreferences(cameraDetection: .ignore, microphoneDetection: .ignore,
+                                   postponeReturnDelay: 0.2)
+        let (coordinator, _, detector, locker, _) = await startWithActiveBreak(preferences: prefs)
+        #expect(locker.isShowing)
+
+        detector.contextToReturn = DetectionContext(cameraActive: true)
+        coordinator.postponeActiveBreak()
+        locker.showOverlayCalled = false
+
+        try? await Task.sleep(for: .milliseconds(500))
+        #expect(!locker.showOverlayCalled)
+
+        detector.contextToReturn = .clear
+        try? await Task.sleep(for: .milliseconds(500))
+        #expect(locker.showOverlayCalled)
+
+        coordinator.stop()
+    }
+
+    @Test
+    func returnCountdownRestartsWhenCallResumes() async {
+        let (coordinator, _, detector, locker, _) = await startWithActiveBreak()
+        #expect(locker.isShowing)
+
+        coordinator.postponeActiveBreak()
+        locker.showOverlayCalled = false
+
+        try? await Task.sleep(for: .milliseconds(100))
+        detector.contextToReturn = DetectionContext(microphoneActive: true)
+        try? await Task.sleep(for: .milliseconds(400))
+        #expect(!locker.showOverlayCalled)
+
+        detector.contextToReturn = .clear
+        try? await Task.sleep(for: .milliseconds(100))
+        #expect(!locker.showOverlayCalled)
+
+        try? await Task.sleep(for: .milliseconds(400))
+        #expect(locker.showOverlayCalled)
+
+        coordinator.stop()
+    }
+
+    @Test
+    func returnedBreakIsNotCountedTwice() async {
+        let (coordinator, _, _, locker, schedule) = await startWithActiveBreak()
+        #expect(locker.isShowing)
+
+        coordinator.postponeActiveBreak()
+        locker.showOverlayCalled = false
+        try? await Task.sleep(for: .milliseconds(500))
+        #expect(locker.showOverlayCalled)
+
+        let state = coordinator.captureEnforcementState()
+        #expect(state.dailyBreakCounts[schedule.id] == 1)
+        #expect(state.cycleIndices[schedule.id] == 1)
+
+        coordinator.stop()
+    }
+
+    @Test
+    func menuSkipDuringPostponeAdvancesCycleOnce() async {
+        let (coordinator, _, detector, locker, schedule) = await startWithActiveBreak()
+        #expect(locker.isShowing)
+
+        var lastStats: BreakStatistics?
+        let listener = Task {
+            for await event in coordinator.events {
+                if case .statisticsUpdated(let s) = event { lastStats = s }
+            }
+        }
+
+        detector.contextToReturn = DetectionContext(microphoneActive: true)
+        coordinator.postponeActiveBreak()
+        coordinator.skipNextBreak()
+        try? await Task.sleep(for: .milliseconds(50))
+
+        #expect(coordinator.captureEnforcementState().cycleIndices[schedule.id] == 1)
+        #expect(lastStats?.breaksSkipped == 1)
+
+        locker.showOverlayCalled = false
+        detector.contextToReturn = .clear
+        try? await Task.sleep(for: .milliseconds(500))
+        #expect(!locker.showOverlayCalled)
+
+        coordinator.stop()
+        listener.cancel()
+    }
+
+    @Test
+    func postponeOnlyOncePerBreak() async {
+        let (coordinator, _, _, locker, _) = await startWithActiveBreak()
+        #expect(locker.isShowing)
+
+        var lastStats: BreakStatistics?
+        let listener = Task {
+            for await event in coordinator.events {
+                if case .statisticsUpdated(let s) = event { lastStats = s }
+            }
+        }
+
+        coordinator.postponeActiveBreak()
+        locker.showOverlayCalled = false
+        try? await Task.sleep(for: .milliseconds(500))
+        #expect(locker.showOverlayCalled)
+        let deferredBefore = lastStats?.breaksDeferred
+
+        coordinator.postponeActiveBreak()
+        try? await Task.sleep(for: .milliseconds(50))
+        #expect(locker.isShowing)
+        #expect(lastStats?.breaksDeferred == deferredBefore)
+
+        coordinator.completeActiveBreak()
+        try? await Task.sleep(for: .milliseconds(50))
+        #expect(lastStats?.breaksCompleted == 1)
+
+        coordinator.stop()
+        listener.cancel()
+    }
+
+    @Test
+    func postponedBreakSurvivesScreenLock() async {
+        let (coordinator, _, _, locker, _) = await startWithActiveBreak()
+        #expect(locker.isShowing)
+
+        var lastStats: BreakStatistics?
+        let listener = Task {
+            for await event in coordinator.events {
+                if case .statisticsUpdated(let s) = event { lastStats = s }
+            }
+        }
+
+        coordinator.postponeActiveBreak()
+        coordinator.handleScreenLock()
+        coordinator.handleScreenUnlock()
+        locker.showOverlayCalled = false
+
+        try? await Task.sleep(for: .milliseconds(600))
+        #expect(locker.showOverlayCalled)
+        #expect(locker.lastCanPostpone == false)
+        #expect(lastStats?.breaksSkipped == 0)
+
+        coordinator.stop()
+        listener.cancel()
+    }
+
+    @Test
+    func postponedBreakSurvivesSleep() async {
+        let (coordinator, _, _, locker, _) = await startWithActiveBreak()
+        #expect(locker.isShowing)
+
+        var lastStats: BreakStatistics?
+        let listener = Task {
+            for await event in coordinator.events {
+                if case .statisticsUpdated(let s) = event { lastStats = s }
+            }
+        }
+
+        coordinator.postponeActiveBreak()
+        coordinator.handleSystemSleep()
+        coordinator.handleSystemWake()
+        locker.showOverlayCalled = false
+
+        try? await Task.sleep(for: .milliseconds(600))
+        #expect(locker.showOverlayCalled)
+        #expect(locker.lastCanPostpone == false)
+        #expect(lastStats?.breaksSkipped == 0)
+
+        coordinator.stop()
+        listener.cancel()
+    }
+
+    @Test
+    func postponedBreakSurvivesPause() async {
+        let (coordinator, _, _, locker, _) = await startWithActiveBreak()
+        #expect(locker.isShowing)
+
+        coordinator.postponeActiveBreak()
+        coordinator.pause(for: 0.1)
+        locker.showOverlayCalled = false
+
+        try? await Task.sleep(for: .milliseconds(700))
+        #expect(locker.showOverlayCalled)
+        #expect(locker.lastCanPostpone == false)
+
+        coordinator.stop()
+    }
+
+    @Test
+    func menuSkipEndsPostponedBreakForGood() async {
+        let (coordinator, _, detector, locker, _) = await startWithActiveBreak()
+        #expect(locker.isShowing)
+
+        detector.contextToReturn = DetectionContext(microphoneActive: true)
+        coordinator.postponeActiveBreak()
+        coordinator.skipNextBreak()
+        coordinator.handleScreenLock()
+        coordinator.handleScreenUnlock()
+        locker.showOverlayCalled = false
+        detector.contextToReturn = .clear
+
+        try? await Task.sleep(for: .milliseconds(600))
+        #expect(!locker.showOverlayCalled)
+
+        coordinator.stop()
+    }
+
+    /// Stands in for `AppCoordinator.restartCoordinator`: the old coordinator's state is
+    /// captured, it is stopped, and a fresh one starts from that state with a clear context.
+    private func rebuild(
+        from old: BreakCoordinator, with schedules: [Schedule]
+    ) -> (BreakCoordinator, MockLocker) {
+        let state = old.captureEnforcementState()
+        old.stop()
+        let scheduler = MockScheduler()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(600)
+        let locker = MockLocker()
+        let coordinator = BreakCoordinator(
+            scheduler: scheduler, detector: MockDetector(), locker: locker,
+            deferralPollingInterval: 0.05
+        )
+        coordinator.start(with: schedules, preferences: AppPreferences(postponeReturnDelay: 0.2),
+                          restoring: state)
+        return (coordinator, locker)
+    }
+
+    @Test
+    func postponedBreakSurvivesCoordinatorRebuild() async {
+        let (coordinator, _, detector, locker, schedule) = await startWithActiveBreak()
+        #expect(locker.isShowing)
+
+        detector.contextToReturn = DetectionContext(microphoneActive: true)
+        coordinator.postponeActiveBreak()
+        let (rebuilt, newLocker) = rebuild(from: coordinator, with: [schedule])
+
+        try? await Task.sleep(for: .milliseconds(600))
+        #expect(newLocker.showOverlayCalled)
+        #expect(newLocker.lastCanPostpone == false)
+
+        rebuilt.stop()
+    }
+
+    @Test
+    func postponedBreakWaitsOutDisabledSchedule() async {
+        let (coordinator, _, detector, locker, schedule) = await startWithActiveBreak()
+        #expect(locker.isShowing)
+
+        detector.contextToReturn = DetectionContext(microphoneActive: true)
+        coordinator.postponeActiveBreak()
+        let (withoutSchedule, idleLocker) = rebuild(from: coordinator, with: [])
+        try? await Task.sleep(for: .milliseconds(400))
+        #expect(!idleLocker.showOverlayCalled)
+
+        let (rebuilt, newLocker) = rebuild(from: withoutSchedule, with: [schedule])
+        try? await Task.sleep(for: .milliseconds(600))
+        #expect(newLocker.showOverlayCalled)
+        #expect(newLocker.lastCanPostpone == false)
+
+        rebuilt.stop()
+    }
+
+    @Test
+    func secondRebuildDuringPostponeKeepsDisabledScheduleSlot() async {
+        let disabledID = UUID()
+        let slot = Date().addingTimeInterval(600)
+        let (coordinator, _, detector, locker, schedule) = await startWithActiveBreak(
+            restoring: { _ in EnforcementState(pendingBreakDates: [disabledID: slot]) }
+        )
+        #expect(locker.isShowing)
+
+        detector.contextToReturn = DetectionContext(microphoneActive: true)
+        coordinator.postponeActiveBreak()
+        let (once, _) = rebuild(from: coordinator, with: [schedule])
+        let (twice, _) = rebuild(from: once, with: [schedule])
+
+        #expect(twice.captureEnforcementState().pendingBreakDates[disabledID] == slot)
+
+        twice.stop()
+    }
+
+    @Test
+    func postponedBreakIsNotSavedAcrossRelaunch() throws {
+        let state = EnforcementState(postponedScheduleID: UUID())
+        let decoded = try JSONDecoder().decode(
+            EnforcementState.self, from: JSONEncoder().encode(state)
+        )
+        #expect(decoded.postponedScheduleID == nil)
     }
 }

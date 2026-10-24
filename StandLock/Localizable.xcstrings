@@ -471,6 +471,22 @@
         }
       }
     },
+    "A postponed break comes back this long after the microphone and camera are free" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ertelenen mola, mikrofon ve kamera boşaldıktan bu kadar sonra geri gelir"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "麦克风和摄像头空闲后，推迟的休息会在这段时间后再次出现"
+          }
+        }
+      }
+    },
     "About" : {
       "localizations" : {
         "tr" : {
@@ -925,6 +941,24 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "休息提示语"
+          }
+        }
+      }
+    },
+    "Break postponed" : {
+      "comment" : "DeferralReason.displayName",
+      "extractionState" : "manual",
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mola ertelendi"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "休息已推迟"
           }
         }
       }
@@ -4074,6 +4108,22 @@
         }
       }
     },
+    "Postpone" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ertele"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "推迟"
+          }
+        }
+      }
+    },
     "Posture Check" : {
       "comment" : "Exercise title",
       "extractionState" : "manual",
@@ -4322,6 +4372,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "恢复日程"
+          }
+        }
+      }
+    },
+    "Return after call: %lld min" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Görüşmeden sonra dönüş: %lld dk"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通话结束后返回：%lld 分钟"
           }
         }
       }
@@ -5508,6 +5574,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "文字在此背景上可能难以阅读"
+          }
+        }
+      }
+    },
+    "The break comes back after your call" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mola görüşmenden sonra geri gelir"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通话结束后休息会再次出现"
           }
         }
       }

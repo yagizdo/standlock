@@ -342,6 +342,9 @@ final class AppCoordinator: ObservableObject {
         overlayController.onEscape = { [weak breakCoordinator] in
             breakCoordinator?.escapeActiveBreak()
         }
+        overlayController.onPostpone = { [weak breakCoordinator] in
+            breakCoordinator?.postponeActiveBreak()
+        }
 
         breakCoordinator.start(with: enforceableSchedules(),
                                preferences: preferences,
@@ -363,6 +366,7 @@ final class AppCoordinator: ObservableObject {
         overlayController.onSkip = nil
         overlayController.onComplete = nil
         overlayController.onEscape = nil
+        overlayController.onPostpone = nil
         clearActiveBreakState()
         deferralReason = nil
     }
@@ -465,6 +469,7 @@ final class AppCoordinator: ObservableObject {
             clearActiveBreakState()
 
         case .breakDeferred(let reason, _):
+            if isBreakActive { clearActiveBreakState() }
             deferralReason = reason
 
         case .schedulePaused(let until):

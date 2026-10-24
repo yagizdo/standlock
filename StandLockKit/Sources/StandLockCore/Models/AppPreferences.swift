@@ -22,6 +22,8 @@ public struct AppPreferences: Codable, Sendable, Equatable {
     public var selectedCalendarIdentifiers: [String]
     public var screenSharingDetectionEnabled: Bool
     public var screenSharingPostDeferral: PostDeferralBehavior
+    /// Seconds the microphone and camera must both stay free before a postponed break returns.
+    public var postponeReturnDelay: TimeInterval
     public var idleDetectionEnabled: Bool
 
     public var pauseMediaDuringBreak: Bool
@@ -47,6 +49,7 @@ public struct AppPreferences: Codable, Sendable, Equatable {
         selectedCalendarIdentifiers: [String] = [],
         screenSharingDetectionEnabled: Bool = true,
         screenSharingPostDeferral: PostDeferralBehavior = .triggerBreak,
+        postponeReturnDelay: TimeInterval = 120,
         idleDetectionEnabled: Bool = true,
         pauseMediaDuringBreak: Bool = true,
         resetIntervalOnSkip: Bool = true,
@@ -67,6 +70,7 @@ public struct AppPreferences: Codable, Sendable, Equatable {
         self.selectedCalendarIdentifiers = selectedCalendarIdentifiers
         self.screenSharingDetectionEnabled = screenSharingDetectionEnabled
         self.screenSharingPostDeferral = screenSharingPostDeferral
+        self.postponeReturnDelay = postponeReturnDelay
         self.idleDetectionEnabled = idleDetectionEnabled
         self.pauseMediaDuringBreak = pauseMediaDuringBreak
         self.resetIntervalOnSkip = resetIntervalOnSkip
@@ -82,6 +86,7 @@ public struct AppPreferences: Codable, Sendable, Equatable {
         case cameraDetection, microphoneDetection
         case calendarDetectionEnabled, calendarLookAheadMinutes, calendarSelectionMode, selectedCalendarIdentifiers
         case screenSharingDetectionEnabled, screenSharingPostDeferral
+        case postponeReturnDelay
         case idleDetectionEnabled
         case pauseMediaDuringBreak
         case resetIntervalOnSkip
@@ -104,6 +109,7 @@ public struct AppPreferences: Codable, Sendable, Equatable {
         selectedCalendarIdentifiers = try c.decodeIfPresent([String].self, forKey: .selectedCalendarIdentifiers) ?? []
         screenSharingDetectionEnabled = try c.decodeIfPresent(Bool.self, forKey: .screenSharingDetectionEnabled) ?? true
         screenSharingPostDeferral = try c.decodeIfPresent(PostDeferralBehavior.self, forKey: .screenSharingPostDeferral) ?? .triggerBreak
+        postponeReturnDelay = try c.decodeIfPresent(TimeInterval.self, forKey: .postponeReturnDelay) ?? 120
         idleDetectionEnabled = try c.decodeIfPresent(Bool.self, forKey: .idleDetectionEnabled) ?? true
         pauseMediaDuringBreak = try c.decodeIfPresent(Bool.self, forKey: .pauseMediaDuringBreak) ?? true
         resetIntervalOnSkip = try c.decodeIfPresent(Bool.self, forKey: .resetIntervalOnSkip) ?? true

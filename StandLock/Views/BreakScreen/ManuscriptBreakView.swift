@@ -11,7 +11,9 @@ struct ManuscriptBreakView: View {
     let enforcementTier: EnforcementTier
     let escalationTierIndex: Int
     let nextIntervalLabel: String?
+    let canPostpone: Bool
     let onSkip: () -> Void
+    let onPostpone: () -> Void
     let onEscape: () -> Void
     let onComplete: () -> Void
 
@@ -25,7 +27,9 @@ struct ManuscriptBreakView: View {
          preferences: AppPreferences, statistics: BreakStatistics,
          escalationTier: Int = 0,
          nextIntervalLabel: String? = nil,
+         canPostpone: Bool,
          onSkip: @escaping () -> Void,
+         onPostpone: @escaping () -> Void,
          onEscape: @escaping () -> Void,
          onComplete: @escaping () -> Void) {
         self.level = level
@@ -38,7 +42,9 @@ struct ManuscriptBreakView: View {
         self.enforcementTier = policy.tier(at: escalationTier)
         self.escalationTierIndex = escalationTier
         self.nextIntervalLabel = nextIntervalLabel
+        self.canPostpone = canPostpone
         self.onSkip = onSkip
+        self.onPostpone = onPostpone
         self.onEscape = onEscape
         self.onComplete = onComplete
         self._remainingSeconds = State(initialValue: totalDuration)
@@ -95,6 +101,9 @@ struct ManuscriptBreakView: View {
                             onDismiss: onSkip,
                             onEscape: onEscape
                         )
+                        if canPostpone {
+                            PostponeButton(palette: palette, onPostpone: onPostpone)
+                        }
                     }
                     .padding(.horizontal, 40)
 
@@ -209,6 +218,34 @@ struct ManuscriptBreakView: View {
             isVisible = false
         }
         onComplete()
+    }
+}
+
+// MARK: - Postpone Button
+
+private struct PostponeButton: View {
+    let palette: BreakPalette
+    let onPostpone: () -> Void
+
+    @State private var isPressed = false
+
+    var body: some View {
+        Button(action: onPostpone) {
+            VStack(spacing: 4) {
+                Text("Postpone")
+                    .font(BreakTypography.label(size: 14, weight: .medium))
+                    .foregroundStyle(palette.ink.opacity(isPressed ? 0.7 : 1))
+                Rectangle()
+                    .fill(palette.ink.opacity(isPressed ? 0.7 : 1))
+                    .frame(height: 1)
+            }
+            .fixedSize()
+        }
+        .buttonStyle(.plain)
+        .accessibilityHint(Text("The break comes back after your call"))
+        .onLongPressGesture(minimumDuration: .infinity, pressing: { pressing in
+            isPressed = pressing
+        }, perform: {})
     }
 }
 

@@ -22,6 +22,17 @@ struct DetectionSettingsView: View {
                     systemImage: "mic",
                     behavior: $coordinator.preferences.microphoneDetection
                 )
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Stepper(
+                        "Return after call: \(postponeReturnMinutes.wrappedValue) min",
+                        value: postponeReturnMinutes,
+                        in: 1...10
+                    )
+                    Text("A postponed break comes back this long after the microphone and camera are free")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
             }
 
             Section("Calendar") {
@@ -200,6 +211,13 @@ struct DetectionSettingsView: View {
         }
         .padding(.leading, 24)
         .task { coordinator.refreshAvailableCalendars() }
+    }
+
+    private var postponeReturnMinutes: Binding<Int> {
+        Binding(
+            get: { Int(coordinator.preferences.postponeReturnDelay / 60) },
+            set: { coordinator.preferences.postponeReturnDelay = TimeInterval($0 * 60) }
+        )
     }
 
     private func calendarBinding(for calendar: CalendarInfo) -> Binding<Bool> {
