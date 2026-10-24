@@ -90,6 +90,7 @@ Enable progressive enforcement on any schedule and each consecutive skip makes t
 - Exercise suggestions during breaks (stretches, water reminders, squats)
 - Postpone a break once when a call comes up: it returns at full length once the microphone and camera have been free for the delay set in Settings › Detection (1-10 min, default 2), and counts as deferred, not skipped
 - Pauses system media during breaks
+- Break Screen settings in Settings › General: your own background and text colours (with a warning when contrast is low), hide today's statistics, or add a message under the timer
 
 ### Break Statistics
 
@@ -112,7 +113,7 @@ A dedicated Statistics tab in Settings tracks break history over time.
 
 - **Launch at login** via macOS login items
 - **Auto-update** via Sparkle, with an update banner in the menu bar. Off by default: turn on Automatic Updates in Settings and StandLock checks every 4 hours, otherwise use Check for Updates
-- **Appearance**: System, Light or Dark in Settings › General. System is the default and follows your Mac, including the break overlay
+- **Appearance**: System, Light or Dark in Settings › General. System is the default and follows your Mac, including the break overlay unless it has custom colours
 - **Language**: English, Turkish and Simplified Chinese. Settings › General has a picker that switches the interface without a restart; System follows your Mac's language
 
 ## Install
