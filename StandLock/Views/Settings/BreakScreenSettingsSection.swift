@@ -94,6 +94,7 @@ struct BreakScreenSettingsSection: View {
                 // Commits on Return or when focus leaves; an invalid code puts the previous one back.
                 TextField("Hex Code", value: hexBinding(keyPath, fallback: fallback), format: HexColorFormat())
                     .labelsHidden()
+                    .textFieldStyle(.roundedBorder)
                     .font(.body.monospaced())
                     .frame(width: 80)
                 ColorPicker(title, selection: colorBinding(keyPath, fallback: fallback), supportsOpacity: false)
