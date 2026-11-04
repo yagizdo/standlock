@@ -12,6 +12,7 @@ security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
 security unlock-keychain -p "$KEYCHAIN_PASS" "$KEYCHAIN_PATH"
 security import "$CERT_PATH" -k "$KEYCHAIN_PATH" -P "$P12_PASSWORD" \
   -T /usr/bin/codesign -T /usr/bin/security
+rm -f "$CERT_PATH"
 security list-keychains -d user -s "$KEYCHAIN_PATH" login.keychain-db
 security set-key-partition-list -S apple-tool:,apple: -s -k "$KEYCHAIN_PASS" "$KEYCHAIN_PATH"
 
