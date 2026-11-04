@@ -1,5 +1,12 @@
 # Changelog
 
+## StandLock v0.10.1
+
+**Improvements**
+- Updated Sparkle, the framework behind in-app updates, to 2.10.1 (bd63c06)
+
+**Full Changelog:** https://github.com/yagizdo/StandLock/compare/v0.10.0...v0.10.1
+
 ## StandLock v0.10.0
 
 **Features**
