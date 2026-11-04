@@ -20,3 +20,21 @@ jobs:
 
       - name: Run StandLockKit tests
         run: swift test --package-path StandLockKit
+
+  # swift test never compiles the app target.
+  build:
+    runs-on: macos-26
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Build the app
+        run: |
+          xcodebuild build \
+            -project StandLock.xcodeproj \
+            -scheme StandLock \
+            -configuration Debug \
+            -destination 'generic/platform=macOS' \
+            -derivedDataPath "$RUNNER_TEMP/DerivedData" \
+            CODE_SIGNING_ALLOWED=NO
