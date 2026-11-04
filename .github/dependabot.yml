@@ -8,3 +8,15 @@ updates:
       default-days: 7
     commit-message:
       prefix: ci
+
+  # Sparkle PRs also raise minimumVersion in project.pbxproj. Raise `from:` in
+  # project.yml in the same PR, or the next xcodegen run puts the old value back.
+  - package-ecosystem: swift
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    commit-message:
+      prefix: chore
+      include: scope
