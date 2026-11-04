@@ -1,20 +1,15 @@
 #!/bin/bash
 set -euo pipefail
 
-SPARKLE_VERSION=$(jq -r '.pins[] | select(.identity == "sparkle") | .state.version' \
-  StandLock.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved)
-curl -sL -o "$RUNNER_TEMP/Sparkle.tar.xz" \
-  "https://github.com/sparkle-project/Sparkle/releases/download/${SPARKLE_VERSION}/Sparkle-${SPARKLE_VERSION}.tar.xz"
-mkdir -p "$RUNNER_TEMP/sparkle"
-tar xf "$RUNNER_TEMP/Sparkle.tar.xz" -C "$RUNNER_TEMP/sparkle"
+SIGN_UPDATE=$(find "${RUNNER_TEMP:?}/DerivedData/SourcePackages/artifacts" \
+  -path '*/Sparkle/bin/sign_update' -type f 2>/dev/null | head -1 || true)
+if [ -z "$SIGN_UPDATE" ]; then
+  echo "::error::sign_update not found in the SwiftPM artifacts. Did the Resolve SPM dependencies step run with -derivedDataPath \$RUNNER_TEMP/DerivedData?"
+  exit 1
+fi
 
-SIGN_UPDATE="$RUNNER_TEMP/sparkle/bin/sign_update"
-chmod +x "$SIGN_UPDATE"
-
-KEY_FILE="$RUNNER_TEMP/sparkle-key"
-echo "$SPARKLE_PRIVATE_KEY" > "$KEY_FILE"
-
-SIGN_OUTPUT=$("$SIGN_UPDATE" "StandLock-${VERSION}.dmg" --ed-key-file "$KEY_FILE")
+# The key goes in on stdin, so it never lands in a file on the runner.
+SIGN_OUTPUT=$(echo "$SPARKLE_PRIVATE_KEY" | "$SIGN_UPDATE" "StandLock-${VERSION}.dmg" --ed-key-file -)
 ED_SIGNATURE=$(echo "$SIGN_OUTPUT" | sed -n 's/.*sparkle:edSignature="\([^"]*\)".*/\1/p')
 if [ -z "$ED_SIGNATURE" ]; then
   echo "::error::sign_update did not produce an edSignature. Raw output:"
