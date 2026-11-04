@@ -1,23 +1,24 @@
 import SwiftUI
+import StandLockCore
 @preconcurrency import Sparkle
 
 struct SettingsView: View {
-    @Binding var selectedTab: AppCoordinator.SettingsTab
+    @ObservedObject var navigation: SettingsNavigation
     let updater: SPUUpdater
 
     var body: some View {
         VStack(spacing: 0) {
-            SettingsTabBar(selectedTab: $selectedTab)
+            SettingsTabBar(selectedTab: $navigation.page)
             Divider()
             tabContent
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-        .frame(width: 520, height: selectedTab == .statistics ? 580 : 480)
+        .frame(width: 520, height: navigation.page == .statistics ? 580 : 480)
     }
 
     @ViewBuilder
     private var tabContent: some View {
-        switch selectedTab {
+        switch navigation.page {
         case .general: GeneralSettingsView()
         case .schedules: ScheduleEditorView()
         case .detection: DetectionSettingsView()
@@ -29,9 +30,9 @@ struct SettingsView: View {
 }
 
 private struct SettingsTabBar: View {
-    @Binding var selectedTab: AppCoordinator.SettingsTab
+    @Binding var selectedTab: SettingsPage
 
-    private static let tabs: [(AppCoordinator.SettingsTab, LocalizedStringKey, String)] = [
+    private static let tabs: [(SettingsPage, LocalizedStringKey, String)] = [
         (.general, "General", "gearshape"),
         (.schedules, "Schedules", "calendar.badge.clock"),
         (.detection, "Detection", "eye"),

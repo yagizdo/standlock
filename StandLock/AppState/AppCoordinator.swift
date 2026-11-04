@@ -23,11 +23,6 @@ private final class OnboardingWindowCloseDelegate: NSObject, NSWindowDelegate {
 
 @MainActor
 final class AppCoordinator: ObservableObject {
-    enum SettingsTab: Int, Hashable {
-        case general, schedules, detection, permissions, statistics, about
-    }
-
-    @Published var selectedSettingsTab: SettingsTab = .general
     @Published var nextBreakTime: Date?
     @Published private(set) var breakScheduledAt: Date?
     @Published var isBreakActive: Bool = false
@@ -46,6 +41,7 @@ final class AppCoordinator: ObservableObject {
 
     let languageStore = LanguageStore()
     let themeStore = ThemeStore()
+    let settingsNavigation = SettingsNavigation()
     let permissionChecker: PermissionChecker
 
     private var coordinator: BreakCoordinator?
