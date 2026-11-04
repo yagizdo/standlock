@@ -6,7 +6,7 @@ on:
       - "v*"
 
 permissions:
-  contents: write
+  contents: read
 
 # Deliberately keyed on the repository, not the ref: the point is to stop two
 # different tags racing each other in the tap, and a per-ref group would give
@@ -25,7 +25,9 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Run StandLockKit tests
         run: swift test --package-path StandLockKit
@@ -33,10 +35,14 @@ jobs:
   release:
     needs: test
     runs-on: macos-26
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Extract version from tag
         run: echo "VERSION=${GITHUB_REF_NAME#v}" >> "$GITHUB_ENV"
@@ -97,6 +103,7 @@ jobs:
           echo "$P8_KEY" > "$P8_PATH"
           xcrun notarytool store-credentials "ci-notary" \
             --key "$P8_PATH" --key-id "$KEY_ID" --issuer "$ISSUER_ID"
+          rm -f "$P8_PATH"
 
       # ── Build ──
 
@@ -192,9 +199,6 @@ jobs:
           xcrun notarytool submit "$RUNNER_TEMP/StandLock-notarize.zip" \
             --keychain-profile "ci-notary" --wait
           xcrun stapler staple "$RUNNER_TEMP/export/StandLock.app"
-
-      - name: Install create-dmg
-        run: brew install create-dmg
 
       - name: Create release DMG
         run: scripts/create-release-dmg.sh
