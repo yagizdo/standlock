@@ -60,7 +60,7 @@ extension SettingsPage {
                 "Show Statistics", "Break Message", "During a break", "Pause Media",
             ]
         case .discipline:
-            ["Discipline", "Daily skip limits", "Gentle Daily Skip Limit", "Firm Daily Skip Limit"]
+            ["Discipline", "Daily skip limits", "Gentle Daily Skip Limit", "Firm Daily Skip Limit", "Strict"]
         case .schedule:
             Self.scheduleFormTerms
         case .newSchedule:
@@ -69,7 +69,7 @@ extension SettingsPage {
             [
                 "Detection", "Calls", "Camera Detection", "Microphone Detection", "Return after call",
                 "Calendar", "Calendar Integration", "Look-ahead", "Calendars",
-                "Screen sharing", "Screen Sharing", "After sharing ends", "Idle", "Idle as Break",
+                "Screen Sharing", "After sharing ends", "Idle", "Idle as Break",
             ]
         case .permissions:
             ["Permissions", "Accessibility", "Input Monitoring", "Calendar Access"]
@@ -89,6 +89,6 @@ extension SettingsPage {
     private static let scheduleFormTerms: [LocalizedStringResource] = [
         "Schedules", "Enabled", "Name", "When", "Active Days", "Time Windows", "Timing", "Break every",
         "Break duration", "Repetition Cycle", "Short breaks", "Short break", "Long break", "Discipline",
-        "Progressive Enforcement",
+        "Gentle", "Firm", "Strict", "Progressive Enforcement",
     ]
 }
