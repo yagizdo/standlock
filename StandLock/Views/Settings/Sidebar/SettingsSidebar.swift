@@ -63,8 +63,13 @@ struct SettingsSidebar: View {
 
     private func rows(_ pages: [SettingsPage]) -> some View {
         ForEach(pages, id: \.self) { page in
-            SettingsSidebarRow(page: page, isSelected: page == navigation.page)
-                .tag(page)
+            let isSelected = page == navigation.page
+            SettingsSidebarRow(page: page, isSelected: isSelected) {
+                if page == .permissions {
+                    PermissionBadge(schedules: schedules, isSelected: isSelected)
+                }
+            }
+            .tag(page)
         }
     }
 }

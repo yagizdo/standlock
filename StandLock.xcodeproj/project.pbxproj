@@ -65,6 +65,7 @@
 		AB84ADC15C8263AFD995E8B5 /* BreakTypography.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99FB6FBBABD55844628B8DA3 /* BreakTypography.swift */; };
 		AD18B90CCF07CB58B8312CDB /* Locking in Frameworks */ = {isa = PBXBuildFile; productRef = 3F23054B7AE15E61C38C884E /* Locking */; };
 		B0B45CBAC1620814C7F443D0 /* DetectionSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF6A31515CC4248B938E982 /* DetectionSettingsView.swift */; };
+		B2DDDE67D0C30F62374D0BBE /* PermissionBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2BDD3661430F1F997413023 /* PermissionBadge.swift */; };
 		B7E27A2CACE2784901CB923C /* SettingsNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29B46D4E8DC400FCF4E57374 /* SettingsNavigation.swift */; };
 		BB64F88461355BFECA64390F /* StatisticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BB7EC878B3C641D2888AD2 /* StatisticsView.swift */; };
 		C144671C95E22BC38AD14FE8 /* ScheduleSidebarRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = F07BB496D038848FFC7FDB3F /* ScheduleSidebarRow.swift */; };
@@ -141,6 +142,7 @@
 		C3663C539337040D9472D8D1 /* ScheduleFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleFormView.swift; sourceTree = "<group>"; };
 		C5BBDBF97CFAA5FF490CBD00 /* BreakOverlayWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakOverlayWindow.swift; sourceTree = "<group>"; };
 		CD5052FB7ADFF1C72A819672 /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
+		D2BDD3661430F1F997413023 /* PermissionBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionBadge.swift; sourceTree = "<group>"; };
 		D5021A1A699359391AD0CEEB /* SettingsRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsRow.swift; sourceTree = "<group>"; };
 		DA2920940F5FB5690FF53B7B /* SettingsTokens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsTokens.swift; sourceTree = "<group>"; };
 		DB803AB21175A8E54B5A2191 /* BreakScreenLook.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakScreenLook.swift; sourceTree = "<group>"; };
@@ -342,6 +344,7 @@
 		D20C180CD8A9180C69463B27 /* Sidebar */ = {
 			isa = PBXGroup;
 			children = (
+				D2BDD3661430F1F997413023 /* PermissionBadge.swift */,
 				F07BB496D038848FFC7FDB3F /* ScheduleSidebarRow.swift */,
 				644D55BA77E73588DF358AC7 /* SettingsSidebar.swift */,
 				7832761FE83C21F870E571C7 /* SettingsSidebarRow.swift */,
@@ -493,6 +496,7 @@
 				FBB74759FC16BB2E5F728128 /* OnboardingView.swift in Sources */,
 				72EF8A3AE6FD2B14FA478D0F /* OpenSettingsCommand.swift in Sources */,
 				ED1A168BD55576065212E8ED /* OverlayWindowController.swift in Sources */,
+				B2DDDE67D0C30F62374D0BBE /* PermissionBadge.swift in Sources */,
 				21816E071409DEA5FC6A0BCE /* PermissionChecker.swift in Sources */,
 				939B26A31A39AED7A89760CE /* PermissionsStepView.swift in Sources */,
 				EAC5C8BAB2FC5D5FB1D845C5 /* PermissionsView.swift in Sources */,
