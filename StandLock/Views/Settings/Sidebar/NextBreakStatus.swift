@@ -24,8 +24,9 @@ struct NextBreakStatus: View {
         case .paused(let until):
             Text("Paused until \(until, style: .time)")
         case .deferred(let reason):
-            VStack(alignment: .leading, spacing: SettingsTokens.rowTextSpacing) {
+            VStack(alignment: .leading, spacing: SettingsTokens.sidebarFooterLineSpacing) {
                 Text("Break waiting")
+                    .foregroundStyle(.primary)
                 Text(LocalizedStringKey(reason.displayName))
             }
         case .countingDown(let nextBreak):
