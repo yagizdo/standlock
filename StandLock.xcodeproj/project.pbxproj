@@ -11,6 +11,7 @@
 		0961DAEECC3F5E489E40FBC0 /* WordmarkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85C5398AE9D97E6B58618468 /* WordmarkView.swift */; };
 		09F7858EAC29160F684A60DD /* GeneralSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05EBBE0E51300DF74842F753 /* GeneralSettingsView.swift */; };
 		10EB4FC225CCCB669122BFED /* MediaController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5586791BF5D81FC7CE5AE185 /* MediaController.swift */; };
+		12E5EB862AA08D86DF45D9F1 /* SidebarBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ECFF53DE04217DC4398CB8C /* SidebarBackground.swift */; };
 		18504F805D34BF50C5E6729A /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 109FDEA57D0C0F3D6F9C1809 /* Sparkle */; };
 		1895F27AD369A832CA280556 /* AppTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37C6854B70D7BA6C7DDE4D09 /* AppTheme.swift */; };
 		1CCAA6FDBBB854DCBC1968EA /* MenuBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A2D12AD9D89928096A633C /* MenuBarView.swift */; };
@@ -31,27 +32,32 @@
 		5AC2660FDBB66F4B523FC1E2 /* ScheduleEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94F9B9151DFEA710D1211B70 /* ScheduleEditorView.swift */; };
 		60CC12D31EA4AABEAA2F6BF2 /* BreakScreenPreviewCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E67B79CF3D1B0C360EC60E94 /* BreakScreenPreviewCard.swift */; };
 		676678D8A09155A2AEEFA18C /* DisciplineLevelPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = A866831BDFD42E80353C80D8 /* DisciplineLevelPicker.swift */; };
-		6AF974084F51158A71D9EA47 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512EB234C46341A2816AAE12 /* SettingsView.swift */; };
 		6F9C00664AAD42633900A642 /* Exercises.json in Resources */ = {isa = PBXBuildFile; fileRef = 2063FDE70AFCC135664A8FD4 /* Exercises.json */; };
 		726D144CA2B3B5AF4D4503AE /* LevelPill.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF6724F4176D1F398DF9A697 /* LevelPill.swift */; };
 		72EF8A3AE6FD2B14FA478D0F /* OpenSettingsCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D5900DFD7FAE70774438F1F /* OpenSettingsCommand.swift */; };
 		742A80C38BAB206209CC4213 /* WelcomeStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B387012391C6BC0360436B50 /* WelcomeStepView.swift */; };
 		75E31F36751D55F051D6FF34 /* ExerciseBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 434445F0717D4FC94E284CB8 /* ExerciseBlock.swift */; };
 		7BF1946EE4BC2EF26F5CE641 /* BreakScreenLook.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB803AB21175A8E54B5A2191 /* BreakScreenLook.swift */; };
+		7D2C20F63E9C2C051EE354DE /* SettingsSidebarRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7832761FE83C21F870E571C7 /* SettingsSidebarRow.swift */; };
 		82BDAFFF1661ED2476DDCAD3 /* Detection in Frameworks */ = {isa = PBXBuildFile; productRef = F19E05A1FA932709D406DD8F /* Detection */; };
 		8392C29716F63661BC5BBF34 /* LocalizedRoot.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCAC5A6BBBB241EEA90944F4 /* LocalizedRoot.swift */; };
+		85380886D037B53802511647 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 765091196991FB6E7E8B8185 /* SettingsView.swift */; };
+		861C544CEA9B855BFE8724B6 /* SettingsSidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 644D55BA77E73588DF358AC7 /* SettingsSidebar.swift */; };
 		89532644D109DAC0E1C69BED /* PermissionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6382F8157622B1D11845645E /* PermissionsView.swift */; };
 		897387E26C50A633291C6545 /* QuickSetupStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7259326030030D8F49258219 /* QuickSetupStepView.swift */; };
 		90D5E71A0446AFE3673A03EA /* Scheduling in Frameworks */ = {isa = PBXBuildFile; productRef = 316964B56B03AC1F35947883 /* Scheduling */; };
+		91653967871122B28FBC7378 /* SettingsIconChip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07D76C4C05AEF8916D063F51 /* SettingsIconChip.swift */; };
 		918E275316F96D0940D30FE1 /* Coordination in Frameworks */ = {isa = PBXBuildFile; productRef = B92CC5F67D1B761AB8B497AF /* Coordination */; };
 		939B26A31A39AED7A89760CE /* PermissionsStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F5AA3BD882ECB78BB3099D /* PermissionsStepView.swift */; };
 		959469674E2A16E84F15F50B /* LanguageStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35EA7054F16243AE0575478E /* LanguageStore.swift */; };
 		9D77F7B7F12048E4399B8B25 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD06AD45022B6D147E26C4A6 /* AppDelegate.swift */; };
 		A6C60C181FF99EA8F84AA488 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = EE28EF9957F31C9560EE4439 /* Localizable.xcstrings */; };
+		A90BBE014C28C0EE022F3E96 /* SettingsPage+Presentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 045E2DB0FA1DABBAEE991FDC /* SettingsPage+Presentation.swift */; };
 		AB84ADC15C8263AFD995E8B5 /* BreakTypography.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99FB6FBBABD55844628B8DA3 /* BreakTypography.swift */; };
 		AD18B90CCF07CB58B8312CDB /* Locking in Frameworks */ = {isa = PBXBuildFile; productRef = 3F23054B7AE15E61C38C884E /* Locking */; };
 		B0845F2F14770C95395FBA5F /* ScheduleFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14C3EDA84FE380ED1AF6CE8A /* ScheduleFormView.swift */; };
 		B7E27A2CACE2784901CB923C /* SettingsNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29B46D4E8DC400FCF4E57374 /* SettingsNavigation.swift */; };
+		C5895F53358BDFD586A4A800 /* SettingsDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF887D81035A1FE4735344F3 /* SettingsDetail.swift */; };
 		D439305E99C8EADDE7F0DE89 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CD0B4059D699DF8BDF99889 /* AboutView.swift */; };
 		D588F2EB46E9B8124422C5EE /* StatsFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43B1BE95A60D5294C770AEDE /* StatsFooter.swift */; };
 		D6409DD8838F0ED91DC848C5 /* NextIntervalLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33012BFC809E077C2D638165 /* NextIntervalLabel.swift */; };
@@ -65,9 +71,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		045E2DB0FA1DABBAEE991FDC /* SettingsPage+Presentation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SettingsPage+Presentation.swift"; sourceTree = "<group>"; };
 		05CE8593F3F5EBFD2FD7DD08 /* StandLock.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StandLock.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		05EBBE0E51300DF74842F753 /* GeneralSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralSettingsView.swift; sourceTree = "<group>"; };
+		07D76C4C05AEF8916D063F51 /* SettingsIconChip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsIconChip.swift; sourceTree = "<group>"; };
 		0EABC17E13A353DC207277A7 /* StatisticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsView.swift; sourceTree = "<group>"; };
+		0ECFF53DE04217DC4398CB8C /* SidebarBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarBackground.swift; sourceTree = "<group>"; };
 		14C3EDA84FE380ED1AF6CE8A /* ScheduleFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleFormView.swift; sourceTree = "<group>"; };
 		2063FDE70AFCC135664A8FD4 /* Exercises.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Exercises.json; sourceTree = "<group>"; };
 		29B46D4E8DC400FCF4E57374 /* SettingsNavigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsNavigation.swift; sourceTree = "<group>"; };
@@ -82,13 +91,15 @@
 		4462E8D161113596647BD19E /* OverlayWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayWindowController.swift; sourceTree = "<group>"; };
 		4CD0B4059D699DF8BDF99889 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 		4FBAA74EE852DF8AA45C0909 /* HexColor+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HexColor+SwiftUI.swift"; sourceTree = "<group>"; };
-		512EB234C46341A2816AAE12 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		52A2D12AD9D89928096A633C /* MenuBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarView.swift; sourceTree = "<group>"; };
 		540564FDDCA36A0411155BC1 /* StandLock.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = StandLock.entitlements; sourceTree = "<group>"; };
 		5586791BF5D81FC7CE5AE185 /* MediaController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaController.swift; sourceTree = "<group>"; };
 		6382F8157622B1D11845645E /* PermissionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionsView.swift; sourceTree = "<group>"; };
+		644D55BA77E73588DF358AC7 /* SettingsSidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSidebar.swift; sourceTree = "<group>"; };
 		6AF14D6C0FE257CA354FAE8B /* WeekdaySymbols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekdaySymbols.swift; sourceTree = "<group>"; };
 		7259326030030D8F49258219 /* QuickSetupStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickSetupStepView.swift; sourceTree = "<group>"; };
+		765091196991FB6E7E8B8185 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		7832761FE83C21F870E571C7 /* SettingsSidebarRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSidebarRow.swift; sourceTree = "<group>"; };
 		7A85E4C082C8E3C5083ABAEB /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		8180C020203FB970C798C84E /* ThemeStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeStore.swift; sourceTree = "<group>"; };
 		85C5398AE9D97E6B58618468 /* WordmarkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordmarkView.swift; sourceTree = "<group>"; };
@@ -110,6 +121,7 @@
 		DC6421DB3A1D7F3131B3B7F4 /* StandLockKit */ = {isa = PBXFileReference; lastKnownFileType = folder; name = StandLockKit; path = StandLockKit; sourceTree = SOURCE_ROOT; };
 		DD06AD45022B6D147E26C4A6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		DEAF9C8AFAF33310B45445B2 /* TimerNumerals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerNumerals.swift; sourceTree = "<group>"; };
+		DF887D81035A1FE4735344F3 /* SettingsDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsDetail.swift; sourceTree = "<group>"; };
 		E1F5AA3BD882ECB78BB3099D /* PermissionsStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionsStepView.swift; sourceTree = "<group>"; };
 		E2436E0F3F20FE12F920ADE7 /* QuickActionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickActionsView.swift; sourceTree = "<group>"; };
 		E2E6E6102A1900D1FAB2A856 /* DetectionSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetectionSettingsView.swift; sourceTree = "<group>"; };
@@ -149,6 +161,8 @@
 			isa = PBXGroup;
 			children = (
 				2D5900DFD7FAE70774438F1F /* OpenSettingsCommand.swift */,
+				765091196991FB6E7E8B8185 /* SettingsView.swift */,
+				0ECFF53DE04217DC4398CB8C /* SidebarBackground.swift */,
 			);
 			path = Shell;
 			sourceTree = "<group>";
@@ -185,11 +199,13 @@
 				6382F8157622B1D11845645E /* PermissionsView.swift */,
 				94F9B9151DFEA710D1211B70 /* ScheduleEditorView.swift */,
 				14C3EDA84FE380ED1AF6CE8A /* ScheduleFormView.swift */,
-				512EB234C46341A2816AAE12 /* SettingsView.swift */,
 				303422D10B9C319038D63E32 /* SoftwareUpdate.swift */,
 				0EABC17E13A353DC207277A7 /* StatisticsView.swift */,
 				6AF14D6C0FE257CA354FAE8B /* WeekdaySymbols.swift */,
+				BF60A55A3946AB48FAA84D9A /* Components */,
+				B148AE5DC3A465394345D109 /* Pages */,
 				170C41147D720CA97536CFB1 /* Shell */,
+				D20C180CD8A9180C69463B27 /* Sidebar */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -247,6 +263,23 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
+		B148AE5DC3A465394345D109 /* Pages */ = {
+			isa = PBXGroup;
+			children = (
+				DF887D81035A1FE4735344F3 /* SettingsDetail.swift */,
+				045E2DB0FA1DABBAEE991FDC /* SettingsPage+Presentation.swift */,
+			);
+			path = Pages;
+			sourceTree = "<group>";
+		};
+		BF60A55A3946AB48FAA84D9A /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				07D76C4C05AEF8916D063F51 /* SettingsIconChip.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
 		C791EB2D22AF23F85734BB7A /* MenuBar */ = {
 			isa = PBXGroup;
 			children = (
@@ -255,6 +288,15 @@
 				E2436E0F3F20FE12F920ADE7 /* QuickActionsView.swift */,
 			);
 			path = MenuBar;
+			sourceTree = "<group>";
+		};
+		D20C180CD8A9180C69463B27 /* Sidebar */ = {
+			isa = PBXGroup;
+			children = (
+				644D55BA77E73588DF358AC7 /* SettingsSidebar.swift */,
+				7832761FE83C21F870E571C7 /* SettingsSidebarRow.swift */,
+			);
+			path = Sidebar;
 			sourceTree = "<group>";
 		};
 		D36891D20EB0A9697C01CD27 /* Products */ = {
@@ -404,8 +446,14 @@
 				897387E26C50A633291C6545 /* QuickSetupStepView.swift in Sources */,
 				5AC2660FDBB66F4B523FC1E2 /* ScheduleEditorView.swift in Sources */,
 				B0845F2F14770C95395FBA5F /* ScheduleFormView.swift in Sources */,
+				C5895F53358BDFD586A4A800 /* SettingsDetail.swift in Sources */,
+				91653967871122B28FBC7378 /* SettingsIconChip.swift in Sources */,
 				B7E27A2CACE2784901CB923C /* SettingsNavigation.swift in Sources */,
-				6AF974084F51158A71D9EA47 /* SettingsView.swift in Sources */,
+				A90BBE014C28C0EE022F3E96 /* SettingsPage+Presentation.swift in Sources */,
+				861C544CEA9B855BFE8724B6 /* SettingsSidebar.swift in Sources */,
+				7D2C20F63E9C2C051EE354DE /* SettingsSidebarRow.swift in Sources */,
+				85380886D037B53802511647 /* SettingsView.swift in Sources */,
+				12E5EB862AA08D86DF45D9F1 /* SidebarBackground.swift in Sources */,
 				009F1339F2742632532208AA /* SoftwareUpdate.swift in Sources */,
 				2CD0D3C3CF795626E50A5EAA /* StandLockApp.swift in Sources */,
 				1D8C2A5E77A5D5D5F9C7EFDC /* StatisticsView.swift in Sources */,

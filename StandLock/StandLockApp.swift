@@ -32,7 +32,8 @@ struct StandLockApp: App {
             }
         }
         .windowStyle(.hiddenTitleBar)
-        .windowResizability(.contentSize)
+        .defaultSize(width: 860, height: 620)
+        .windowResizability(.contentMinSize)
         // Before `.commands`: the other order removes those commands too.
         .commandsRemoved()
         .commands {
