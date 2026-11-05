@@ -1,7 +1,7 @@
 import SwiftUI
 
-/// The one place Settings saves preferences. A leaf, so a coordinator publish re-evaluates this
-/// body and not the page switch.
+/// Saves every preference change while Settings is open. A leaf, so a coordinator publish
+/// re-evaluates this body and not the page switch.
 struct PreferencesSaveOwner: View {
     @EnvironmentObject private var coordinator: AppCoordinator
 

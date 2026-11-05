@@ -21,7 +21,7 @@ struct MenuBarSettingsView: View {
     var body: some View {
         SettingsPageLayout("Menu Bar") {
             SettingsSection("Preview") {
-                HStack(spacing: 4) {
+                HStack(spacing: SettingsTokens.stripItemSpacing) {
                     Image(nsImage: MenuBarIcon.make(progress: 0.5))
                         .renderingMode(.template)
                         .foregroundStyle(.primary)
@@ -32,9 +32,8 @@ struct MenuBarSettingsView: View {
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .trailing)
-                .padding(.horizontal, 11)
-                .padding(.vertical, 5)
-                .background(.quaternary, in: RoundedRectangle(cornerRadius: 7))
+                .padding(SettingsTokens.stripInsets)
+                .background(.quaternary, in: RoundedRectangle(cornerRadius: SettingsTokens.stripRadius))
                 .padding(SettingsTokens.rowInsets)
             }
 

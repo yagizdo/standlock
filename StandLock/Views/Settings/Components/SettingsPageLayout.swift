@@ -15,9 +15,7 @@ struct SettingsPageLayout<Content: View>: View {
             Text(title)
                 .font(SettingsTokens.pageTitleFont)
                 .accessibilityAddTraits(.isHeader)
-                .padding(.horizontal, SettingsTokens.pageInset)
-                .padding(.top, 14)
-                .padding(.bottom, 10)
+                .padding(SettingsTokens.pageTitleInsets)
 
             ScrollView {
                 VStack(alignment: .leading, spacing: SettingsTokens.sectionSpacing) {

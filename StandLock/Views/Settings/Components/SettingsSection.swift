@@ -18,7 +18,7 @@ struct SettingsSection<Content: View>: View {
             Text(title)
                 .font(SettingsTokens.sectionTitleFont)
                 .accessibilityAddTraits(.isHeader)
-                .padding(.horizontal, 2)
+                .padding(.horizontal, SettingsTokens.sectionTitleInset)
 
             VStack(alignment: .leading, spacing: 0) {
                 content

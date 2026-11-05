@@ -19,7 +19,7 @@ struct SettingsRow<Control: View>: View {
 
     var body: some View {
         HStack(spacing: SettingsTokens.rowSpacing) {
-            VStack(alignment: .leading, spacing: 1) {
+            VStack(alignment: .leading, spacing: SettingsTokens.rowTextSpacing) {
                 Text(title)
                 if let description {
                     Text(description)
