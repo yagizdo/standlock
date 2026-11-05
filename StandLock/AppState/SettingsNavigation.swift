@@ -21,7 +21,8 @@ final class SettingsNavigation: ObservableObject {
     /// would be a turn late: a measured edit followed by a row change on one turn went through.
     var unsavedEdits: (() -> Bool)?
     private weak var closingWindow: NSWindow?
-    /// Fires on every open. The scene keeps the closed window, so its views never reappear.
+    /// Fires when Settings is opened from outside it. The scene keeps the closed window, so its
+    /// views never reappear.
     let opened = PassthroughSubject<Void, Never>()
 
     /// Opens Settings on `page`, or on the last page when `page` is nil.
@@ -39,7 +40,8 @@ final class SettingsNavigation: ObservableObject {
         openWindow(id: Self.windowID)
         // Deprecated in the header, but plain `activate()` did not make the window key.
         NSApp.activate(ignoringOtherApps: true)
-        opened.send()
+        // Asked here, not in the view: `controlActiveState` stays `.key` in a closed window.
+        if !(keyWindow?.delegate is SettingsWindowDelegate) { opened.send() }
         dismissMenuBarPanel(keyWindow)
     }
 
