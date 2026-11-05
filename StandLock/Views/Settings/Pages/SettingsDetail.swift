@@ -9,6 +9,7 @@ struct SettingsDetail: View {
     var body: some View {
         page
             .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(PreferencesSaveOwner())
     }
 
     @ViewBuilder

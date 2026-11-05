@@ -20,6 +20,7 @@
 		21816E071409DEA5FC6A0BCE /* PermissionChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE0E2C708B760F809144B756 /* PermissionChecker.swift */; };
 		2200215D71D0CABD7DD45E92 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 94B7BAAC1837524EF3DD6B90 /* Assets.xcassets */; };
 		2CD0D3C3CF795626E50A5EAA /* StandLockApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1524D749BB78A875E5FD51F /* StandLockApp.swift */; };
+		3F24521CD8A9CA8C9156A1B9 /* PreferencesSaveOwner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EA489010EA8A9B969CE5227 /* PreferencesSaveOwner.swift */; };
 		44D9EB3E27CF114DDF7E3735 /* BreakOverlayWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5BBDBF97CFAA5FF490CBD00 /* BreakOverlayWindow.swift */; };
 		45EEC3830A30A1175EBD1FCE /* ThemeStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8180C020203FB970C798C84E /* ThemeStore.swift */; };
 		4A537C55B992DF62814F9857 /* QuickActionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2436E0F3F20FE12F920ADE7 /* QuickActionsView.swift */; };
@@ -101,6 +102,7 @@
 		765091196991FB6E7E8B8185 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		7832761FE83C21F870E571C7 /* SettingsSidebarRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSidebarRow.swift; sourceTree = "<group>"; };
 		7A85E4C082C8E3C5083ABAEB /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		7EA489010EA8A9B969CE5227 /* PreferencesSaveOwner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesSaveOwner.swift; sourceTree = "<group>"; };
 		8180C020203FB970C798C84E /* ThemeStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeStore.swift; sourceTree = "<group>"; };
 		85C5398AE9D97E6B58618468 /* WordmarkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordmarkView.swift; sourceTree = "<group>"; };
 		94B7BAAC1837524EF3DD6B90 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -266,6 +268,7 @@
 		B148AE5DC3A465394345D109 /* Pages */ = {
 			isa = PBXGroup;
 			children = (
+				7EA489010EA8A9B969CE5227 /* PreferencesSaveOwner.swift */,
 				DF887D81035A1FE4735344F3 /* SettingsDetail.swift */,
 				045E2DB0FA1DABBAEE991FDC /* SettingsPage+Presentation.swift */,
 			);
@@ -442,6 +445,7 @@
 				21816E071409DEA5FC6A0BCE /* PermissionChecker.swift in Sources */,
 				939B26A31A39AED7A89760CE /* PermissionsStepView.swift in Sources */,
 				89532644D109DAC0E1C69BED /* PermissionsView.swift in Sources */,
+				3F24521CD8A9CA8C9156A1B9 /* PreferencesSaveOwner.swift in Sources */,
 				4A537C55B992DF62814F9857 /* QuickActionsView.swift in Sources */,
 				897387E26C50A633291C6545 /* QuickSetupStepView.swift in Sources */,
 				5AC2660FDBB66F4B523FC1E2 /* ScheduleEditorView.swift in Sources */,
