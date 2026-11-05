@@ -12,7 +12,7 @@ struct BreakScreenSettingsSection: View {
     }
 
     var body: some View {
-        Section("Break Screen") {
+        VStack(alignment: .leading, spacing: 10) {
             Toggle(isOn: customColorsEnabled) {
                 Label {
                     VStack(alignment: .leading, spacing: 2) {
@@ -56,7 +56,10 @@ struct BreakScreenSettingsSection: View {
                 }
             }
 
-            TextField("Break Message", text: $coordinator.preferences.breakScreen.message, prompt: Text("e.g. Drink some water"))
+            LabeledContent("Break Message") {
+                TextField("Break Message", text: $coordinator.preferences.breakScreen.message, prompt: Text("e.g. Drink some water"))
+                    .labelsHidden()
+            }
             Text("Shown under the timer during every break")
                 .font(.caption)
                 .foregroundStyle(.secondary)
