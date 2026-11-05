@@ -2,7 +2,9 @@ import SwiftUI
 import StandLockCore
 
 extension SettingsPage {
-    static let sidebarPages: [SettingsPage] = [.general, .menuBar, .breakScreen, .discipline, .schedules, .detection, .permissions, .statistics, .about]
+    static let sidebarTopPages: [SettingsPage] = [.general, .menuBar]
+    static let sidebarBreakPages: [SettingsPage] = [.breakScreen, .discipline, .detection]
+    static let sidebarBottomPages: [SettingsPage] = [.schedules, .permissions, .statistics, .about]
 
     var title: LocalizedStringKey {
         switch self {
