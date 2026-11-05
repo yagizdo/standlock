@@ -119,6 +119,22 @@ public struct AppPreferences: Codable, Sendable, Equatable {
     }
 }
 
+extension AppPreferences {
+    /// A specific selection that holds nothing yet starts with every calendar ticked, so the
+    /// switch to it changes nothing until the user narrows it down.
+    public var needsCalendarPreCheck: Bool {
+        calendarSelectionMode == .selected && selectedCalendarIdentifiers.isEmpty
+    }
+
+    public mutating func setCalendar(_ id: String, isSelected: Bool) {
+        if isSelected {
+            if !selectedCalendarIdentifiers.contains(id) { selectedCalendarIdentifiers.append(id) }
+        } else {
+            selectedCalendarIdentifiers.removeAll { $0 == id }
+        }
+    }
+}
+
 public enum DetectionBehavior: String, Codable, Sendable, CaseIterable {
     case deferBreak
     case reduceToGentle
