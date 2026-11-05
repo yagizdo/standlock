@@ -22,9 +22,7 @@ struct SettingsRow<Control: View>: View {
             VStack(alignment: .leading, spacing: SettingsTokens.rowTextSpacing) {
                 Text(title)
                 if let description {
-                    Text(description)
-                        .font(SettingsTokens.descriptionFont)
-                        .foregroundStyle(.secondary)
+                    SettingsDescription(description)
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)

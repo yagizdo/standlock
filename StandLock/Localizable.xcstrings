@@ -52,6 +52,22 @@
         }
       }
     },
+    "Daily skip limits" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Günlük atlama sınırları"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "每日跳过上限"
+          }
+        }
+      }
+    },
     "Language and appearance" : {
       "localizations" : {
         "tr" : {

@@ -1,13 +1,15 @@
 import SwiftUI
 
-/// A heading over a card. Pages put a `Divider()` between rows: macOS 13 has no public way for
+/// A heading over a card, with an optional note below it. Pages put a `Divider()` between rows: macOS 13 has no public way for
 /// this view to walk its content.
 struct SettingsSection<Content: View>: View {
     private let title: LocalizedStringKey
+    private let note: LocalizedStringKey?
     private let content: Content
 
-    init(_ title: LocalizedStringKey, @ViewBuilder content: () -> Content) {
+    init(_ title: LocalizedStringKey, note: LocalizedStringKey? = nil, @ViewBuilder content: () -> Content) {
         self.title = title
+        self.note = note
         self.content = content()
     }
 
@@ -26,6 +28,11 @@ struct SettingsSection<Content: View>: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(Color(nsColor: .controlBackgroundColor), in: card)
             .overlay(card.strokeBorder(Color(nsColor: .separatorColor), lineWidth: 0.5))
+
+            if let note {
+                SettingsDescription(note)
+                    .padding(.horizontal, SettingsTokens.sectionTitleInset)
+            }
         }
     }
 }
