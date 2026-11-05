@@ -3,7 +3,7 @@ import SwiftUI
 import StandLockCore
 
 /// What is waiting on the unsaved edits prompt.
-enum PendingLeave: Equatable {
+enum PendingLeave {
     case page(SettingsPage)
     case closeWindow
 }
@@ -15,8 +15,8 @@ final class SettingsNavigation: ObservableObject {
 
     @Published private(set) var page: SettingsPage = .general
     @Published private(set) var pendingLeave: PendingLeave?
-    /// Set by the schedule page and asked at the moment of a selection. A stored flag would be
-    /// too late: a field commits on blur, on the same turn as the click that moved focus.
+    /// Set by the schedule page and asked at the moment of a selection. A flag kept by `onChange`
+    /// would be a turn late: a measured edit followed by a row change on one turn went through.
     var unsavedEdits: (() -> Bool)?
     private weak var closingWindow: NSWindow?
 
@@ -40,14 +40,14 @@ final class SettingsNavigation: ObservableObject {
 
     /// Moves to `page`, unless that would lose unsaved edits: then the schedule page asks first.
     func select(_ page: SettingsPage) {
-        guard page != self.page else { return }
-        guard unsavedEdits?() == true else {
-            leave(to: page)
-            return
+        switch self.page.leaving(to: page, hasUnsavedEdits: unsavedEdits?() == true) {
+        case .stay: break
+        case .go: leave(to: page)
+        case .ask:
+            // The sidebar `List` has already moved its row. A publish on this turn leaves it
+            // there; one on the next turn brings it back.
+            DispatchQueue.main.async { self.pendingLeave = .page(page) }
         }
-        // The sidebar `List` has already moved its row. A publish on this turn leaves it there;
-        // one on the next turn brings it back.
-        DispatchQueue.main.async { self.pendingLeave = .page(page) }
     }
 
     /// Moves to `page` with the draft dealt with, so nothing asks.

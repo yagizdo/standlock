@@ -22,6 +22,10 @@ public struct IntervalRow: Identifiable, Equatable, Sendable {
 
 /// The values of the schedule form, held apart from the stored schedule until Save.
 public struct ScheduleDraft: Equatable, Sendable {
+    public static let intervalRange = 1...180
+    public static let breakRange = 0.1...60.0
+    public static let shortBreakRange = 0.1...30.0
+
     public var name = ""
     public var dayPreset = DayPreset.weekdays
     public var customDays: Set<Weekday> = []
@@ -69,8 +73,13 @@ public struct ScheduleDraft: Equatable, Sendable {
         !name.trimmingCharacters(in: .whitespaces).isEmpty
     }
 
+    public func canSubmit(from baseline: ScheduleDraft) -> Bool {
+        canSave && hasChanges(from: baseline)
+    }
+
     /// `existing` supplies what the form does not edit, so pass the latest stored schedule: the
-    /// enable toggle can change it while a draft is open.
+    /// enable toggle can change it while a draft is open. Ranges are held here too: Return can save
+    /// before a field's own clamp has run.
     public func build(existing: Schedule?) -> Schedule {
         let days: DaySelection = switch dayPreset {
         case .everyDay: .everyDay
@@ -82,14 +91,14 @@ public struct ScheduleDraft: Equatable, Sendable {
         let repetitionRule: RepetitionRule? = useRepetition
             ? RepetitionRule(
                 shortBreakCount: shortBreakCount,
-                shortBreakDuration: (shortBreakMinutes * 60).rounded(),
+                shortBreakDuration: (Self.clamped(shortBreakMinutes, to: Self.shortBreakRange) * 60).rounded(),
                 longBreakDuration: TimeInterval(longBreakMinutes * 60)
             )
             : nil
 
         let steps = intervalRows.map { row -> IntervalStep in
             let trimmed = row.label.trimmingCharacters(in: .whitespaces)
-            return IntervalStep(duration: TimeInterval(row.minutes * 60),
+            return IntervalStep(duration: TimeInterval(Self.clamped(row.minutes, to: Self.intervalRange) * 60),
                                 label: trimmed.isEmpty ? nil : trimmed)
         }
         // A single row is the canonical single-interval schedule; `breakInterval` always
@@ -105,13 +114,17 @@ public struct ScheduleDraft: Equatable, Sendable {
             days: days,
             windows: windows,
             breakInterval: steps[0].duration,
-            breakDuration: (breakDurationMinutes * 60).rounded(),
+            breakDuration: (Self.clamped(breakDurationMinutes, to: Self.breakRange) * 60).rounded(),
             intervalCycle: intervalCycle,
             repetitionRule: repetitionRule,
             disciplineLevel: disciplineLevel,
             dailyBreakCap: existing?.dailyBreakCap,
             progressiveEnforcement: progressiveEnforcement
         )
+    }
+
+    public static func clamped<Value: Comparable>(_ value: Value, to range: ClosedRange<Value>) -> Value {
+        min(max(value, range.lowerBound), range.upperBound)
     }
 
     /// Compares what would be saved, not the fields: a stored value the form rounds, or a field

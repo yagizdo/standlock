@@ -23,8 +23,11 @@ struct ScheduleSidebarRow: View {
         }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text(verbatim: schedule.name))
-        .accessibilityValue(Text(schedule.isEnabled ? "Enabled" : "Disabled"))
-        .accessibilityHint(Text(LocalizedStringKey(schedule.disciplineLevel.displayName)))
+        .accessibilityValue(
+            Text(schedule.isEnabled ? "Enabled" : "Disabled")
+                + Text(verbatim: ", ")
+                + Text(LocalizedStringKey(schedule.disciplineLevel.displayName))
+        )
     }
 
     private func dot(_ color: Color) -> some View {

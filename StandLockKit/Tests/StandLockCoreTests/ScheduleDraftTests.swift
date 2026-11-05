@@ -107,9 +107,51 @@ struct ScheduleDraftTests {
     }
 
     /// Stored values the form cannot show exactly must not read as an edit.
-    @Test func normalisedValuesAreNotChanges() {
+    @Test func aFieldShowingTheRoundedValueIsNotAnEdit() {
+        let baseline = ScheduleDraft(schedule: stored(breakDuration: 67))
+        var draft = baseline
+        draft.breakDurationMinutes = 1.12
+        #expect(!draft.hasChanges(from: baseline))
+    }
+
+    @Test func aStoredValueTheFormTruncatesIsNotAnEdit() {
         let draft = ScheduleDraft(schedule: stored(breakInterval: 90, breakDuration: 66))
-        #expect(!draft.hasChanges(from: draft))
+        #expect(!draft.hasChanges(from: ScheduleDraft(schedule: stored(breakInterval: 90, breakDuration: 66))))
+    }
+
+    /// Return can save before the field's own clamp has run, so `build` holds the ranges itself.
+    @Test func buildKeepsValuesInRange() {
+        var draft = ScheduleDraft(schedule: stored())
+        draft.intervalRows = [IntervalRow(minutes: 0), IntervalRow(minutes: 999)]
+        draft.breakDurationMinutes = 0
+        draft.useRepetition = true
+        draft.shortBreakMinutes = 500
+
+        let built = draft.build(existing: nil)
+
+        #expect(built.intervalCycle?.map(\.duration) == [TimeInterval(60), TimeInterval(180 * 60)])
+        #expect(built.breakInterval == TimeInterval(60))
+        #expect(built.breakDuration == TimeInterval(6))
+        #expect(built.repetitionRule?.shortBreakDuration == TimeInterval(30 * 60))
+    }
+
+    /// The change check builds on every body pass, so a pasted number must not trap the multiply.
+    @Test func aHugeIntervalDoesNotTrap() {
+        let baseline = ScheduleDraft(schedule: stored())
+        var draft = baseline
+        draft.intervalRows = [IntervalRow(minutes: .max)]
+        #expect(draft.hasChanges(from: baseline))
+        #expect(draft.build(existing: nil).breakInterval == TimeInterval(180 * 60))
+    }
+
+    @Test func submitNeedsANameAndAChange() {
+        let baseline = ScheduleDraft(schedule: stored())
+        var draft = baseline
+        #expect(!draft.canSubmit(from: baseline))
+        draft.windows[0].endHour = 13
+        #expect(draft.canSubmit(from: baseline))
+        draft.name = "  "
+        #expect(!draft.canSubmit(from: baseline))
     }
 
     @Test func hiddenFieldsAreNotChanges() {

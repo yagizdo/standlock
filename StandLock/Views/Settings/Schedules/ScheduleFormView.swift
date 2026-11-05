@@ -35,10 +35,10 @@ struct ScheduleFormView: View {
     }
 
     private var daysBlock: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: SettingsTokens.blockSpacing) {
             Text("Active Days")
 
-            HStack(spacing: 8) {
+            HStack(spacing: SettingsTokens.blockSpacing) {
                 presetButton("Weekdays", preset: .weekdays)
                 presetButton("Weekends", preset: .weekends)
                 presetButton("Every Day", preset: .everyDay)
@@ -46,7 +46,7 @@ struct ScheduleFormView: View {
             }
 
             if draft.dayPreset == .custom {
-                HStack(spacing: 4) {
+                HStack(spacing: SettingsTokens.stripItemSpacing) {
                     ForEach(Weekday.allCases, id: \.self) { day in
                         let isSelected = draft.customDays.contains(day)
                         Button(WeekdaySymbols(locale: locale).short(for: day)) {
@@ -55,10 +55,9 @@ struct ScheduleFormView: View {
                         }
                         .buttonStyle(.plain)
                         .font(.caption.weight(.medium))
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
+                        .padding(SettingsTokens.dayInsets)
                         .background(
-                            RoundedRectangle(cornerRadius: 6)
+                            RoundedRectangle(cornerRadius: SettingsTokens.chipRadius)
                                 .fill(isSelected ? Color.accentColor : Color.secondary.opacity(0.1))
                         )
                         .foregroundStyle(isSelected ? .white : .primary)
@@ -71,7 +70,7 @@ struct ScheduleFormView: View {
     }
 
     private var windowsBlock: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: SettingsTokens.blockSpacing) {
             HStack {
                 Text("Time Windows")
                 Spacer()
@@ -87,7 +86,7 @@ struct ScheduleFormView: View {
             // Bound by identity, not index: removing a row while indices are the identity leaves
             // SwiftUI holding a stale index and the `$windows[index]` bindings read out of range.
             ForEach($draft.windows) { $window in
-                HStack(spacing: 8) {
+                HStack(spacing: SettingsTokens.blockSpacing) {
                     timePicker("Start", hour: $window.startHour, minute: $window.startMinute)
                     Text("to")
                         .foregroundStyle(.secondary)
@@ -114,7 +113,7 @@ struct ScheduleFormView: View {
             intervalsBlock
             Divider()
             SettingsRow("Break duration") {
-                minutesField("Break duration", value: $draft.breakDurationMinutes, upperBound: 60)
+                minutesField("Break duration", value: $draft.breakDurationMinutes, range: ScheduleDraft.breakRange)
             }
             Divider()
             SettingsToggleRow(
@@ -130,7 +129,7 @@ struct ScheduleFormView: View {
     }
 
     private var intervalsBlock: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: SettingsTokens.blockSpacing) {
             HStack {
                 Text("Break every")
                 Spacer()
@@ -147,15 +146,15 @@ struct ScheduleFormView: View {
 
             // Bound by identity for the same reason as the windows section.
             ForEach($draft.intervalRows) { $row in
-                HStack(spacing: 4) {
+                HStack(spacing: SettingsTokens.stripItemSpacing) {
                     TextField("", value: $row.minutes, format: .number)
                         .textFieldStyle(.roundedBorder)
-                        .frame(width: 50)
+                        .frame(width: SettingsTokens.numberFieldWidth)
                         .accessibilityLabel("Break every")
                         .onChange(of: row.minutes) { newValue in
-                            row.minutes = max(1, min(180, newValue))
+                            row.minutes = ScheduleDraft.clamped(newValue, to: ScheduleDraft.intervalRange)
                         }
-                    Stepper("Break every", value: $row.minutes, in: 1...180, step: 5)
+                    Stepper("Break every", value: $row.minutes, in: ScheduleDraft.intervalRange, step: 5)
                         .labelsHidden()
                     Text("min")
                         .foregroundStyle(.secondary)
@@ -184,11 +183,11 @@ struct ScheduleFormView: View {
     }
 
     private var repetitionBlock: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: SettingsTokens.blockSpacing) {
             Stepper("Short breaks: \(draft.shortBreakCount)", value: $draft.shortBreakCount, in: 1...10)
-            HStack(spacing: 4) {
+            HStack(spacing: SettingsTokens.stripItemSpacing) {
                 Text("Short break")
-                minutesField("Short break", value: $draft.shortBreakMinutes, upperBound: 30)
+                minutesField("Short break", value: $draft.shortBreakMinutes, range: ScheduleDraft.shortBreakRange)
             }
             Stepper("Long break: \(draft.longBreakMinutes)m", value: $draft.longBreakMinutes, in: 5...60, step: 5)
         }
@@ -215,10 +214,9 @@ struct ScheduleFormView: View {
         return Button(label) { draft.dayPreset = preset }
             .buttonStyle(.plain)
             .font(.caption.weight(.medium))
-            .padding(.horizontal, 10)
-            .padding(.vertical, 5)
+            .padding(SettingsTokens.presetInsets)
             .background(
-                RoundedRectangle(cornerRadius: 6)
+                RoundedRectangle(cornerRadius: SettingsTokens.chipRadius)
                     .fill(isSelected ? Color.accentColor : Color.secondary.opacity(0.1))
             )
             .foregroundStyle(isSelected ? .white : .primary)
@@ -226,14 +224,14 @@ struct ScheduleFormView: View {
     }
 
     private func timePicker(_ label: LocalizedStringKey, hour: Binding<Int>, minute: Binding<Int>) -> some View {
-        HStack(spacing: 2) {
+        HStack(spacing: SettingsTokens.rowTextSpacing) {
             Picker(label, selection: hour) {
                 ForEach(0..<24, id: \.self) { h in
                     Text(String(format: "%02d", h)).tag(h)
                 }
             }
             .labelsHidden()
-            .frame(width: 60)
+            .frame(width: SettingsTokens.timePickerWidth)
 
             Text(":")
 
@@ -243,23 +241,23 @@ struct ScheduleFormView: View {
                 }
             }
             .labelsHidden()
-            .frame(width: 60)
+            .frame(width: SettingsTokens.timePickerWidth)
         }
     }
 
     /// Minutes field with a stepper. Accepts decimals so a break can be shorter
     /// than a minute: 0.5 is thirty seconds, the floor 0.1 is six seconds.
-    private func minutesField(_ label: LocalizedStringKey, value: Binding<Double>, upperBound: Double) -> some View {
-        HStack(spacing: 4) {
+    private func minutesField(_ label: LocalizedStringKey, value: Binding<Double>, range: ClosedRange<Double>) -> some View {
+        HStack(spacing: SettingsTokens.stripItemSpacing) {
             TextField("", value: value, format: .number.precision(.fractionLength(0...2)))
                 .textFieldStyle(.roundedBorder)
-                .frame(width: 50)
+                .frame(width: SettingsTokens.numberFieldWidth)
                 .accessibilityLabel(label)
                 .onChange(of: value.wrappedValue) { newValue in
-                    value.wrappedValue = max(0.1, min(upperBound, newValue))
+                    value.wrappedValue = ScheduleDraft.clamped(newValue, to: range)
                 }
             // ponytail: step stays 1, so 0.5 steps to 1.5; typing is how you reach a fraction.
-            Stepper(label, value: value, in: 0.1...upperBound, step: 1)
+            Stepper(label, value: value, in: range, step: 1)
                 .labelsHidden()
             Text("min")
                 .foregroundStyle(.secondary)

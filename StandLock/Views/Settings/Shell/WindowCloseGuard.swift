@@ -41,7 +41,7 @@ private final class CloseDelegate: NSObject, NSWindowDelegate {
     }
 
     func windowShouldClose(_ sender: NSWindow) -> Bool {
-        let allowed = MainActor.assumeIsolated { navigation.shouldClose(sender) }
+        let allowed = navigation.shouldClose(sender)
         return allowed && scene?.windowShouldClose?(sender) ?? allowed
     }
 

@@ -36,4 +36,16 @@ struct SettingsPageTests {
         #expect(SettingsPage.firstSchedule(in: [first, UUID()]) == .schedule(first))
         #expect(SettingsPage.firstSchedule(in: []) == .newSchedule)
     }
+
+    @Test func leavingAsksOnlyWithUnsavedEdits() {
+        let page = SettingsPage.schedule(UUID())
+        #expect(page.leaving(to: .general, hasUnsavedEdits: true) == .ask)
+        #expect(page.leaving(to: .general, hasUnsavedEdits: false) == .go)
+    }
+
+    @Test func leavingForTheSamePageDoesNothing() {
+        let page = SettingsPage.schedule(UUID())
+        #expect(page.leaving(to: page, hasUnsavedEdits: true) == .stay)
+        #expect(page.leaving(to: page, hasUnsavedEdits: false) == .stay)
+    }
 }

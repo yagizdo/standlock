@@ -76,7 +76,9 @@ private struct SchedulePage: View {
             }
             Button("Cancel", role: .cancel) { navigation.cancelPending() }
         } message: { _ in
-            Text("Your changes to this schedule have not been saved.")
+            Text(draft.canSave
+                ? "Your changes to this schedule have not been saved."
+                : "Name this schedule to save it, or discard your changes.")
         }
         .sheet(isPresented: $showDeleteConfirmation) {
             LocalizedRoot(store: languageStore) {
@@ -132,15 +134,13 @@ private struct SchedulePage: View {
             }
             Spacer()
             Button("Cancel") { cancel() }
-                .disabled(schedule != nil && !isDirty)
+                .disabled(!isDirty && (schedule != nil || coordinator.schedules.isEmpty))
             Button(schedule == nil ? "Add Schedule" : "Save") { saveAndStay() }
                 .buttonStyle(.borderedProminent)
-                .disabled(!canSubmit)
+                .disabled(!draft.canSubmit(from: baseline))
         }
         .padding(SettingsTokens.footerInsets)
     }
-
-    private var canSubmit: Bool { draft.canSave && isDirty }
 
     private var promptIsPresented: Binding<Bool> {
         let navigation = navigation
@@ -150,25 +150,21 @@ private struct SchedulePage: View {
         )
     }
 
-    /// Returns the saved schedule. Return lands here too, so nothing the Save button would refuse
-    /// goes through: a nameless schedule, or a restart of enforcement with nothing changed.
-    @discardableResult
-    private func save() -> Schedule? {
-        guard canSubmit else { return nil }
+    /// Return lands here too, so nothing the Save button would refuse goes through: a nameless
+    /// schedule, or a restart of enforcement with nothing changed.
+    private func saveAndStay() {
+        guard draft.canSubmit(from: baseline) else { return }
         let saved = draft.build(existing: schedule)
+        // Reloaded because the pane stays open: the form must show what was stored, such as
+        // Monday for an empty custom selection.
+        draft = ScheduleDraft(schedule: saved)
+        baseline = draft
         if schedule == nil {
             coordinator.addSchedule(saved)
+            navigation.leave(to: .schedule(saved.id))
         } else {
             coordinator.updateSchedule(saved)
         }
-        draft.name = saved.name
-        baseline = draft
-        return saved
-    }
-
-    private func saveAndStay() {
-        guard let saved = save(), schedule == nil else { return }
-        navigation.leave(to: .schedule(saved.id))
     }
 
     private func cancel() {

@@ -308,6 +308,22 @@
         }
       }
     },
+    "Name this schedule to save it, or discard your changes." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kaydetmek için programa ad ver ya da değişiklikleri at."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请为此日程命名以存储，或放弃更改。"
+          }
+        }
+      }
+    },
     "Preview" : {
       "localizations" : {
         "tr" : {

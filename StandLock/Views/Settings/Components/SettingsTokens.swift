@@ -21,6 +21,12 @@ enum SettingsTokens {
     static let previewSpacing: CGFloat = 10
     static let textFieldWidth: CGFloat = 170
     static let statusDotSize: CGFloat = 7
+    static let blockSpacing: CGFloat = 8
+    static let chipRadius: CGFloat = 6
+    static let presetInsets = EdgeInsets(top: 5, leading: 10, bottom: 5, trailing: 10)
+    static let dayInsets = EdgeInsets(top: 4, leading: 8, bottom: 4, trailing: 8)
+    static let numberFieldWidth: CGFloat = 50
+    static let timePickerWidth: CGFloat = 60
     static let sidebarHeaderInset: CGFloat = 12
     static let footerInsets = EdgeInsets(top: 10, leading: 24, bottom: 10, trailing: 24)
     static let pageTitleFont = Font.system(size: 15, weight: .semibold)
