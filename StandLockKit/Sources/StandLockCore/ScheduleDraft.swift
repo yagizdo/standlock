@@ -124,7 +124,7 @@ public struct ScheduleDraft: Equatable, Sendable {
     }
 
     public static func clamped<Value: Comparable>(_ value: Value, to range: ClosedRange<Value>) -> Value {
-        min(max(value, range.lowerBound), range.upperBound)
+        max(range.lowerBound, min(range.upperBound, value))
     }
 
     /// Compares what would be saved, not the fields: a stored value the form rounds, or a field

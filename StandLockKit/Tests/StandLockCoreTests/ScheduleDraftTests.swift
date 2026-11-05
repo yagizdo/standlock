@@ -135,6 +135,13 @@ struct ScheduleDraftTests {
         #expect(built.repetitionRule?.shortBreakDuration == TimeInterval(30 * 60))
     }
 
+    /// A number field parses "NaN". It would stop the whole schedule list encoding.
+    @Test func notANumberBecomesTheUpperBound() {
+        var draft = ScheduleDraft(schedule: stored())
+        draft.breakDurationMinutes = .nan
+        #expect(draft.build(existing: nil).breakDuration == TimeInterval(60 * 60))
+    }
+
     /// The change check builds on every body pass, so a pasted number must not trap the multiply.
     @Test func aHugeIntervalDoesNotTrap() {
         let baseline = ScheduleDraft(schedule: stored())
