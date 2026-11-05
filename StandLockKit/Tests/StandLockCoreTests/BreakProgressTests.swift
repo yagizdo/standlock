@@ -5,6 +5,16 @@ import Testing
 @Suite("Break Progress Calculation Tests")
 struct BreakProgressTests {
 
+    // MARK: - formatCountdown
+
+    @Test(arguments: [
+        (724.0, "12:04"), (5.0, "0:05"), (0.0, "0:00"), (-3.0, "0:00"),
+        (59.0, "0:59"), (60.0, "1:00"), (3599.0, "59:59"), (3600.0, "1:00:00"), (4324.0, "1:12:04"),
+    ])
+    func countdownText(seconds: TimeInterval, expected: String) {
+        #expect(formatCountdown(secondsRemaining: seconds) == expected)
+    }
+
     // MARK: - calculateBreakProgress
 
     @Test func breakActiveReturnsOne() {

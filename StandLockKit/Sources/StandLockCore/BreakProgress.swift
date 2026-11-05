@@ -22,6 +22,18 @@ public func breakSecondsRemaining(until end: Date, now: Date = Date()) -> TimeIn
     max(0, end.timeIntervalSince(now).rounded())
 }
 
+/// `12:04`, or `1:12:04` from an hour up.
+public func formatCountdown(secondsRemaining: TimeInterval) -> String {
+    let total = Int(max(0, secondsRemaining))
+    let hours = total / 3600
+    let minutes = total / 60 % 60
+    let seconds = total % 60
+    if hours > 0 {
+        return String(format: "%d:%02d:%02d", hours, minutes, seconds)
+    }
+    return String(format: "%d:%02d", minutes, seconds)
+}
+
 public func formatMenuBarTimer(
     secondsRemaining: TimeInterval,
     showFullTimer: Bool,
