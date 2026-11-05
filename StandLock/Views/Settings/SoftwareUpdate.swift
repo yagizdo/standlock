@@ -7,8 +7,12 @@ import StandLockCore
 final class UpdateObserver: NSObject, ObservableObject, SPUUpdaterDelegate {
     @Published var updateAvailable = false
     @Published var availableVersion: String?
-    /// True only after a check reached the feed and found nothing newer that this Mac can run.
+    /// True only after a check reached the feed and found nothing newer that this Mac can run,
+    /// apart from a version the user chose to skip: Sparkle reports that the same way.
     @Published var onLatestVersion = false
+    /// When the last check ended. `lastUpdateCheckDate` already moves as a check starts, which
+    /// would put a running check's time beside the previous check's result.
+    @Published var finishedCheckDate: Date?
 
     nonisolated override init() {
         super.init()
@@ -44,8 +48,10 @@ final class UpdateObserver: NSObject, ObservableObject, SPUUpdaterDelegate {
         error: (any Error)?
     ) {
         let foundNothing = (error as NSError?)?.code == Int(SUError.noUpdateError.rawValue)
+        let finished = updater.lastUpdateCheckDate
         Task { @MainActor in
             self.onLatestVersion = self.onLatestVersion && foundNothing
+            self.finishedCheckDate = finished
         }
     }
 }
@@ -92,17 +98,15 @@ struct CheckForUpdatesView: View {
     }
 }
 
-/// A state, not help: it stays outside `SettingsDescription`. Sparkle moves the date when a check
-/// starts, so it is read when a result lands instead of being observed.
+/// A state, not help: it stays outside `SettingsDescription`.
 struct UpdateStatusRow: View {
     @EnvironmentObject private var updateObserver: UpdateObserver
 
     let updater: SPUUpdater
 
     var body: some View {
-        let lastCheck = updater.lastUpdateCheckDate
+        let lastCheck = updateObserver.finishedCheckDate ?? updater.lastUpdateCheckDate
         let status = UpdateStatus(
-            updateAvailable: updateObserver.updateAvailable,
             availableVersion: updateObserver.availableVersion,
             onLatestVersion: updateObserver.onLatestVersion,
             lastCheckDate: lastCheck
@@ -111,7 +115,7 @@ struct UpdateStatusRow: View {
 
         HStack(spacing: 0) {
             Image(systemName: mark.symbol)
-                .foregroundStyle(mark.style)
+                .foregroundStyle(mark.color)
                 .frame(width: SettingsTokens.statusMarkWidth)
                 .padding(.leading, SettingsTokens.rowInsets.leading)
                 .accessibilityHidden(true)
@@ -128,19 +132,18 @@ struct UpdateStatusRow: View {
 
     private func title(for status: UpdateStatus) -> LocalizedStringKey {
         switch status {
-        case .available(let version?): "v\(version) available"
-        case .available(nil): "Update available"
+        case .available(let version): "v\(version) available"
         case .upToDate: "StandLock is up to date"
         case .checked: "Last checked"
         case .neverChecked: "Not checked yet"
         }
     }
 
-    private func mark(for status: UpdateStatus) -> (symbol: String, style: AnyShapeStyle) {
+    private func mark(for status: UpdateStatus) -> (symbol: String, color: Color) {
         switch status {
-        case .available: ("arrow.down.circle.fill", AnyShapeStyle(.green))
-        case .upToDate: ("checkmark.circle.fill", AnyShapeStyle(.green))
-        case .checked, .neverChecked: ("clock", AnyShapeStyle(.secondary))
+        case .available: ("arrow.down.circle.fill", .green)
+        case .upToDate: ("checkmark.circle.fill", .green)
+        case .checked, .neverChecked: ("clock", .secondary)
         }
     }
 }
