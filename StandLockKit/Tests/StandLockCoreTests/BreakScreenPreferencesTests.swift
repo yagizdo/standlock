@@ -15,6 +15,20 @@ struct BreakScreenPreferencesTests {
         #expect(screen.customColors == nil)
     }
 
+    @Test func customColorsUnderMinimumContrastAreHardToRead() throws {
+        let grey = BreakScreenPreferences(backgroundHex: "#888888", textHex: "#777777")
+        let blackOnWhite = BreakScreenPreferences(backgroundHex: "#FFFFFF", textHex: "#000000")
+        // 4.54:1, the darkest grey that still passes on white.
+        let threshold = BreakScreenPreferences(backgroundHex: "#FFFFFF", textHex: "#767676")
+        // 4.48:1.
+        let justUnder = BreakScreenPreferences(backgroundHex: "#FFFFFF", textHex: "#777777")
+
+        #expect(try #require(grey.customColors).isHardToRead)
+        #expect(try #require(justUnder.customColors).isHardToRead)
+        #expect(try !#require(blackOnWhite.customColors).isHardToRead)
+        #expect(try !#require(threshold.customColors).isHardToRead)
+    }
+
     @Test func roundTripsInsideAppPreferences() throws {
         let prefs = AppPreferences(breakScreen: BreakScreenPreferences(
             backgroundHex: "#102030",

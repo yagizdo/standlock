@@ -30,7 +30,7 @@ struct BreakScreenSettingsSection: View {
                 colorRow("Background", \.backgroundHex, fallback: .white)
                 colorRow("Text", \.textHex, fallback: .black)
 
-                if customColors.paper.contrastRatio(with: customColors.ink) < 4.5 {
+                if customColors.isHardToRead {
                     Label("Text may be hard to read on this background", systemImage: "exclamationmark.triangle")
                         .font(.caption)
                         .foregroundStyle(.orange)

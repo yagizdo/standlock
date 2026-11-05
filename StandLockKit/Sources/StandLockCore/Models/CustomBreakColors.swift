@@ -12,6 +12,9 @@ public struct CustomBreakColors: Equatable, Sendable {
     /// Whether the background reads as dark, which picks the light or dark base theme.
     public var isDark: Bool { paper.isDark }
 
+    /// Under WCAG AA for normal text, the level Settings warns about.
+    public var isHardToRead: Bool { paper.contrastRatio(with: ink) < 4.5 }
+
     public init(
         paper: HexColor,
         paperEdge: HexColor,
