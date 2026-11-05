@@ -33,6 +33,7 @@ struct StandLockApp: App {
                     .environmentObject(appCoordinator)
                     .environmentObject(appCoordinator.permissionChecker)
                     .environmentObject(appCoordinator.themeStore)
+                    .environmentObject(appDelegate.updateObserver)
             }
         }
         .windowStyle(.hiddenTitleBar)

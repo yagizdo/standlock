@@ -29,6 +29,10 @@ enum SettingsTokens {
     static let numberFieldWidth: CGFloat = 50
     static let timePickerWidth: CGFloat = 60
     static let sidebarHeaderInset: CGFloat = 12
+    static let identityIconSize: CGFloat = 66
+    static let identityIconRadius: CGFloat = 15
+    static let identityInset: CGFloat = 12
+    static let identitySpacing: CGFloat = 7
     static let footerInsets = EdgeInsets(top: 10, leading: 24, bottom: 10, trailing: 24)
     static let pageTitleFont = Font.system(size: 15, weight: .semibold)
     static let sectionTitleFont = Font.system(size: 12.5, weight: .semibold)

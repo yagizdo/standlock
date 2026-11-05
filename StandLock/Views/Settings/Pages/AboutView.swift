@@ -19,47 +19,67 @@ struct AboutView: View {
     }()
 
     var body: some View {
-        VStack(spacing: 16) {
-            Image(nsImage: Self.appIcon)
-                .resizable()
-                .interpolation(.high)
-                .frame(width: 80, height: 80)
-                .clipShape(.rect(cornerRadius: 18))
-
-            Text("StandLock")
-                .font(.title)
-                .fontWeight(.bold)
-
-            Text("Version \(version) (Build \(build))")
-                .font(.callout)
-                .foregroundStyle(.secondary)
-
-            VStack(alignment: .leading, spacing: 8) {
-                UpdaterSettingsView(updater: updater)
-                CheckForUpdatesView(updater: updater)
+        SettingsPageLayout("About") {
+            SettingsSection {
+                identity
             }
-            .padding(.horizontal, 40)
-            .padding(12)
-            .background(.quaternary.opacity(0.5), in: RoundedRectangle(cornerRadius: 8))
 
-            HStack(spacing: 16) {
-                aboutLink("GitHub", icon: "curlybraces", url: "https://github.com/yagizdo/StandLock")
-                aboutLink("Website", icon: "globe", url: "https://standlock.app")
-                aboutLink("Twitter", icon: "at", url: "https://x.com/yagizdo")
+            SettingsSection("Updates") {
+                UpdaterSettingsView(updater: updater)
+                Divider()
+                SettingsRow("Version \(version)") {
+                    CheckForUpdatesView(updater: updater)
+                        .controlSize(.small)
+                }
+                Divider()
+                UpdateStatusRow(updater: updater)
+            }
+
+            SettingsSection("Links") {
+                linkRow("GitHub", url: "https://github.com/yagizdo/StandLock")
+                Divider()
+                linkRow("Website", url: "https://standlock.app")
+                Divider()
+                linkRow("Twitter", url: "https://x.com/yagizdo")
             }
 
             Text("© 2026 Yılmaz Yağız Dokumacı. MIT License.")
                 .font(.footnote)
                 .foregroundStyle(.tertiary)
+                .frame(maxWidth: .infinity)
         }
-        .padding(.top, 12)
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
     }
 
-    private func aboutLink(_ title: LocalizedStringKey, icon: String, url: String) -> some View {
-        Link(destination: URL(string: url)!) {
-            Label(title, systemImage: icon)
-                .font(.footnote)
+    /// The version here is identity, not help: it stays outside `SettingsDescription`.
+    private var identity: some View {
+        VStack(spacing: SettingsTokens.identitySpacing) {
+            Image(nsImage: Self.appIcon)
+                .resizable()
+                .interpolation(.high)
+                .frame(width: SettingsTokens.identityIconSize, height: SettingsTokens.identityIconSize)
+                .clipShape(.rect(cornerRadius: SettingsTokens.identityIconRadius))
+                .accessibilityHidden(true)
+
+            Text("StandLock")
+                .font(SettingsTokens.pageTitleFont)
+
+            Text("Version \(version) (Build \(build))")
+                .font(SettingsTokens.descriptionFont)
+                .foregroundStyle(.secondary)
         }
+        .frame(maxWidth: .infinity)
+        .padding(SettingsTokens.identityInset)
+    }
+
+    private func linkRow(_ title: LocalizedStringKey, url: String) -> some View {
+        Link(destination: URL(string: url)!) {
+            SettingsRow(title) {
+                Image(systemName: "arrow.up.right")
+                    .foregroundStyle(.secondary)
+                    .accessibilityHidden(true)
+            }
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
     }
 }
