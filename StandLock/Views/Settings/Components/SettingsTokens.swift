@@ -21,6 +21,7 @@ enum SettingsTokens {
     static let previewSpacing: CGFloat = 10
     static let textFieldWidth: CGFloat = 170
     static let statusDotSize: CGFloat = 7
+    static let statusMarkWidth: CGFloat = 16
     static let blockSpacing: CGFloat = 8
     static let chipRadius: CGFloat = 6
     static let presetInsets = EdgeInsets(top: 5, leading: 10, bottom: 5, trailing: 10)

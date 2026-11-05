@@ -164,6 +164,22 @@
         }
       }
     },
+    "Denied" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reddedildi"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已拒绝"
+          }
+        }
+      }
+    },
     "Disabled" : {
       "localizations" : {
         "tr" : {
@@ -224,6 +240,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "已开启"
+          }
+        }
+      }
+    },
+    "Granted" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İzin verildi"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已授予"
           }
         }
       }
@@ -324,6 +356,54 @@
         }
       }
     },
+    "Needed by your schedules" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Programlarınızın gerektirdikleri"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你的日程需要"
+          }
+        }
+      }
+    },
+    "Not granted" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İzin verilmedi"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未授予"
+          }
+        }
+      }
+    },
+    "Optional" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İsteğe Bağlı"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "可选"
+          }
+        }
+      }
+    },
     "Preview" : {
       "localizations" : {
         "tr" : {
@@ -372,6 +452,22 @@
         }
       }
     },
+    "Restart needed" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yeniden başlatma gerekli"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "需要重新启动"
+          }
+        }
+      }
+    },
     "Return after call" : {
       "localizations" : {
         "tr" : {
@@ -400,6 +496,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "屏幕共享"
+          }
+        }
+      }
+    },
+    "StandLock works without any of them." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "StandLock hiçbiri olmadan da çalışır."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "即使一项都不授予，StandLock 也能运行。"
           }
         }
       }
@@ -2905,22 +3017,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "授予"
-          }
-        }
-      }
-    },
-    "Grant permissions that match your usage. StandLock works without any of them." : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kullanımınıza uyan izinleri verin. StandLock hiçbiri olmadan da çalışır."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "按你的使用方式授予权限。即使一项都不授予，StandLock 也能运行。"
           }
         }
       }

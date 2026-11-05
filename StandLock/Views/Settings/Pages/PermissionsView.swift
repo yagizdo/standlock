@@ -1,133 +1,121 @@
 import SwiftUI
+import StandLockCore
 
 struct PermissionsView: View {
+    @EnvironmentObject private var coordinator: AppCoordinator
     @EnvironmentObject private var checker: PermissionChecker
 
     var body: some View {
-        Form {
-            Section {
-                PermissionRow(
-                    title: "Input Monitoring",
-                    description: "Enables the escape key combo that ends a Strict break.",
-                    systemImage: "keyboard",
-                    status: checker.inputMonitoringStatus,
-                    settingsURLs: PermissionType.inputMonitoring.settingsURLs,
-                    action: { checker.requestInputMonitoring() },
-                    restartAction: { checker.relaunchApp() }
-                )
-
-                PermissionRow(
-                    title: "Accessibility",
-                    description: "Enables Strict mode to fully block keyboard and mouse input.",
-                    systemImage: "hand.raised.circle",
-                    status: checker.accessibilityStatus,
-                    settingsURLs: PermissionType.accessibility.settingsURLs,
-                    action: { checker.requestAccessibility() },
-                    restartAction: { checker.relaunchApp() }
-                )
-
-                PermissionRow(
-                    title: "Calendar Access",
-                    description: "Defer breaks during calendar events.",
-                    systemImage: "calendar",
-                    status: checker.calendarPermissionStatus,
-                    settingsURLs: PermissionType.calendar.settingsURLs,
-                    action: { checker.requestCalendar() },
-                    restartAction: { checker.relaunchApp() }
-                )
-            } header: {
-                Text("Grant permissions that match your usage. StandLock works without any of them.")
-                    .textCase(nil)
-                    .font(.callout)
-                    .foregroundStyle(.secondary)
+        SettingsPageLayout("Permissions") {
+            if coordinator.schedules.contains(where: scheduleUsesStrict) {
+                SettingsSection("Needed by your schedules") {
+                    if !checker.strictModeAvailable {
+                        strictWarning
+                        Divider()
+                    }
+                    accessibilityRow
+                    Divider()
+                    inputMonitoringRow
+                }
+                SettingsSection("Optional") {
+                    calendarRow
+                }
+            } else {
+                SettingsSection("Optional", note: "StandLock works without any of them.") {
+                    accessibilityRow
+                    Divider()
+                    inputMonitoringRow
+                    Divider()
+                    calendarRow
+                }
             }
         }
-        .formStyle(.grouped)
+    }
+
+    private var strictWarning: some View {
+        Label("Strict inactive, running as Firm", systemImage: "exclamationmark.triangle.fill")
+            .font(.caption)
+            .foregroundStyle(.orange)
+            .padding(SettingsTokens.rowInsets)
+            .help(LocalizedStringKey(checker.strictModeBlockedReason ?? ""))
+    }
+
+    private var accessibilityRow: some View {
+        PermissionRow(
+            title: "Accessibility",
+            description: "Enables Strict mode to fully block keyboard and mouse input.",
+            permission: .accessibility,
+            status: checker.accessibilityStatus,
+            grant: { checker.requestAccessibility() }
+        )
+    }
+
+    private var inputMonitoringRow: some View {
+        PermissionRow(
+            title: "Input Monitoring",
+            description: "Enables the escape key combo that ends a Strict break.",
+            permission: .inputMonitoring,
+            status: checker.inputMonitoringStatus,
+            grant: { checker.requestInputMonitoring() }
+        )
+    }
+
+    private var calendarRow: some View {
+        PermissionRow(
+            title: "Calendar Access",
+            description: "Defer breaks during calendar events.",
+            permission: .calendar,
+            status: checker.calendarPermissionStatus,
+            grant: { checker.requestCalendar() }
+        )
     }
 }
 
+/// The status mark sits outside the description: Show help hides that, and a status is not help.
 struct PermissionRow: View {
+    @EnvironmentObject private var checker: PermissionChecker
+
     let title: LocalizedStringKey
     let description: LocalizedStringKey
-    let systemImage: String
+    let permission: PermissionType
     let status: PermissionStatus
-    let settingsURLs: [URL]
-    let action: () -> Void
-    var restartAction: (() -> Void)?
+    let grant: () -> Void
 
     var body: some View {
-        HStack(spacing: 12) {
-            Image(systemName: systemImage)
-                .font(.title2)
-                .foregroundStyle(statusColor)
-                .frame(width: 32)
+        HStack(spacing: 0) {
+            Image(systemName: mark.symbol)
+                .foregroundStyle(mark.color)
+                .frame(width: SettingsTokens.statusMarkWidth)
+                .padding(.leading, SettingsTokens.rowInsets.leading)
+                .accessibilityLabel(Text(mark.label))
 
-            VStack(alignment: .leading, spacing: 2) {
-                HStack(spacing: 6) {
-                    Text(title)
-                        .font(.body.weight(.medium))
-                    statusBadge
-                }
-                Text(description)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-
-            Spacer()
-
-            if status == .needsRestart {
-                Button("Restart") {
-                    restartAction?()
-                }
-                .controlSize(.small)
-            } else if status != .granted {
-                Button(status == .denied ? "Open Settings" : "Grant") {
-                    if status == .denied {
-                        openSystemSettings()
-                    } else {
-                        action()
-                    }
-                }
-                .controlSize(.small)
+            SettingsRow(title, description: description) {
+                actionButton
+                    .controlSize(.small)
             }
         }
-        .padding(.vertical, 2)
     }
 
     @ViewBuilder
-    private var statusBadge: some View {
+    private var actionButton: some View {
         switch status {
         case .granted:
-            Image(systemName: "checkmark.circle.fill")
-                .foregroundStyle(.green)
-                .font(.caption)
+            EmptyView()
         case .notGranted:
-            Image(systemName: "exclamationmark.circle")
-                .foregroundStyle(.yellow)
-                .font(.caption)
+            Button("Grant", action: grant)
         case .denied:
-            Image(systemName: "xmark.circle.fill")
-                .foregroundStyle(.red)
-                .font(.caption)
+            Button("Open Settings") { checker.openSystemSettings(for: permission) }
         case .needsRestart:
-            Image(systemName: "arrow.clockwise.circle.fill")
-                .foregroundStyle(.orange)
-                .font(.caption)
+            Button("Restart") { checker.relaunchApp() }
         }
     }
 
-    private var statusColor: Color {
+    private var mark: (symbol: String, color: Color, label: LocalizedStringKey) {
         switch status {
-        case .granted: .green
-        case .notGranted: .secondary
-        case .denied: .red
-        case .needsRestart: .orange
-        }
-    }
-
-    private func openSystemSettings() {
-        for url in settingsURLs {
-            if NSWorkspace.shared.open(url) { return }
+        case .granted: ("checkmark.circle.fill", .green, "Granted")
+        case .notGranted: ("exclamationmark.circle", .orange, "Not granted")
+        case .denied: ("xmark.circle.fill", .red, "Denied")
+        case .needsRestart: ("arrow.clockwise.circle.fill", .orange, "Restart needed")
         }
     }
 }
