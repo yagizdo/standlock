@@ -6,7 +6,7 @@ struct SettingsSidebar: View {
     @FocusState private var listFocused: Bool
 
     var body: some View {
-        List(selection: selection) {
+        List(selection: $navigation.page) {
             ForEach(SettingsPage.sidebarPages, id: \.self) { page in
                 SettingsSidebarRow(page: page, isSelected: page == navigation.page)
                     .tag(page)
@@ -17,15 +17,5 @@ struct SettingsSidebar: View {
         .focused($listFocused)
         .onAppear { listFocused = true }
         .onChange(of: navigation.page) { _ in listFocused = true }
-    }
-
-    /// A click on empty space writes nil, which must not clear the page.
-    private var selection: Binding<SettingsPage?> {
-        Binding(
-            get: { navigation.page },
-            set: { page in
-                if let page { navigation.page = page }
-            }
-        )
     }
 }
