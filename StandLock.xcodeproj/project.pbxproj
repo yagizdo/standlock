@@ -67,6 +67,7 @@
 		AB84ADC15C8263AFD995E8B5 /* BreakTypography.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99FB6FBBABD55844628B8DA3 /* BreakTypography.swift */; };
 		ABE16985BBC55C65ED6E8824 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C80FA2B8295FD72CAA075B38 /* AboutView.swift */; };
 		AD18B90CCF07CB58B8312CDB /* Locking in Frameworks */ = {isa = PBXBuildFile; productRef = 3F23054B7AE15E61C38C884E /* Locking */; };
+		AFCD8E682F3B7C00A263441C /* SettingsSearchField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB7CBA12B287EE7D1683389 /* SettingsSearchField.swift */; };
 		B0B45CBAC1620814C7F443D0 /* DetectionSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF6A31515CC4248B938E982 /* DetectionSettingsView.swift */; };
 		B2DDDE67D0C30F62374D0BBE /* PermissionBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2BDD3661430F1F997413023 /* PermissionBadge.swift */; };
 		B7E27A2CACE2784901CB923C /* SettingsNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29B46D4E8DC400FCF4E57374 /* SettingsNavigation.swift */; };
@@ -115,6 +116,7 @@
 		5F3E46265727E4E3D2C1578A /* HexColorField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HexColorField.swift; sourceTree = "<group>"; };
 		644D55BA77E73588DF358AC7 /* SettingsSidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSidebar.swift; sourceTree = "<group>"; };
 		6CDB4CFBD38A25482A8B215B /* WeekdaySymbols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekdaySymbols.swift; sourceTree = "<group>"; };
+		6EB7CBA12B287EE7D1683389 /* SettingsSearchField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSearchField.swift; sourceTree = "<group>"; };
 		7259326030030D8F49258219 /* QuickSetupStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickSetupStepView.swift; sourceTree = "<group>"; };
 		765091196991FB6E7E8B8185 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		7832761FE83C21F870E571C7 /* SettingsSidebarRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSidebarRow.swift; sourceTree = "<group>"; };
@@ -352,6 +354,7 @@
 				946A989D9EC41AFA82920166 /* NextBreakStatus.swift */,
 				D2BDD3661430F1F997413023 /* PermissionBadge.swift */,
 				F07BB496D038848FFC7FDB3F /* ScheduleSidebarRow.swift */,
+				6EB7CBA12B287EE7D1683389 /* SettingsSearchField.swift */,
 				644D55BA77E73588DF358AC7 /* SettingsSidebar.swift */,
 				7832761FE83C21F870E571C7 /* SettingsSidebarRow.swift */,
 			);
@@ -522,6 +525,7 @@
 				A90BBE014C28C0EE022F3E96 /* SettingsPage+Presentation.swift in Sources */,
 				F7D293B2C83521B31C5FCF7B /* SettingsPageLayout.swift in Sources */,
 				F0B1F1A0D00E271181FA544B /* SettingsRow.swift in Sources */,
+				AFCD8E682F3B7C00A263441C /* SettingsSearchField.swift in Sources */,
 				040AE413C982CD1E84472CDA /* SettingsSection.swift in Sources */,
 				861C544CEA9B855BFE8724B6 /* SettingsSidebar.swift in Sources */,
 				7D2C20F63E9C2C051EE354DE /* SettingsSidebarRow.swift in Sources */,

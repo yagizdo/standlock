@@ -45,4 +45,50 @@ extension SettingsPage {
         case .discipline: .firm
         }
     }
+
+    /// What search looks in, besides a schedule's name: the page title, its section and row titles.
+    /// Literals, so the build extracts them and a term with no catalog entry surfaces on a sync.
+    var searchTerms: [LocalizedStringResource] {
+        switch self {
+        case .general:
+            ["General", "Startup", "Launch at Startup", "Language and appearance", "Language", "Appearance"]
+        case .menuBar:
+            ["Menu Bar", "Timer", "Show Full Work Timer", "Countdown Start", "Preview"]
+        case .breakScreen:
+            [
+                "Break Screen", "Look", "Custom Break Colors", "Background", "Text", "Preview", "Content",
+                "Show Statistics", "Break Message", "During a break", "Pause Media",
+            ]
+        case .discipline:
+            ["Discipline", "Daily skip limits", "Gentle Daily Skip Limit", "Firm Daily Skip Limit"]
+        case .schedule:
+            Self.scheduleFormTerms
+        case .newSchedule:
+            ["Add Schedule", "New Schedule"] + Self.scheduleFormTerms
+        case .detection:
+            [
+                "Detection", "Calls", "Camera Detection", "Microphone Detection", "Return after call",
+                "Calendar", "Calendar Integration", "Look-ahead", "Calendars",
+                "Screen sharing", "Screen Sharing", "After sharing ends", "Idle", "Idle as Break",
+            ]
+        case .permissions:
+            ["Permissions", "Accessibility", "Input Monitoring", "Calendar Access"]
+        case .statistics:
+            [
+                "Statistics", "Period", "Break Activity", "Streak", "Best Streak",
+                "Completed", "Skipped", "Break Time", "Completion",
+            ]
+        case .about:
+            [
+                "About", "Updates", "Automatic Updates", "Check for Updates…", "Version",
+                "Links", "GitHub", "Website", "Twitter",
+            ]
+        }
+    }
+
+    private static let scheduleFormTerms: [LocalizedStringResource] = [
+        "Schedules", "Enabled", "Name", "When", "Active Days", "Time Windows", "Timing", "Break every",
+        "Break duration", "Repetition Cycle", "Short breaks", "Short break", "Long break", "Discipline",
+        "Progressive Enforcement",
+    ]
 }

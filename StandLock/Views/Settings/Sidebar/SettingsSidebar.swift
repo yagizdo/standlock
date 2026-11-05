@@ -8,6 +8,10 @@ struct SettingsSidebar: View {
     @State private var schedules: [Schedule]
     @FocusState private var listFocused: Bool
     @AppStorage(SettingsDescription.showHelpKey) private var showHelp = true
+    /// Observed so a language change re-resolves the search terms. It publishes on nothing else.
+    @EnvironmentObject private var languageStore: LanguageStore
+    @State private var query = ""
+    @FocusState private var searchFocused: Bool
 
     init(navigation: SettingsNavigation, coordinator: AppCoordinator) {
         self.navigation = navigation
@@ -19,6 +23,8 @@ struct SettingsSidebar: View {
         // Below the list, not a `safeAreaInset`: rows would scroll under the footer, and a
         // background to stop that would block the glass.
         VStack(spacing: 0) {
+            SettingsSearchField(query: $query, isFocused: $searchFocused, onExit: clearSearch)
+                .padding(SettingsTokens.sidebarSearchInsets)
             list
             Divider()
             VStack(spacing: SettingsTokens.sidebarFooterSpacing) {
@@ -40,45 +46,88 @@ struct SettingsSidebar: View {
     }
 
     private var list: some View {
-        List(selection: selection) {
-            rows(SettingsPage.sidebarTopPages)
+        let visible = visiblePages
+        return List(selection: selection) {
+            rows(SettingsPage.sidebarTopPages.filter(visible.contains))
 
-            Section("Breaks") {
-                rows(SettingsPage.sidebarBreakPages)
-            }
-            // macOS 13 lets a sidebar section collapse, which could hide the selected row.
-            .collapsible(false)
-
-            Section {
-                ForEach(schedules) { schedule in
-                    ScheduleSidebarRow(schedule: schedule)
-                        .tag(SettingsPage.schedule(schedule.id))
+            let breakPages = SettingsPage.sidebarBreakPages.filter(visible.contains)
+            if !breakPages.isEmpty {
+                Section("Breaks") {
+                    rows(breakPages)
                 }
-                rows([.newSchedule])
-            } header: {
-                HStack {
-                    Text("Schedules")
-                    Spacer()
-                    Text("\(schedules.filter(\.isEnabled).count) on")
-                        .padding(.trailing, SettingsTokens.sidebarHeaderInset)
-                }
+                // macOS 13 lets a sidebar section collapse, which could hide the selected row.
+                .collapsible(false)
             }
-            .collapsible(false)
 
-            // Headerless, so these rows do not read as part of Schedules.
-            Section {
-                rows(SettingsPage.sidebarBottomPages)
+            let scheduleRows = schedules.filter { visible.contains(.schedule($0.id)) }
+            if !scheduleRows.isEmpty || visible.contains(.newSchedule) {
+                Section {
+                    ForEach(scheduleRows) { schedule in
+                        ScheduleSidebarRow(schedule: schedule)
+                            .tag(SettingsPage.schedule(schedule.id))
+                    }
+                    rows([.newSchedule].filter(visible.contains))
+                } header: {
+                    HStack {
+                        Text("Schedules")
+                        Spacer()
+                        Text("\(schedules.filter(\.isEnabled).count) on")
+                            .padding(.trailing, SettingsTokens.sidebarHeaderInset)
+                    }
+                }
+                .collapsible(false)
+            }
+
+            let bottomPages = SettingsPage.sidebarBottomPages.filter(visible.contains)
+            if !bottomPages.isEmpty {
+                // Headerless, so these rows do not read as part of Schedules.
+                Section {
+                    rows(bottomPages)
+                }
             }
         }
         .listStyle(.sidebar)
         .scrollContentBackground(.hidden)
+        // Over the list, not instead of it: a list that comes back runs `onAppear`, which would
+        // take focus from the field mid-word.
+        .overlay {
+            if visible.isEmpty {
+                Text("No results")
+                    .foregroundStyle(.secondary)
+            }
+        }
         .focused($listFocused)
         .onAppear { listFocused = true }
         .onChange(of: navigation.page) { _ in listFocused = true }
+        // A stale filter would hide the page being opened.
+        .onReceive(navigation.opened) { clearSearch() }
         .onReceive(coordinator.$schedules.removeDuplicates()) { value in
             schedules = value
             navigation.reconcile(scheduleIDs: value.map(\.id))
         }
+    }
+
+    private func clearSearch() {
+        query = ""
+        listFocused = true
+    }
+
+    private var visiblePages: Set<SettingsPage> {
+        let pages = SettingsPage.sidebarTopPages + SettingsPage.sidebarBreakPages + [.newSchedule]
+            + SettingsPage.sidebarBottomPages
+        // Resolving the terms takes about 15 ms, which every selection would pay.
+        guard !query.isEmpty else { return Set(pages + schedules.map { .schedule($0.id) }) }
+
+        let formTerms = schedules.first.map { terms(of: .schedule($0.id)) } ?? []
+        let matchingPages = pages.filter { settingsSearchMatches(query: query, terms: terms(of: $0)) }
+        let matchingSchedules = schedules.filter {
+            settingsSearchMatches(query: query, terms: [$0.name] + formTerms)
+        }
+        return Set(matchingPages + matchingSchedules.map { .schedule($0.id) })
+    }
+
+    private func terms(of page: SettingsPage) -> [String] {
+        page.searchTerms.map(languageStore.string)
     }
 
     private var selection: Binding<SettingsPage> {

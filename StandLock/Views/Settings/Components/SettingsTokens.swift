@@ -29,6 +29,10 @@ enum SettingsTokens {
     static let numberFieldWidth: CGFloat = 50
     static let timePickerWidth: CGFloat = 60
     static let sidebarHeaderInset: CGFloat = 12
+    static let sidebarSearchInsets = EdgeInsets(top: 0, leading: 12, bottom: 8, trailing: 12)
+    static let searchFieldInsets = EdgeInsets(top: 5, leading: 8, bottom: 5, trailing: 8)
+    static let searchFieldSpacing: CGFloat = 6
+    static let searchFieldRadius: CGFloat = 7
     static let sidebarFooterInsets = EdgeInsets(top: 10, leading: 16, bottom: 12, trailing: 16)
     static let sidebarFooterSpacing: CGFloat = 9
     static let sidebarFooterLineSpacing: CGFloat = 4
