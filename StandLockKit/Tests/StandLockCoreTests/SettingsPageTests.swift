@@ -5,7 +5,7 @@ import Testing
 struct SettingsPageTests {
 
     @Test func casesAreDistinct() {
-        let pages: Set<SettingsPage> = [.general, .menuBar, .discipline, .schedules, .detection, .permissions, .statistics, .about]
-        #expect(pages.count == 8)
+        let pages: Set<SettingsPage> = [.general, .menuBar, .breakScreen, .discipline, .schedules, .detection, .permissions, .statistics, .about]
+        #expect(pages.count == 9)
     }
 }

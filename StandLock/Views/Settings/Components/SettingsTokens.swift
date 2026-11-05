@@ -15,6 +15,10 @@ enum SettingsTokens {
     static let stripInsets = EdgeInsets(top: 5, leading: 11, bottom: 5, trailing: 11)
     static let stripRadius: CGFloat = 7
     static let stripItemSpacing: CGFloat = 4
+    static let previewInsets = EdgeInsets(top: 11, leading: 13, bottom: 11, trailing: 13)
+    static let previewRadius: CGFloat = 9
+    static let previewSpacing: CGFloat = 10
+    static let messageFieldWidth: CGFloat = 170
     static let pageTitleFont = Font.system(size: 15, weight: .semibold)
     static let sectionTitleFont = Font.system(size: 12.5, weight: .semibold)
     static let descriptionFont = Font.system(size: 11.5)

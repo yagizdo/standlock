@@ -63,11 +63,6 @@ struct GeneralSettingsView: View {
                     .fixedSize()
                 }
             }
-
-            SettingsSection("Break Screen") {
-                BreakScreenSettingsSection()
-                    .padding(SettingsTokens.rowInsets)
-            }
         }
     }
 

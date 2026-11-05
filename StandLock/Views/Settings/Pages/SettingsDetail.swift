@@ -17,6 +17,7 @@ struct SettingsDetail: View {
         switch navigation.page {
         case .general: GeneralSettingsView()
         case .menuBar: MenuBarSettingsView()
+        case .breakScreen: BreakScreenSettingsView()
         case .discipline: DisciplineSettingsView()
         case .schedules: ScheduleEditorView()
         case .detection: DetectionSettingsView()

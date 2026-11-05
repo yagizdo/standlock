@@ -10,7 +10,7 @@ struct BreakScreenPreviewCard: View {
     let statistics: BreakStatistics?
 
     var body: some View {
-        VStack(spacing: 10) {
+        VStack(spacing: SettingsTokens.previewSpacing) {
             LevelPill(level: .gentle, palette: look.palette)
 
             Text(verbatim: "05:00")
@@ -31,7 +31,7 @@ struct BreakScreenPreviewCard: View {
         .padding()
         .frame(maxWidth: .infinity, minHeight: 170)
         .background(
-            RoundedRectangle(cornerRadius: 10)
+            RoundedRectangle(cornerRadius: SettingsTokens.previewRadius)
                 .fill(RadialGradient(
                     colors: [look.palette.paper, look.palette.paperEdge],
                     center: .center,

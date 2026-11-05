@@ -99,19 +99,6 @@ struct DetectionSettingsView: View {
             }
 
             Section("Media & Idle") {
-                Toggle(isOn: $coordinator.preferences.pauseMediaDuringBreak) {
-                    Label {
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text("Pause Media")
-                            Text("Pause audio playback when a break starts")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                        }
-                    } icon: {
-                        Image(systemName: "speaker.slash")
-                    }
-                }
-
                 Toggle(isOn: $coordinator.preferences.idleDetectionEnabled) {
                     Label {
                         VStack(alignment: .leading, spacing: 2) {

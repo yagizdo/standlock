@@ -52,6 +52,22 @@
         }
       }
     },
+    "Content" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İçerik"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "内容"
+          }
+        }
+      }
+    },
     "Daily skip limits" : {
       "localizations" : {
         "tr" : {
@@ -68,6 +84,22 @@
         }
       }
     },
+    "During a break" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mola sırasında"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "休息期间"
+          }
+        }
+      }
+    },
     "Language and appearance" : {
       "localizations" : {
         "tr" : {
@@ -80,6 +112,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "语言和外观"
+          }
+        }
+      }
+    },
+    "Look" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Görünüm"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "外观"
           }
         }
       }
