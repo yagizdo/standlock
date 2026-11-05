@@ -55,11 +55,12 @@ struct MenuBarView: View {
 
     @ViewBuilder
     private var statusSection: some View {
-        if coordinator.isBreakActive {
+        switch coordinator.nextBreakState {
+        case .breakActive:
             Label("Break in progress", systemImage: "figure.stand")
                 .font(.subheadline)
                 .foregroundStyle(.green)
-        } else if coordinator.isPaused, let until = coordinator.pausedUntil {
+        case .paused(let until):
             Label {
                 Text("Paused until \(until, style: .time)")
             } icon: {
@@ -67,7 +68,7 @@ struct MenuBarView: View {
             }
             .font(.caption)
             .foregroundStyle(.secondary)
-        } else if let reason = coordinator.deferralReason {
+        case .deferred(let reason):
             VStack(alignment: .leading, spacing: 2) {
                 Label("Break waiting", systemImage: "pause.circle")
                     .font(.caption)
@@ -76,7 +77,7 @@ struct MenuBarView: View {
                     .font(.caption2)
                     .foregroundStyle(.secondary)
             }
-        } else if let nextBreak = coordinator.nextBreakTime {
+        case .countingDown(let nextBreak):
             Label {
                 Text("Next break \(nextBreak, style: .relative)")
             } icon: {
@@ -84,11 +85,11 @@ struct MenuBarView: View {
             }
             .font(.caption)
             .foregroundStyle(.secondary)
-        } else if coordinator.schedules.isEmpty {
+        case .noSchedules:
             Label("No schedules configured", systemImage: "calendar.badge.exclamationmark")
                 .font(.caption)
                 .foregroundStyle(.secondary)
-        } else {
+        case .noActiveSchedules:
             Label("No active schedules", systemImage: "moon.zzz")
                 .font(.caption)
                 .foregroundStyle(.secondary)
