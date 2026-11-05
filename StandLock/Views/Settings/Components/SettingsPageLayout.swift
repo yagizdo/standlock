@@ -1,21 +1,28 @@
 import SwiftUI
 
 /// A page title that stays put above a scrolling column of sections.
-struct SettingsPageLayout<Content: View>: View {
-    private let title: LocalizedStringKey
+struct SettingsPageLayout<Accessory: View, Content: View>: View {
+    private let title: Text
+    private let accessory: Accessory
     private let content: Content
 
-    init(_ title: LocalizedStringKey, @ViewBuilder content: () -> Content) {
+    init(title: Text, @ViewBuilder accessory: () -> Accessory, @ViewBuilder content: () -> Content) {
         self.title = title
+        self.accessory = accessory()
         self.content = content()
     }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text(title)
-                .font(SettingsTokens.pageTitleFont)
-                .accessibilityAddTraits(.isHeader)
-                .padding(SettingsTokens.pageTitleInsets)
+            HStack(spacing: SettingsTokens.rowSpacing) {
+                title
+                    .font(SettingsTokens.pageTitleFont)
+                    .lineLimit(1)
+                    .accessibilityAddTraits(.isHeader)
+                Spacer(minLength: 0)
+                accessory
+            }
+            .padding(SettingsTokens.pageTitleInsets)
 
             ScrollView {
                 VStack(alignment: .leading, spacing: SettingsTokens.sectionSpacing) {
@@ -26,5 +33,11 @@ struct SettingsPageLayout<Content: View>: View {
                 .padding(.bottom, SettingsTokens.pageInset)
             }
         }
+    }
+}
+
+extension SettingsPageLayout where Accessory == EmptyView {
+    init(_ title: LocalizedStringKey, @ViewBuilder content: () -> Content) {
+        self.init(title: Text(title), accessory: { EmptyView() }, content: content)
     }
 }

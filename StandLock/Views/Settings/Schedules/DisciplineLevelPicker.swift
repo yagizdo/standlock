@@ -9,18 +9,22 @@ struct DisciplineLevelPicker: View {
     var body: some View {
         HStack(spacing: 12) {
             ForEach(DisciplineLevel.allCases, id: \.self) { level in
-                LevelCard(
-                    level: level,
-                    isSelected: selection == level,
-                    isDisabled: level == .strict && !checker.strictModeAvailable
-                )
-                .onTapGesture {
+                // A button, so Tab reaches it: this now sits on a page, not in a modal sheet.
+                Button {
                     if level == .strict && !checker.strictModeAvailable {
                         showPermissionAlert = true
                     } else {
                         selection = level
                     }
+                } label: {
+                    LevelCard(
+                        level: level,
+                        isSelected: selection == level,
+                        isDisabled: level == .strict && !checker.strictModeAvailable
+                    )
                 }
+                .buttonStyle(.plain)
+                .accessibilityAddTraits(selection == level ? .isSelected : [])
             }
         }
         .alert("Permission Required", isPresented: $showPermissionAlert) {

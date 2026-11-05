@@ -25,7 +25,11 @@ struct StandLockApp: App {
 
         Window("Settings", id: SettingsNavigation.windowID) {
             LocalizedRoot(store: appCoordinator.languageStore) {
-                SettingsView(navigation: appCoordinator.settingsNavigation, updater: appDelegate.updaterController.updater)
+                SettingsView(
+                    navigation: appCoordinator.settingsNavigation,
+                    coordinator: appCoordinator,
+                    updater: appDelegate.updaterController.updater
+                )
                     .environmentObject(appCoordinator)
                     .environmentObject(appCoordinator.permissionChecker)
                     .environmentObject(appCoordinator.themeStore)

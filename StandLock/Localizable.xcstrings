@@ -52,6 +52,22 @@
         }
       }
     },
+    "%lld on" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld açık"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已开启 %lld 个"
+          }
+        }
+      }
+    },
     ":" : {
       "localizations" : {
         "tr" : {
@@ -64,6 +80,38 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : ":"
+          }
+        }
+      }
+    },
+    "Add Interval" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mola Sıklığı Ekle"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "添加休息间隔"
+          }
+        }
+      }
+    },
+    "Add Time Window" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zaman Aralığı Ekle"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "添加时间区间"
           }
         }
       }
@@ -116,6 +164,38 @@
         }
       }
     },
+    "Disabled" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kapalı"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已关闭"
+          }
+        }
+      }
+    },
+    "Discard" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Değişiklikleri At"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "放弃更改"
+          }
+        }
+      }
+    },
     "During a break" : {
       "localizations" : {
         "tr" : {
@@ -128,6 +208,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "休息期间"
+          }
+        }
+      }
+    },
+    "Enabled" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Açık"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已开启"
           }
         }
       }
@@ -228,6 +324,38 @@
         }
       }
     },
+    "Remove Interval" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mola Sıklığını Kaldır"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "移除休息间隔"
+          }
+        }
+      }
+    },
+    "Remove Time Window" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zaman Aralığını Kaldır"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "移除时间区间"
+          }
+        }
+      }
+    },
     "Return after call" : {
       "localizations" : {
         "tr" : {
@@ -288,6 +416,54 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "计时器"
+          }
+        }
+      }
+    },
+    "Unsaved Changes" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kaydedilmemiş Değişiklikler"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未存储的更改"
+          }
+        }
+      }
+    },
+    "When" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ne zaman"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "时间"
+          }
+        }
+      }
+    },
+    "Your changes to this schedule have not been saved." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu programdaki değişiklikler kaydedilmedi."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "对此日程的更改尚未存储。"
           }
         }
       }
@@ -1947,22 +2123,6 @@
         }
       }
     },
-    "Discipline Level" : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Disiplin Seviyesi"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "约束级别"
-          }
-        }
-      }
-    },
     "Do 10 slow bodyweight squats. Keep your back straight and knees behind your toes." : {
       "comment" : "Exercise description",
       "extractionState" : "manual",
@@ -2059,38 +2219,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "每项权限都会解锁一项功能。你可以现在授予，也可以稍后在“设置”中授予。"
-          }
-        }
-      }
-    },
-    "Edit" : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Düzenle"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "编辑"
-          }
-        }
-      }
-    },
-    "Edit Schedule" : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Programı Düzenle"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "编辑日程"
           }
         }
       }

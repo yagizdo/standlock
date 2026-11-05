@@ -4,7 +4,7 @@ import StandLockCore
 extension SettingsPage {
     static let sidebarTopPages: [SettingsPage] = [.general, .menuBar]
     static let sidebarBreakPages: [SettingsPage] = [.breakScreen, .discipline, .detection]
-    static let sidebarBottomPages: [SettingsPage] = [.schedules, .permissions, .statistics, .about]
+    static let sidebarBottomPages: [SettingsPage] = [.permissions, .statistics, .about]
 
     var title: LocalizedStringKey {
         switch self {
@@ -12,7 +12,8 @@ extension SettingsPage {
         case .menuBar: "Menu Bar"
         case .breakScreen: "Break Screen"
         case .discipline: "Discipline"
-        case .schedules: "Schedules"
+        case .schedule: "Schedules"
+        case .newSchedule: "Add Schedule"
         case .detection: "Detection"
         case .permissions: "Permissions"
         case .statistics: "Statistics"
@@ -26,7 +27,8 @@ extension SettingsPage {
         case .menuBar: "menubar.rectangle"
         case .breakScreen: "clock"
         case .discipline: "hand.raised"
-        case .schedules: "calendar.badge.clock"
+        case .schedule: "calendar.badge.clock"
+        case .newSchedule: "plus"
         case .detection: "eye"
         case .permissions: "lock.shield"
         case .statistics: "chart.bar.xaxis"
@@ -37,7 +39,7 @@ extension SettingsPage {
     /// The palette hue of the sidebar chip. Nil is neutral grey.
     var tone: DisciplineLevel? {
         switch self {
-        case .general, .schedules, .permissions, .about: nil
+        case .general, .schedule, .newSchedule, .permissions, .about: nil
         case .detection: .strict
         case .menuBar, .breakScreen, .statistics: .gentle
         case .discipline: .firm

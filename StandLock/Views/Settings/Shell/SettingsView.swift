@@ -6,17 +6,19 @@ private let sidebarWidth: CGFloat = 232
 /// Picks the window chrome. Page, sidebar and navigation logic stay out of both containers.
 struct SettingsView: View {
     let navigation: SettingsNavigation
+    let coordinator: AppCoordinator
     let updater: SPUUpdater
 
     var body: some View {
         Group {
             if #available(macOS 26, *) {
-                SplitContainer(navigation: navigation, updater: updater)
+                SplitContainer(navigation: navigation, coordinator: coordinator, updater: updater)
             } else {
-                StackContainer(navigation: navigation, updater: updater)
+                StackContainer(navigation: navigation, coordinator: coordinator, updater: updater)
             }
         }
         .frame(minWidth: 760, minHeight: 520)
+        .background(WindowCloseGuard(navigation: navigation))
     }
 }
 
@@ -24,6 +26,7 @@ struct SettingsView: View {
 @available(macOS 26, *)
 private struct SplitContainer: View {
     let navigation: SettingsNavigation
+    let coordinator: AppCoordinator
     let updater: SPUUpdater
 
     @State private var columnVisibility: NavigationSplitViewVisibility = .all
@@ -31,7 +34,7 @@ private struct SplitContainer: View {
     var body: some View {
         NavigationSplitView(columnVisibility: pinnedVisibility) {
             // `.toolbar(removing:)` goes inside the width: the other order loses the width.
-            SettingsSidebar(navigation: navigation)
+            SettingsSidebar(navigation: navigation, coordinator: coordinator)
                 .toolbar(removing: .sidebarToggle)
                 .navigationSplitViewColumnWidth(sidebarWidth)
         } detail: {
@@ -55,11 +58,12 @@ private struct SplitContainer: View {
 
 private struct StackContainer: View {
     let navigation: SettingsNavigation
+    let coordinator: AppCoordinator
     let updater: SPUUpdater
 
     var body: some View {
         HStack(spacing: 0) {
-            SettingsSidebar(navigation: navigation)
+            SettingsSidebar(navigation: navigation, coordinator: coordinator)
                 .frame(width: sidebarWidth)
                 .background(SidebarBackground().ignoresSafeArea())
             Divider()

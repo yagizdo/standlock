@@ -19,7 +19,10 @@ enum SettingsTokens {
     static let previewInsets = EdgeInsets(top: 11, leading: 13, bottom: 11, trailing: 13)
     static let previewRadius: CGFloat = 9
     static let previewSpacing: CGFloat = 10
-    static let messageFieldWidth: CGFloat = 170
+    static let textFieldWidth: CGFloat = 170
+    static let statusDotSize: CGFloat = 7
+    static let sidebarHeaderInset: CGFloat = 12
+    static let footerInsets = EdgeInsets(top: 10, leading: 24, bottom: 10, trailing: 24)
     static let pageTitleFont = Font.system(size: 15, weight: .semibold)
     static let sectionTitleFont = Font.system(size: 12.5, weight: .semibold)
     static let descriptionFont = Font.system(size: 11.5)

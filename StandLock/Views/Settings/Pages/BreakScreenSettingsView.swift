@@ -51,7 +51,7 @@ struct BreakScreenSettingsView: View {
                     TextField("Break Message", text: $coordinator.preferences.breakScreen.message, prompt: Text("e.g. Drink some water"))
                         .labelsHidden()
                         .textFieldStyle(.roundedBorder)
-                        .frame(width: SettingsTokens.messageFieldWidth)
+                        .frame(width: SettingsTokens.textFieldWidth)
                 }
 
                 Divider()

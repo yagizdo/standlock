@@ -2,12 +2,23 @@ import AppKit
 import SwiftUI
 import StandLockCore
 
+/// What is waiting on the unsaved edits prompt.
+enum PendingLeave: Equatable {
+    case page(SettingsPage)
+    case closeWindow
+}
+
 /// The selected Settings page and the only path that opens the Settings window.
 @MainActor
 final class SettingsNavigation: ObservableObject {
     static let windowID = "settings"
 
-    @Published var page: SettingsPage = .general
+    @Published private(set) var page: SettingsPage = .general
+    @Published private(set) var pendingLeave: PendingLeave?
+    /// Set by the schedule page and asked at the moment of a selection. A stored flag would be
+    /// too late: a field commits on blur, on the same turn as the click that moved focus.
+    var unsavedEdits: (() -> Bool)?
+    private weak var closingWindow: NSWindow?
 
     /// Opens Settings on `page`, or on the last page when `page` is nil.
     func open(_ page: SettingsPage?, using openWindow: OpenWindowAction) {
@@ -20,11 +31,63 @@ final class SettingsNavigation: ObservableObject {
         // grabbed here and hidden once Settings has been asked to open.
         let keyWindow = NSApp.keyWindow
 
-        if let page { self.page = page }
+        if let page { select(page) }
         openWindow(id: Self.windowID)
         // Deprecated in the header, but plain `activate()` did not make the window key.
         NSApp.activate(ignoringOtherApps: true)
         dismissMenuBarPanel(keyWindow)
+    }
+
+    /// Moves to `page`, unless that would lose unsaved edits: then the schedule page asks first.
+    func select(_ page: SettingsPage) {
+        guard page != self.page else { return }
+        guard unsavedEdits?() == true else {
+            leave(to: page)
+            return
+        }
+        // The sidebar `List` has already moved its row. A publish on this turn leaves it there;
+        // one on the next turn brings it back.
+        DispatchQueue.main.async { self.pendingLeave = .page(page) }
+    }
+
+    /// Moves to `page` with the draft dealt with, so nothing asks.
+    func leave(to page: SettingsPage) {
+        pendingLeave = nil
+        guard page != self.page else { return }
+        unsavedEdits = nil
+        self.page = page
+    }
+
+    func cancelPending() {
+        pendingLeave = nil
+    }
+
+    /// Returns whether `window` may close now. If not, the schedule page asks first.
+    func shouldClose(_ window: NSWindow) -> Bool {
+        guard unsavedEdits?() == true else { return true }
+        closingWindow = window
+        pendingLeave = .closeWindow
+        return false
+    }
+
+    /// Carries out what was waiting, once the prompt has dealt with the draft.
+    func finish(_ leave: PendingLeave) {
+        switch leave {
+        case .page(let page):
+            self.leave(to: page)
+        case .closeWindow:
+            pendingLeave = nil
+            // Not `close()`, and not on this turn: a window refuses to close under its sheet,
+            // and the alert is still attached here.
+            let window = closingWindow
+            DispatchQueue.main.async { window?.performClose(nil) }
+        }
+    }
+
+    /// A deleted schedule has no draft left to protect, so this does not ask.
+    func reconcile(scheduleIDs: [UUID]) {
+        let resolved = page.resolved(scheduleIDs: scheduleIDs)
+        if resolved != page { leave(to: resolved) }
     }
 
     /// Hides the MenuBarExtra panel captured before Settings was opened.
