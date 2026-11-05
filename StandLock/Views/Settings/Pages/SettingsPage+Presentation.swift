@@ -2,11 +2,12 @@ import SwiftUI
 import StandLockCore
 
 extension SettingsPage {
-    static let sidebarPages: [SettingsPage] = [.general, .schedules, .detection, .permissions, .statistics, .about]
+    static let sidebarPages: [SettingsPage] = [.general, .menuBar, .schedules, .detection, .permissions, .statistics, .about]
 
     var title: LocalizedStringKey {
         switch self {
         case .general: "General"
+        case .menuBar: "Menu Bar"
         case .schedules: "Schedules"
         case .detection: "Detection"
         case .permissions: "Permissions"
@@ -18,6 +19,7 @@ extension SettingsPage {
     var symbol: String {
         switch self {
         case .general: "gearshape"
+        case .menuBar: "menubar.rectangle"
         case .schedules: "calendar.badge.clock"
         case .detection: "eye"
         case .permissions: "lock.shield"
@@ -31,7 +33,7 @@ extension SettingsPage {
         switch self {
         case .general, .schedules, .permissions, .about: nil
         case .detection: .strict
-        case .statistics: .gentle
+        case .menuBar, .statistics: .gentle
         }
     }
 }

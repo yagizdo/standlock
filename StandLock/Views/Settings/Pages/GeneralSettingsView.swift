@@ -70,50 +70,6 @@ struct GeneralSettingsView: View {
                     .padding(SettingsTokens.rowInsets)
             }
 
-            SettingsSection("Menu Bar Display") {
-                VStack(alignment: .leading, spacing: 10) {
-                    Toggle(isOn: $coordinator.preferences.showFullWorkTimer) {
-                        Label {
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text("Show Full Work Timer")
-                                Text("Always display remaining time next to the icon")
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                            }
-                        } icon: {
-                            Image(systemName: "timer")
-                        }
-                    }
-                    .onChange(of: coordinator.preferences.showFullWorkTimer) { _ in
-                        coordinator.savePreferences()
-                    }
-
-                    if !coordinator.preferences.showFullWorkTimer {
-                        Picker(selection: $coordinator.preferences.menuBarCountdownMinutes) {
-                            Text("1 min").tag(1)
-                            Text("2 min").tag(2)
-                            Text("3 min").tag(3)
-                            Text("5 min").tag(5)
-                        } label: {
-                            Label {
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text("Countdown Start")
-                                    Text("Show timer in the last minutes before break")
-                                        .font(.caption)
-                                        .foregroundStyle(.secondary)
-                                }
-                            } icon: {
-                                Image(systemName: "clock.badge.checkmark")
-                            }
-                        }
-                        .onChange(of: coordinator.preferences.menuBarCountdownMinutes) { _ in
-                            coordinator.savePreferences()
-                        }
-                    }
-                }
-                .padding(SettingsTokens.rowInsets)
-            }
-
             SettingsSection("Discipline") {
                 VStack(alignment: .leading, spacing: 10) {
                     skipLimitStepper(

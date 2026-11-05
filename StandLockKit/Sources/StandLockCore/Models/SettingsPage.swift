@@ -1,3 +1,3 @@
 public enum SettingsPage: Hashable, Sendable {
-    case general, schedules, detection, permissions, statistics, about
+    case general, menuBar, schedules, detection, permissions, statistics, about
 }

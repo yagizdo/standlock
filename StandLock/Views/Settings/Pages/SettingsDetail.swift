@@ -16,6 +16,7 @@ struct SettingsDetail: View {
     private var page: some View {
         switch navigation.page {
         case .general: GeneralSettingsView()
+        case .menuBar: MenuBarSettingsView()
         case .schedules: ScheduleEditorView()
         case .detection: DetectionSettingsView()
         case .permissions: PermissionsView()
