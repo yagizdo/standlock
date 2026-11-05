@@ -1523,22 +1523,6 @@
         }
       }
     },
-    "Break Statistics" : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mola İstatistikleri"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "休息统计"
-          }
-        }
-      }
-    },
     "Break Time" : {
       "localizations" : {
         "tr" : {

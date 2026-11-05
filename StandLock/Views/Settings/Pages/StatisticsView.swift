@@ -9,32 +9,27 @@ struct StatisticsView: View {
     @State private var cachedStats: AggregateStats = .empty
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 20) {
-                headerRow
-                metricsGrid
-                Group {
-                    switch selectedPeriod {
-                    case .today:
-                        EmptyView()
-                    case .week:
-                        WeekCardsView(history: coordinator.breakHistory,
+        SettingsPageLayout(title: Text("Statistics"), accessory: { periodPicker }) {
+            metricsGrid
+            Group {
+                switch selectedPeriod {
+                case .today:
+                    EmptyView()
+                case .week:
+                    WeekCardsView(history: coordinator.breakHistory,
+                                  activeDays: cachedStats.activeDays)
+                case .month:
+                    MonthCalendarView(history: coordinator.breakHistory,
                                       activeDays: cachedStats.activeDays)
-                    case .month:
-                        MonthCalendarView(history: coordinator.breakHistory,
-                                          activeDays: cachedStats.activeDays)
-                    case .year:
-                        if let heatmap = cachedHeatmap {
-                            YearHeatmapView(data: heatmap,
-                                            activeDays: cachedStats.activeDays)
-                        }
+                case .year:
+                    if let heatmap = cachedHeatmap {
+                        YearHeatmapView(data: heatmap,
+                                        activeDays: cachedStats.activeDays)
                     }
                 }
-                .animation(.easeInOut(duration: 0.25), value: selectedPeriod)
             }
-            .padding(20)
+            .animation(.easeInOut(duration: 0.25), value: selectedPeriod)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .onAppear { rebuildCache() }
         .onChange(of: coordinator.breakHistory.revision) { _ in rebuildCache() }
         .onChange(of: selectedPeriod) { _ in rebuildCache() }
@@ -68,20 +63,15 @@ struct StatisticsView: View {
         cachedStats = coordinator.breakHistory.aggregateStats(for: selectedPeriod, referenceDate: now)
     }
 
-    private var headerRow: some View {
-        HStack {
-            Text("Break Statistics")
-                .font(.headline)
-            Spacer()
-            Picker("Period", selection: $selectedPeriod) {
-                ForEach(StatsPeriod.allCases) { period in
-                    Text(LocalizedStringKey(period.rawValue)).tag(period)
-                }
+    private var periodPicker: some View {
+        Picker("Period", selection: $selectedPeriod) {
+            ForEach(StatsPeriod.allCases) { period in
+                Text(LocalizedStringKey(period.rawValue)).tag(period)
             }
-            .pickerStyle(.segmented)
-            .labelsHidden()
-            .frame(width: 240)
         }
+        .pickerStyle(.segmented)
+        .labelsHidden()
+        .fixedSize()
     }
 
     private var metricsGrid: some View {
