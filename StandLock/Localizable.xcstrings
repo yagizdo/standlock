@@ -36,6 +36,22 @@
         }
       }
     },
+    "%lld min" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld dk"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 分钟"
+          }
+        }
+      }
+    },
     ":" : {
       "localizations" : {
         "tr" : {
@@ -48,6 +64,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : ":"
+          }
+        }
+      }
+    },
+    "Calls" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Görüşmeler"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通话"
           }
         }
       }
@@ -100,6 +132,22 @@
         }
       }
     },
+    "Idle" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Boşta"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无操作"
+          }
+        }
+      }
+    },
     "Language and appearance" : {
       "localizations" : {
         "tr" : {
@@ -132,6 +180,22 @@
         }
       }
     },
+    "Look-ahead" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İleri bakış"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "提前查看"
+          }
+        }
+      }
+    },
     "Menu Bar" : {
       "localizations" : {
         "tr" : {
@@ -160,6 +224,38 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "预览"
+          }
+        }
+      }
+    },
+    "Return after call" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Görüşmeden sonra dönüş"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通话结束后返回"
+          }
+        }
+      }
+    },
+    "Screen sharing" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ekran paylaşımı"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "屏幕共享"
           }
         }
       }
@@ -885,22 +981,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "背景"
-          }
-        }
-      }
-    },
-    "Behavior" : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Davranış"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "行为"
           }
         }
       }
@@ -3393,22 +3473,6 @@
         }
       }
     },
-    "Look-ahead: %lld min" : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "İleri bakış: %lld dk"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "提前查看：%lld 分钟"
-          }
-        }
-      }
-    },
     "m" : {
       "comment" : "Menu bar timer minute suffix",
       "localizations" : {
@@ -3472,22 +3536,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "也许站起来比这个容易"
-          }
-        }
-      }
-    },
-    "Media & Idle" : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Medya ve Boşta"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "媒体与无操作"
           }
         }
       }
@@ -4500,22 +4548,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "恢复日程"
-          }
-        }
-      }
-    },
-    "Return after call: %lld min" : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Görüşmeden sonra dönüş: %lld dk"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "通话结束后返回：%lld 分钟"
           }
         }
       }
@@ -6130,22 +6162,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "版本 %@（构建 %@）"
-          }
-        }
-      }
-    },
-    "Video & Audio" : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Video ve Ses"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "视频与音频"
           }
         }
       }

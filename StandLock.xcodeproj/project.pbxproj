@@ -63,6 +63,7 @@
 		AB84ADC15C8263AFD995E8B5 /* BreakTypography.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99FB6FBBABD55844628B8DA3 /* BreakTypography.swift */; };
 		AD18B90CCF07CB58B8312CDB /* Locking in Frameworks */ = {isa = PBXBuildFile; productRef = 3F23054B7AE15E61C38C884E /* Locking */; };
 		B0845F2F14770C95395FBA5F /* ScheduleFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14C3EDA84FE380ED1AF6CE8A /* ScheduleFormView.swift */; };
+		B0B45CBAC1620814C7F443D0 /* DetectionSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF6A31515CC4248B938E982 /* DetectionSettingsView.swift */; };
 		B7E27A2CACE2784901CB923C /* SettingsNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29B46D4E8DC400FCF4E57374 /* SettingsNavigation.swift */; };
 		C5895F53358BDFD586A4A800 /* SettingsDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF887D81035A1FE4735344F3 /* SettingsDetail.swift */; };
 		D439305E99C8EADDE7F0DE89 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CD0B4059D699DF8BDF99889 /* AboutView.swift */; };
@@ -70,7 +71,6 @@
 		D6409DD8838F0ED91DC848C5 /* NextIntervalLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33012BFC809E077C2D638165 /* NextIntervalLabel.swift */; };
 		D6924A301B93814466C9327F /* WeekdaySymbols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AF14D6C0FE257CA354FAE8B /* WeekdaySymbols.swift */; };
 		D751E70A3ADA8406061C5A90 /* ManuscriptBreakView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99BB0E055C4BD25865AD3EE1 /* ManuscriptBreakView.swift */; };
-		DABDEC6CA937B88679850A3E /* DetectionSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2E6E6102A1900D1FAB2A856 /* DetectionSettingsView.swift */; };
 		E390B98931E7EE42E14FF2BD /* ActionArea.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5A68046037D0CAAE70C0F88 /* ActionArea.swift */; };
 		ED1A168BD55576065212E8ED /* OverlayWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4462E8D161113596647BD19E /* OverlayWindowController.swift */; };
 		F0B1F1A0D00E271181FA544B /* SettingsRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5021A1A699359391AD0CEEB /* SettingsRow.swift */; };
@@ -137,13 +137,13 @@
 		D5021A1A699359391AD0CEEB /* SettingsRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsRow.swift; sourceTree = "<group>"; };
 		DA2920940F5FB5690FF53B7B /* SettingsTokens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsTokens.swift; sourceTree = "<group>"; };
 		DB803AB21175A8E54B5A2191 /* BreakScreenLook.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakScreenLook.swift; sourceTree = "<group>"; };
+		DBF6A31515CC4248B938E982 /* DetectionSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetectionSettingsView.swift; sourceTree = "<group>"; };
 		DC6421DB3A1D7F3131B3B7F4 /* StandLockKit */ = {isa = PBXFileReference; lastKnownFileType = folder; name = StandLockKit; path = StandLockKit; sourceTree = SOURCE_ROOT; };
 		DD06AD45022B6D147E26C4A6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		DEAF9C8AFAF33310B45445B2 /* TimerNumerals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerNumerals.swift; sourceTree = "<group>"; };
 		DF887D81035A1FE4735344F3 /* SettingsDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsDetail.swift; sourceTree = "<group>"; };
 		E1F5AA3BD882ECB78BB3099D /* PermissionsStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionsStepView.swift; sourceTree = "<group>"; };
 		E2436E0F3F20FE12F920ADE7 /* QuickActionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickActionsView.swift; sourceTree = "<group>"; };
-		E2E6E6102A1900D1FAB2A856 /* DetectionSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetectionSettingsView.swift; sourceTree = "<group>"; };
 		E5A68046037D0CAAE70C0F88 /* ActionArea.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionArea.swift; sourceTree = "<group>"; };
 		E940304A1CB44B2B8CC0FC8C /* BreakScreenPreviewCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakScreenPreviewCard.swift; sourceTree = "<group>"; };
 		EB686878D805A9466970EFA3 /* MenuBarSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarSettingsView.swift; sourceTree = "<group>"; };
@@ -211,7 +211,6 @@
 			isa = PBXGroup;
 			children = (
 				4CD0B4059D699DF8BDF99889 /* AboutView.swift */,
-				E2E6E6102A1900D1FAB2A856 /* DetectionSettingsView.swift */,
 				A866831BDFD42E80353C80D8 /* DisciplineLevelPicker.swift */,
 				6382F8157622B1D11845645E /* PermissionsView.swift */,
 				94F9B9151DFEA710D1211B70 /* ScheduleEditorView.swift */,
@@ -285,6 +284,7 @@
 			children = (
 				E940304A1CB44B2B8CC0FC8C /* BreakScreenPreviewCard.swift */,
 				20227808D86E5CC2E786ADAA /* BreakScreenSettingsView.swift */,
+				DBF6A31515CC4248B938E982 /* DetectionSettingsView.swift */,
 				1D816A891C5FD51B89E4D0E2 /* DisciplineSettingsView.swift */,
 				88D72443C7D064247ADFE6D0 /* GeneralSettingsView.swift */,
 				5F3E46265727E4E3D2C1578A /* HexColorField.swift */,
@@ -453,7 +453,7 @@
 				16C25FF6FB1CDC9B466ACB0D /* BreakScreenPreviewCard.swift in Sources */,
 				9282BD07119596D0242E67D6 /* BreakScreenSettingsView.swift in Sources */,
 				AB84ADC15C8263AFD995E8B5 /* BreakTypography.swift in Sources */,
-				DABDEC6CA937B88679850A3E /* DetectionSettingsView.swift in Sources */,
+				B0B45CBAC1620814C7F443D0 /* DetectionSettingsView.swift in Sources */,
 				676678D8A09155A2AEEFA18C /* DisciplineLevelPicker.swift in Sources */,
 				8ABB22099BF5F67DCC2A0FA3 /* DisciplineSettingsView.swift in Sources */,
 				75E31F36751D55F051D6FF34 /* ExerciseBlock.swift in Sources */,
