@@ -404,6 +404,22 @@
         }
       }
     },
+    "Next break" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sonraki mola"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下次休息"
+          }
+        }
+      }
+    },
     "Not checked yet" : {
       "localizations" : {
         "tr" : {

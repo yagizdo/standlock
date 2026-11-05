@@ -15,6 +15,19 @@ struct SettingsSidebar: View {
     }
 
     var body: some View {
+        // Below the list, not a `safeAreaInset`: rows would scroll under the footer, and a
+        // background to stop that would block the glass.
+        VStack(spacing: 0) {
+            list
+            Divider()
+            NextBreakStatus(coordinator: coordinator)
+                .font(SettingsTokens.descriptionFont)
+                .foregroundStyle(.secondary)
+                .padding(SettingsTokens.sidebarFooterInsets)
+        }
+    }
+
+    private var list: some View {
         List(selection: selection) {
             rows(SettingsPage.sidebarTopPages)
 

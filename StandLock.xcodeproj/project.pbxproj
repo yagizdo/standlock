@@ -11,6 +11,7 @@
 		040AE413C982CD1E84472CDA /* SettingsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E666594049BE353F6E6FF6 /* SettingsSection.swift */; };
 		08AEDD7B79B9125648BCDA93 /* ScheduleDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6255027F43C988785C9635D /* ScheduleDetailView.swift */; };
 		0961DAEECC3F5E489E40FBC0 /* WordmarkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85C5398AE9D97E6B58618468 /* WordmarkView.swift */; };
+		0D610080A09A596344AA5268 /* NextBreakClock.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDC1758B39501153DCF68061 /* NextBreakClock.swift */; };
 		0E1C2D941E09D0DF09384EE0 /* DisciplineLevelPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9685AC67A3B1CA0D154BC6DB /* DisciplineLevelPicker.swift */; };
 		10EB4FC225CCCB669122BFED /* MediaController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5586791BF5D81FC7CE5AE185 /* MediaController.swift */; };
 		12E5EB862AA08D86DF45D9F1 /* SidebarBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ECFF53DE04217DC4398CB8C /* SidebarBackground.swift */; };
@@ -37,6 +38,7 @@
 		51FC83BD2349C694BF8C11DD /* TimerNumerals.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEAF9C8AFAF33310B45445B2 /* TimerNumerals.swift */; };
 		525A004E07BB31DB91651F08 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = CD5052FB7ADFF1C72A819672 /* InfoPlist.xcstrings */; };
 		525B69F011F29FD72647967A /* SettingsToggleRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9AA3E0D667AF2DB2D988625 /* SettingsToggleRow.swift */; };
+		69A429EE405DE1B8A2E568BC /* NextBreakStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946A989D9EC41AFA82920166 /* NextBreakStatus.swift */; };
 		6F9C00664AAD42633900A642 /* Exercises.json in Resources */ = {isa = PBXBuildFile; fileRef = 2063FDE70AFCC135664A8FD4 /* Exercises.json */; };
 		726D144CA2B3B5AF4D4503AE /* LevelPill.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF6724F4176D1F398DF9A697 /* LevelPill.swift */; };
 		72EF8A3AE6FD2B14FA478D0F /* OpenSettingsCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D5900DFD7FAE70774438F1F /* OpenSettingsCommand.swift */; };
@@ -122,6 +124,7 @@
 		85C5398AE9D97E6B58618468 /* WordmarkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordmarkView.swift; sourceTree = "<group>"; };
 		88D72443C7D064247ADFE6D0 /* GeneralSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralSettingsView.swift; sourceTree = "<group>"; };
 		89C0F66299A75A8744DE5CF6 /* SettingsDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsDescription.swift; sourceTree = "<group>"; };
+		946A989D9EC41AFA82920166 /* NextBreakStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NextBreakStatus.swift; sourceTree = "<group>"; };
 		94B7BAAC1837524EF3DD6B90 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		9685AC67A3B1CA0D154BC6DB /* DisciplineLevelPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisciplineLevelPicker.swift; sourceTree = "<group>"; };
 		99BB0E055C4BD25865AD3EE1 /* ManuscriptBreakView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManuscriptBreakView.swift; sourceTree = "<group>"; };
@@ -159,6 +162,7 @@
 		EE28EF9957F31C9560EE4439 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		F07BB496D038848FFC7FDB3F /* ScheduleSidebarRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleSidebarRow.swift; sourceTree = "<group>"; };
 		F9AA3E0D667AF2DB2D988625 /* SettingsToggleRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsToggleRow.swift; sourceTree = "<group>"; };
+		FDC1758B39501153DCF68061 /* NextBreakClock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NextBreakClock.swift; sourceTree = "<group>"; };
 		FE0E2C708B760F809144B756 /* PermissionChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionChecker.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -251,6 +255,7 @@
 				37C6854B70D7BA6C7DDE4D09 /* AppTheme.swift */,
 				35EA7054F16243AE0575478E /* LanguageStore.swift */,
 				5586791BF5D81FC7CE5AE185 /* MediaController.swift */,
+				FDC1758B39501153DCF68061 /* NextBreakClock.swift */,
 				4462E8D161113596647BD19E /* OverlayWindowController.swift */,
 				FE0E2C708B760F809144B756 /* PermissionChecker.swift */,
 				29B46D4E8DC400FCF4E57374 /* SettingsNavigation.swift */,
@@ -344,6 +349,7 @@
 		D20C180CD8A9180C69463B27 /* Sidebar */ = {
 			isa = PBXGroup;
 			children = (
+				946A989D9EC41AFA82920166 /* NextBreakStatus.swift */,
 				D2BDD3661430F1F997413023 /* PermissionBadge.swift */,
 				F07BB496D038848FFC7FDB3F /* ScheduleSidebarRow.swift */,
 				644D55BA77E73588DF358AC7 /* SettingsSidebar.swift */,
@@ -492,6 +498,8 @@
 				2030E658A07F36AC7B1141D5 /* MenuBarIcon.swift in Sources */,
 				28D05A3781FA4F3C0DE6E18A /* MenuBarSettingsView.swift in Sources */,
 				1CCAA6FDBBB854DCBC1968EA /* MenuBarView.swift in Sources */,
+				0D610080A09A596344AA5268 /* NextBreakClock.swift in Sources */,
+				69A429EE405DE1B8A2E568BC /* NextBreakStatus.swift in Sources */,
 				D6409DD8838F0ED91DC848C5 /* NextIntervalLabel.swift in Sources */,
 				FBB74759FC16BB2E5F728128 /* OnboardingView.swift in Sources */,
 				72EF8A3AE6FD2B14FA478D0F /* OpenSettingsCommand.swift in Sources */,
