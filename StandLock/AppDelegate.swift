@@ -21,6 +21,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
         if PermissionChecker.isRelaunching { return .terminateNow }
         let hasActiveOverlay = sender.windows.contains { $0 is BreakOverlayWindow && $0.isVisible }
-        return hasActiveOverlay ? .terminateCancel : .terminateNow
+        if hasActiveOverlay { return .terminateCancel }
+        for window in sender.windows {
+            if let delegate = window.delegate as? SettingsWindowDelegate, !delegate.navigation.shouldQuit(window) {
+                return .terminateCancel
+            }
+        }
+        return .terminateNow
     }
 }

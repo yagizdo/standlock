@@ -6,6 +6,7 @@ import StandLockCore
 enum PendingLeave {
     case page(SettingsPage)
     case closeWindow
+    case quit
 }
 
 /// The selected Settings page and the only path that opens the Settings window.
@@ -70,6 +71,18 @@ final class SettingsNavigation: ObservableObject {
         return false
     }
 
+    /// Returns whether the app may quit now. If not, `window` comes forward and the schedule page
+    /// asks first. Quit often comes from the menu bar panel, with Settings behind other apps.
+    func shouldQuit(_ window: NSWindow) -> Bool {
+        guard unsavedEdits?() == true else { return true }
+        let keyWindow = NSApp.keyWindow
+        pendingLeave = .quit
+        window.makeKeyAndOrderFront(nil)
+        NSApp.activate(ignoringOtherApps: true)
+        dismissMenuBarPanel(keyWindow)
+        return false
+    }
+
     /// Carries out what was waiting, once the prompt has dealt with the draft.
     func finish(_ leave: PendingLeave) {
         switch leave {
@@ -81,6 +94,10 @@ final class SettingsNavigation: ObservableObject {
             // and the alert is still attached here.
             let window = closingWindow
             DispatchQueue.main.async { window?.performClose(nil) }
+        case .quit:
+            pendingLeave = nil
+            // A later turn for the same reason: quitting is refused under a sheet too.
+            DispatchQueue.main.async { NSApp.terminate(nil) }
         }
     }
 

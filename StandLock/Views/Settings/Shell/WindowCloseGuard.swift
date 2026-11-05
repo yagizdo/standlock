@@ -14,10 +14,10 @@ struct WindowCloseGuard: NSViewRepresentable {
 }
 
 final class WindowWatcher: NSView {
-    private let closeDelegate: CloseDelegate
+    private let closeDelegate: SettingsWindowDelegate
 
     init(navigation: SettingsNavigation) {
-        closeDelegate = CloseDelegate(navigation: navigation)
+        closeDelegate = SettingsWindowDelegate(navigation: navigation)
         super.init(frame: .zero)
     }
 
@@ -32,8 +32,8 @@ final class WindowWatcher: NSView {
 }
 
 /// Stands in front of SwiftUI's window delegate and hands it everything else.
-private final class CloseDelegate: NSObject, NSWindowDelegate {
-    private let navigation: SettingsNavigation
+final class SettingsWindowDelegate: NSObject, NSWindowDelegate {
+    let navigation: SettingsNavigation
     weak var scene: NSWindowDelegate?
 
     init(navigation: SettingsNavigation) {
