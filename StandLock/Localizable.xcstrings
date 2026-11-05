@@ -580,6 +580,22 @@
         }
       }
     },
+    "Show help" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yardımı Göster"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "显示帮助"
+          }
+        }
+      }
+    },
     "StandLock is up to date" : {
       "localizations" : {
         "tr" : {

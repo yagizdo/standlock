@@ -7,6 +7,7 @@ struct SettingsSidebar: View {
     let coordinator: AppCoordinator
     @State private var schedules: [Schedule]
     @FocusState private var listFocused: Bool
+    @AppStorage(SettingsDescription.showHelpKey) private var showHelp = true
 
     init(navigation: SettingsNavigation, coordinator: AppCoordinator) {
         self.navigation = navigation
@@ -20,10 +21,21 @@ struct SettingsSidebar: View {
         VStack(spacing: 0) {
             list
             Divider()
-            NextBreakStatus(coordinator: coordinator)
-                .font(SettingsTokens.descriptionFont)
-                .foregroundStyle(.secondary)
-                .padding(SettingsTokens.sidebarFooterInsets)
+            VStack(spacing: SettingsTokens.sidebarFooterSpacing) {
+                NextBreakStatus(coordinator: coordinator)
+                HStack {
+                    Text("Show help")
+                    Spacer()
+                    // A label beside the switch leaves it nameless to VoiceOver.
+                    Toggle("Show help", isOn: $showHelp)
+                        .labelsHidden()
+                        .toggleStyle(.switch)
+                        .controlSize(.mini)
+                }
+            }
+            .font(SettingsTokens.descriptionFont)
+            .foregroundStyle(.secondary)
+            .padding(SettingsTokens.sidebarFooterInsets)
         }
     }
 

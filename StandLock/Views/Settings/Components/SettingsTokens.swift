@@ -30,6 +30,7 @@ enum SettingsTokens {
     static let timePickerWidth: CGFloat = 60
     static let sidebarHeaderInset: CGFloat = 12
     static let sidebarFooterInsets = EdgeInsets(top: 10, leading: 16, bottom: 12, trailing: 16)
+    static let sidebarFooterSpacing: CGFloat = 9
     static let countdownSize: CGFloat = 21
     static let identityIconSize: CGFloat = 66
     static let identityIconRadius: CGFloat = 15
