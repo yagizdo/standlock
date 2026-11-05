@@ -258,7 +258,7 @@ final class AppCoordinator: ObservableObject {
         guard lastStrictModeAvailable != strictAvailable else { return }
         lastStrictModeAvailable = strictAvailable
         if coordinator != nil,
-           schedules.contains(where: { $0.isEnabled && $0.disciplineLevel == .strict }) {
+           schedules.contains(where: scheduleUsesStrict) {
             restartCoordinator()
         }
     }

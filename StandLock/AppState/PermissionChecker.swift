@@ -245,7 +245,7 @@ final class PermissionChecker: ObservableObject {
     /// True when the schedule reads Strict but the break will run as Firm. Shared by the
     /// schedule list and the menu bar so neither can leave the downgrade unmentioned.
     func strictIsInactive(for schedule: Schedule) -> Bool {
-        schedule.isEnabled && schedule.disciplineLevel == .strict && !strictModeAvailable
+        scheduleNeedsStrictPermission(schedule, strictAvailable: strictModeAvailable)
     }
 
     var calendarIntegrationAvailable: Bool { CalendarDetector.isAuthorized(calendarStatus) }
