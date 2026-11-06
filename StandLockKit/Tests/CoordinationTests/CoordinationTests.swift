@@ -12,10 +12,13 @@ final class MockScheduler: SchedulingEngine, @unchecked Sendable {
     var breakDurationToReturn: TimeInterval = 300
     var receivedCycleIndices: [(scheduleID: UUID, index: Int)] = []
     var receivedAfterDates: [Date] = []
+    /// Answers by the search date, for a test that needs two searches to land apart.
+    var nextBreakAfter: ((Date) -> Date?)?
 
     func nextBreakTime(for schedule: Schedule, after date: Date, cycleIndex: Int) -> Date? {
         receivedCycleIndices.append((scheduleID: schedule.id, index: cycleIndex))
         receivedAfterDates.append(date)
+        if let nextBreakAfter { return nextBreakAfter(date) }
         return nextBreakTimes[schedule.id] ?? nextBreakTimeToReturn
     }
     func breakDuration(for schedule: Schedule, breakIndex: Int) -> TimeInterval { breakDurationToReturn }
@@ -1810,6 +1813,8 @@ struct BreakCoordinatorTests {
         coordinator.start(with: [makeSchedule()], preferences: AppPreferences())
         try? await Task.sleep(for: .milliseconds(50))
 
+        // Within the schedule's hours a search from now lands past the slot.
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(600)
         let skippedAt = Date()
         coordinator.skipNextBreak()
         try? await Task.sleep(for: .milliseconds(50))
@@ -1818,6 +1823,35 @@ struct BreakCoordinatorTests {
         #expect(abs(anchor.timeIntervalSince(skippedAt)) < 5)
 
         coordinator.stop()
+    }
+
+    /// Outside the schedule's hours, or too near their end, every search from now lands on the
+    /// same slot. The skip counts, so the break has to go.
+    @Test @MainActor
+    func skipMovesPastASlotThatNowCannotGetBeyond() async {
+        let scheduler = MockScheduler()
+        let slot = Date().addingTimeInterval(3600)
+        let following = slot.addingTimeInterval(600)
+        scheduler.nextBreakAfter = { $0 < slot ? slot : following }
+        let coordinator = BreakCoordinator(scheduler: scheduler, detector: MockDetector(), locker: MockLocker())
+
+        var scheduled: [Date] = []
+        let listener = Task {
+            for await event in coordinator.events {
+                if case .nextBreakScheduled(let date) = event { scheduled.append(date) }
+            }
+        }
+
+        coordinator.start(with: [makeSchedule()], preferences: AppPreferences())
+        try? await Task.sleep(for: .milliseconds(50))
+
+        coordinator.skipNextBreak()
+        try? await Task.sleep(for: .milliseconds(50))
+
+        #expect(scheduled == [slot, following])
+
+        coordinator.stop()
+        listener.cancel()
     }
 
 }

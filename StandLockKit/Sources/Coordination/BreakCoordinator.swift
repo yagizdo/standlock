@@ -388,10 +388,18 @@ public final class BreakCoordinator {
 
     // MARK: - Escalation
 
-    /// Nil keeps the default `now` anchor. A slot date is returned only when the user has turned
-    /// off `resetIntervalOnSkip`, which is what makes a skip cost the time it saved.
+    /// Nil keeps the default `now` anchor. A slot date is returned when the user has turned off
+    /// `resetIntervalOnSkip`, which is what makes a skip cost the time it saved, and when a search
+    /// from `now` cannot get past the slot: outside the schedule's hours, or too near their end,
+    /// it lands on the same break, and the skip would count while the break stayed.
     private func skipAnchor(slot: Date?) -> Date? {
-        preferences.resetIntervalOnSkip ? nil : slot
+        guard let slot, preferences.resetIntervalOnSkip else { return slot }
+        guard let schedule = activeSchedules.first(where: { $0.id == pendingBreakScheduleID }),
+              let next = scheduler.nextBreakTime(
+                for: schedule, after: Date(), cycleIndex: cycleIndices[schedule.id, default: 0]
+              )
+        else { return nil }
+        return next <= slot ? slot : nil
     }
 
     private func currentTier(for schedule: Schedule) -> Int {

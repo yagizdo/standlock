@@ -22,7 +22,7 @@ struct QuickActionsView: View {
                     pill("Skip", symbol: "forward.end")
                 }
                 .buttonStyle(MenuBarPillStyle())
-                .disabled(coordinator.schedules.isEmpty || coordinator.isBreakActive)
+                .disabled(!coordinator.schedules.contains(where: \.isEnabled) || coordinator.isBreakActive)
 
                 Button {
                     showPauseMenu()
