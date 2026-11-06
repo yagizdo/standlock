@@ -1,9 +1,5 @@
 import Foundation
 
-public enum DayPreset: Sendable {
-    case everyDay, weekdays, weekends, custom
-}
-
 /// Session-only row identity, same non-persisted-id pattern as `TimeWindow.id`.
 public struct IntervalRow: Identifiable, Equatable, Sendable {
     public let id = UUID()
@@ -27,8 +23,7 @@ public struct ScheduleDraft: Equatable, Sendable {
     public static let shortBreakRange = 0.1...30.0
 
     public var name = ""
-    public var dayPreset = DayPreset.weekdays
-    public var customDays: Set<Weekday> = []
+    public var days = DaySelection.weekdays.activeDays
     public var windows = [TimeWindow(startHour: 9, startMinute: 0, endHour: 17, endMinute: 0)]
     public var intervalRows = [IntervalRow(minutes: 40)]
     public var breakDurationMinutes: Double = 10
@@ -52,14 +47,7 @@ public struct ScheduleDraft: Equatable, Sendable {
         disciplineLevel = schedule.disciplineLevel
         progressiveEnforcement = schedule.progressiveEnforcement
 
-        switch schedule.days {
-        case .everyDay: dayPreset = .everyDay
-        case .weekdays: dayPreset = .weekdays
-        case .weekends: dayPreset = .weekends
-        case .custom(let days):
-            dayPreset = .custom
-            customDays = days
-        }
+        days = schedule.days.activeDays
 
         if let rule = schedule.repetitionRule {
             useRepetition = true
@@ -70,7 +58,7 @@ public struct ScheduleDraft: Equatable, Sendable {
     }
 
     public var canSave: Bool {
-        !name.trimmingCharacters(in: .whitespaces).isEmpty
+        !name.trimmingCharacters(in: .whitespaces).isEmpty && !days.isEmpty
     }
 
     public func canSubmit(from baseline: ScheduleDraft) -> Bool {
@@ -81,13 +69,6 @@ public struct ScheduleDraft: Equatable, Sendable {
     /// enable toggle can change it while a draft is open. Ranges are held here too: Return can save
     /// before a field's own clamp has run.
     public func build(existing: Schedule?) -> Schedule {
-        let days: DaySelection = switch dayPreset {
-        case .everyDay: .everyDay
-        case .weekdays: .weekdays
-        case .weekends: .weekends
-        case .custom: .custom(customDays.isEmpty ? [.monday] : customDays)
-        }
-
         let repetitionRule: RepetitionRule? = useRepetition
             ? RepetitionRule(
                 shortBreakCount: shortBreakCount,
@@ -111,7 +92,7 @@ public struct ScheduleDraft: Equatable, Sendable {
             id: existing?.id ?? UUID(),
             name: name.trimmingCharacters(in: .whitespaces),
             isEnabled: existing?.isEnabled ?? true,
-            days: days,
+            days: daySelection(existing: existing),
             windows: windows,
             breakInterval: steps[0].duration,
             breakDuration: (Self.clamped(breakDurationMinutes, to: Self.breakRange) * 60).rounded(),
@@ -121,6 +102,17 @@ public struct ScheduleDraft: Equatable, Sendable {
             dailyBreakCap: existing?.dailyBreakCap,
             progressiveEnforcement: progressiveEnforcement
         )
+    }
+
+    /// An unedited day set keeps its stored case: `.custom(Mon-Fri)` is not equal to `.weekdays`.
+    private func daySelection(existing: Schedule?) -> DaySelection {
+        if let existing, existing.days.activeDays == days { return existing.days }
+        return switch days {
+        case DaySelection.everyDay.activeDays: .everyDay
+        case DaySelection.weekdays.activeDays: .weekdays
+        case DaySelection.weekends.activeDays: .weekends
+        default: .custom(days)
+        }
     }
 
     public static func clamped<Value: Comparable>(_ value: Value, to range: ClosedRange<Value>) -> Value {

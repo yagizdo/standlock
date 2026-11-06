@@ -6961,6 +6961,22 @@
           }
         }
       }
+    },
+    "Pick at least one day" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En az bir gün seçin"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请至少选择一天"
+          }
+        }
+      }
     }
   },
   "version" : "1.1"

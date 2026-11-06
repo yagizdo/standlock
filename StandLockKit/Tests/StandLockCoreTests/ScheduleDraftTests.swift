@@ -47,11 +47,44 @@ struct ScheduleDraftTests {
         #expect(built.dailyBreakCap == 3)
     }
 
-    @Test func emptyCustomDaysBecomeMonday() {
+    @Test func emptyCustomDaysStayEmpty() {
         var draft = ScheduleDraft(schedule: stored())
-        draft.dayPreset = .custom
-        draft.customDays = []
-        #expect(draft.build(existing: nil).days == .custom([.monday]))
+        draft.days = []
+        #expect(draft.build(existing: nil).days == .custom([]))
+    }
+
+    @Test func emptyDaysCannotBeSaved() {
+        var draft = ScheduleDraft(schedule: stored())
+        draft.days = []
+        #expect(!draft.canSave)
+        #expect(!draft.canSubmit(from: ScheduleDraft(schedule: stored())))
+    }
+
+    /// `.custom(Mon-Fri)` is not equal to `.weekdays`, so rewriting it would save an edit nobody made.
+    @Test func storedCustomWeekdaysStayCustom() {
+        let days: Set<Weekday> = [.monday, .tuesday, .wednesday, .thursday, .friday]
+        let schedule = stored(days: .custom(days))
+        let draft = ScheduleDraft(schedule: schedule)
+
+        #expect(draft.days == days)
+        #expect(draft.build(existing: schedule).days == .custom(days))
+        #expect(!draft.hasChanges(from: ScheduleDraft(schedule: schedule)))
+    }
+
+    @Test func canonicalSetsBecomeNamedSelections() {
+        var draft = ScheduleDraft(schedule: nil)
+
+        draft.days = [.monday, .tuesday, .wednesday, .thursday, .friday]
+        #expect(draft.build(existing: nil).days == .weekdays)
+
+        draft.days = [.saturday, .sunday]
+        #expect(draft.build(existing: nil).days == .weekends)
+
+        draft.days = Set(Weekday.allCases)
+        #expect(draft.build(existing: nil).days == .everyDay)
+
+        draft.days = [.monday, .sunday]
+        #expect(draft.build(existing: nil).days == .custom([.monday, .sunday]))
     }
 
     @Test func oneIntervalRowHasNoCycleAndDropsItsLabel() {
@@ -164,7 +197,6 @@ struct ScheduleDraftTests {
     @Test func hiddenFieldsAreNotChanges() {
         let baseline = ScheduleDraft(schedule: stored())
         var draft = baseline
-        draft.customDays = [.sunday]
         draft.shortBreakCount = 9
         draft.intervalRows[0].label = "Hidden at one row"
         draft.name = " Work "

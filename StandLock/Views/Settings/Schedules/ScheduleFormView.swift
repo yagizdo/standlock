@@ -38,31 +38,22 @@ struct ScheduleFormView: View {
         VStack(alignment: .leading, spacing: SettingsTokens.blockSpacing) {
             Text("Active Days")
 
-            HStack(spacing: SettingsTokens.blockSpacing) {
-                presetButton("Weekdays", preset: .weekdays)
-                presetButton("Weekends", preset: .weekends)
-                presetButton("Every Day", preset: .everyDay)
-                presetButton("Custom", preset: .custom)
-            }
-
-            if draft.dayPreset == .custom {
-                HStack(spacing: SettingsTokens.stripItemSpacing) {
-                    ForEach(Weekday.allCases, id: \.self) { day in
-                        let isSelected = draft.customDays.contains(day)
-                        Button(WeekdaySymbols(locale: locale).short(for: day)) {
-                            if isSelected { draft.customDays.remove(day) }
-                            else { draft.customDays.insert(day) }
-                        }
-                        .buttonStyle(.plain)
-                        .font(.caption.weight(.medium))
-                        .padding(SettingsTokens.dayInsets)
-                        .background(
-                            RoundedRectangle(cornerRadius: SettingsTokens.chipRadius)
-                                .fill(isSelected ? Color.accentColor : Color.secondary.opacity(0.1))
-                        )
-                        .foregroundStyle(isSelected ? .white : .primary)
-                        .accessibilityAddTraits(isSelected ? .isSelected : [])
+            HStack(spacing: SettingsTokens.stripItemSpacing) {
+                ForEach(Weekday.allCases, id: \.self) { day in
+                    let isSelected = draft.days.contains(day)
+                    Button(WeekdaySymbols(locale: locale).short(for: day)) {
+                        if isSelected { draft.days.remove(day) }
+                        else { draft.days.insert(day) }
                     }
+                    .buttonStyle(.plain)
+                    .font(.caption.weight(.medium))
+                    .padding(SettingsTokens.dayInsets)
+                    .background(
+                        RoundedRectangle(cornerRadius: SettingsTokens.chipRadius)
+                            .fill(isSelected ? Color.accentColor : Color.secondary.opacity(0.1))
+                    )
+                    .foregroundStyle(isSelected ? .white : .primary)
+                    .accessibilityAddTraits(isSelected ? .isSelected : [])
                 }
             }
         }
@@ -208,20 +199,6 @@ struct ScheduleFormView: View {
     }
 
     // MARK: - Helpers
-
-    private func presetButton(_ label: LocalizedStringKey, preset: DayPreset) -> some View {
-        let isSelected = draft.dayPreset == preset
-        return Button(label) { draft.dayPreset = preset }
-            .buttonStyle(.plain)
-            .font(.caption.weight(.medium))
-            .padding(SettingsTokens.presetInsets)
-            .background(
-                RoundedRectangle(cornerRadius: SettingsTokens.chipRadius)
-                    .fill(isSelected ? Color.accentColor : Color.secondary.opacity(0.1))
-            )
-            .foregroundStyle(isSelected ? .white : .primary)
-            .accessibilityAddTraits(isSelected ? .isSelected : [])
-    }
 
     private func timePicker(_ label: LocalizedStringKey, hour: Binding<Int>, minute: Binding<Int>) -> some View {
         HStack(spacing: SettingsTokens.rowTextSpacing) {

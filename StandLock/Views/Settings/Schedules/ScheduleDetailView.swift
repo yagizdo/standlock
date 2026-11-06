@@ -76,9 +76,7 @@ private struct SchedulePage: View {
             }
             Button("Cancel", role: .cancel) { navigation.cancelPending() }
         } message: { _ in
-            Text(draft.canSave
-                ? "Your changes to this schedule have not been saved."
-                : "Name this schedule to save it, or discard your changes.")
+            Text(leaveMessage)
         }
         .sheet(isPresented: $showDeleteConfirmation) {
             LocalizedRoot(store: languageStore) {
@@ -92,6 +90,11 @@ private struct SchedulePage: View {
                 )
             }
         }
+    }
+
+    private var leaveMessage: LocalizedStringKey {
+        if draft.canSave { return "Your changes to this schedule have not been saved." }
+        return draft.days.isEmpty ? "Pick at least one day" : "Name this schedule to save it, or discard your changes."
     }
 
     private var title: Text {
@@ -155,8 +158,7 @@ private struct SchedulePage: View {
     private func saveAndStay() {
         guard draft.canSubmit(from: baseline) else { return }
         let saved = draft.build(existing: schedule)
-        // Reloaded because the pane stays open: the form must show what was stored, such as
-        // Monday for an empty custom selection.
+        // Reloaded because the pane stays open: the form must show what was stored.
         draft = ScheduleDraft(schedule: saved)
         baseline = draft
         if schedule == nil {
