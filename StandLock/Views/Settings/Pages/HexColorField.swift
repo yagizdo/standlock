@@ -27,7 +27,7 @@ struct HexColorField: View {
             .onAppear { text = color.hex }
             // Selecting another page removes the field with no focus change to commit on.
             .onDisappear {
-                if isFocused { commit() }
+                if text != color.hex { commit() }
             }
     }
 
