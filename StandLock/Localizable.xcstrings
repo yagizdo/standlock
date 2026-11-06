@@ -7153,6 +7153,22 @@
           }
         }
       }
+    },
+    "Skipping a break does not buy extra work time" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mola atlamak fazladan çalışma süresi kazandırmaz"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "跳过休息不会换来额外的工作时间"
+          }
+        }
+      }
     }
   },
   "version" : "1.1"

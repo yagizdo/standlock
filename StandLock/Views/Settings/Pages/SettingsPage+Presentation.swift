@@ -61,7 +61,10 @@ extension SettingsPage {
                 "Sound when a break ends", "Sound before a break",
             ]
         case .discipline:
-            ["Discipline", "Daily skip limits", "Gentle Daily Skip Limit", "Firm Daily Skip Limit", "Strict"]
+            [
+                "Discipline", "Daily skip limits", "Gentle Daily Skip Limit", "Firm Daily Skip Limit", "Strict",
+                "Skipping a break does not buy extra work time",
+            ]
         case .schedule:
             Self.scheduleFormTerms
         case .newSchedule:

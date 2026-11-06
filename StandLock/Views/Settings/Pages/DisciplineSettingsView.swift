@@ -25,7 +25,23 @@ struct DisciplineSettingsView: View {
                     value: $coordinator.preferences.firmDailySkipLimit
                 )
             }
+
+            SettingsSection {
+                SettingsToggleRow(
+                    "Skipping a break does not buy extra work time",
+                    symbol: "forward.end",
+                    isOn: skipKeepsTheSlot
+                )
+            }
         }
+    }
+
+    /// Inverted: on is the stricter choice, and the stored default stays `true`.
+    private var skipKeepsTheSlot: Binding<Bool> {
+        Binding(
+            get: { !coordinator.preferences.resetIntervalOnSkip },
+            set: { coordinator.preferences.resetIntervalOnSkip = !$0 }
+        )
     }
 
     /// The number sits beside the stepper because Show help can hide the description.
