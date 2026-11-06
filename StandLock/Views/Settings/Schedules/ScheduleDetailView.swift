@@ -95,7 +95,12 @@ private struct SchedulePage: View {
 
     private var leaveMessage: LocalizedStringKey {
         if draft.canSave { return "Your changes to this schedule have not been saved." }
-        return draft.days.isEmpty ? "Pick at least one day" : "Name this schedule to save it, or discard your changes."
+        if draft.days.isEmpty {
+            return draft.hasName
+                ? "Pick at least one day to save this schedule, or discard your changes."
+                : "Name this schedule and pick at least one day to save it, or discard your changes."
+        }
+        return "Name this schedule to save it, or discard your changes."
     }
 
     private var title: Text {

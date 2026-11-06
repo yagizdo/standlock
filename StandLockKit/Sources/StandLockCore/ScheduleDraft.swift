@@ -57,8 +57,12 @@ public struct ScheduleDraft: Equatable, Sendable {
         }
     }
 
+    public var hasName: Bool {
+        !name.trimmingCharacters(in: .whitespaces).isEmpty
+    }
+
     public var canSave: Bool {
-        !name.trimmingCharacters(in: .whitespaces).isEmpty && !days.isEmpty
+        hasName && !days.isEmpty
     }
 
     public func canSubmit(from baseline: ScheduleDraft) -> Bool {

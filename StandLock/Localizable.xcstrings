@@ -388,6 +388,22 @@
         }
       }
     },
+    "Name this schedule and pick at least one day to save it, or discard your changes." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kaydetmek için programa ad ver ve en az bir gün seç ya da değişiklikleri at."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请为此日程命名并至少选择一天以存储，或放弃更改。"
+          }
+        }
+      }
+    },
     "Name this schedule to save it, or discard your changes." : {
       "localizations" : {
         "tr" : {
@@ -6814,6 +6830,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "你还在这儿？"
+          }
+        }
+      }
+    },
+    "Pick at least one day to save this schedule, or discard your changes." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kaydetmek için en az bir gün seç ya da değişiklikleri at."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请至少选择一天以存储此日程，或放弃更改。"
           }
         }
       }
