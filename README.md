@@ -79,7 +79,7 @@ Enable progressive enforcement on any schedule and each consecutive skip makes t
 - Configurable daily skip limits per discipline level, set in Settings › Discipline (Strict has none)
 - Skipping a break resets the interval by default; a switch in Settings › Discipline measures the next break from the skipped one instead, so a skip buys no extra work time
 
-<img src="assets/schedules.png" width="640" alt="Settings window with the sidebar and a schedule open, showing active days, time windows and alternating work intervals">
+<img src="assets/schedules.png" width="640" alt="Settings window with the sidebar and a schedule open, showing day buttons, hours, alternating work intervals and the day's break times">
 
 ### Context Awareness
 
