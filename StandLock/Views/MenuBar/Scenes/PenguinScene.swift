@@ -52,7 +52,7 @@ struct PenguinScene: View {
         ZStack {
             Circle().trim(from: 0.5, to: 1).fill(Color(hex: 0xFFFFFF)).frame(width: 58, height: 58)
             Circle().trim(from: 0.5, to: 1).stroke(Color(hex: 0xB9D7E8), lineWidth: 1.5).frame(width: 58, height: 58)
-            Circle().trim(from: 0.5, to: 1).fill(Color(hex: 0x6E9DBB)).frame(width: 24, height: 24).offset(y: 0)
+            Circle().trim(from: 0.5, to: 1).fill(Color(hex: 0x6E9DBB)).frame(width: 24, height: 24)
         }
         .position(x: 214, y: 118)
     }
