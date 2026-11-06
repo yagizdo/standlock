@@ -131,6 +131,16 @@ struct DayPreviewTests {
         #expect(preview.evening.map(\.hour) == [18])
     }
 
+    /// On the day clocks go back, a window opening in the repeated hour resolves to its first
+    /// occurrence, which can be behind the walk. Following it never reaches the end of the day.
+    @Test func aTimeBehindTheWalkEndsIt() {
+        let engine = RewindingEngine(first: monday)
+        let preview = DayPreview.make(
+            for: schedule(windows: [workday], interval: 60, duration: 6), from: monday, evaluator: engine
+        )
+        #expect(preview.items.count == 1)
+    }
+
     /// 60 s plus 66 s steps inside a window closing at 23:59:00.
     @Test func densestScheduleStops() {
         let preview = DayPreview.make(
@@ -143,4 +153,24 @@ struct DayPreviewTests {
         )
         #expect(preview.items.count == 1308)
     }
+}
+
+/// One real time, then always an hour behind the caller. Gives up after a while, so a walk that
+/// follows it fails the test instead of hanging the run.
+private final class RewindingEngine: SchedulingEngine, @unchecked Sendable {
+    private let first: Date
+    private var calls = 0
+
+    init(first: Date) {
+        self.first = first
+    }
+
+    func nextBreakTime(for schedule: Schedule, after date: Date, cycleIndex: Int) -> Date? {
+        calls += 1
+        if calls == 1 { return first }
+        return calls < 100 ? date.addingTimeInterval(-3600) : nil
+    }
+
+    func breakDuration(for schedule: Schedule, breakIndex: Int) -> TimeInterval { 6 }
+    func isWithinActiveWindow(_ schedule: Schedule, at date: Date) -> Bool { true }
 }

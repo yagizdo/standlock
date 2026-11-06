@@ -2559,22 +2559,6 @@
         }
       }
     },
-    "Enables Strict mode to fully block keyboard and mouse input." : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Katı modun klavye ve fare girdisini tümüyle engellemesini sağlar."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "让强制模式完全屏蔽键盘和鼠标输入。"
-          }
-        }
-      }
-    },
     "Enables the escape key combo that ends a Strict break." : {
       "localizations" : {
         "tr" : {

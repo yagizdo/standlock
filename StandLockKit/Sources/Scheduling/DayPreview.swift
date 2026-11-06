@@ -20,7 +20,7 @@ public struct DayPreview: Equatable, Sendable {
     /// Previews `date`, or the next active day after it. The walk starts at the start of the day,
     /// not the window start: that is how the coordinator meets a window it is outside of.
     public static func make(
-        for schedule: Schedule, from date: Date, evaluator: ScheduleEvaluator = ScheduleEvaluator()
+        for schedule: Schedule, from date: Date, evaluator: any SchedulingEngine = ScheduleEvaluator()
     ) -> DayPreview {
         let calendar = Calendar.current
         let today = calendar.startOfDay(for: date)
@@ -37,7 +37,10 @@ public struct DayPreview: Equatable, Sendable {
         var items: [Item] = []
         var cursor = activeDay
         var index = 0
-        while let next = evaluator.nextBreakTime(for: schedule, after: cursor, cycleIndex: index), next < dayEnd {
+        // `next > cursor`: on the day clocks go back the evaluator can answer with a time behind
+        // the walk, and following it would hang the Settings window.
+        while let next = evaluator.nextBreakTime(for: schedule, after: cursor, cycleIndex: index),
+              next > cursor, next < dayEnd {
             let duration = evaluator.breakDuration(for: schedule, breakIndex: index)
             let time = calendar.dateComponents([.hour, .minute], from: next)
             items.append(Item(hour: time.hour ?? 0, minute: time.minute ?? 0, duration: duration))
