@@ -71,6 +71,16 @@ struct ScheduleDraftTests {
         #expect(!draft.hasChanges(from: ScheduleDraft(schedule: schedule)))
     }
 
+    @Test func aDayEditOnAStoredScheduleIsSavedAndIsAChange() {
+        let schedule = stored(days: .custom([.tuesday, .friday]))
+        let baseline = ScheduleDraft(schedule: schedule)
+        var draft = baseline
+        draft.days = [.monday, .tuesday, .wednesday, .thursday, .friday]
+
+        #expect(draft.build(existing: schedule).days == .weekdays)
+        #expect(draft.hasChanges(from: baseline))
+    }
+
     @Test func canonicalSetsBecomeNamedSelections() {
         var draft = ScheduleDraft(schedule: nil)
 
@@ -147,9 +157,10 @@ struct ScheduleDraftTests {
         #expect(!draft.hasChanges(from: baseline))
     }
 
-    @Test func aStoredValueTheFormTruncatesIsNotAnEdit() {
-        let draft = ScheduleDraft(schedule: stored(breakInterval: 90, breakDuration: 66))
-        #expect(!draft.hasChanges(from: ScheduleDraft(schedule: stored(breakInterval: 90, breakDuration: 66))))
+    @Test func aFractionalMinuteStoredIntervalLoadsTruncated() {
+        let draft = ScheduleDraft(schedule: stored(breakInterval: 90))
+        #expect(draft.intervalRows.map(\.minutes) == [1])
+        #expect(draft.build(existing: nil).breakInterval == TimeInterval(60))
     }
 
     /// Return can save before the field's own clamp has run, so `build` holds the ranges itself.
