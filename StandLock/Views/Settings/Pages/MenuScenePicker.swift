@@ -11,38 +11,51 @@ struct MenuScenePicker: View {
     private static let width: CGFloat = 256 * scale
     private static let height: CGFloat = 136 * scale
 
+    /// Three cards fit at the window's minimum width.
+    private static let columns = 3
+
+    private var rows: [[MenuScene]] {
+        let scenes = MenuScene.allCases
+        return stride(from: 0, to: scenes.count, by: Self.columns).map {
+            Array(scenes[$0..<min($0 + Self.columns, scenes.count)])
+        }
+    }
+
     var body: some View {
-        // A grid, so a scene that does not fit the row at the window's minimum width wraps.
-        LazyVGrid(
-            columns: [GridItem(.adaptive(minimum: Self.width), spacing: SettingsTokens.cardSpacing)],
-            spacing: SettingsTokens.cardSpacing
-        ) {
-            ForEach(MenuScene.allCases, id: \.self) { scene in
-                Button {
-                    selection = scene
-                } label: {
-                    VStack(spacing: SettingsTokens.rowTextSpacing) {
-                        thumbnail(scene)
-                            .overlay {
-                                if selection == scene {
-                                    RoundedRectangle(cornerRadius: SettingsTokens.previewRadius)
-                                        .strokeBorder(Color.accentColor, lineWidth: 2)
-                                        .padding(SettingsTokens.chipRadius - SettingsTokens.previewRadius)
-                                }
-                            }
-                            .padding(.bottom, SettingsTokens.stripItemSpacing)
-                        title(of: scene)
-                            .foregroundStyle(selection == scene ? .primary : .secondary)
-                    }
-                    .contentShape(Rectangle())
+        // Not a `LazyVGrid`: on macOS 15 Tab reached only the first card in one.
+        Grid(horizontalSpacing: SettingsTokens.cardSpacing, verticalSpacing: SettingsTokens.cardSpacing) {
+            ForEach(rows, id: \.self) { row in
+                GridRow {
+                    ForEach(row, id: \.self) { card($0) }
                 }
-                .buttonStyle(.plain)
-                .frame(maxWidth: .infinity)
-                .accessibilityLabel(title(of: scene))
-                .accessibilityAddTraits(selection == scene ? .isSelected : [])
             }
         }
         .padding(SettingsTokens.rowInsets)
+    }
+
+    private func card(_ scene: MenuScene) -> some View {
+        Button {
+            selection = scene
+        } label: {
+            VStack(spacing: SettingsTokens.rowTextSpacing) {
+                thumbnail(scene)
+                    .overlay {
+                        if selection == scene {
+                            RoundedRectangle(cornerRadius: SettingsTokens.previewRadius)
+                                .strokeBorder(Color.accentColor, lineWidth: 2)
+                                .padding(SettingsTokens.chipRadius - SettingsTokens.previewRadius)
+                        }
+                    }
+                    .padding(.bottom, SettingsTokens.stripItemSpacing)
+                title(of: scene)
+                    .foregroundStyle(selection == scene ? .primary : .secondary)
+            }
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .frame(maxWidth: .infinity)
+        .accessibilityLabel(title(of: scene))
+        .accessibilityAddTraits(selection == scene ? .isSelected : [])
     }
 
     @ViewBuilder
@@ -63,7 +76,7 @@ struct MenuScenePicker: View {
         switch scene {
         case .hourglass: Text("Hourglass")
         case .desk: Text("Desk")
-        case .cat: Text(verbatim: "Yosun Yosun")
+        case .cat: Text(verbatim: "Yosun")
         case .penguin: Text("Penguin")
         case .off: Text("Off")
         }

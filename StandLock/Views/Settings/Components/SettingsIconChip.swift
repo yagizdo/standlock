@@ -26,8 +26,9 @@ struct SettingsIconChip: View {
         isSelected ? AnyShapeStyle(.secondary) : AnyShapeStyle(color)
     }
 
+    // No fill on selection: macOS 15 drew `.quaternary` here as a solid white square over the glyph.
     private var fillStyle: AnyShapeStyle {
-        isSelected ? AnyShapeStyle(.quaternary) : AnyShapeStyle(color.opacity(0.26))
+        isSelected ? AnyShapeStyle(Color.clear) : AnyShapeStyle(color.opacity(0.26))
     }
 
     private var color: Color {
