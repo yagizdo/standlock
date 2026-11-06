@@ -2637,13 +2637,15 @@ struct BreakCoordinatorCueTests {
 
     /// `updatePreferences` does not re-arm the timer, so the armed value must not be the one read.
     @Test func soundPreferenceIsReadAtLeadPoint() async {
-        let turnedOn = start(preferences: AppPreferences(), firesIn: 0.7, cueLead: 0.2)
+        let turnedOn = start(preferences: AppPreferences(), firesIn: 1.2, cueLead: 0.2)
+        try? await Task.sleep(for: .milliseconds(150))
         turnedOn.coordinator.updatePreferences(AppPreferences(soundBeforeBreak: true))
         await waitForBreak(turnedOn)
         #expect(turnedOn.log.entries == ["approaching", "started"])
         turnedOn.finish()
 
-        let turnedOff = start(preferences: AppPreferences(soundBeforeBreak: true), firesIn: 0.7, cueLead: 0.2)
+        let turnedOff = start(preferences: AppPreferences(soundBeforeBreak: true), firesIn: 1.2, cueLead: 0.2)
+        try? await Task.sleep(for: .milliseconds(150))
         turnedOff.coordinator.updatePreferences(AppPreferences())
         await waitForBreak(turnedOff)
         #expect(turnedOff.log.entries == ["started"])
