@@ -71,7 +71,7 @@ Enable progressive enforcement on any schedule and each consecutive skip makes t
 
 - Multiple named schedules, each with its own discipline level and settings
 - Time windows (e.g., 09:00-12:00, 13:00-17:00)
-- Day selection: weekdays, weekends, every day, or custom
+- Pick any days of the week
 - Pomodoro-style repetition cycles with short/long break patterns
 - Alternating work intervals: a schedule can cycle through up to 6 intervals instead of one (e.g. 58 min sitting, then 28 min standing), each with an optional label the break screen shows as what's coming next
 - Configurable daily skip limits per discipline level, set in Settings › Discipline (Strict has none)

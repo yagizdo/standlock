@@ -91,8 +91,8 @@ extension SettingsPage {
     }
 
     private static let scheduleFormTerms: [LocalizedStringResource] = [
-        "Schedules", "Enabled", "Name", "When", "Active Days", "Time Windows", "Timing", "Break every",
-        "Break duration", "Repetition Cycle", "Short breaks", "Short break", "Long break", "Discipline",
+        "Schedules", "Enabled", "Name", "When", "Hours", "Rhythm", "Break every", "Break lasts",
+        "Alternating intervals", "Repetition Cycle", "Short breaks", "Short break", "Long break", "Discipline",
         "Gentle", "Firm", "Strict", "Progressive Enforcement",
     ]
 }

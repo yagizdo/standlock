@@ -1303,22 +1303,6 @@
         }
       }
     },
-    "Active Days" : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Etkin Günler"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "生效日"
-          }
-        }
-      }
-    },
     "Add a schedule to start taking breaks." : {
       "localizations" : {
         "tr" : {
@@ -1613,22 +1597,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "休息活动"
-          }
-        }
-      }
-    },
-    "Break duration" : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mola süresi"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "休息时长"
           }
         }
       }
@@ -2215,22 +2183,6 @@
         }
       }
     },
-    "Custom" : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Özel"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "自定义"
-          }
-        }
-      }
-    },
     "Custom Break Colors" : {
       "localizations" : {
         "tr" : {
@@ -2713,22 +2665,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Her gün"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "每天"
-          }
-        }
-      }
-    },
-    "Every Day" : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Her Gün"
           }
         },
         "zh-Hans" : {
@@ -6306,38 +6242,6 @@
         }
       }
     },
-    "Time Windows" : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zaman Aralıkları"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "时间区间"
-          }
-        }
-      }
-    },
-    "Timing" : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zamanlama"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "时间设置"
-          }
-        }
-      }
-    },
     "to" : {
       "localizations" : {
         "tr" : {
@@ -6732,38 +6636,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "本周"
-          }
-        }
-      }
-    },
-    "Weekdays" : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hafta İçi"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "工作日"
-          }
-        }
-      }
-    },
-    "Weekends" : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hafta Sonu"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "周末"
           }
         }
       }
@@ -7166,6 +7038,86 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "跳过休息不会换来额外的工作时间"
+          }
+        }
+      }
+    },
+    "Hours" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saatler"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "时段"
+          }
+        }
+      }
+    },
+    "Rhythm" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ritim"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "节奏"
+          }
+        }
+      }
+    },
+    "Break lasts" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mola süresi"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "休息时长"
+          }
+        }
+      }
+    },
+    "min, %lld sec" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "dk, %lld sn"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "分钟，%lld 秒"
+          }
+        }
+      }
+    },
+    "Alternating intervals" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Değişen aralıklar"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "交替间隔"
           }
         }
       }

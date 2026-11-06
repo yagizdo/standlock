@@ -8,16 +8,22 @@ import StandLockCore
 struct WeekdaySymbols {
     /// Sunday-first, as `Calendar` always returns regardless of `firstWeekday`.
     private let symbols: [String]
+    private let fullSymbols: [String]
 
     init(locale: Locale) {
         var calendar = Calendar(identifier: .gregorian)
         calendar.locale = locale
         // veryShortWeekdaySymbols is ambiguous in Turkish -- P, P, S, Ç, P, C, C.
         symbols = calendar.shortWeekdaySymbols
+        fullSymbols = calendar.weekdaySymbols
     }
 
     func short(for day: Weekday) -> String {
         symbols[day.rawValue - 1]
+    }
+
+    func full(for day: Weekday) -> String {
+        fullSymbols[day.rawValue - 1]
     }
 
     /// Monday-first, for the calendar grids that lay out weeks that way.

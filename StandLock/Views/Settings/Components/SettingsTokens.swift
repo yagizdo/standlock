@@ -8,6 +8,7 @@ enum SettingsTokens {
     static let sectionTitleSpacing: CGFloat = 7
     static let sectionTitleInset: CGFloat = 2
     static let cardRadius: CGFloat = 11
+    static let cardSpacing: CGFloat = 10
     static let rowInsets = EdgeInsets(top: 9, leading: 13, bottom: 9, trailing: 13)
     static let rowMinHeight: CGFloat = 40
     static let rowSpacing: CGFloat = 12
@@ -26,12 +27,13 @@ enum SettingsTokens {
     static let statusMarkWidth: CGFloat = 16
     static let blockSpacing: CGFloat = 8
     static let chipRadius: CGFloat = 6
-    static let presetInsets = EdgeInsets(top: 5, leading: 10, bottom: 5, trailing: 10)
-    static let dayInsets = EdgeInsets(top: 4, leading: 8, bottom: 4, trailing: 8)
+    static let dayButtonInsets = EdgeInsets(top: 6, leading: 0, bottom: 6, trailing: 0)
+    static let dayButtonSpacing: CGFloat = 5
+    static let tileHeaderSpacing: CGFloat = 7
+    static let intervalValueWidth: CGFloat = 112
     static let numberFieldWidth: CGFloat = 50
     static let timePickerWidth: CGFloat = 60
     static let permissionChipSize: CGFloat = 30
-    static let permissionCardSpacing: CGFloat = 10
     static let permissionNoteSpacing: CGFloat = 3
     static let permissionNoteIconWidth: CGFloat = 13
     static let pillInsets = EdgeInsets(top: 3, leading: 8, bottom: 3, trailing: 8)
@@ -52,5 +54,8 @@ enum SettingsTokens {
     static let pageTitleFont = Font.system(size: 15, weight: .semibold)
     static let sectionTitleFont = Font.system(size: 12.5, weight: .semibold)
     static let descriptionFont = Font.system(size: 11.5)
+    static let dayButtonFont = Font.system(size: 11.5, weight: .medium)
+    static let tileTitleFont = Font.system(size: 12)
+    static let tileNumberFont = Font.system(size: 26, weight: .semibold, design: .rounded)
     static let pillFont = Font.system(size: 11, weight: .medium)
 }

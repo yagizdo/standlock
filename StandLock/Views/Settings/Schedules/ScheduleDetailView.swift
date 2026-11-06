@@ -49,6 +49,7 @@ private struct SchedulePage: View {
                     emptyNote
                 }
                 ScheduleFormView(draft: $draft)
+                    .environment(\.settingsRowTone, .strict)
                     // Not `.keyboardShortcut`: in a pane that reaches the whole window, sidebar
                     // and search included. These two need focus inside the form.
                     .onSubmit { saveAndStay() }

@@ -4,19 +4,17 @@ import StandLockCore
 struct ScheduleFormView: View {
     @Binding var draft: ScheduleDraft
 
-    @Environment(\.locale) private var locale
-
     var body: some View {
         nameSection
         whenSection
-        timingSection
+        rhythmSection
         disciplineSection
     }
 
     // MARK: - Sections
 
     private var nameSection: some View {
-        SettingsSection("Name") {
+        SettingsSection {
             SettingsRow("Name", symbol: "textformat") {
                 TextField("e.g. Work Hours", text: $draft.name)
                     .labelsHidden()
@@ -28,103 +26,120 @@ struct ScheduleFormView: View {
 
     private var whenSection: some View {
         SettingsSection("When") {
-            daysBlock
+            DayButtons(days: $draft.days)
+                .padding(SettingsTokens.rowInsets)
             Divider()
-            windowsBlock
-        }
-    }
-
-    private var daysBlock: some View {
-        VStack(alignment: .leading, spacing: SettingsTokens.blockSpacing) {
-            Text("Active Days")
-
-            HStack(spacing: SettingsTokens.stripItemSpacing) {
-                ForEach(Weekday.allCases, id: \.self) { day in
-                    let isSelected = draft.days.contains(day)
-                    Button(WeekdaySymbols(locale: locale).short(for: day)) {
-                        if isSelected { draft.days.remove(day) }
-                        else { draft.days.insert(day) }
-                    }
-                    .buttonStyle(.plain)
-                    .font(.caption.weight(.medium))
-                    .padding(SettingsTokens.dayInsets)
-                    .background(
-                        RoundedRectangle(cornerRadius: SettingsTokens.chipRadius)
-                            .fill(isSelected ? Color.accentColor : Color.secondary.opacity(0.1))
-                    )
-                    .foregroundStyle(isSelected ? .white : .primary)
-                    .accessibilityAddTraits(isSelected ? .isSelected : [])
-                }
-            }
-        }
-        .padding(SettingsTokens.rowInsets)
-    }
-
-    private var windowsBlock: some View {
-        VStack(alignment: .leading, spacing: SettingsTokens.blockSpacing) {
-            HStack {
-                Text("Time Windows")
-                Spacer()
-                Button {
-                    draft.windows.append(TimeWindow(startHour: 9, startMinute: 0, endHour: 17, endMinute: 0))
-                } label: {
-                    Image(systemName: "plus.circle")
-                }
-                .buttonStyle(.plain)
-                .accessibilityLabel("Add Time Window")
-            }
-
             // Bound by identity, not index: removing a row while indices are the identity leaves
             // SwiftUI holding a stale index and the `$windows[index]` bindings read out of range.
             ForEach($draft.windows) { $window in
-                HStack(spacing: SettingsTokens.blockSpacing) {
-                    timePicker("Start", hour: $window.startHour, minute: $window.startMinute)
-                    Text("to")
-                        .foregroundStyle(.secondary)
-                    timePicker("End", hour: $window.endHour, minute: $window.endMinute)
-
-                    if draft.windows.count > 1 {
-                        Button {
-                            draft.windows.removeAll { $0.id == window.id }
-                        } label: {
-                            Image(systemName: "minus.circle")
-                                .foregroundStyle(.red)
-                        }
-                        .buttonStyle(.plain)
-                        .accessibilityLabel("Remove Time Window")
+                if window.id == draft.windows.first?.id {
+                    SettingsRow("Hours", symbol: "clock") {
+                        windowControls($window)
                     }
+                } else {
+                    SettingsRowDivider()
+                    windowControls($window)
+                        .frame(maxWidth: .infinity, alignment: .trailing)
+                        .padding(SettingsTokens.rowInsets)
                 }
             }
         }
-        .padding(SettingsTokens.rowInsets)
     }
 
-    private var timingSection: some View {
-        SettingsSection("Timing") {
-            intervalsBlock
-            Divider()
-            SettingsRow("Break duration", symbol: "hourglass") {
-                minutesField("Break duration", value: $draft.breakDurationMinutes, range: ScheduleDraft.breakRange)
+    private func windowControls(_ window: Binding<TimeWindow>) -> some View {
+        let id = window.wrappedValue.id
+        return HStack(spacing: SettingsTokens.blockSpacing) {
+            timePicker("Start", hour: window.startHour, minute: window.startMinute)
+            Text("to")
+                .foregroundStyle(.secondary)
+            timePicker("End", hour: window.endHour, minute: window.endMinute)
+
+            if draft.windows.count > 1 {
+                Button {
+                    draft.windows.removeAll { $0.id == id }
+                } label: {
+                    Image(systemName: "minus.circle")
+                        .foregroundStyle(.red)
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Remove Time Window")
             }
-            SettingsRowDivider()
-            SettingsToggleRow(
-                "Repetition Cycle",
-                symbol: "repeat",
-                description: draft.useRepetition ? "e.g. 3 short breaks, then 1 long break" : nil,
-                isOn: $draft.useRepetition
-            )
-            if draft.useRepetition {
-                Divider()
-                repetitionBlock
+
+            // Hidden, not left out, so the pickers of every row stay in line.
+            if id == draft.windows.first?.id {
+                addWindowButton
+            } else {
+                addWindowButton.hidden()
+            }
+        }
+        // The row's title column would otherwise squeeze "to" and the colons down to nothing.
+        .fixedSize()
+    }
+
+    private var addWindowButton: some View {
+        Button {
+            draft.windows.append(TimeWindow(startHour: 9, startMinute: 0, endHour: 17, endMinute: 0))
+        } label: {
+            Image(systemName: "plus.circle")
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("Add Time Window")
+    }
+
+    private var rhythmSection: some View {
+        SettingsGroup("Rhythm") {
+            HStack(spacing: SettingsTokens.cardSpacing) {
+                RhythmTile(
+                    title: "Break every",
+                    symbol: "timer",
+                    value: firstInterval,
+                    range: Self.intervalMinutes,
+                    step: 5
+                )
+                RhythmTile(
+                    title: "Break lasts",
+                    symbol: "hourglass",
+                    value: $draft.breakDurationMinutes,
+                    range: ScheduleDraft.breakRange,
+                    step: 1
+                )
+            }
+
+            SettingsSection {
+                intervalsBlock
+                SettingsRowDivider()
+                SettingsToggleRow(
+                    "Repetition Cycle",
+                    symbol: "repeat",
+                    description: draft.useRepetition ? "e.g. 3 short breaks, then 1 long break" : nil,
+                    isOn: $draft.useRepetition
+                )
+                if draft.useRepetition {
+                    Divider()
+                    repetitionBlock
+                }
             }
         }
     }
 
+    private static let intervalMinutes =
+        Double(ScheduleDraft.intervalRange.lowerBound)...Double(ScheduleDraft.intervalRange.upperBound)
+
+    /// Clamped before the conversion: a typed "NaN" or a huge number would trap `Int(_:)`.
+    private var firstInterval: Binding<Double> {
+        Binding(
+            get: { Double(draft.intervalRows[0].minutes) },
+            set: { draft.intervalRows[0].minutes = Int(ScheduleDraft.clamped($0, to: Self.intervalMinutes)) }
+        )
+    }
+
     private var intervalsBlock: some View {
-        VStack(alignment: .leading, spacing: SettingsTokens.blockSpacing) {
-            HStack {
-                Text("Break every")
-                Spacer()
+        VStack(alignment: .leading, spacing: 0) {
+            SettingsRow(
+                "Alternating intervals",
+                symbol: "arrow.2.squarepath",
+                description: draft.intervalRows.count > 1 ? "Breaks cycle through these intervals in order." : nil
+            ) {
                 if draft.intervalRows.count < 6 {
                     Button {
                         draft.intervalRows.append(IntervalRow(minutes: 40))
@@ -136,42 +151,58 @@ struct ScheduleFormView: View {
                 }
             }
 
-            // Bound by identity for the same reason as the windows section.
-            ForEach($draft.intervalRows) { $row in
-                HStack(spacing: SettingsTokens.stripItemSpacing) {
-                    TextField("", value: $row.minutes, format: .number)
-                        .textFieldStyle(.roundedBorder)
-                        .frame(width: SettingsTokens.numberFieldWidth)
-                        .accessibilityLabel("Break every")
-                        .onChange(of: row.minutes) { newValue in
-                            row.minutes = ScheduleDraft.clamped(newValue, to: ScheduleDraft.intervalRange)
-                        }
-                    Stepper("Break every", value: $row.minutes, in: ScheduleDraft.intervalRange, step: 5)
-                        .labelsHidden()
-                    Text("min")
-                        .foregroundStyle(.secondary)
+            if draft.intervalRows.count > 1 {
+                VStack(alignment: .leading, spacing: SettingsTokens.blockSpacing) {
+                    // Bound by identity for the same reason as the windows section.
+                    ForEach($draft.intervalRows) { $row in
+                        intervalRow($row)
+                    }
+                }
+                .padding(.leading, SettingsTokens.rowTextInset)
+                .padding(.trailing, SettingsTokens.rowInsets.trailing)
+                .padding(.bottom, SettingsTokens.rowInsets.bottom)
+            }
+        }
+    }
 
-                    if draft.intervalRows.count > 1 {
-                        TextField("Label (optional, e.g. Sitting)", text: $row.label)
-                            .labelsHidden()
+    /// The first interval's number lives in the tile above, so here it is only read back.
+    private func intervalRow(_ row: Binding<IntervalRow>) -> some View {
+        let id = row.wrappedValue.id
+        return HStack(spacing: SettingsTokens.stripItemSpacing) {
+            Group {
+                if id == draft.intervalRows.first?.id {
+                    Text("\(row.wrappedValue.minutes) min")
+                        .monospacedDigit()
+                } else {
+                    HStack(spacing: SettingsTokens.stripItemSpacing) {
+                        TextField("", value: row.minutes, format: .number)
                             .textFieldStyle(.roundedBorder)
-                        Button {
-                            draft.intervalRows.removeAll { $0.id == row.id }
-                        } label: {
-                            Image(systemName: "minus.circle")
-                                .foregroundStyle(.red)
-                        }
-                        .buttonStyle(.plain)
-                        .accessibilityLabel("Remove Interval")
+                            .frame(width: SettingsTokens.numberFieldWidth)
+                            .accessibilityLabel("Break every")
+                            .onChange(of: row.wrappedValue.minutes) { newValue in
+                                row.wrappedValue.minutes = ScheduleDraft.clamped(newValue, to: ScheduleDraft.intervalRange)
+                            }
+                        Stepper("Break every", value: row.minutes, in: ScheduleDraft.intervalRange, step: 5)
+                            .labelsHidden()
+                        Text("min")
+                            .foregroundStyle(.secondary)
                     }
                 }
             }
+            .frame(width: SettingsTokens.intervalValueWidth, alignment: .leading)
 
-            if draft.intervalRows.count > 1 {
-                SettingsDescription("Breaks cycle through these intervals in order.")
+            TextField("Label (optional, e.g. Sitting)", text: row.label)
+                .labelsHidden()
+                .textFieldStyle(.roundedBorder)
+            Button {
+                draft.intervalRows.removeAll { $0.id == id }
+            } label: {
+                Image(systemName: "minus.circle")
+                    .foregroundStyle(.red)
             }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Remove Interval")
         }
-        .padding(SettingsTokens.rowInsets)
     }
 
     private var repetitionBlock: some View {

@@ -11,6 +11,7 @@
 		040AE413C982CD1E84472CDA /* SettingsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E666594049BE353F6E6FF6 /* SettingsSection.swift */; };
 		08AEDD7B79B9125648BCDA93 /* ScheduleDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6255027F43C988785C9635D /* ScheduleDetailView.swift */; };
 		0961DAEECC3F5E489E40FBC0 /* WordmarkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85C5398AE9D97E6B58618468 /* WordmarkView.swift */; };
+		0CFCF7C5DD7436BB8418444D /* SettingsGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BE7F1FDA447F8791ACCD2BB /* SettingsGroup.swift */; };
 		0D610080A09A596344AA5268 /* NextBreakClock.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDC1758B39501153DCF68061 /* NextBreakClock.swift */; };
 		0E1C2D941E09D0DF09384EE0 /* DisciplineLevelPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9685AC67A3B1CA0D154BC6DB /* DisciplineLevelPicker.swift */; };
 		10EB4FC225CCCB669122BFED /* MediaController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5586791BF5D81FC7CE5AE185 /* MediaController.swift */; };
@@ -26,6 +27,7 @@
 		22B7DFF9D9E85875A7E90081 /* ScheduleStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A485172E288DBE02E326017 /* ScheduleStatusView.swift */; };
 		28D05A3781FA4F3C0DE6E18A /* MenuBarSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB686878D805A9466970EFA3 /* MenuBarSettingsView.swift */; };
 		2CD0D3C3CF795626E50A5EAA /* StandLockApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1524D749BB78A875E5FD51F /* StandLockApp.swift */; };
+		354BBE2CE0040FB1FE1928BA /* RhythmTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = A485E937F7D80FA3455BA910 /* RhythmTile.swift */; };
 		3EA2689E42A22B02662039B0 /* SettingsTokens.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA2920940F5FB5690FF53B7B /* SettingsTokens.swift */; };
 		3F24521CD8A9CA8C9156A1B9 /* PreferencesSaveOwner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EA489010EA8A9B969CE5227 /* PreferencesSaveOwner.swift */; };
 		44D9EB3E27CF114DDF7E3735 /* BreakOverlayWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5BBDBF97CFAA5FF490CBD00 /* BreakOverlayWindow.swift */; };
@@ -73,6 +75,7 @@
 		AFCD8E682F3B7C00A263441C /* SettingsSearchField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB7CBA12B287EE7D1683389 /* SettingsSearchField.swift */; };
 		B0B45CBAC1620814C7F443D0 /* DetectionSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF6A31515CC4248B938E982 /* DetectionSettingsView.swift */; };
 		B2DDDE67D0C30F62374D0BBE /* PermissionBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2BDD3661430F1F997413023 /* PermissionBadge.swift */; };
+		B2FF3CCDF5FB0EFC3C60C8BF /* DayButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = B06BD317C6ADEBC1F1D16043 /* DayButtons.swift */; };
 		B3DAE3D0009EA570806955F3 /* PermissionCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2442916C24424F076D8711A6 /* PermissionCard.swift */; };
 		B7E27A2CACE2784901CB923C /* SettingsNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29B46D4E8DC400FCF4E57374 /* SettingsNavigation.swift */; };
 		BB64F88461355BFECA64390F /* StatisticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BB7EC878B3C641D2888AD2 /* StatisticsView.swift */; };
@@ -127,6 +130,7 @@
 		765091196991FB6E7E8B8185 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		7832761FE83C21F870E571C7 /* SettingsSidebarRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSidebarRow.swift; sourceTree = "<group>"; };
 		7A85E4C082C8E3C5083ABAEB /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		7BE7F1FDA447F8791ACCD2BB /* SettingsGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsGroup.swift; sourceTree = "<group>"; };
 		7EA489010EA8A9B969CE5227 /* PreferencesSaveOwner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesSaveOwner.swift; sourceTree = "<group>"; };
 		8180C020203FB970C798C84E /* ThemeStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeStore.swift; sourceTree = "<group>"; };
 		85C5398AE9D97E6B58618468 /* WordmarkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordmarkView.swift; sourceTree = "<group>"; };
@@ -140,10 +144,12 @@
 		99FB6FBBABD55844628B8DA3 /* BreakTypography.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakTypography.swift; sourceTree = "<group>"; };
 		9A485172E288DBE02E326017 /* ScheduleStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleStatusView.swift; sourceTree = "<group>"; };
 		9C3B7E68FDF3C989BA50F367 /* BreakPalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakPalette.swift; sourceTree = "<group>"; };
+		A485E937F7D80FA3455BA910 /* RhythmTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RhythmTile.swift; sourceTree = "<group>"; };
 		A7F941253F684FB262B426B9 /* SettingsRowDivider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsRowDivider.swift; sourceTree = "<group>"; };
 		A81F2ED91290AD26CB5B672E /* AppCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
 		AA4E43A1C69B7789F4968823 /* SettingsPageLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPageLayout.swift; sourceTree = "<group>"; };
 		AF6724F4176D1F398DF9A697 /* LevelPill.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelPill.swift; sourceTree = "<group>"; };
+		B06BD317C6ADEBC1F1D16043 /* DayButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayButtons.swift; sourceTree = "<group>"; };
 		B1524D749BB78A875E5FD51F /* StandLockApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StandLockApp.swift; sourceTree = "<group>"; };
 		B387012391C6BC0360436B50 /* WelcomeStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeStepView.swift; sourceTree = "<group>"; };
 		B6255027F43C988785C9635D /* ScheduleDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleDetailView.swift; sourceTree = "<group>"; };
@@ -215,8 +221,10 @@
 		2AE3A6170DA1A80203F9D293 /* Schedules */ = {
 			isa = PBXGroup;
 			children = (
+				B06BD317C6ADEBC1F1D16043 /* DayButtons.swift */,
 				BF82AC0C965E52DC46B97A8C /* DeleteConfirmationView.swift */,
 				9685AC67A3B1CA0D154BC6DB /* DisciplineLevelPicker.swift */,
+				A485E937F7D80FA3455BA910 /* RhythmTile.swift */,
 				B6255027F43C988785C9635D /* ScheduleDetailView.swift */,
 				C3663C539337040D9472D8D1 /* ScheduleFormView.swift */,
 				9A485172E288DBE02E326017 /* ScheduleStatusView.swift */,
@@ -338,6 +346,7 @@
 			isa = PBXGroup;
 			children = (
 				89C0F66299A75A8744DE5CF6 /* SettingsDescription.swift */,
+				7BE7F1FDA447F8791ACCD2BB /* SettingsGroup.swift */,
 				07D76C4C05AEF8916D063F51 /* SettingsIconChip.swift */,
 				AA4E43A1C69B7789F4968823 /* SettingsPageLayout.swift */,
 				D5021A1A699359391AD0CEEB /* SettingsRow.swift */,
@@ -498,6 +507,7 @@
 				9282BD07119596D0242E67D6 /* BreakScreenSettingsView.swift in Sources */,
 				9CE3B1904556E5F701466351 /* BreakSoundPlayer.swift in Sources */,
 				AB84ADC15C8263AFD995E8B5 /* BreakTypography.swift in Sources */,
+				B2FF3CCDF5FB0EFC3C60C8BF /* DayButtons.swift in Sources */,
 				E6C55A4F70CDBF7DB5403B1F /* DeleteConfirmationView.swift in Sources */,
 				B0B45CBAC1620814C7F443D0 /* DetectionSettingsView.swift in Sources */,
 				0E1C2D941E09D0DF09384EE0 /* DisciplineLevelPicker.swift in Sources */,
@@ -528,12 +538,14 @@
 				3F24521CD8A9CA8C9156A1B9 /* PreferencesSaveOwner.swift in Sources */,
 				4A537C55B992DF62814F9857 /* QuickActionsView.swift in Sources */,
 				897387E26C50A633291C6545 /* QuickSetupStepView.swift in Sources */,
+				354BBE2CE0040FB1FE1928BA /* RhythmTile.swift in Sources */,
 				08AEDD7B79B9125648BCDA93 /* ScheduleDetailView.swift in Sources */,
 				4B80C2E0DB86C0724C97A49F /* ScheduleFormView.swift in Sources */,
 				C144671C95E22BC38AD14FE8 /* ScheduleSidebarRow.swift in Sources */,
 				22B7DFF9D9E85875A7E90081 /* ScheduleStatusView.swift in Sources */,
 				86A8326B93233891CC64711F /* SettingsDescription.swift in Sources */,
 				C5895F53358BDFD586A4A800 /* SettingsDetail.swift in Sources */,
+				0CFCF7C5DD7436BB8418444D /* SettingsGroup.swift in Sources */,
 				91653967871122B28FBC7378 /* SettingsIconChip.swift in Sources */,
 				B7E27A2CACE2784901CB923C /* SettingsNavigation.swift in Sources */,
 				A90BBE014C28C0EE022F3E96 /* SettingsPage+Presentation.swift in Sources */,

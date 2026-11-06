@@ -8,45 +8,22 @@ struct PermissionsView: View {
     var body: some View {
         SettingsPageLayout("Permissions") {
             if coordinator.schedules.contains(where: scheduleUsesStrict) {
-                group("Needed by your schedules") {
+                SettingsGroup("Needed by your schedules") {
                     if !checker.strictModeAvailable {
                         SettingsSection { strictWarning }
                     }
                     accessibilityCard
                     inputMonitoringCard
                 }
-                group("Optional") {
+                SettingsGroup("Optional") {
                     calendarCard
                 }
             } else {
-                group("Optional", note: "StandLock works without any of them.") {
+                SettingsGroup("Optional", note: "StandLock works without any of them.") {
                     accessibilityCard
                     inputMonitoringCard
                     calendarCard
                 }
-            }
-        }
-    }
-
-    /// `SettingsSection`'s heading and note over separate cards instead of one.
-    private func group<Content: View>(
-        _ title: LocalizedStringKey,
-        note: LocalizedStringKey? = nil,
-        @ViewBuilder content: () -> Content
-    ) -> some View {
-        VStack(alignment: .leading, spacing: SettingsTokens.sectionTitleSpacing) {
-            Text(title)
-                .font(SettingsTokens.sectionTitleFont)
-                .accessibilityAddTraits(.isHeader)
-                .padding(.horizontal, SettingsTokens.sectionTitleInset)
-
-            VStack(spacing: SettingsTokens.permissionCardSpacing) {
-                content()
-            }
-
-            if let note {
-                SettingsDescription(note)
-                    .padding(.horizontal, SettingsTokens.sectionTitleInset)
             }
         }
     }
