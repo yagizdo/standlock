@@ -17,12 +17,31 @@
 
 <img src="assets/break-gentle.png" width="820" alt="StandLock break overlay with a countdown and an exercise suggestion">
 
+**[Download the latest release](https://github.com/yagizdo/StandLock/releases/latest)** or `brew install --cask yagizdo/tap/standlock`
+
 </div>
 
-A macOS menu bar app that forces you to take stand-up breaks. It runs quietly in your menu bar, manages multiple schedules, and puts a full-screen overlay on every display when it's time. You pick how strict each schedule should be, and the app gets progressively harder to dismiss the more you skip.
+You have dismissed every break reminder you were ever sent. StandLock is built for that: when it's time to stand up, it covers every display with a countdown and an exercise, and you decide in advance how hard it is to get out of.
+
+<div align="center">
+
+<img src="assets/panel.gif" height="317" alt="Menu bar panel with an animated penguin scene and the countdown to the next break">
+<img src="assets/statistics.png" height="317" alt="Statistics page with a year of break activity as a heatmap">
+
+</div>
+
+## Highlights
+
+- **Three levels of stubborn.** Gentle has a skip button. Firm makes you wait, then type a sentence. Strict blocks the keyboard and mouse, with one emergency key combo out.
+- **Skipping gets harder.** Turn on escalation and each skip makes the next one worse: a button that runs from your cursor, mini-games, sentences you'd rather not type. *"We both know standing would've been easier."*
+- **It stays out of your calls.** Meetings, screen recordings, screen sharing and calendar events defer the break. When a call comes up mid-break, you can postpone it once.
+- **A small scene in your menu bar.** An hourglass, a desk, a calico cat or a penguin, reacting as your next break gets closer.
+- **A year of breaks in green squares.** Streaks, completion rate and a heatmap, so the skipping shows.
+- **Open source and native.** MIT, written in Swift, Sparkle is the only dependency. No account, no analytics. English, Turkish and Simplified Chinese.
 
 ## Contents
 
+- [Highlights](#highlights)
 - [Why](#why)
 - [Features](#features)
   - [Discipline Levels](#discipline-levels)
@@ -97,6 +116,8 @@ Enable progressive enforcement on any schedule and each consecutive skip makes t
 - Optional sounds, off by default, in Settings › Break Screen: one a minute before a break and one when a break ends
 - Settings › Break Screen: your own background and text colours (with a warning when contrast is low), hide today's statistics, or add a message under the timer
 
+<img src="assets/settings-break-screen.png" width="640" alt="Break Screen settings with a live preview, custom colours and a message under the timer">
+
 ### Break Statistics
 
 A dedicated Statistics page in Settings tracks break history over time.
@@ -111,9 +132,11 @@ A dedicated Statistics page in Settings tracks break history over time.
 - Break stats: completions, streak, and skips for today
 - Pause/resume controls
 - Warns when the active schedule's Strict level is inactive and running as Firm
-- A drawn scene that follows the break state, chosen in Settings › Menu Bar, or Off
+- A drawn scene that follows the break state: an hourglass, a desk, a calico cat or a penguin, chosen in Settings › Menu Bar, or Off
 
-<img src="assets/menubar.png" width="280" alt="Menu bar panel with the hourglass scene, the countdown to the next break and today's stats">
+<img src="assets/menubar.png" width="820" alt="Four menu bar panels with the hourglass, desk, calico cat and penguin scenes, each in a different break state">
+
+<img src="assets/settings-menu-bar.png" width="640" alt="Menu Bar settings with a card for each scene">
 
 ### General
 
