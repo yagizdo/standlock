@@ -88,7 +88,7 @@ struct BreakPalette {
     )
 }
 
-private extension Color {
+extension Color {
     init(hex: UInt, opacity: Double = 1.0) {
         self.init(
             .sRGB,

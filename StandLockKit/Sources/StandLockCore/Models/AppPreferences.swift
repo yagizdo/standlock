@@ -34,6 +34,7 @@ public struct AppPreferences: Codable, Sendable, Equatable {
 
     public var showFullWorkTimer: Bool
     public var menuBarCountdownMinutes: Int
+    public var menuScene: MenuScene
 
     public var breakScreen: BreakScreenPreferences
 
@@ -59,6 +60,7 @@ public struct AppPreferences: Codable, Sendable, Equatable {
         resetIntervalOnSkip: Bool = true,
         showFullWorkTimer: Bool = false,
         menuBarCountdownMinutes: Int = 1,
+        menuScene: MenuScene = .hourglass,
         breakScreen: BreakScreenPreferences = BreakScreenPreferences()
     ) {
         self.gentleDailySkipLimit = gentleDailySkipLimit
@@ -82,6 +84,7 @@ public struct AppPreferences: Codable, Sendable, Equatable {
         self.resetIntervalOnSkip = resetIntervalOnSkip
         self.showFullWorkTimer = showFullWorkTimer
         self.menuBarCountdownMinutes = menuBarCountdownMinutes
+        self.menuScene = menuScene
         self.breakScreen = breakScreen
     }
 
@@ -96,7 +99,7 @@ public struct AppPreferences: Codable, Sendable, Equatable {
         case idleDetectionEnabled
         case pauseMediaDuringBreak, soundBeforeBreak, soundAfterBreak
         case resetIntervalOnSkip
-        case showFullWorkTimer, menuBarCountdownMinutes
+        case showFullWorkTimer, menuBarCountdownMinutes, menuScene
         case breakScreen
     }
 
@@ -123,6 +126,9 @@ public struct AppPreferences: Codable, Sendable, Equatable {
         resetIntervalOnSkip = try c.decodeIfPresent(Bool.self, forKey: .resetIntervalOnSkip) ?? true
         showFullWorkTimer = try c.decodeIfPresent(Bool.self, forKey: .showFullWorkTimer) ?? false
         menuBarCountdownMinutes = try c.decodeIfPresent(Int.self, forKey: .menuBarCountdownMinutes) ?? 1
+        // A string, not the enum: the load drops every preference on one failed field, and a scene
+        // from a newer version would fail here.
+        menuScene = try c.decodeIfPresent(String.self, forKey: .menuScene).flatMap(MenuScene.init(rawValue:)) ?? .hourglass
         breakScreen = try c.decodeIfPresent(BreakScreenPreferences.self, forKey: .breakScreen) ?? BreakScreenPreferences()
     }
 }

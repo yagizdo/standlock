@@ -4,96 +4,28 @@ import StandLockCore
 struct MenuBarView: View {
     @EnvironmentObject private var coordinator: AppCoordinator
     @EnvironmentObject private var updateObserver: UpdateObserver
-    @Environment(\.openWindow) private var openWindow
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             VStack(alignment: .leading, spacing: 10) {
-                header
                 updateBanner
-                statusSection
+                MenuBarStatusView(
+                    state: coordinator.nextBreakState,
+                    progress: coordinator.breakProgress,
+                    scene: coordinator.preferences.menuScene,
+                    schedule: coordinator.schedules.first(where: \.isEnabled)
+                )
                 statsBar
             }
-            .padding(.horizontal, 4)
             .padding(.bottom, 10)
 
             Divider()
-                .padding(.vertical, 6)
+                .padding(.bottom, 10)
 
             QuickActionsView()
-
-            Divider()
-                .padding(.vertical, 6)
-
-            bottomActions
         }
         .padding(12)
         .frame(width: 280)
-    }
-
-    // MARK: - Header
-
-    private var header: some View {
-        HStack {
-            Text("StandLock")
-                .font(.headline)
-            Spacer()
-            if coordinator.isPaused {
-                Text("Paused")
-                    .font(.caption2)
-                    .fontWeight(.medium)
-                    .padding(.horizontal, 6)
-                    .padding(.vertical, 2)
-                    .background(.orange.opacity(0.2))
-                    .foregroundStyle(.orange)
-                    .clipShape(Capsule())
-            }
-        }
-    }
-
-    // MARK: - Status
-
-    @ViewBuilder
-    private var statusSection: some View {
-        switch coordinator.nextBreakState {
-        case .breakActive:
-            Label("Break in progress", systemImage: "figure.stand")
-                .font(.subheadline)
-                .foregroundStyle(.green)
-        case .paused(let until):
-            Label {
-                Text("Paused until \(until, style: .time)")
-            } icon: {
-                Image(systemName: "pause.circle.fill")
-            }
-            .font(.caption)
-            .foregroundStyle(.secondary)
-        case .deferred(let reason):
-            VStack(alignment: .leading, spacing: 2) {
-                Label("Break waiting", systemImage: "pause.circle")
-                    .font(.caption)
-                    .foregroundStyle(.orange)
-                Text(LocalizedStringKey(reason.displayName))
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
-            }
-        case .countingDown(let nextBreak):
-            Label {
-                Text("Next break \(nextBreak, style: .relative)")
-            } icon: {
-                Image(systemName: "clock")
-            }
-            .font(.caption)
-            .foregroundStyle(.secondary)
-        case .noSchedules:
-            Label("No schedules configured", systemImage: "calendar.badge.exclamationmark")
-                .font(.caption)
-                .foregroundStyle(.secondary)
-        case .noActiveSchedules:
-            Label("No active schedules", systemImage: "moon.zzz")
-                .font(.caption)
-                .foregroundStyle(.secondary)
-        }
     }
 
     // MARK: - Stats
@@ -164,82 +96,5 @@ struct MenuBarView: View {
             .background(.green.opacity(0.08), in: RoundedRectangle(cornerRadius: 8))
             .overlay(RoundedRectangle(cornerRadius: 8).strokeBorder(.green.opacity(0.25)))
         }
-    }
-
-    // MARK: - Bottom Actions
-
-    private var bottomActions: some View {
-        VStack(alignment: .leading, spacing: 2) {
-            Button {
-                coordinator.settingsNavigation.open(.general, using: openWindow)
-            } label: {
-                settingsLabel
-            }
-            .buttonStyle(MenuBarRowStyle())
-
-            Button {
-                coordinator.settingsNavigation.open(.about, using: openWindow)
-            } label: {
-                aboutLabel
-            }
-            .buttonStyle(MenuBarRowStyle())
-
-            Button {
-                NSApp.terminate(nil)
-            } label: {
-                HStack(spacing: 8) {
-                    Image(systemName: "power")
-                        .frame(width: 18)
-                        .foregroundStyle(.secondary)
-                    Text("Quit StandLock")
-                    Spacer()
-                    Text("\u{2318}Q")
-                        .font(.caption)
-                        .foregroundStyle(.tertiary)
-                }
-            }
-            .buttonStyle(MenuBarRowStyle())
-            .disabled(coordinator.isBreakActive)
-        }
-    }
-}
-
-private var settingsLabel: some View {
-    HStack(spacing: 8) {
-        Image(systemName: "gearshape")
-            .frame(width: 18)
-            .foregroundStyle(.secondary)
-        Text("Settings...")
-        Spacer()
-        Text("\u{2318},")
-            .font(.caption)
-            .foregroundStyle(.tertiary)
-    }
-}
-
-private var aboutLabel: some View {
-    HStack(spacing: 8) {
-        Image(systemName: "info.circle")
-            .frame(width: 18)
-            .foregroundStyle(.secondary)
-        Text("About StandLock")
-        Spacer()
-    }
-}
-
-struct MenuBarRowStyle: ButtonStyle {
-    @State private var isHovered = false
-
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal, 8)
-            .padding(.vertical, 5)
-            .foregroundStyle(.primary)
-            .background(
-                RoundedRectangle(cornerRadius: 6)
-                    .fill(Color.primary.opacity(isHovered ? 0.08 : 0))
-            )
-            .onHover { isHovered = $0 }
     }
 }
