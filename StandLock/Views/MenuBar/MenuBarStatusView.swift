@@ -46,15 +46,22 @@ struct MenuBarStatusView: View {
             }
             // The panel names the level with nothing else around it, so an unqualified "Strict"
             // is the one place the downgrade could pass for the real thing. Its own line, at full
-            // width: beside the countdown it would wrap and change the panel's height.
+            // width: beside the countdown it would wrap and change the panel's height. Hidden, not
+            // removed, when Strict is active, so the panel is the same height either way.
             if schedule.map(checker.strictIsInactive) == true {
-                Text("Strict inactive, running as Firm")
-                    .font(.caption)
-                    .foregroundStyle(.orange)
+                strictWarning
+            } else {
+                strictWarning.hidden()
             }
         }
         .padding(.horizontal, 4)
         .accessibilityElement(children: .combine)
+    }
+
+    private var strictWarning: some View {
+        Text("Strict inactive, running as Firm")
+            .font(.caption)
+            .foregroundStyle(.orange)
     }
 
     private func title(_ look: MenuSceneLook) -> LocalizedStringKey {
