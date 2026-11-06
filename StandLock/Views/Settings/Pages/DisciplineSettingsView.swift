@@ -11,14 +11,16 @@ struct DisciplineSettingsView: View {
             ) {
                 skipLimitRow(
                     "Gentle",
+                    symbol: "hand.raised",
                     stepperLabel: "Gentle Daily Skip Limit",
                     value: $coordinator.preferences.gentleDailySkipLimit
                 )
 
-                Divider()
+                SettingsRowDivider()
 
                 skipLimitRow(
                     "Firm",
+                    symbol: "timer",
                     stepperLabel: "Firm Daily Skip Limit",
                     value: $coordinator.preferences.firmDailySkipLimit
                 )
@@ -29,10 +31,11 @@ struct DisciplineSettingsView: View {
     /// The number sits beside the stepper because Show help can hide the description.
     private func skipLimitRow(
         _ title: LocalizedStringKey,
+        symbol: String,
         stepperLabel: LocalizedStringKey,
         value: Binding<Int>
     ) -> some View {
-        SettingsRow(title, description: "\(value.wrappedValue) skips per day before breaks stop being dismissible") {
+        SettingsRow(title, symbol: symbol, description: "\(value.wrappedValue) skips per day before breaks stop being dismissible") {
             HStack(spacing: SettingsTokens.rowSpacing) {
                 Text(verbatim: "\(value.wrappedValue)")
                     .monospacedDigit()

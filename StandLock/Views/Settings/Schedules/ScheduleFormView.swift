@@ -17,7 +17,7 @@ struct ScheduleFormView: View {
 
     private var nameSection: some View {
         SettingsSection("Name") {
-            SettingsRow("Name") {
+            SettingsRow("Name", symbol: "textformat") {
                 TextField("e.g. Work Hours", text: $draft.name)
                     .labelsHidden()
                     .textFieldStyle(.roundedBorder)
@@ -103,12 +103,13 @@ struct ScheduleFormView: View {
         SettingsSection("Timing") {
             intervalsBlock
             Divider()
-            SettingsRow("Break duration") {
+            SettingsRow("Break duration", symbol: "hourglass") {
                 minutesField("Break duration", value: $draft.breakDurationMinutes, range: ScheduleDraft.breakRange)
             }
-            Divider()
+            SettingsRowDivider()
             SettingsToggleRow(
                 "Repetition Cycle",
+                symbol: "repeat",
                 description: draft.useRepetition ? "e.g. 3 short breaks, then 1 long break" : nil,
                 isOn: $draft.useRepetition
             )
@@ -192,6 +193,7 @@ struct ScheduleFormView: View {
             Divider()
             SettingsToggleRow(
                 "Progressive Enforcement",
+                symbol: "chart.line.uptrend.xyaxis",
                 description: "Makes each skipped break harder to dismiss",
                 isOn: $draft.progressiveEnforcement
             )

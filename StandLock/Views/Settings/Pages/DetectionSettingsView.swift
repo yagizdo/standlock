@@ -11,19 +11,21 @@ struct DetectionSettingsView: View {
             SettingsSection("Calls") {
                 behaviorRow(
                     "Camera Detection",
+                    symbol: "video",
                     description: "Defer breaks when camera is active (video calls)",
                     behavior: $coordinator.preferences.cameraDetection
                 )
 
-                Divider()
+                SettingsRowDivider()
 
                 behaviorRow(
                     "Microphone Detection",
+                    symbol: "mic",
                     description: "Defer breaks when microphone is active (audio calls)",
                     behavior: $coordinator.preferences.microphoneDetection
                 )
 
-                Divider()
+                SettingsRowDivider()
 
                 minutesRow(
                     "Return after call",
@@ -36,6 +38,7 @@ struct DetectionSettingsView: View {
             SettingsSection("Calendar") {
                 SettingsToggleRow(
                     "Calendar Integration",
+                    symbol: "calendar",
                     description: "Defer breaks during calendar events",
                     isOn: permissionChecker.gatedToggle(
                         for: $coordinator.preferences.calendarDetectionEnabled,
@@ -46,7 +49,7 @@ struct DetectionSettingsView: View {
 
                 if permissionChecker.calendarIntegrationAvailable
                     && coordinator.preferences.calendarDetectionEnabled {
-                    Divider()
+                    SettingsRowDivider()
 
                     minutesRow(
                         "Look-ahead",
@@ -54,9 +57,9 @@ struct DetectionSettingsView: View {
                         in: 1...15
                     )
 
-                    Divider()
+                    SettingsRowDivider()
 
-                    SettingsRow("Calendars") {
+                    SettingsRow("Calendars", symbol: "arrow.turn.down.right") {
                         Picker("Calendars", selection: $coordinator.preferences.calendarSelectionMode) {
                             Text("All calendars").tag(CalendarSelectionMode.all)
                             Text("Specific calendars").tag(CalendarSelectionMode.selected)
@@ -75,14 +78,15 @@ struct DetectionSettingsView: View {
             SettingsSection("Screen sharing") {
                 SettingsToggleRow(
                     "Screen Sharing",
+                    symbol: "rectangle.on.rectangle",
                     description: "Defer breaks during screen sharing or recording",
                     isOn: $coordinator.preferences.screenSharingDetectionEnabled
                 )
 
                 if coordinator.preferences.screenSharingDetectionEnabled {
-                    Divider()
+                    SettingsRowDivider()
 
-                    SettingsRow("After sharing ends") {
+                    SettingsRow("After sharing ends", symbol: "arrow.turn.down.right") {
                         Picker("After sharing ends", selection: $coordinator.preferences.screenSharingPostDeferral) {
                             Text("Start break").tag(PostDeferralBehavior.triggerBreak)
                             Text("Skip break").tag(PostDeferralBehavior.skipBreak)
@@ -96,6 +100,7 @@ struct DetectionSettingsView: View {
             SettingsSection("Idle") {
                 SettingsToggleRow(
                     "Idle as Break",
+                    symbol: "moon.zzz",
                     description: "Count inactivity as a break taken",
                     isOn: $coordinator.preferences.idleDetectionEnabled
                 )
@@ -122,10 +127,11 @@ struct DetectionSettingsView: View {
 
     private func behaviorRow(
         _ title: LocalizedStringKey,
+        symbol: String,
         description: LocalizedStringKey,
         behavior: Binding<DetectionBehavior>
     ) -> some View {
-        SettingsRow(title, description: description) {
+        SettingsRow(title, symbol: symbol, description: description) {
             Picker(title, selection: behavior) {
                 Text("Defer break").tag(DetectionBehavior.deferBreak)
                 Text("Reduce to Gentle").tag(DetectionBehavior.reduceToGentle)
@@ -143,7 +149,7 @@ struct DetectionSettingsView: View {
         value: Binding<Int>,
         in range: ClosedRange<Int>
     ) -> some View {
-        SettingsRow(title, description: description) {
+        SettingsRow(title, symbol: "arrow.turn.down.right", description: description) {
             HStack(spacing: SettingsTokens.rowSpacing) {
                 Text("\(value.wrappedValue) min")
                     .monospacedDigit()

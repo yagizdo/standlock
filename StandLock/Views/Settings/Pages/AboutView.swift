@@ -26,8 +26,8 @@ struct AboutView: View {
 
             SettingsSection("Updates") {
                 UpdaterSettingsView(updater: updater)
-                Divider()
-                SettingsRow("Version \(version)") {
+                SettingsRowDivider()
+                SettingsRow("Version \(version)", symbol: "number") {
                     CheckForUpdatesView(updater: updater)
                         .controlSize(.small)
                 }
@@ -37,9 +37,9 @@ struct AboutView: View {
 
             SettingsSection("Links") {
                 linkRow("GitHub", url: "https://github.com/yagizdo/StandLock")
-                Divider()
+                SettingsRowDivider()
                 linkRow("Website", url: "https://standlock.app")
-                Divider()
+                SettingsRowDivider()
                 linkRow("Twitter", url: "https://x.com/yagizdo")
             }
 
@@ -73,7 +73,7 @@ struct AboutView: View {
 
     private func linkRow(_ title: LocalizedStringKey, url: String) -> some View {
         Link(destination: URL(string: url)!) {
-            SettingsRow(title) {
+            SettingsRow(title, symbol: "link") {
                 Image(systemName: "arrow.up.right")
                     .foregroundStyle(.secondary)
                     .accessibilityHidden(true)

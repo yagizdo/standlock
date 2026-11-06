@@ -8,6 +8,7 @@ struct SettingsDetail: View {
 
     var body: some View {
         page
+            .environment(\.settingsRowTone, navigation.page.tone)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(PreferencesSaveOwner())
     }

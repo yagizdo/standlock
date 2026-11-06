@@ -11,6 +11,8 @@ enum SettingsTokens {
     static let rowInsets = EdgeInsets(top: 9, leading: 13, bottom: 9, trailing: 13)
     static let rowMinHeight: CGFloat = 40
     static let rowSpacing: CGFloat = 12
+    static let rowChipSize: CGFloat = 24
+    static let rowTextInset = rowInsets.leading + rowChipSize + rowSpacing
     static let rowTextSpacing: CGFloat = 1
     static let listItemSpacing: CGFloat = 6
     static let stripInsets = EdgeInsets(top: 5, leading: 11, bottom: 5, trailing: 11)

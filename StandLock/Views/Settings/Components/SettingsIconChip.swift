@@ -7,16 +7,17 @@ struct SettingsIconChip: View {
 
     let symbol: String
     let tone: DisciplineLevel?
-    let isSelected: Bool
+    var isSelected = false
+    var size: CGFloat = 20
 
     var body: some View {
         Image(systemName: symbol)
-            .font(.system(size: 13))
+            .font(.system(size: max(13, size * 0.56)))
             // A sidebar `Label` enlarges its icon past the chip otherwise.
             .imageScale(.medium)
             .foregroundStyle(glyphStyle)
-            .frame(width: 20, height: 20)
-            .background(RoundedRectangle(cornerRadius: 5).fill(fillStyle))
+            .frame(width: size, height: size)
+            .background(RoundedRectangle(cornerRadius: size / 4).fill(fillStyle))
             .accessibilityHidden(true)
     }
 

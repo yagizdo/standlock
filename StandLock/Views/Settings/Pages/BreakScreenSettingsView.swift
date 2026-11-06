@@ -26,14 +26,15 @@ struct BreakScreenSettingsView: View {
             SettingsSection("Look") {
                 SettingsToggleRow(
                     "Custom Break Colors",
+                    symbol: "paintpalette",
                     description: "Use your own background and text colors",
                     isOn: customColorsEnabled
                 )
 
                 if let customColors = breakScreen.customColors {
-                    Divider()
+                    SettingsRowDivider()
                     colorRow("Background", \.backgroundHex, fallback: .white)
-                    Divider()
+                    SettingsRowDivider()
                     colorRow("Text", \.textHex, fallback: .black)
 
                     if customColors.isHardToRead {
@@ -47,17 +48,18 @@ struct BreakScreenSettingsView: View {
             }
 
             SettingsSection("Content") {
-                SettingsRow("Break Message", description: "Shown under the timer during every break") {
+                SettingsRow("Break Message", symbol: "text.quote", description: "Shown under the timer during every break") {
                     TextField("Break Message", text: $coordinator.preferences.breakScreen.message, prompt: Text("e.g. Drink some water"))
                         .labelsHidden()
                         .textFieldStyle(.roundedBorder)
                         .frame(width: SettingsTokens.textFieldWidth)
                 }
 
-                Divider()
+                SettingsRowDivider()
 
                 SettingsToggleRow(
                     "Show Statistics",
+                    symbol: "chart.bar",
                     description: "Show today's break counts at the bottom",
                     isOn: $coordinator.preferences.breakScreen.showsStatistics
                 )
@@ -66,21 +68,24 @@ struct BreakScreenSettingsView: View {
             SettingsSection("During a break") {
                 SettingsToggleRow(
                     "Pause Media",
+                    symbol: "pause.circle",
                     description: "Pause audio playback when a break starts",
                     isOn: $coordinator.preferences.pauseMediaDuringBreak
                 )
 
-                Divider()
+                SettingsRowDivider()
 
                 SettingsToggleRow(
                     "Sound when a break ends",
+                    symbol: "bell",
                     isOn: $coordinator.preferences.soundAfterBreak
                 )
 
-                Divider()
+                SettingsRowDivider()
 
                 SettingsToggleRow(
                     "Sound before a break",
+                    symbol: "bell.badge",
                     description: "Plays one minute before a break",
                     isOn: $coordinator.preferences.soundBeforeBreak
                 )
@@ -111,7 +116,7 @@ struct BreakScreenSettingsView: View {
         _ keyPath: WritableKeyPath<BreakScreenPreferences, String?>,
         fallback: HexColor
     ) -> some View {
-        SettingsRow(title) {
+        SettingsRow(title, symbol: "arrow.turn.down.right") {
             HStack(spacing: SettingsTokens.rowSpacing) {
                 HexColorField(color: hexBinding(keyPath, fallback: fallback))
                 ColorPicker(title, selection: colorBinding(keyPath, fallback: fallback), supportsOpacity: false)

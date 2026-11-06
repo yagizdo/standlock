@@ -42,6 +42,7 @@
 		6F9C00664AAD42633900A642 /* Exercises.json in Resources */ = {isa = PBXBuildFile; fileRef = 2063FDE70AFCC135664A8FD4 /* Exercises.json */; };
 		726D144CA2B3B5AF4D4503AE /* LevelPill.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF6724F4176D1F398DF9A697 /* LevelPill.swift */; };
 		72EF8A3AE6FD2B14FA478D0F /* OpenSettingsCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D5900DFD7FAE70774438F1F /* OpenSettingsCommand.swift */; };
+		73D55EC0B43E3538ED4157C1 /* SettingsRowDivider.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7F941253F684FB262B426B9 /* SettingsRowDivider.swift */; };
 		742A80C38BAB206209CC4213 /* WelcomeStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B387012391C6BC0360436B50 /* WelcomeStepView.swift */; };
 		75E31F36751D55F051D6FF34 /* ExerciseBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 434445F0717D4FC94E284CB8 /* ExerciseBlock.swift */; };
 		7BF1946EE4BC2EF26F5CE641 /* BreakScreenLook.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB803AB21175A8E54B5A2191 /* BreakScreenLook.swift */; };
@@ -54,6 +55,7 @@
 		86A8326B93233891CC64711F /* SettingsDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89C0F66299A75A8744DE5CF6 /* SettingsDescription.swift */; };
 		897387E26C50A633291C6545 /* QuickSetupStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7259326030030D8F49258219 /* QuickSetupStepView.swift */; };
 		8ABB22099BF5F67DCC2A0FA3 /* DisciplineSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D816A891C5FD51B89E4D0E2 /* DisciplineSettingsView.swift */; };
+		8F6AC147C464B1A28A96E798 /* SettingsRowTone.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9413FF43C324512A68D3038A /* SettingsRowTone.swift */; };
 		90D5E71A0446AFE3673A03EA /* Scheduling in Frameworks */ = {isa = PBXBuildFile; productRef = 316964B56B03AC1F35947883 /* Scheduling */; };
 		91653967871122B28FBC7378 /* SettingsIconChip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07D76C4C05AEF8916D063F51 /* SettingsIconChip.swift */; };
 		918E275316F96D0940D30FE1 /* Coordination in Frameworks */ = {isa = PBXBuildFile; productRef = B92CC5F67D1B761AB8B497AF /* Coordination */; };
@@ -128,6 +130,7 @@
 		85C5398AE9D97E6B58618468 /* WordmarkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordmarkView.swift; sourceTree = "<group>"; };
 		88D72443C7D064247ADFE6D0 /* GeneralSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralSettingsView.swift; sourceTree = "<group>"; };
 		89C0F66299A75A8744DE5CF6 /* SettingsDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsDescription.swift; sourceTree = "<group>"; };
+		9413FF43C324512A68D3038A /* SettingsRowTone.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsRowTone.swift; sourceTree = "<group>"; };
 		946A989D9EC41AFA82920166 /* NextBreakStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NextBreakStatus.swift; sourceTree = "<group>"; };
 		94B7BAAC1837524EF3DD6B90 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		9685AC67A3B1CA0D154BC6DB /* DisciplineLevelPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisciplineLevelPicker.swift; sourceTree = "<group>"; };
@@ -135,6 +138,7 @@
 		99FB6FBBABD55844628B8DA3 /* BreakTypography.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakTypography.swift; sourceTree = "<group>"; };
 		9A485172E288DBE02E326017 /* ScheduleStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleStatusView.swift; sourceTree = "<group>"; };
 		9C3B7E68FDF3C989BA50F367 /* BreakPalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakPalette.swift; sourceTree = "<group>"; };
+		A7F941253F684FB262B426B9 /* SettingsRowDivider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsRowDivider.swift; sourceTree = "<group>"; };
 		A81F2ED91290AD26CB5B672E /* AppCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
 		AA4E43A1C69B7789F4968823 /* SettingsPageLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPageLayout.swift; sourceTree = "<group>"; };
 		AF6724F4176D1F398DF9A697 /* LevelPill.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelPill.swift; sourceTree = "<group>"; };
@@ -334,6 +338,8 @@
 				07D76C4C05AEF8916D063F51 /* SettingsIconChip.swift */,
 				AA4E43A1C69B7789F4968823 /* SettingsPageLayout.swift */,
 				D5021A1A699359391AD0CEEB /* SettingsRow.swift */,
+				A7F941253F684FB262B426B9 /* SettingsRowDivider.swift */,
+				9413FF43C324512A68D3038A /* SettingsRowTone.swift */,
 				55E666594049BE353F6E6FF6 /* SettingsSection.swift */,
 				F9AA3E0D667AF2DB2D988625 /* SettingsToggleRow.swift */,
 				DA2920940F5FB5690FF53B7B /* SettingsTokens.swift */,
@@ -529,6 +535,8 @@
 				A90BBE014C28C0EE022F3E96 /* SettingsPage+Presentation.swift in Sources */,
 				F7D293B2C83521B31C5FCF7B /* SettingsPageLayout.swift in Sources */,
 				F0B1F1A0D00E271181FA544B /* SettingsRow.swift in Sources */,
+				73D55EC0B43E3538ED4157C1 /* SettingsRowDivider.swift in Sources */,
+				8F6AC147C464B1A28A96E798 /* SettingsRowTone.swift in Sources */,
 				AFCD8E682F3B7C00A263441C /* SettingsSearchField.swift in Sources */,
 				040AE413C982CD1E84472CDA /* SettingsSection.swift in Sources */,
 				861C544CEA9B855BFE8724B6 /* SettingsSidebar.swift in Sources */,

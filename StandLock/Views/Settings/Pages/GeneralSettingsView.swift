@@ -13,6 +13,7 @@ struct GeneralSettingsView: View {
             SettingsSection("Startup") {
                 SettingsToggleRow(
                     "Launch at Startup",
+                    symbol: "power",
                     description: "Open StandLock when you log in",
                     isOn: $launchAtStartup
                 )
@@ -31,7 +32,7 @@ struct GeneralSettingsView: View {
             }
 
             SettingsSection("Language and appearance") {
-                SettingsRow("Language", description: "System follows your Mac's language") {
+                SettingsRow("Language", symbol: "globe", description: "System follows your Mac's language") {
                     Picker("Language", selection: Binding(
                         get: { languageStore.selection },
                         set: { languageStore.select($0) }
@@ -45,9 +46,9 @@ struct GeneralSettingsView: View {
                     .fixedSize()
                 }
 
-                Divider()
+                SettingsRowDivider()
 
-                SettingsRow("Appearance", description: "System follows your Mac's appearance") {
+                SettingsRow("Appearance", symbol: "circle.lefthalf.filled", description: "System follows your Mac's appearance") {
                     Picker("Appearance", selection: Binding(
                         get: { themeStore.selection },
                         set: { themeStore.select($0) }

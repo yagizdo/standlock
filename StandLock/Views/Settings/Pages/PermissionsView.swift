@@ -89,7 +89,7 @@ struct PermissionRow: View {
                 .padding(.leading, SettingsTokens.rowInsets.leading)
                 .accessibilityLabel(Text(mark.label))
 
-            SettingsRow(title, description: description) {
+            SettingsRow(title, symbol: "lock.shield", description: description) {
                 actionButton
                     .controlSize(.small)
             }

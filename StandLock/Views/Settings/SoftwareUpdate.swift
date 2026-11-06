@@ -76,7 +76,7 @@ struct UpdaterSettingsView: View {
     }
 
     var body: some View {
-        SettingsToggleRow("Automatic Updates", isOn: $automaticallyChecksForUpdates)
+        SettingsToggleRow("Automatic Updates", symbol: "arrow.down.circle", isOn: $automaticallyChecksForUpdates)
             .onChange(of: automaticallyChecksForUpdates) { newValue in
                 updater.automaticallyChecksForUpdates = newValue
             }
@@ -120,7 +120,7 @@ struct UpdateStatusRow: View {
                 .padding(.leading, SettingsTokens.rowInsets.leading)
                 .accessibilityHidden(true)
 
-            SettingsRow(title(for: status)) {
+            SettingsRow(title(for: status), symbol: nil) {
                 if let lastCheck {
                     Text(lastCheck, format: Date.FormatStyle(date: .abbreviated, time: .shortened))
                         .font(SettingsTokens.descriptionFont)
