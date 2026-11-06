@@ -36,7 +36,8 @@ final class SettingsNavigation: ObservableObject {
         // grabbed here and hidden once Settings has been asked to open.
         let keyWindow = NSApp.keyWindow
 
-        if let page { select(page) }
+        // A sheet on Settings belongs to the page under it, so changing page would take it away.
+        if let page, !settingsHasSheet { select(page) }
         openWindow(id: Self.windowID)
         // Deprecated in the header, but plain `activate()` did not make the window key.
         NSApp.activate(ignoringOtherApps: true)
@@ -111,6 +112,10 @@ final class SettingsNavigation: ObservableObject {
     func reconcile(scheduleIDs: [UUID]) {
         let resolved = page.resolved(scheduleIDs: scheduleIDs)
         if resolved != page { leave(to: resolved) }
+    }
+
+    private var settingsHasSheet: Bool {
+        NSApp.windows.contains { $0.delegate is SettingsWindowDelegate && $0.attachedSheet != nil }
     }
 
     /// Hides the MenuBarExtra panel captured before Settings was opened.
