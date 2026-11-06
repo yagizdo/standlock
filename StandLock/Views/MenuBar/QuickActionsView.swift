@@ -3,98 +3,56 @@ import StandLockCore
 
 struct QuickActionsView: View {
     @EnvironmentObject private var coordinator: AppCoordinator
-    @EnvironmentObject private var checker: PermissionChecker
     @EnvironmentObject private var languageStore: LanguageStore
-
-    private var activeSchedule: Schedule? {
-        coordinator.schedules.first(where: \.isEnabled)
-    }
+    @Environment(\.openWindow) private var openWindow
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        HStack(spacing: 6) {
             if coordinator.isPaused {
                 Button {
                     coordinator.resumeSchedule()
                 } label: {
-                    HStack(spacing: 8) {
-                        Image(systemName: "play.fill")
-                            .frame(width: 18)
-                            .foregroundStyle(.secondary)
-                        Text("Resume Schedule")
-                        Spacer()
-                    }
+                    pill("Resume", symbol: "play.fill")
                 }
-                .buttonStyle(MenuBarRowStyle())
+                .buttonStyle(MenuBarPillStyle())
             } else {
                 Button {
                     coordinator.skipNextBreak()
                 } label: {
-                    HStack(spacing: 8) {
-                        Image(systemName: "forward.end")
-                            .frame(width: 18)
-                            .foregroundStyle(.secondary)
-                        Text("Skip Next Break")
-                        Spacer()
-                    }
+                    pill("Skip", symbol: "forward.end")
                 }
-                .buttonStyle(MenuBarRowStyle())
+                .buttonStyle(MenuBarPillStyle())
                 .disabled(coordinator.schedules.isEmpty || coordinator.isBreakActive)
 
                 Button {
                     showPauseMenu()
                 } label: {
-                    HStack(spacing: 8) {
-                        Image(systemName: "pause.circle")
-                            .frame(width: 18)
-                            .foregroundStyle(.secondary)
-                        Text("Pause Schedule")
-                        Spacer()
-                        Image(systemName: "chevron.right")
-                            .font(.caption2)
-                            .foregroundStyle(.tertiary)
-                    }
+                    pill("Pause", symbol: "pause.circle")
                 }
-                .buttonStyle(MenuBarRowStyle())
+                .buttonStyle(MenuBarPillStyle())
                 .disabled(coordinator.schedules.isEmpty)
             }
 
-            if let schedule = activeSchedule {
-                scheduleInfo(schedule)
-                    .padding(.top, 4)
+            Button {
+                showMoreMenu()
+            } label: {
+                Image(systemName: "gearshape")
+                    .foregroundStyle(.secondary)
             }
+            .buttonStyle(MenuBarPillStyle())
+            .frame(width: 34)
+            .accessibilityLabel("Menu")
         }
     }
 
-    private func scheduleInfo(_ schedule: Schedule) -> some View {
-        // The menu bar names the level with nothing else around it, so an unqualified "Strict"
-        // here is the one place the downgrade could pass for the real thing.
-        let strictIsInactive = checker.strictIsInactive(for: schedule)
-        return HStack(spacing: 8) {
-            Text(strictIsInactive ? "⚠️" : levelIcon(schedule.disciplineLevel))
-                .font(.caption)
-            VStack(alignment: .leading, spacing: 1) {
-                Text(schedule.name)
-                    .font(.caption)
-                    .fontWeight(.medium)
-                    .lineLimit(1)
-                if strictIsInactive {
-                    Text("Strict inactive, running as Firm")
-                        .font(.caption2)
-                        .foregroundStyle(.orange)
-                } else {
-                    Text(LocalizedStringKey(schedule.disciplineLevel.displayName))
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
-                }
-            }
-            Spacer()
+    private func pill(_ title: LocalizedStringKey, symbol: String) -> some View {
+        HStack(spacing: 6) {
+            Image(systemName: symbol)
+                .foregroundStyle(.secondary)
+            Text(title)
+                .font(.callout)
+                .lineLimit(1)
         }
-        .padding(.horizontal, 10)
-        .padding(.vertical, 6)
-        .background(
-            RoundedRectangle(cornerRadius: 6)
-                .fill(Color.primary.opacity(0.04))
-        )
     }
 
     private func showPauseMenu() {
@@ -116,12 +74,29 @@ struct QuickActionsView: View {
         menu.popUp(positioning: nil, at: NSEvent.mouseLocation, in: nil)
     }
 
-    private func levelIcon(_ level: DisciplineLevel) -> String {
-        switch level {
-        case .gentle: "🟢"
-        case .firm: "🟡"
-        case .strict: "🔴"
-        }
+    private func showMoreMenu() {
+        let handler = MoreMenuHandler(coordinator: coordinator, openWindow: openWindow)
+        let menu = NSMenu()
+        // An `NSMenu` item ignores SwiftUI's `.disabled`, and without this it would ignore
+        // `isEnabled` too.
+        menu.autoenablesItems = false
+
+        let settings = NSMenuItem(title: languageStore.string("Settings..."), action: #selector(MoreMenuHandler.settings), keyEquivalent: ",")
+        settings.target = handler
+        menu.addItem(settings)
+
+        let about = NSMenuItem(title: languageStore.string("About StandLock"), action: #selector(MoreMenuHandler.about), keyEquivalent: "")
+        about.target = handler
+        menu.addItem(about)
+
+        menu.addItem(.separator())
+
+        let quit = NSMenuItem(title: languageStore.string("Quit StandLock"), action: #selector(MoreMenuHandler.quit), keyEquivalent: "")
+        quit.target = handler
+        quit.isEnabled = !coordinator.isBreakActive
+        menu.addItem(quit)
+
+        menu.popUp(positioning: nil, at: NSEvent.mouseLocation, in: nil)
     }
 }
 
@@ -136,4 +111,19 @@ private final class PauseMenuHandler: NSObject {
     @objc func pause30() { coordinator.pauseSchedule(for: 30 * 60) }
     @objc func pause60() { coordinator.pauseSchedule(for: 60 * 60) }
     @objc func pause120() { coordinator.pauseSchedule(for: 2 * 60 * 60) }
+}
+
+@MainActor
+private final class MoreMenuHandler: NSObject {
+    let coordinator: AppCoordinator
+    let openWindow: OpenWindowAction
+
+    init(coordinator: AppCoordinator, openWindow: OpenWindowAction) {
+        self.coordinator = coordinator
+        self.openWindow = openWindow
+    }
+
+    @objc func settings() { coordinator.settingsNavigation.open(.general, using: openWindow) }
+    @objc func about() { coordinator.settingsNavigation.open(.about, using: openWindow) }
+    @objc func quit() { NSApp.terminate(nil) }
 }

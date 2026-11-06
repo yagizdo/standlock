@@ -53,7 +53,7 @@ extension SettingsPage {
         case .general:
             ["General", "Startup", "Launch at Startup", "Language and appearance", "Language", "Appearance"]
         case .menuBar:
-            ["Menu Bar", "Timer", "Show Full Work Timer", "Countdown Start", "Preview"]
+            ["Menu Bar", "Scene", "Timer", "Show Full Work Timer", "Countdown Start", "Preview"]
         case .breakScreen:
             [
                 "Break Screen", "Look", "Custom Break Colors", "Background", "Text", "Preview", "Content",

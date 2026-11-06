@@ -121,7 +121,12 @@ final class SettingsNavigation: ObservableObject {
     /// captured window can be Settings itself when it was already key, or a sheet or the
     /// color panel, and none of those may be hidden.
     private func dismissMenuBarPanel(_ window: NSWindow?) {
-        guard let window, window.className.contains("MenuBarExtraWindow") else { return }
+        guard let window, window.isMenuBarPanel else { return }
         window.orderOut(nil)
     }
+}
+
+extension NSWindow {
+    /// SwiftUI gives no handle on the MenuBarExtra panel, so it is known by its class name.
+    var isMenuBarPanel: Bool { className.contains("MenuBarExtraWindow") }
 }

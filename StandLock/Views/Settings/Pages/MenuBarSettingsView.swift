@@ -37,6 +37,10 @@ struct MenuBarSettingsView: View {
                 .padding(SettingsTokens.rowInsets)
             }
 
+            SettingsSection("Scene", note: "The picture at the top of the menu bar panel") {
+                MenuScenePicker(selection: $coordinator.preferences.menuScene)
+            }
+
             SettingsSection("Timer") {
                 SettingsToggleRow(
                     "Show Full Work Timer",
