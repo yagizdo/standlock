@@ -68,7 +68,7 @@ extension SettingsPage {
         case .schedule:
             Self.scheduleFormTerms
         case .newSchedule:
-            ["Add Schedule", "New Schedule"] + Self.scheduleFormTerms
+            ["Add Schedule", "New Schedule", "Start from"] + Self.scheduleFormTerms
         case .detection:
             [
                 "Detection", "Calls", "Camera Detection", "Microphone Detection", "Return after call",
