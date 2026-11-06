@@ -5,6 +5,7 @@ struct ScheduleSidebarRow: View {
     @Environment(\.colorScheme) private var colorScheme
 
     let schedule: Schedule
+    let isSelected: Bool
 
     var body: some View {
         Label {
@@ -18,7 +19,8 @@ struct ScheduleSidebarRow: View {
                 }
             }
         } icon: {
-            dot(levelColor)
+            // A fixed hue does not read on the selection fill.
+            dot(isSelected ? AnyShapeStyle(.secondary) : AnyShapeStyle(levelColor))
                 .frame(width: 20, height: 20)
         }
         .accessibilityElement(children: .ignore)
@@ -30,9 +32,9 @@ struct ScheduleSidebarRow: View {
         )
     }
 
-    private func dot(_ color: Color) -> some View {
+    private func dot(_ style: some ShapeStyle) -> some View {
         Circle()
-            .fill(color)
+            .fill(style)
             .frame(width: SettingsTokens.statusDotSize, height: SettingsTokens.statusDotSize)
     }
 

@@ -63,7 +63,7 @@ struct SettingsSidebar: View {
             if !scheduleRows.isEmpty || visible.contains(.newSchedule) {
                 Section {
                     ForEach(scheduleRows) { schedule in
-                        ScheduleSidebarRow(schedule: schedule)
+                        ScheduleSidebarRow(schedule: schedule, isSelected: navigation.page == .schedule(schedule.id))
                             .tag(SettingsPage.schedule(schedule.id))
                     }
                     rows([.newSchedule].filter(visible.contains))
