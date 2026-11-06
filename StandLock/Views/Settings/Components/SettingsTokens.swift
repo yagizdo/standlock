@@ -30,6 +30,11 @@ enum SettingsTokens {
     static let dayInsets = EdgeInsets(top: 4, leading: 8, bottom: 4, trailing: 8)
     static let numberFieldWidth: CGFloat = 50
     static let timePickerWidth: CGFloat = 60
+    static let permissionChipSize: CGFloat = 30
+    static let permissionCardSpacing: CGFloat = 10
+    static let permissionNoteSpacing: CGFloat = 3
+    static let permissionNoteIconWidth: CGFloat = 13
+    static let pillInsets = EdgeInsets(top: 3, leading: 8, bottom: 3, trailing: 8)
     static let sidebarHeaderInset: CGFloat = 12
     static let sidebarSearchInsets = EdgeInsets(top: 0, leading: 12, bottom: 8, trailing: 12)
     static let searchFieldInsets = EdgeInsets(top: 5, leading: 8, bottom: 5, trailing: 8)
@@ -47,4 +52,5 @@ enum SettingsTokens {
     static let pageTitleFont = Font.system(size: 15, weight: .semibold)
     static let sectionTitleFont = Font.system(size: 12.5, weight: .semibold)
     static let descriptionFont = Font.system(size: 11.5)
+    static let pillFont = Font.system(size: 11, weight: .medium)
 }

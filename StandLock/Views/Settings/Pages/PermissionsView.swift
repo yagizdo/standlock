@@ -8,26 +8,45 @@ struct PermissionsView: View {
     var body: some View {
         SettingsPageLayout("Permissions") {
             if coordinator.schedules.contains(where: scheduleUsesStrict) {
-                SettingsSection("Needed by your schedules") {
+                group("Needed by your schedules") {
                     if !checker.strictModeAvailable {
-                        strictWarning
-                        Divider()
+                        SettingsSection { strictWarning }
                     }
-                    accessibilityRow
-                    Divider()
-                    inputMonitoringRow
+                    accessibilityCard
+                    inputMonitoringCard
                 }
-                SettingsSection("Optional") {
-                    calendarRow
+                group("Optional") {
+                    calendarCard
                 }
             } else {
-                SettingsSection("Optional", note: "StandLock works without any of them.") {
-                    accessibilityRow
-                    Divider()
-                    inputMonitoringRow
-                    Divider()
-                    calendarRow
+                group("Optional", note: "StandLock works without any of them.") {
+                    accessibilityCard
+                    inputMonitoringCard
+                    calendarCard
                 }
+            }
+        }
+    }
+
+    /// `SettingsSection`'s heading and note over separate cards instead of one.
+    private func group<Content: View>(
+        _ title: LocalizedStringKey,
+        note: LocalizedStringKey? = nil,
+        @ViewBuilder content: () -> Content
+    ) -> some View {
+        VStack(alignment: .leading, spacing: SettingsTokens.sectionTitleSpacing) {
+            Text(title)
+                .font(SettingsTokens.sectionTitleFont)
+                .accessibilityAddTraits(.isHeader)
+                .padding(.horizontal, SettingsTokens.sectionTitleInset)
+
+            VStack(spacing: SettingsTokens.permissionCardSpacing) {
+                content()
+            }
+
+            if let note {
+                SettingsDescription(note)
+                    .padding(.horizontal, SettingsTokens.sectionTitleInset)
             }
         }
     }
@@ -40,82 +59,43 @@ struct PermissionsView: View {
             .help(LocalizedStringKey(checker.strictModeBlockedReason ?? ""))
     }
 
-    private var accessibilityRow: some View {
-        PermissionRow(
+    // `figure.stand`, not `accessibility`: that symbol needs macOS 14.
+    private var accessibilityCard: some View {
+        PermissionCard(
             title: "Accessibility",
-            description: "Enables Strict mode to fully block keyboard and mouse input.",
+            symbol: "figure.stand",
+            reason: "Strict breaks block your keyboard and mouse. macOS allows that only with this permission.",
+            withoutIt: "Without it: Strict runs as Firm.",
+            privacy: "Used only during a Strict break.",
             permission: .accessibility,
             status: checker.accessibilityStatus,
             grant: { checker.requestAccessibility() }
         )
     }
 
-    private var inputMonitoringRow: some View {
-        PermissionRow(
+    private var inputMonitoringCard: some View {
+        PermissionCard(
             title: "Input Monitoring",
-            description: "Enables the escape key combo that ends a Strict break.",
+            symbol: "keyboard",
+            reason: "Lets StandLock notice when you hold Control, Option and Command to end a Strict break early.",
+            withoutIt: "Without it: Strict runs as Firm.",
+            privacy: "What you type is never read or saved.",
             permission: .inputMonitoring,
             status: checker.inputMonitoringStatus,
             grant: { checker.requestInputMonitoring() }
         )
     }
 
-    private var calendarRow: some View {
-        PermissionRow(
+    private var calendarCard: some View {
+        PermissionCard(
             title: "Calendar Access",
-            description: "Defer breaks during calendar events.",
+            symbol: "calendar",
+            reason: "Lets StandLock keep breaks out of your meetings.",
+            withoutIt: "Without it: breaks ignore your calendar.",
+            privacy: "Reads event times only, never titles.",
             permission: .calendar,
             status: checker.calendarPermissionStatus,
             grant: { checker.requestCalendar() }
         )
-    }
-}
-
-/// The status mark sits outside the description: Show help hides that, and a status is not help.
-struct PermissionRow: View {
-    @EnvironmentObject private var checker: PermissionChecker
-
-    let title: LocalizedStringKey
-    let description: LocalizedStringKey
-    let permission: PermissionType
-    let status: PermissionStatus
-    let grant: () -> Void
-
-    var body: some View {
-        HStack(spacing: 0) {
-            Image(systemName: mark.symbol)
-                .foregroundStyle(mark.color)
-                .frame(width: SettingsTokens.statusMarkWidth)
-                .padding(.leading, SettingsTokens.rowInsets.leading)
-                .accessibilityLabel(Text(mark.label))
-
-            SettingsRow(title, symbol: "lock.shield", description: description) {
-                actionButton
-                    .controlSize(.small)
-            }
-        }
-    }
-
-    @ViewBuilder
-    private var actionButton: some View {
-        switch status {
-        case .granted:
-            EmptyView()
-        case .notGranted:
-            Button("Grant", action: grant)
-        case .denied:
-            Button("Open Settings") { checker.openSystemSettings(for: permission) }
-        case .needsRestart:
-            Button("Restart") { checker.relaunchApp() }
-        }
-    }
-
-    private var mark: (symbol: String, color: Color, label: LocalizedStringKey) {
-        switch status {
-        case .granted: ("checkmark.circle.fill", .green, "Granted")
-        case .notGranted: ("exclamationmark.circle", .orange, "Not granted")
-        case .denied: ("xmark.circle.fill", .red, "Denied")
-        case .needsRestart: ("arrow.clockwise.circle.fill", .orange, "Restart needed")
-        }
     }
 }

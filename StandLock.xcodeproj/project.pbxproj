@@ -73,6 +73,7 @@
 		AFCD8E682F3B7C00A263441C /* SettingsSearchField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB7CBA12B287EE7D1683389 /* SettingsSearchField.swift */; };
 		B0B45CBAC1620814C7F443D0 /* DetectionSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF6A31515CC4248B938E982 /* DetectionSettingsView.swift */; };
 		B2DDDE67D0C30F62374D0BBE /* PermissionBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2BDD3661430F1F997413023 /* PermissionBadge.swift */; };
+		B3DAE3D0009EA570806955F3 /* PermissionCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2442916C24424F076D8711A6 /* PermissionCard.swift */; };
 		B7E27A2CACE2784901CB923C /* SettingsNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29B46D4E8DC400FCF4E57374 /* SettingsNavigation.swift */; };
 		BB64F88461355BFECA64390F /* StatisticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BB7EC878B3C641D2888AD2 /* StatisticsView.swift */; };
 		C144671C95E22BC38AD14FE8 /* ScheduleSidebarRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = F07BB496D038848FFC7FDB3F /* ScheduleSidebarRow.swift */; };
@@ -100,6 +101,7 @@
 		1D816A891C5FD51B89E4D0E2 /* DisciplineSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisciplineSettingsView.swift; sourceTree = "<group>"; };
 		20227808D86E5CC2E786ADAA /* BreakScreenSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakScreenSettingsView.swift; sourceTree = "<group>"; };
 		2063FDE70AFCC135664A8FD4 /* Exercises.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Exercises.json; sourceTree = "<group>"; };
+		2442916C24424F076D8711A6 /* PermissionCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionCard.swift; sourceTree = "<group>"; };
 		29B46D4E8DC400FCF4E57374 /* SettingsNavigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsNavigation.swift; sourceTree = "<group>"; };
 		2D5900DFD7FAE70774438F1F /* OpenSettingsCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenSettingsCommand.swift; sourceTree = "<group>"; };
 		303422D10B9C319038D63E32 /* SoftwareUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoftwareUpdate.swift; sourceTree = "<group>"; };
@@ -322,6 +324,7 @@
 				88D72443C7D064247ADFE6D0 /* GeneralSettingsView.swift */,
 				5F3E46265727E4E3D2C1578A /* HexColorField.swift */,
 				EB686878D805A9466970EFA3 /* MenuBarSettingsView.swift */,
+				2442916C24424F076D8711A6 /* PermissionCard.swift */,
 				12184C2234D04E8FE035B701 /* PermissionsView.swift */,
 				7EA489010EA8A9B969CE5227 /* PreferencesSaveOwner.swift */,
 				DF887D81035A1FE4735344F3 /* SettingsDetail.swift */,
@@ -518,6 +521,7 @@
 				72EF8A3AE6FD2B14FA478D0F /* OpenSettingsCommand.swift in Sources */,
 				ED1A168BD55576065212E8ED /* OverlayWindowController.swift in Sources */,
 				B2DDDE67D0C30F62374D0BBE /* PermissionBadge.swift in Sources */,
+				B3DAE3D0009EA570806955F3 /* PermissionCard.swift in Sources */,
 				21816E071409DEA5FC6A0BCE /* PermissionChecker.swift in Sources */,
 				939B26A31A39AED7A89760CE /* PermissionsStepView.swift in Sources */,
 				EAC5C8BAB2FC5D5FB1D845C5 /* PermissionsView.swift in Sources */,

@@ -7025,6 +7025,134 @@
           }
         }
       }
+    },
+    "Strict breaks block your keyboard and mouse. macOS allows that only with this permission." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Katı molalar klavyeyi ve fareyi engeller. macOS buna yalnız bu izinle olanak tanır."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "强制休息会屏蔽键盘和鼠标。macOS 只有在获得此权限后才允许这样做。"
+          }
+        }
+      }
+    },
+    "Without it: Strict runs as Firm." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İzin olmadan: Katı, Sıkı olarak çalışır."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "没有此权限：强制模式将以严格模式运行。"
+          }
+        }
+      }
+    },
+    "Used only during a Strict break." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yalnız Katı mola sırasında kullanılır."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "仅在强制休息期间使用。"
+          }
+        }
+      }
+    },
+    "Lets StandLock notice when you hold Control, Option and Command to end a Strict break early." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Katı molayı erken bitirmek için Control, Option ve Command tuşlarını basılı tuttuğunuzu StandLock'un anlamasını sağlar."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "让 StandLock 能发现你按住 Control、Option 和 Command 以提前结束强制休息。"
+          }
+        }
+      }
+    },
+    "What you type is never read or saved." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yazdıklarınız asla okunmaz ve kaydedilmez."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "绝不读取或存储你输入的内容。"
+          }
+        }
+      }
+    },
+    "Lets StandLock keep breaks out of your meetings." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "StandLock'un molaları toplantılarınızın dışında tutmasını sağlar."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "让 StandLock 避开你的会议安排休息。"
+          }
+        }
+      }
+    },
+    "Without it: breaks ignore your calendar." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İzin olmadan: Molalar takviminizi dikkate almaz."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "没有此权限：休息将忽略你的日历。"
+          }
+        }
+      }
+    },
+    "Reads event times only, never titles." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yalnız etkinlik saatlerini okur, başlıkları asla okumaz."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "只读取事件时间，绝不读取标题。"
+          }
+        }
+      }
     }
   },
   "version" : "1.1"
