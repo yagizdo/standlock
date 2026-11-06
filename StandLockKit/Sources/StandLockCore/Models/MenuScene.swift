@@ -3,5 +3,6 @@ public enum MenuScene: String, Codable, Sendable, CaseIterable {
     case hourglass
     case desk
     case cat
+    case penguin
     case off
 }

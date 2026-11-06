@@ -86,6 +86,7 @@
 		B3DAE3D0009EA570806955F3 /* PermissionCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2442916C24424F076D8711A6 /* PermissionCard.swift */; };
 		B7E27A2CACE2784901CB923C /* SettingsNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29B46D4E8DC400FCF4E57374 /* SettingsNavigation.swift */; };
 		BB64F88461355BFECA64390F /* StatisticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BB7EC878B3C641D2888AD2 /* StatisticsView.swift */; };
+		BF272D7E49CFE686A28BE539 /* PenguinScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = C851627E22E0B6855CD31121 /* PenguinScene.swift */; };
 		C144671C95E22BC38AD14FE8 /* ScheduleSidebarRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = F07BB496D038848FFC7FDB3F /* ScheduleSidebarRow.swift */; };
 		C5895F53358BDFD586A4A800 /* SettingsDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF887D81035A1FE4735344F3 /* SettingsDetail.swift */; };
 		CE55FB80048215F1C86DC99D /* DeskScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24E37F0725B2E389ACEC601F /* DeskScene.swift */; };
@@ -178,6 +179,7 @@
 		C5BBDBF97CFAA5FF490CBD00 /* BreakOverlayWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakOverlayWindow.swift; sourceTree = "<group>"; };
 		C64B592ED400D7D67ABD591A /* MenuScenePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuScenePicker.swift; sourceTree = "<group>"; };
 		C80FA2B8295FD72CAA075B38 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
+		C851627E22E0B6855CD31121 /* PenguinScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PenguinScene.swift; sourceTree = "<group>"; };
 		CD5052FB7ADFF1C72A819672 /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
 		CECAC1DE354D80668B0437F6 /* DayPreviewCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayPreviewCard.swift; sourceTree = "<group>"; };
 		D2BDD3661430F1F997413023 /* PermissionBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionBadge.swift; sourceTree = "<group>"; };
@@ -423,6 +425,7 @@
 				24E37F0725B2E389ACEC601F /* DeskScene.swift */,
 				39E5EFA4AB6411AD0176ED38 /* HourglassScene.swift */,
 				73072AEAC528F616B0FD5DB2 /* MenuSceneCard.swift */,
+				C851627E22E0B6855CD31121 /* PenguinScene.swift */,
 				F2A85DF7A9AA67198838FE47 /* SceneBubble.swift */,
 			);
 			path = Scenes;
@@ -576,6 +579,7 @@
 				FBB74759FC16BB2E5F728128 /* OnboardingView.swift in Sources */,
 				72EF8A3AE6FD2B14FA478D0F /* OpenSettingsCommand.swift in Sources */,
 				ED1A168BD55576065212E8ED /* OverlayWindowController.swift in Sources */,
+				BF272D7E49CFE686A28BE539 /* PenguinScene.swift in Sources */,
 				B2DDDE67D0C30F62374D0BBE /* PermissionBadge.swift in Sources */,
 				B3DAE3D0009EA570806955F3 /* PermissionCard.swift in Sources */,
 				21816E071409DEA5FC6A0BCE /* PermissionChecker.swift in Sources */,

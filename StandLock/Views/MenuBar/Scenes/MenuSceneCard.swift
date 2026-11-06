@@ -20,6 +20,7 @@ struct MenuSceneCard: View {
             case .hourglass: HourglassScene(look: look, progress: progress, time: time)
             case .desk: DeskScene(look: look, time: time)
             case .cat: CatScene(look: look, time: time)
+            case .penguin: PenguinScene(look: look, time: time)
             case .off: EmptyView()
             }
         }

@@ -7541,6 +7541,22 @@
           }
         }
       }
+    },
+    "Penguin" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Penguen"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "企鹅"
+          }
+        }
+      }
     }
   },
   "version" : "1.1"
