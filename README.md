@@ -17,166 +17,92 @@
 
 <img src="assets/break-gentle.png" width="820" alt="StandLock break overlay with a countdown and an exercise suggestion">
 
-**[Download the latest release](https://github.com/yagizdo/StandLock/releases/latest)** or `brew install --cask yagizdo/tap/standlock`
-
 </div>
 
-You have dismissed every break reminder you were ever sent. StandLock is built for that: when it's time to stand up, it covers every display with a countdown and an exercise, and you decide in advance how hard it is to get out of.
+You know you should stand up. You've also dismissed every reminder that told you so.
 
-<div align="center">
-
-<img src="assets/panel.gif" height="317" alt="Menu bar panel with an animated penguin scene and the countdown to the next break">
-<img src="assets/statistics.png" height="317" alt="Statistics page with a year of break activity as a heatmap">
-
-</div>
-
-## Highlights
-
-- **Three levels of stubborn.** Gentle has a skip button. Firm makes you wait, then type a sentence. Strict blocks the keyboard and mouse, with one emergency key combo out.
-- **Skipping gets harder.** Turn on escalation and each skip makes the next one worse: a button that runs from your cursor, mini-games, sentences you'd rather not type. *"We both know standing would've been easier."*
-- **It stays out of your calls.** Meetings, screen recordings, screen sharing and calendar events defer the break. When a call comes up mid-break, you can postpone it once.
-- **A small scene in your menu bar.** An hourglass, a desk, a calico cat or a penguin, reacting as your next break gets closer.
-- **A year of breaks in green squares.** Streaks, completion rate and a heatmap, so the skipping shows.
-- **Open source and native.** MIT, written in Swift, Sparkle is the only dependency. No account, no analytics. English, Turkish and Simplified Chinese.
-
-## Contents
-
-- [Highlights](#highlights)
-- [Why](#why)
-- [Features](#features)
-  - [Discipline Levels](#discipline-levels)
-  - [Escalation](#escalation)
-  - [Smart Scheduling](#smart-scheduling)
-  - [Context Awareness](#context-awareness)
-  - [Break Experience](#break-experience)
-  - [Break Statistics](#break-statistics)
-  - [Menu Bar](#menu-bar)
-  - [General](#general)
-- [Install](#install)
-  - [Requirements](#requirements)
-  - [GitHub Releases](#github-releases)
-  - [Homebrew](#homebrew)
-- [macOS Permissions](#macos-permissions)
-- [Building from Source](#building-from-source)
-  - [Deployment Target](#deployment-target)
-- [Contributing](#contributing)
-- [License](#license)
-
-## Why
-
-Most break reminder apps show a notification you can swipe away in half a second. That doesn't work if you're deep in focus and keep ignoring it. StandLock takes a different approach: instead of asking nicely, it can actually block your screen. You choose the level of enforcement per schedule. Use Gentle mode during casual browsing and Strict mode during long coding sessions. The goal is to make skipping a break a conscious decision, not a reflex.
-
-## Features
-
-### Discipline Levels
-
-Each schedule has its own discipline level. Pick one per schedule and change it anytime.
-
-| Level | Behavior |
-|-------|----------|
-| Gentle | Full-screen overlay with an immediate skip button |
-| Firm | Timed skip delay + type an escape phrase to dismiss |
-| Strict | Full input blocking, only an emergency key combo (Ctrl+Option+Command hold) exits |
-
-<img src="assets/break-firm.png" width="820" alt="Firm mode break screen asking you to type an escape phrase">
-
-### Escalation
-
-Enable progressive enforcement on any schedule and each consecutive skip makes the next break harder to dismiss. Challenges range from dodging buttons and mini-games to typing embarrassing phrases with snarky app commentary. Complete a break (or let idle detection count one) and the tier resets.
-
-<img src="assets/escalation.gif" width="640" alt="The skip button moving away from the cursor as the escalation tier rises">
-
-### Smart Scheduling
-
-- Multiple named schedules, each with its own discipline level and settings
-- Time windows (e.g., 09:00-12:00, 13:00-17:00)
-- Pick any days of the week
-- Templates when adding a schedule: 20-20-20, Pomodoro (25/5) and 52/17
-- A preview in the form lists every break time of the day
-- Pomodoro-style repetition cycles with short/long break patterns
-- Alternating work intervals: a schedule can cycle through up to 6 intervals instead of one (e.g. 58 min sitting, then 28 min standing), each with an optional label the break screen shows as what's coming next
-- Configurable daily skip limits per discipline level, set in Settings › Discipline (Strict has none)
-- Skipping a break resets the interval by default; a switch in Settings › Discipline measures the next break from the skipped one instead, so a skip buys no extra work time
-
-<img src="assets/schedules.png" width="640" alt="Settings window with the sidebar and a schedule open, showing day buttons, hours, alternating work intervals and the day's break times">
-
-### Context Awareness
-
-- Defers breaks during meetings (camera or microphone active), screen recordings and remote screen sharing sessions
-- Integrates with Calendar to skip during upcoming events, either every calendar or only the ones you pick
-- Detects idle time: if you've already been away for at least a minute (or the full break length, if longer), the break counts as completed
-- Camera and microphone detection can defer the break, reduce it to Gentle, or be ignored; screen sharing and idle detection are on or off, and calendar integration adds a choice of which calendars count
-
-### Break Experience
-
-- Full-screen overlay on every display with countdown timer
-- Exercise suggestions during breaks (stretches, water reminders, squats)
-- Postpone a break once when a call comes up: it returns at full length once the microphone and camera have been free for the delay set in Settings › Detection (1-10 min, default 2), and counts as deferred, not skipped
-- Pauses system media during breaks
-- Optional sounds, off by default, in Settings › Break Screen: one a minute before a break and one when a break ends
-- Settings › Break Screen: your own background and text colours (with a warning when contrast is low), hide today's statistics, or add a message under the timer
-
-<img src="assets/settings-break-screen.png" width="640" alt="Break Screen settings with a live preview, custom colours and a message under the timer">
-
-### Break Statistics
-
-A dedicated Statistics page in Settings tracks break history over time.
-
-- 6 metric cards: completions, skips, completion rate, current streak, best streak, total break time
-- Week view with per-day cards, month calendar, and year heatmap
-- Filtered by period: today, this week, this month, this year
-
-### Menu Bar
-
-- Timer showing remaining time until next break (always-on or last-minutes countdown)
-- Break stats: completions, streak, and skips for today
-- Pause/resume controls
-- Warns when the active schedule's Strict level is inactive and running as Firm
-- A drawn scene that follows the break state: an hourglass, a desk, a calico cat or a penguin, chosen in Settings › Menu Bar, or Off
-
-<img src="assets/menubar.png" width="820" alt="Four menu bar panels with the hourglass, desk, calico cat and penguin scenes, each in a different break state">
-
-<img src="assets/settings-menu-bar.png" width="640" alt="Menu Bar settings with a card for each scene">
-
-### General
-
-- **Launch at login** via macOS login items
-- **Auto-update** via Sparkle, with an update banner in the menu bar. Off by default: turn on Automatic Updates in Settings › About and StandLock checks every 4 hours, otherwise use Check for Updates
-- **Appearance**: System, Light or Dark in Settings › General. System is the default and follows your Mac, including the break overlay unless it has custom colours
-- **Language**: English, Turkish and Simplified Chinese. Settings › General has a picker that switches the interface without a restart; System follows your Mac's language
-
-## Install
-
-### Requirements
-
-- macOS 13+ (Ventura)
-
-### GitHub Releases
-
-Download the DMG: <https://github.com/yagizdo/StandLock/releases/latest>
-
-Drag StandLock to your Applications folder, then open it. The app appears in your menu bar.
-
-### Homebrew
+StandLock doesn't ask. When a break is due, it covers every display with a countdown and an exercise, and you choose beforehand how hard it is to get out of. It's free and open source, written in Swift. There's no account to make and no analytics.
 
 ```bash
 brew install --cask yagizdo/tap/standlock
 ```
 
-## macOS Permissions
+Or [download the DMG](https://github.com/yagizdo/StandLock/releases/latest) and drag StandLock to Applications. Requires macOS 13 or later. Start on Gentle, where one click gets you out, and get stricter when you're ready.
 
-StandLock asks for a permission only when you use the feature that needs it. It does check Accessibility and Input Monitoring at launch so the permissions screen reflects what macOS actually reports; the system's own preflight answer for Input Monitoring can go stale after you grant it.
+## Features
 
-| Permission | Why |
-|------------|-----|
-| **Accessibility** | Required for Strict mode. Blocks keyboard and mouse input during breaks by installing a system-level event tap. Without this, Strict mode cannot enforce breaks. |
-| **Input Monitoring** | Required for Strict mode (alongside Accessibility). Powers the escape key combo that ends a Strict break. Idle detection does not need it. |
-| **Calendar** | Optional. Reads your calendar events to automatically defer breaks during meetings. Never modifies your calendar. |
-| **Camera & Microphone** | Not accessed directly. StandLock checks whether another app is using the camera or mic to detect active meetings and defer breaks accordingly. |
+### Hard to ignore
 
-You can revoke any permission at any time in **System Settings > Privacy & Security**. When a permission is revoked, features that depend on it degrade instead of breaking: Strict schedules run as Firm until the permission is back, keeping their Strict setting and showing the reason on the schedule page, on Permissions and in the menu bar, and calendar integration is skipped. No crashes, no broken state.
+| Level | How you get out |
+|-------|-----------------|
+| Gentle | Click skip |
+| Firm | Wait, then type a phrase |
+| Strict | Input is blocked. Hold Ctrl+Option+Command to exit |
 
-## Building from Source
+- Set a level per schedule and change it anytime
+- Turn on escalation and each skip makes the next break harder: a button that runs from your cursor, mini-games, sentences you'd rather not type
+- Complete a break and escalation resets
+- Daily skip limits for Gentle and Firm
+
+<p align="center">
+  <img src="assets/break-firm.png" height="230" alt="Firm break screen asking you to type a phrase to dismiss">
+  <img src="assets/escalation.gif" height="230" alt="The skip button moving away from the cursor">
+</p>
+
+### Fits your day
+
+- Several schedules, each with its own days, hours and level
+- Templates for 20-20-20, Pomodoro and 52/17
+- Alternating intervals, like 58 minutes sitting and 28 standing
+- Every break of the day listed before you save
+- Breaks wait for meetings, screen recordings, screen sharing and calendar events
+- If you were already away from your desk, the break counts as done
+- You can postpone a break once when a call comes up
+
+<p align="center"><img src="assets/schedules.png" width="460" alt="Schedule form with days, hours, alternating intervals and the day's break times"></p>
+
+### A scene in your menu bar
+
+- Pick an hourglass, a desk, a calico cat or a penguin, or turn it off
+- The scene changes with your break: alert in the last minute, resting when you pause
+- Countdown, today's stats, Skip and Pause in one panel
+
+<p align="center"><img src="assets/scenes.webp" width="640" alt="The hourglass, penguin, calico cat and desk scenes, animated"></p>
+
+<p align="center"><img src="assets/menubar.png" width="760" alt="Four menu bar panels, each in a different break state"></p>
+
+### Streaks, colours and the rest
+
+- Completions, skips, streaks and a year heatmap
+- Your own break screen colours and message
+- Pauses your media during a break, with optional sounds before and after
+- System, Light or Dark, in English, Turkish or Simplified Chinese
+- Launch at login, and automatic updates through Sparkle (off by default)
+
+<p align="center">
+  <img src="assets/statistics.png" height="330" alt="Statistics page with six metric cards and a year heatmap">
+  <img src="assets/settings-break-screen.png" height="330" alt="Break Screen settings with a live preview, custom colours and a message">
+</p>
+
+<div align="center">
+
+**[Download StandLock](https://github.com/yagizdo/StandLock/releases/latest)**
+
+</div>
+
+## Permissions
+
+StandLock asks only when you use a feature that needs a permission. If you revoke one, Strict schedules run as Firm and calendar integration is skipped until you grant it again.
+
+| Permission | Used for |
+|------------|----------|
+| Accessibility | Strict mode: blocks keyboard and mouse during breaks |
+| Input Monitoring | Strict mode: the emergency key combo |
+| Calendar | Optional: reads events to defer breaks, never changes them |
+
+StandLock does not open your camera or microphone. It only checks whether another app is using them.
+
+## Build from source
 
 ```bash
 git clone https://github.com/yagizdo/StandLock.git
@@ -184,20 +110,7 @@ cd StandLock
 open StandLock.xcodeproj
 ```
 
-Build and run the `StandLock` scheme in Xcode. The app lives in your menu bar.
-
-### Deployment Target
-
-The minimum macOS version is declared in four places, and they do not derive from each other:
-
-- `project.yml` -- app target (Xcode project is regenerated from this with `xcodegen generate`)
-- `StandLockKit/Package.swift` -- Swift package (separate platform list)
-- `scripts/generate-appcast.sh` -- `sparkle:minimumSystemVersion`, decides which installs Sparkle offers the update to
-- `scripts/update-homebrew-cask.sh` -- `depends_on macos:`, decides who `brew install` lets in
-
-When raising or lowering the deployment target, update all four and run `xcodegen generate` to refresh `StandLock.xcodeproj`. Direct edits to `StandLock.xcodeproj/project.pbxproj` are overwritten on the next regeneration.
-
-The last two are easy to miss because nothing fails when they are wrong: the build succeeds, and users on the excluded versions are simply never offered the app. That is how 0.3.0 shipped telling Sparkle and Homebrew it needed macOS 15 while the binary reported `minos 13.0`.
+Build and run the `StandLock` scheme.
 
 ## Contributing
 

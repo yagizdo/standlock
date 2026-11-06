@@ -36,7 +36,20 @@ One thing that will confuse you at some point: after you add or remove a stored 
 - One concern per file, named after its primary type. Keep helpers out of `StandLockApp.swift` and `AppDelegate.swift`.
 - Open an issue before adding a dependency.
 - Leave `CHANGELOG.md` alone. I write the release notes when I cut a release and credit contributors there.
-- The minimum macOS version lives in four files. See [Deployment Target](README.md#deployment-target) in the README before changing it.
+- The minimum macOS version lives in four files. See [Deployment Target](#deployment-target) before changing it.
+
+## Deployment Target
+
+The minimum macOS version is declared in four places, and they do not derive from each other:
+
+- `project.yml` -- app target (Xcode project is regenerated from this with `xcodegen generate`)
+- `StandLockKit/Package.swift` -- Swift package (separate platform list)
+- `scripts/generate-appcast.sh` -- `sparkle:minimumSystemVersion`, decides which installs Sparkle offers the update to
+- `scripts/update-homebrew-cask.sh` -- `depends_on macos:`, decides who `brew install` lets in
+
+When raising or lowering the deployment target, update all four and run `xcodegen generate` to refresh `StandLock.xcodeproj`. Direct edits to `StandLock.xcodeproj/project.pbxproj` are overwritten on the next regeneration.
+
+The last two are easy to miss because nothing fails when they are wrong: the build succeeds, and users on the excluded versions are simply never offered the app. That is how 0.3.0 shipped telling Sparkle and Homebrew it needed macOS 15 while the binary reported `minos 13.0`.
 
 ## Pull requests
 
