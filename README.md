@@ -74,9 +74,9 @@ Enable progressive enforcement on any schedule and each consecutive skip makes t
 - Day selection: weekdays, weekends, every day, or custom
 - Pomodoro-style repetition cycles with short/long break patterns
 - Alternating work intervals: a schedule can cycle through up to 6 intervals instead of one (e.g. 58 min sitting, then 28 min standing), each with an optional label the break screen shows as what's coming next
-- Configurable daily skip limits per discipline level, set in Settings › General (Strict has none)
+- Configurable daily skip limits per discipline level, set in Settings › Discipline (Strict has none)
 
-<img src="assets/schedules.png" width="515" alt="Schedules window showing time windows, day selection and discipline level">
+<img src="assets/schedules.png" width="640" alt="Settings window with the sidebar and a schedule open, showing active days, time windows and alternating work intervals">
 
 ### Context Awareness
 
@@ -91,11 +91,11 @@ Enable progressive enforcement on any schedule and each consecutive skip makes t
 - Exercise suggestions during breaks (stretches, water reminders, squats)
 - Postpone a break once when a call comes up: it returns at full length once the microphone and camera have been free for the delay set in Settings › Detection (1-10 min, default 2), and counts as deferred, not skipped
 - Pauses system media during breaks
-- Break Screen settings in Settings › General: your own background and text colours (with a warning when contrast is low), hide today's statistics, or add a message under the timer
+- Settings › Break Screen: your own background and text colours (with a warning when contrast is low), hide today's statistics, or add a message under the timer
 
 ### Break Statistics
 
-A dedicated Statistics tab in Settings tracks break history over time.
+A dedicated Statistics page in Settings tracks break history over time.
 
 - 6 metric cards: completions, skips, completion rate, current streak, best streak, total break time
 - Week view with per-day cards, month calendar, and year heatmap
@@ -113,7 +113,7 @@ A dedicated Statistics tab in Settings tracks break history over time.
 ### General
 
 - **Launch at login** via macOS login items
-- **Auto-update** via Sparkle, with an update banner in the menu bar. Off by default: turn on Automatic Updates in Settings and StandLock checks every 4 hours, otherwise use Check for Updates
+- **Auto-update** via Sparkle, with an update banner in the menu bar. Off by default: turn on Automatic Updates in Settings › About and StandLock checks every 4 hours, otherwise use Check for Updates
 - **Appearance**: System, Light or Dark in Settings › General. System is the default and follows your Mac, including the break overlay unless it has custom colours
 - **Language**: English, Turkish and Simplified Chinese. Settings › General has a picker that switches the interface without a restart; System follows your Mac's language
 
