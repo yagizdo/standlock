@@ -48,7 +48,7 @@ private struct SchedulePage: View {
                 } else if coordinator.schedules.isEmpty {
                     emptyNote
                 }
-                ScheduleFormView(draft: $draft)
+                ScheduleFormView(draft: $draft, schedule: schedule)
                     .environment(\.settingsRowTone, .strict)
                     // Not `.keyboardShortcut`: in a pane that reaches the whole window, sidebar
                     // and search included. These two need focus inside the form.

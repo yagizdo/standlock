@@ -3,7 +3,7 @@ import StandLockCore
 
 /// Seven toggles, Monday first. Short names on screen, full names for VoiceOver.
 struct DayButtons: View {
-    private static let order: [Weekday] = [.monday, .tuesday, .wednesday, .thursday, .friday, .saturday, .sunday]
+    static let order: [Weekday] = [.monday, .tuesday, .wednesday, .thursday, .friday, .saturday, .sunday]
 
     @Binding var days: Set<Weekday>
 

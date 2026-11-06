@@ -31,6 +31,9 @@ enum SettingsTokens {
     static let dayButtonSpacing: CGFloat = 5
     static let tileHeaderSpacing: CGFloat = 7
     static let intervalValueWidth: CGFloat = 112
+    static let timeGroupLabelWidth: CGFloat = 118
+    static let timeChipMinWidth: CGFloat = 68
+    static let timeChipInset: CGFloat = 5
     static let numberFieldWidth: CGFloat = 50
     static let timePickerWidth: CGFloat = 60
     static let permissionChipSize: CGFloat = 30
@@ -57,5 +60,6 @@ enum SettingsTokens {
     static let dayButtonFont = Font.system(size: 11.5, weight: .medium)
     static let tileTitleFont = Font.system(size: 12)
     static let tileNumberFont = Font.system(size: 26, weight: .semibold, design: .rounded)
+    static let timeChipFont = Font.system(size: 12.5, weight: .medium)
     static let pillFont = Font.system(size: 11, weight: .medium)
 }

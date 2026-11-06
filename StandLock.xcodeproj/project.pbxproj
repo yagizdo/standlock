@@ -55,6 +55,7 @@
 		853D7752B3F522DFB3E0AA02 /* WeekdaySymbols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CDB4CFBD38A25482A8B215B /* WeekdaySymbols.swift */; };
 		861C544CEA9B855BFE8724B6 /* SettingsSidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 644D55BA77E73588DF358AC7 /* SettingsSidebar.swift */; };
 		86A8326B93233891CC64711F /* SettingsDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89C0F66299A75A8744DE5CF6 /* SettingsDescription.swift */; };
+		877287617D7DDBAB2346687C /* DayPreviewCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECAC1DE354D80668B0437F6 /* DayPreviewCard.swift */; };
 		897387E26C50A633291C6545 /* QuickSetupStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7259326030030D8F49258219 /* QuickSetupStepView.swift */; };
 		8ABB22099BF5F67DCC2A0FA3 /* DisciplineSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D816A891C5FD51B89E4D0E2 /* DisciplineSettingsView.swift */; };
 		8F6AC147C464B1A28A96E798 /* SettingsRowTone.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9413FF43C324512A68D3038A /* SettingsRowTone.swift */; };
@@ -161,6 +162,7 @@
 		C5BBDBF97CFAA5FF490CBD00 /* BreakOverlayWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakOverlayWindow.swift; sourceTree = "<group>"; };
 		C80FA2B8295FD72CAA075B38 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 		CD5052FB7ADFF1C72A819672 /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
+		CECAC1DE354D80668B0437F6 /* DayPreviewCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayPreviewCard.swift; sourceTree = "<group>"; };
 		D2BDD3661430F1F997413023 /* PermissionBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionBadge.swift; sourceTree = "<group>"; };
 		D5021A1A699359391AD0CEEB /* SettingsRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsRow.swift; sourceTree = "<group>"; };
 		DA2920940F5FB5690FF53B7B /* SettingsTokens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsTokens.swift; sourceTree = "<group>"; };
@@ -222,6 +224,7 @@
 			isa = PBXGroup;
 			children = (
 				B06BD317C6ADEBC1F1D16043 /* DayButtons.swift */,
+				CECAC1DE354D80668B0437F6 /* DayPreviewCard.swift */,
 				BF82AC0C965E52DC46B97A8C /* DeleteConfirmationView.swift */,
 				9685AC67A3B1CA0D154BC6DB /* DisciplineLevelPicker.swift */,
 				A485E937F7D80FA3455BA910 /* RhythmTile.swift */,
@@ -508,6 +511,7 @@
 				9CE3B1904556E5F701466351 /* BreakSoundPlayer.swift in Sources */,
 				AB84ADC15C8263AFD995E8B5 /* BreakTypography.swift in Sources */,
 				B2FF3CCDF5FB0EFC3C60C8BF /* DayButtons.swift in Sources */,
+				877287617D7DDBAB2346687C /* DayPreviewCard.swift in Sources */,
 				E6C55A4F70CDBF7DB5403B1F /* DeleteConfirmationView.swift in Sources */,
 				B0B45CBAC1620814C7F443D0 /* DetectionSettingsView.swift in Sources */,
 				0E1C2D941E09D0DF09384EE0 /* DisciplineLevelPicker.swift in Sources */,

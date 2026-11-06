@@ -3,11 +3,15 @@ import StandLockCore
 
 struct ScheduleFormView: View {
     @Binding var draft: ScheduleDraft
+    /// The stored schedule, nil for a new one.
+    let schedule: Schedule?
 
     var body: some View {
         nameSection
         whenSection
         rhythmSection
+        DayPreviewCard(draft: draft, schedule: schedule)
+            .equatable()
         disciplineSection
     }
 
