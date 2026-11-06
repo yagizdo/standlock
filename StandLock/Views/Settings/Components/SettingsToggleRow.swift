@@ -2,11 +2,11 @@ import SwiftUI
 
 struct SettingsToggleRow: View {
     private let title: LocalizedStringKey
-    private let symbol: String?
+    private let symbol: String
     private let description: LocalizedStringKey?
     @Binding private var isOn: Bool
 
-    init(_ title: LocalizedStringKey, symbol: String?, description: LocalizedStringKey? = nil, isOn: Binding<Bool>) {
+    init(_ title: LocalizedStringKey, symbol: String, description: LocalizedStringKey? = nil, isOn: Binding<Bool>) {
         self.title = title
         self.symbol = symbol
         self.description = description

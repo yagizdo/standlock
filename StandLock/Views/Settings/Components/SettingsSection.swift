@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// An optional heading over a card, with an optional note below it. Pages put a `Divider()` between rows: macOS 13 has no public way for
+/// An optional heading over a card, with an optional note below it. Pages put a `SettingsRowDivider()` between rows: macOS 13 has no public way for
 /// this view to walk its content.
 struct SettingsSection<Content: View>: View {
     private let title: LocalizedStringKey?
