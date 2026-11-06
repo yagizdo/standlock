@@ -7413,6 +7413,22 @@
           }
         }
       }
+    },
+    "Start from" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Şununla başla"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "从此开始"
+          }
+        }
+      }
     }
   },
   "version" : "1.1"

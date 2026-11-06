@@ -94,6 +94,7 @@
 		F7D293B2C83521B31C5FCF7B /* SettingsPageLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA4E43A1C69B7789F4968823 /* SettingsPageLayout.swift */; };
 		FBB74759FC16BB2E5F728128 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A85E4C082C8E3C5083ABAEB /* OnboardingView.swift */; };
 		FF4C7AAB3CFF56C574A3EAA2 /* BreakPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C3B7E68FDF3C989BA50F367 /* BreakPalette.swift */; };
+		FFA79495C2E273B9AFDE5F0A /* TemplateRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = B87A8947B73CA1C6C6D091F7 /* TemplateRow.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -154,6 +155,7 @@
 		B1524D749BB78A875E5FD51F /* StandLockApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StandLockApp.swift; sourceTree = "<group>"; };
 		B387012391C6BC0360436B50 /* WelcomeStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeStepView.swift; sourceTree = "<group>"; };
 		B6255027F43C988785C9635D /* ScheduleDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleDetailView.swift; sourceTree = "<group>"; };
+		B87A8947B73CA1C6C6D091F7 /* TemplateRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplateRow.swift; sourceTree = "<group>"; };
 		BCAC5A6BBBB241EEA90944F4 /* LocalizedRoot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizedRoot.swift; sourceTree = "<group>"; };
 		BF82AC0C965E52DC46B97A8C /* DeleteConfirmationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteConfirmationView.swift; sourceTree = "<group>"; };
 		C1BB7EC878B3C641D2888AD2 /* StatisticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsView.swift; sourceTree = "<group>"; };
@@ -231,6 +233,7 @@
 				B6255027F43C988785C9635D /* ScheduleDetailView.swift */,
 				C3663C539337040D9472D8D1 /* ScheduleFormView.swift */,
 				9A485172E288DBE02E326017 /* ScheduleStatusView.swift */,
+				B87A8947B73CA1C6C6D091F7 /* TemplateRow.swift */,
 				6CDB4CFBD38A25482A8B215B /* WeekdaySymbols.swift */,
 			);
 			path = Schedules;
@@ -569,6 +572,7 @@
 				2CD0D3C3CF795626E50A5EAA /* StandLockApp.swift in Sources */,
 				BB64F88461355BFECA64390F /* StatisticsView.swift in Sources */,
 				D588F2EB46E9B8124422C5EE /* StatsFooter.swift in Sources */,
+				FFA79495C2E273B9AFDE5F0A /* TemplateRow.swift in Sources */,
 				45EEC3830A30A1175EBD1FCE /* ThemeStore.swift in Sources */,
 				51FC83BD2349C694BF8C11DD /* TimerNumerals.swift in Sources */,
 				853D7752B3F522DFB3E0AA02 /* WeekdaySymbols.swift in Sources */,

@@ -8,6 +8,9 @@ struct ScheduleFormView: View {
 
     var body: some View {
         nameSection
+        if schedule == nil {
+            TemplateRow(draft: $draft)
+        }
         whenSection
         rhythmSection
         DayPreviewCard(draft: draft, schedule: schedule)
