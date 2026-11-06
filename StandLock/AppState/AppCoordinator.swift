@@ -478,6 +478,9 @@ final class AppCoordinator: ObservableObject {
             pausedUntil = nil
             updateMenuBarTimer()
 
+        case .breakCue:
+            break
+
         case .statisticsUpdated(let stats):
             todayStats = stats
             saveStatistics()
