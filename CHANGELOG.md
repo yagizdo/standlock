@@ -3,13 +3,14 @@
 ## StandLock v0.11.0
 
 **Features**
-- Settings is now one window with a sidebar instead of tabs. General, Menu Bar, Break Screen, Discipline, Detection, Permissions, Statistics and About each have a page, and every schedule has its own row. The sidebar adds search, a countdown to the next break, a badge when a permission needs attention, and a Show help switch for the description text (f493cc8)
+- Settings is now one window with a sidebar instead of tabs. General, Menu Bar, Break Screen, Discipline, Detection, Permissions, Statistics and About each have a page, and every schedule has its own row. The sidebar adds search, a countdown to the next break, a badge when a permission needs attention, and a Show help switch for the description text. Command F focuses search. About shows the update status (f493cc8)
 - Schedules are edited on their own page. Leaving the page, closing the window or quitting with unsaved edits asks you to save, discard or cancel. A schedule can start from a 20-20-20, Pomodoro or 52/17 template, and the form lists every break of the day before you save (f493cc8)
 - Two optional sounds in Settings › Break Screen, both off by default: one a minute before a break, one when you finish a break. The first stays quiet when the break is going to wait or you are away (f493cc8)
 - The menu bar panel opens on a drawn scene that follows your break: alert in the last minute, resting when you pause. Pick an hourglass, a desk, a calico cat, a penguin or Off in Settings › Menu Bar (bdd1f59)
 
 **Improvements**
 - The menu bar panel now has compact Skip, Pause and gear controls. Settings, About and Quit moved into the gear's menu (bdd1f59)
+- Daily skip limits moved to Settings › Discipline and Pause Media to Settings › Break Screen (f493cc8)
 
 **Bug Fixes**
 - Skip in the menu bar now skips the break when you are outside the schedule's hours or near their end. It used to count a skip and reset your streak while the break stayed in place (922a173)
