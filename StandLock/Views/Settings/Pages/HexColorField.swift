@@ -2,7 +2,7 @@ import SwiftUI
 import StandLockCore
 
 /// Keeps the typed code in its own state so the coordinator's once-a-second updates cannot
-/// overwrite an unfinished edit. Commits on Return or when focus leaves; an invalid code
+/// overwrite an unfinished edit. Commits on Return, when focus leaves or when the page does; an invalid code
 /// puts the stored one back.
 struct HexColorField: View {
     @Binding var color: HexColor
@@ -25,6 +25,10 @@ struct HexColorField: View {
                 text = newColor.hex
             }
             .onAppear { text = color.hex }
+            // Selecting another page removes the field with no focus change to commit on.
+            .onDisappear {
+                if isFocused { commit() }
+            }
     }
 
     private func commit() {

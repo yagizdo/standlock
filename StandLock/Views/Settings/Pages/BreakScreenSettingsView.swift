@@ -110,7 +110,11 @@ struct BreakScreenSettingsView: View {
     ) -> Binding<HexColor> {
         Binding(
             get: { HexColor(hex: coordinator.preferences.breakScreen[keyPath: keyPath] ?? "") ?? fallback },
-            set: { coordinator.preferences.breakScreen[keyPath: keyPath] = $0.hex }
+            set: { newColor in
+                // A field committing as Custom Break Colors turns off must not bring one colour back.
+                guard coordinator.preferences.breakScreen.customColors != nil else { return }
+                coordinator.preferences.breakScreen[keyPath: keyPath] = newColor.hex
+            }
         )
     }
 
