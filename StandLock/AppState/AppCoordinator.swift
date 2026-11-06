@@ -23,11 +23,6 @@ private final class OnboardingWindowCloseDelegate: NSObject, NSWindowDelegate {
 
 @MainActor
 final class AppCoordinator: ObservableObject {
-    enum SettingsTab: Int, Hashable {
-        case general, schedules, detection, permissions, statistics, about
-    }
-
-    @Published var selectedSettingsTab: SettingsTab = .general
     @Published var nextBreakTime: Date?
     @Published private(set) var breakScheduledAt: Date?
     @Published var isBreakActive: Bool = false
@@ -46,7 +41,9 @@ final class AppCoordinator: ObservableObject {
 
     let languageStore = LanguageStore()
     let themeStore = ThemeStore()
+    let settingsNavigation = SettingsNavigation()
     let permissionChecker: PermissionChecker
+    private let breakSoundPlayer = BreakSoundPlayer()
 
     private var coordinator: BreakCoordinator?
     /// Survives the coordinator-less interval between a teardown and the next build.
@@ -262,7 +259,7 @@ final class AppCoordinator: ObservableObject {
         guard lastStrictModeAvailable != strictAvailable else { return }
         lastStrictModeAvailable = strictAvailable
         if coordinator != nil,
-           schedules.contains(where: { $0.isEnabled && $0.disciplineLevel == .strict }) {
+           schedules.contains(where: scheduleUsesStrict) {
             restartCoordinator()
         }
     }
@@ -481,6 +478,9 @@ final class AppCoordinator: ObservableObject {
             isPaused = false
             pausedUntil = nil
             updateMenuBarTimer()
+
+        case .breakCue(let cue):
+            breakSoundPlayer.play(cue)
 
         case .statisticsUpdated(let stats):
             todayStats = stats

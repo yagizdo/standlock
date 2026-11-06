@@ -84,6 +84,17 @@ func makeSchedule(
     )
 }
 
+/// For a positive check. A fixed sleep before one fails when a loaded runner wakes late.
+@MainActor
+func waitUntil(_ condition: () -> Bool) async -> Bool {
+    let deadline = ContinuousClock.now + .seconds(3)
+    while !condition() {
+        guard ContinuousClock.now < deadline else { return false }
+        try? await Task.sleep(for: .milliseconds(10))
+    }
+    return true
+}
+
 // MARK: - Tests
 
 @Suite("BreakCoordinator Tests")
@@ -2083,16 +2094,6 @@ struct BreakCoordinatorPostponeTests {
         return (coordinator, scheduler, detector, locker, schedule)
     }
 
-    /// For a positive check. A fixed sleep before one fails when a loaded runner wakes late.
-    private func waitUntil(_ condition: () -> Bool) async -> Bool {
-        let deadline = ContinuousClock.now + .seconds(3)
-        while !condition() {
-            guard ContinuousClock.now < deadline else { return false }
-            try? await Task.sleep(for: .milliseconds(10))
-        }
-        return true
-    }
-
     @Test
     func postponeIsNotASkip() async {
         var stats = BreakStatistics()
@@ -2462,5 +2463,192 @@ struct BreakCoordinatorPostponeTests {
             EnforcementState.self, from: JSONEncoder().encode(state)
         )
         #expect(decoded.postponedScheduleID == nil)
+    }
+}
+
+@Suite("BreakCoordinator Cues")
+@MainActor
+struct BreakCoordinatorCueTests {
+
+    private final class EventLog {
+        var entries: [String] = []
+    }
+
+    /// Holds the context read long enough for a test to act while the lead stage waits on it.
+    private final class SlowDetector: ContextDetecting, @unchecked Sendable {
+        var entered = false
+        func currentContext() async -> DetectionContext {
+            entered = true
+            try? await Task.sleep(for: .milliseconds(100))
+            return .clear
+        }
+    }
+
+    @MainActor
+    private struct Run {
+        let coordinator: BreakCoordinator
+        let scheduler: MockScheduler
+        let locker: MockLocker
+        let log: EventLog
+        let listener: Task<Void, Never>
+
+        func finish() {
+            coordinator.stop()
+            listener.cancel()
+        }
+    }
+
+    private func start(
+        preferences: AppPreferences,
+        firesIn delay: TimeInterval = 0.5,
+        cueLead: TimeInterval = 0.1,
+        detector: any ContextDetecting = MockDetector()
+    ) -> Run {
+        let scheduler = MockScheduler()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(delay)
+        let locker = MockLocker()
+        let coordinator = BreakCoordinator(
+            scheduler: scheduler, detector: detector, locker: locker,
+            deferralPollingInterval: 0.05, cueLead: cueLead
+        )
+        let log = EventLog()
+        let listener = Task {
+            for await event in coordinator.events {
+                switch event {
+                case .breakCue(.approaching): log.entries.append("approaching")
+                case .breakCue(.ended): log.entries.append("ended")
+                case .breakStarted: log.entries.append("started")
+                case .breakCompleted: log.entries.append("completed")
+                case .breakSkipped: log.entries.append("skipped")
+                case .breakEscaped: log.entries.append("escaped")
+                case .breakDeferred: log.entries.append("deferred")
+                default: break
+                }
+            }
+        }
+        coordinator.start(with: [makeSchedule()], preferences: preferences)
+        return Run(coordinator: coordinator, scheduler: scheduler, locker: locker, log: log, listener: listener)
+    }
+
+    /// Waits for the break screen, then pushes the scheduler out so nothing else fires.
+    private func waitForBreak(_ run: Run) async {
+        #expect(await waitUntil { run.log.entries.contains("started") })
+        run.scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(600)
+    }
+
+    private func clearContext(idle: TimeInterval = 0, camera: Bool = false) -> MockDetector {
+        let detector = MockDetector()
+        detector.contextToReturn = DetectionContext(cameraActive: camera, idleDuration: idle)
+        return detector
+    }
+
+    @Test func endCuePlaysAfterCompletion() async {
+        let run = start(preferences: AppPreferences(soundAfterBreak: true))
+        await waitForBreak(run)
+
+        run.coordinator.completeActiveBreak()
+
+        #expect(await waitUntil { run.log.entries.contains("ended") })
+        #expect(run.log.entries == ["started", "completed", "ended"])
+        run.finish()
+    }
+
+    @Test func noEndCueForSkipEscapeOrIdleCredit() async {
+        let skipped = start(preferences: AppPreferences(soundAfterBreak: true))
+        await waitForBreak(skipped)
+        skipped.coordinator.skipActiveBreak()
+        #expect(await waitUntil { skipped.log.entries.contains("skipped") })
+        skipped.finish()
+        #expect(!skipped.log.entries.contains("ended"))
+
+        let escaped = start(preferences: AppPreferences(soundAfterBreak: true))
+        await waitForBreak(escaped)
+        escaped.coordinator.escapeActiveBreak()
+        #expect(await waitUntil { escaped.log.entries.contains("escaped") })
+        escaped.finish()
+        #expect(!escaped.log.entries.contains("ended"))
+
+        let idle = start(
+            preferences: AppPreferences(idleDetectionEnabled: true, soundAfterBreak: true),
+            detector: clearContext(idle: 3600)
+        )
+        #expect(await waitUntil { idle.log.entries.contains("completed") })
+        idle.scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(600)
+        idle.finish()
+        #expect(!idle.log.entries.contains("ended"))
+        #expect(!idle.locker.showOverlayCalled)
+    }
+
+    @Test func noCuesWhenPreferencesOff() async {
+        let run = start(preferences: AppPreferences())
+        await waitForBreak(run)
+        run.coordinator.completeActiveBreak()
+        #expect(await waitUntil { run.log.entries.contains("completed") })
+        run.finish()
+        #expect(run.log.entries == ["started", "completed"])
+    }
+
+    @Test func approachingCueBeforeBreak() async {
+        let run = start(preferences: AppPreferences(soundBeforeBreak: true))
+        await waitForBreak(run)
+        #expect(run.log.entries == ["approaching", "started"])
+        run.finish()
+    }
+
+    @Test func noApproachingCueWhenBreakWillDefer() async {
+        let run = start(
+            preferences: AppPreferences(cameraDetection: .deferBreak, soundBeforeBreak: true),
+            detector: clearContext(camera: true)
+        )
+        #expect(await waitUntil { run.log.entries.contains("deferred") })
+        run.finish()
+        #expect(!run.log.entries.contains("approaching"))
+    }
+
+    @Test func noApproachingCueWhenUserIsAway() async {
+        let run = start(
+            preferences: AppPreferences(soundBeforeBreak: true),
+            detector: clearContext(idle: 0.1)
+        )
+        await waitForBreak(run)
+        #expect(run.log.entries == ["started"])
+        run.finish()
+    }
+
+    @Test func noApproachingCueWhenLeadIsLongerThanDelay() async {
+        let run = start(preferences: AppPreferences(soundBeforeBreak: true), firesIn: 0.1, cueLead: 1)
+        await waitForBreak(run)
+        #expect(run.log.entries == ["started"])
+        run.finish()
+    }
+
+    @Test func skipDuringLeadCancelsCue() async {
+        let detector = SlowDetector()
+        let run = start(preferences: AppPreferences(soundBeforeBreak: true), detector: detector)
+        #expect(await waitUntil { detector.entered })
+
+        run.scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(600)
+        run.coordinator.skipNextBreak()
+
+        try? await Task.sleep(for: .milliseconds(200))
+        run.finish()
+        #expect(run.log.entries.isEmpty)
+    }
+
+    /// `updatePreferences` does not re-arm the timer, so the armed value must not be the one read.
+    @Test func soundPreferenceIsReadAtLeadPoint() async {
+        let turnedOn = start(preferences: AppPreferences(), firesIn: 1.2, cueLead: 0.2)
+        try? await Task.sleep(for: .milliseconds(150))
+        turnedOn.coordinator.updatePreferences(AppPreferences(soundBeforeBreak: true))
+        await waitForBreak(turnedOn)
+        #expect(turnedOn.log.entries == ["approaching", "started"])
+        turnedOn.finish()
+
+        let turnedOff = start(preferences: AppPreferences(soundBeforeBreak: true), firesIn: 1.2, cueLead: 0.2)
+        try? await Task.sleep(for: .milliseconds(150))
+        turnedOff.coordinator.updatePreferences(AppPreferences())
+        await waitForBreak(turnedOff)
+        #expect(turnedOff.log.entries == ["started"])
+        turnedOff.finish()
     }
 }

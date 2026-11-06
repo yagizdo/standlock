@@ -10,4 +10,5 @@ public enum CoordinatorEvent: Sendable {
     case schedulePaused(until: Date)
     case scheduleResumed
     case statisticsUpdated(BreakStatistics)
+    case breakCue(BreakCue)
 }

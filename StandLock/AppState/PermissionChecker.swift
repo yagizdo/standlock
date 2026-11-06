@@ -230,8 +230,8 @@ final class PermissionChecker: ObservableObject {
 
     var strictModeAvailable: Bool { accessibilityGranted && inputMonitoringGranted }
 
-    /// Why Strict cannot run right now, or nil when it can. Shared by the level picker and the
-    /// schedule list so the two never drift into describing the same block differently.
+    /// Why Strict cannot run right now, or nil when it can. Shared by the level picker, the
+    /// schedule page and Permissions so they never drift into describing the same block differently.
     var strictModeBlockedReason: String? {
         if strictModeAvailable { return nil }
         if !accessibilityGranted && !inputMonitoringGranted {
@@ -242,10 +242,10 @@ final class PermissionChecker: ObservableObject {
         }
         return "Strict mode requires Input Monitoring permission for the escape key combo."
     }
-    /// True when the schedule reads Strict but the break will run as Firm. Shared by the
-    /// schedule list and the menu bar so neither can leave the downgrade unmentioned.
+    /// True when the schedule reads Strict but the break will run as Firm. Shared by the schedule
+    /// page, the Permissions badge and the menu bar so none can leave the downgrade unmentioned.
     func strictIsInactive(for schedule: Schedule) -> Bool {
-        schedule.isEnabled && schedule.disciplineLevel == .strict && !strictModeAvailable
+        scheduleNeedsStrictPermission(schedule, strictAvailable: strictModeAvailable)
     }
 
     var calendarIntegrationAvailable: Bool { CalendarDetector.isAuthorized(calendarStatus) }

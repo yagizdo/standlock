@@ -1,0 +1,65 @@
+import SwiftUI
+
+/// Spacing, radii and text sizes shared by Settings pages.
+enum SettingsTokens {
+    static let pageInset: CGFloat = 24
+    static let pageTitleInsets = EdgeInsets(top: 14, leading: 24, bottom: 10, trailing: 24)
+    static let sectionSpacing: CGFloat = 18
+    static let sectionTitleSpacing: CGFloat = 7
+    static let sectionTitleInset: CGFloat = 2
+    static let cardRadius: CGFloat = 11
+    static let cardSpacing: CGFloat = 10
+    static let rowInsets = EdgeInsets(top: 9, leading: 13, bottom: 9, trailing: 13)
+    static let rowMinHeight: CGFloat = 40
+    static let rowSpacing: CGFloat = 12
+    static let rowChipSize: CGFloat = 24
+    static let rowTextInset = rowInsets.leading + rowChipSize + rowSpacing
+    static let rowTextSpacing: CGFloat = 1
+    static let listItemSpacing: CGFloat = 6
+    static let stripInsets = EdgeInsets(top: 5, leading: 11, bottom: 5, trailing: 11)
+    static let stripRadius: CGFloat = 7
+    static let stripItemSpacing: CGFloat = 4
+    static let previewInsets = EdgeInsets(top: 11, leading: 13, bottom: 11, trailing: 13)
+    static let previewRadius: CGFloat = 9
+    static let previewSpacing: CGFloat = 10
+    static let textFieldWidth: CGFloat = 170
+    static let statusDotSize: CGFloat = 7
+    static let statusMarkWidth: CGFloat = 16
+    static let blockSpacing: CGFloat = 8
+    static let chipRadius: CGFloat = 6
+    static let dayButtonInsets = EdgeInsets(top: 6, leading: 0, bottom: 6, trailing: 0)
+    static let dayButtonSpacing: CGFloat = 5
+    static let tileHeaderSpacing: CGFloat = 7
+    static let intervalValueWidth: CGFloat = 112
+    static let timeGroupLabelWidth: CGFloat = 118
+    static let timeChipMinWidth: CGFloat = 68
+    static let timeChipInset: CGFloat = 5
+    static let numberFieldWidth: CGFloat = 50
+    static let timePickerWidth: CGFloat = 60
+    static let permissionChipSize: CGFloat = 30
+    static let permissionNoteSpacing: CGFloat = 3
+    static let permissionNoteIconWidth: CGFloat = 13
+    static let pillInsets = EdgeInsets(top: 3, leading: 8, bottom: 3, trailing: 8)
+    static let sidebarHeaderInset: CGFloat = 12
+    static let sidebarSearchInsets = EdgeInsets(top: 0, leading: 12, bottom: 8, trailing: 12)
+    static let searchFieldInsets = EdgeInsets(top: 5, leading: 8, bottom: 5, trailing: 8)
+    static let searchFieldSpacing: CGFloat = 6
+    static let searchFieldRadius: CGFloat = 7
+    static let sidebarFooterInsets = EdgeInsets(top: 10, leading: 16, bottom: 12, trailing: 16)
+    static let sidebarFooterSpacing: CGFloat = 9
+    static let sidebarFooterLineSpacing: CGFloat = 4
+    static let countdownSize: CGFloat = 21
+    static let identityIconSize: CGFloat = 66
+    static let identityIconRadius: CGFloat = 15
+    static let identityInset: CGFloat = 12
+    static let identitySpacing: CGFloat = 7
+    static let footerInsets = EdgeInsets(top: 10, leading: 24, bottom: 10, trailing: 24)
+    static let pageTitleFont = Font.system(size: 15, weight: .semibold)
+    static let sectionTitleFont = Font.system(size: 12.5, weight: .semibold)
+    static let descriptionFont = Font.system(size: 11.5)
+    static let dayButtonFont = Font.system(size: 11.5, weight: .medium)
+    static let tileTitleFont = Font.system(size: 12)
+    static let tileNumberFont = Font.system(size: 26, weight: .semibold, design: .rounded)
+    static let timeChipFont = Font.system(size: 12.5, weight: .medium)
+    static let pillFont = Font.system(size: 11, weight: .medium)
+}

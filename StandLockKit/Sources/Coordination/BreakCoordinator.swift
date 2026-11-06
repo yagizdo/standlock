@@ -95,11 +95,14 @@ public final class BreakCoordinator {
     private static let minimumLeadTime: TimeInterval = 60
 
     private let deferralPollingInterval: TimeInterval
+    /// How long before a break `.breakCue(.approaching)` plays.
+    private let cueLead: TimeInterval
     private let eventContinuation: AsyncStream<CoordinatorEvent>.Continuation
     public nonisolated let events: AsyncStream<CoordinatorEvent>
 
     public init(scheduler: any SchedulingEngine, detector: any ContextDetecting,
-                locker: any LockPresenting, deferralPollingInterval: TimeInterval = 10) {
+                locker: any LockPresenting, deferralPollingInterval: TimeInterval = 10,
+                cueLead: TimeInterval = 60) {
         var continuation: AsyncStream<CoordinatorEvent>.Continuation!
         self.events = AsyncStream { continuation = $0 }
         self.eventContinuation = continuation
@@ -107,6 +110,7 @@ public final class BreakCoordinator {
         self.detector = detector
         self.locker = locker
         self.deferralPollingInterval = deferralPollingInterval
+        self.cueLead = cueLead
     }
 
     /// Pass previously persisted `statistics` so a relaunch during the day keeps today's
@@ -469,6 +473,13 @@ public final class BreakCoordinator {
         eventContinuation.yield(.nextBreakScheduled(fireDate))
 
         breakTimer = Task {
+            let untilCue = fireDate.timeIntervalSince(Date()) - self.cueLead
+            if untilCue > 0 {
+                try? await Task.sleep(for: .seconds(untilCue))
+                guard !Task.isCancelled else { return }
+                await self.playApproachingCue()
+                guard !Task.isCancelled else { return }
+            }
             let delay = fireDate.timeIntervalSince(Date())
             let leadTime: TimeInterval = 3
             let earlyDelay = max(0, delay - leadTime)
@@ -480,6 +491,15 @@ public final class BreakCoordinator {
             guard !Task.isCancelled else { return }
             await self.triggerBreak(for: target.schedule, context: context)
         }
+    }
+
+    /// The preference is read here, not when the timer is armed: `updatePreferences` does not
+    /// re-arm it. A cue for a break that will defer, or for someone who is away, would be a false alarm.
+    private func playApproachingCue() async {
+        guard preferences.soundBeforeBreak else { return }
+        let context = await detector.currentContext()
+        guard !Task.isCancelled, shouldDefer(context: context) == nil, context.idleDuration < cueLead else { return }
+        eventContinuation.yield(.breakCue(.approaching))
     }
 
     private func triggerBreak(for schedule: Schedule, context: DetectionContext) async {
@@ -616,6 +636,7 @@ public final class BreakCoordinator {
             repetitionTrackers[schedule.id] = tracker
         }
         eventContinuation.yield(.breakCompleted(event))
+        if preferences.soundAfterBreak { eventContinuation.yield(.breakCue(.ended)) }
         updateStatistics {
             $0.breaksCompleted += 1
             $0.currentStreak += 1

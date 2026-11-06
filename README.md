@@ -71,12 +71,15 @@ Enable progressive enforcement on any schedule and each consecutive skip makes t
 
 - Multiple named schedules, each with its own discipline level and settings
 - Time windows (e.g., 09:00-12:00, 13:00-17:00)
-- Day selection: weekdays, weekends, every day, or custom
+- Pick any days of the week
+- Templates when adding a schedule: 20-20-20, Pomodoro (25/5) and 52/17
+- A preview in the form lists every break time of the day
 - Pomodoro-style repetition cycles with short/long break patterns
 - Alternating work intervals: a schedule can cycle through up to 6 intervals instead of one (e.g. 58 min sitting, then 28 min standing), each with an optional label the break screen shows as what's coming next
-- Configurable daily skip limits per discipline level, set in Settings › General (Strict has none)
+- Configurable daily skip limits per discipline level, set in Settings › Discipline (Strict has none)
+- Skipping a break resets the interval by default; a switch in Settings › Discipline measures the next break from the skipped one instead, so a skip buys no extra work time
 
-<img src="assets/schedules.png" width="515" alt="Schedules window showing time windows, day selection and discipline level">
+<img src="assets/schedules.png" width="640" alt="Settings window with the sidebar and a schedule open, showing day buttons, hours, alternating work intervals and the day's break times">
 
 ### Context Awareness
 
@@ -91,11 +94,12 @@ Enable progressive enforcement on any schedule and each consecutive skip makes t
 - Exercise suggestions during breaks (stretches, water reminders, squats)
 - Postpone a break once when a call comes up: it returns at full length once the microphone and camera have been free for the delay set in Settings › Detection (1-10 min, default 2), and counts as deferred, not skipped
 - Pauses system media during breaks
-- Break Screen settings in Settings › General: your own background and text colours (with a warning when contrast is low), hide today's statistics, or add a message under the timer
+- Optional sounds, off by default, in Settings › Break Screen: one a minute before a break and one when a break ends
+- Settings › Break Screen: your own background and text colours (with a warning when contrast is low), hide today's statistics, or add a message under the timer
 
 ### Break Statistics
 
-A dedicated Statistics tab in Settings tracks break history over time.
+A dedicated Statistics page in Settings tracks break history over time.
 
 - 6 metric cards: completions, skips, completion rate, current streak, best streak, total break time
 - Week view with per-day cards, month calendar, and year heatmap
@@ -113,7 +117,7 @@ A dedicated Statistics tab in Settings tracks break history over time.
 ### General
 
 - **Launch at login** via macOS login items
-- **Auto-update** via Sparkle, with an update banner in the menu bar. Off by default: turn on Automatic Updates in Settings and StandLock checks every 4 hours, otherwise use Check for Updates
+- **Auto-update** via Sparkle, with an update banner in the menu bar. Off by default: turn on Automatic Updates in Settings › About and StandLock checks every 4 hours, otherwise use Check for Updates
 - **Appearance**: System, Light or Dark in Settings › General. System is the default and follows your Mac, including the break overlay unless it has custom colours
 - **Language**: English, Turkish and Simplified Chinese. Settings › General has a picker that switches the interface without a restart; System follows your Mac's language
 
@@ -146,7 +150,7 @@ StandLock asks for a permission only when you use the feature that needs it. It 
 | **Calendar** | Optional. Reads your calendar events to automatically defer breaks during meetings. Never modifies your calendar. |
 | **Camera & Microphone** | Not accessed directly. StandLock checks whether another app is using the camera or mic to detect active meetings and defer breaks accordingly. |
 
-You can revoke any permission at any time in **System Settings > Privacy & Security**. When a permission is revoked, features that depend on it degrade instead of breaking: Strict schedules run as Firm until the permission is back, keeping their Strict setting and showing the reason in the schedule list and the menu bar, and calendar integration is skipped. No crashes, no broken state.
+You can revoke any permission at any time in **System Settings > Privacy & Security**. When a permission is revoked, features that depend on it degrade instead of breaking: Strict schedules run as Firm until the permission is back, keeping their Strict setting and showing the reason on the schedule page, on Permissions and in the menu bar, and calendar integration is skipped. No crashes, no broken state.
 
 ## Building from Source
 

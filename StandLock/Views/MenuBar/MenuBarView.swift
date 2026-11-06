@@ -4,6 +4,7 @@ import StandLockCore
 struct MenuBarView: View {
     @EnvironmentObject private var coordinator: AppCoordinator
     @EnvironmentObject private var updateObserver: UpdateObserver
+    @Environment(\.openWindow) private var openWindow
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -54,11 +55,12 @@ struct MenuBarView: View {
 
     @ViewBuilder
     private var statusSection: some View {
-        if coordinator.isBreakActive {
+        switch coordinator.nextBreakState {
+        case .breakActive:
             Label("Break in progress", systemImage: "figure.stand")
                 .font(.subheadline)
                 .foregroundStyle(.green)
-        } else if coordinator.isPaused, let until = coordinator.pausedUntil {
+        case .paused(let until):
             Label {
                 Text("Paused until \(until, style: .time)")
             } icon: {
@@ -66,7 +68,7 @@ struct MenuBarView: View {
             }
             .font(.caption)
             .foregroundStyle(.secondary)
-        } else if let reason = coordinator.deferralReason {
+        case .deferred(let reason):
             VStack(alignment: .leading, spacing: 2) {
                 Label("Break waiting", systemImage: "pause.circle")
                     .font(.caption)
@@ -75,7 +77,7 @@ struct MenuBarView: View {
                     .font(.caption2)
                     .foregroundStyle(.secondary)
             }
-        } else if let nextBreak = coordinator.nextBreakTime {
+        case .countingDown(let nextBreak):
             Label {
                 Text("Next break \(nextBreak, style: .relative)")
             } icon: {
@@ -83,11 +85,11 @@ struct MenuBarView: View {
             }
             .font(.caption)
             .foregroundStyle(.secondary)
-        } else if coordinator.schedules.isEmpty {
+        case .noSchedules:
             Label("No schedules configured", systemImage: "calendar.badge.exclamationmark")
                 .font(.caption)
                 .foregroundStyle(.secondary)
-        } else {
+        case .noActiveSchedules:
             Label("No active schedules", systemImage: "moon.zzz")
                 .font(.caption)
                 .foregroundStyle(.secondary)
@@ -168,30 +170,19 @@ struct MenuBarView: View {
 
     private var bottomActions: some View {
         VStack(alignment: .leading, spacing: 2) {
-            if #available(macOS 14, *) {
-                SettingsRowButton(tab: .general)
-                SettingsRowButton(tab: .about)
-            } else {
-                Button {
-                    let panel = NSApp.keyWindow
-                    coordinator.selectedSettingsTab = .general
-                    openSettingsLegacy()
-                    dismissMenuBarPanel(panel)
-                } label: {
-                    settingsLabel
-                }
-                .buttonStyle(MenuBarRowStyle())
-
-                Button {
-                    let panel = NSApp.keyWindow
-                    coordinator.selectedSettingsTab = .about
-                    openSettingsLegacy()
-                    dismissMenuBarPanel(panel)
-                } label: {
-                    aboutLabel
-                }
-                .buttonStyle(MenuBarRowStyle())
+            Button {
+                coordinator.settingsNavigation.open(.general, using: openWindow)
+            } label: {
+                settingsLabel
             }
+            .buttonStyle(MenuBarRowStyle())
+
+            Button {
+                coordinator.settingsNavigation.open(.about, using: openWindow)
+            } label: {
+                aboutLabel
+            }
+            .buttonStyle(MenuBarRowStyle())
 
             Button {
                 NSApp.terminate(nil)
@@ -210,11 +201,6 @@ struct MenuBarView: View {
             .buttonStyle(MenuBarRowStyle())
             .disabled(coordinator.isBreakActive)
         }
-    }
-
-    private func openSettingsLegacy() {
-        NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
-        NSApp.activate(ignoringOtherApps: true)
     }
 }
 
@@ -239,46 +225,6 @@ private var aboutLabel: some View {
         Text("About StandLock")
         Spacer()
     }
-}
-
-@available(macOS 14, *)
-private struct SettingsRowButton: View {
-    @Environment(\.openSettings) private var openSettings
-    @EnvironmentObject private var coordinator: AppCoordinator
-    let tab: AppCoordinator.SettingsTab
-
-    var body: some View {
-        Button {
-            // The MenuBarExtra panel stays up when another window opens, and SwiftUI gives
-            // no handle on it. It is the key window while the click happens, so it is
-            // grabbed here and hidden after Settings takes over as key.
-            let panel = NSApp.keyWindow
-            coordinator.selectedSettingsTab = tab
-            openSettings()
-            NSApp.activate(ignoringOtherApps: true)
-            dismissMenuBarPanel(panel)
-        } label: {
-            if tab == .about {
-                aboutLabel
-            } else {
-                settingsLabel
-            }
-        }
-        .buttonStyle(MenuBarRowStyle())
-    }
-}
-
-/// Hides the MenuBarExtra panel captured before another window was opened.
-///
-/// `orderOut` rather than `close`: the panel hosts SwiftUI through an NSHostingView,
-/// and closing one of those deadlocks the main thread or frees it out from under the
-/// hosting view. The identity check covers the case where Settings was already open
-/// and key when the row was clicked -- the captured window is then the Settings window
-/// itself, which must not be hidden.
-@MainActor
-private func dismissMenuBarPanel(_ panel: NSWindow?) {
-    guard let panel, panel !== NSApp.keyWindow else { return }
-    panel.orderOut(nil)
 }
 
 struct MenuBarRowStyle: ButtonStyle {

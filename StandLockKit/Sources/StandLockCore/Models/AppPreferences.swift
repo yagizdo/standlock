@@ -27,6 +27,8 @@ public struct AppPreferences: Codable, Sendable, Equatable {
     public var idleDetectionEnabled: Bool
 
     public var pauseMediaDuringBreak: Bool
+    public var soundBeforeBreak: Bool
+    public var soundAfterBreak: Bool
 
     public var resetIntervalOnSkip: Bool
 
@@ -52,6 +54,8 @@ public struct AppPreferences: Codable, Sendable, Equatable {
         postponeReturnDelay: TimeInterval = 120,
         idleDetectionEnabled: Bool = true,
         pauseMediaDuringBreak: Bool = true,
+        soundBeforeBreak: Bool = false,
+        soundAfterBreak: Bool = false,
         resetIntervalOnSkip: Bool = true,
         showFullWorkTimer: Bool = false,
         menuBarCountdownMinutes: Int = 1,
@@ -73,6 +77,8 @@ public struct AppPreferences: Codable, Sendable, Equatable {
         self.postponeReturnDelay = postponeReturnDelay
         self.idleDetectionEnabled = idleDetectionEnabled
         self.pauseMediaDuringBreak = pauseMediaDuringBreak
+        self.soundBeforeBreak = soundBeforeBreak
+        self.soundAfterBreak = soundAfterBreak
         self.resetIntervalOnSkip = resetIntervalOnSkip
         self.showFullWorkTimer = showFullWorkTimer
         self.menuBarCountdownMinutes = menuBarCountdownMinutes
@@ -88,7 +94,7 @@ public struct AppPreferences: Codable, Sendable, Equatable {
         case screenSharingDetectionEnabled, screenSharingPostDeferral
         case postponeReturnDelay
         case idleDetectionEnabled
-        case pauseMediaDuringBreak
+        case pauseMediaDuringBreak, soundBeforeBreak, soundAfterBreak
         case resetIntervalOnSkip
         case showFullWorkTimer, menuBarCountdownMinutes
         case breakScreen
@@ -112,10 +118,28 @@ public struct AppPreferences: Codable, Sendable, Equatable {
         postponeReturnDelay = try c.decodeIfPresent(TimeInterval.self, forKey: .postponeReturnDelay) ?? 120
         idleDetectionEnabled = try c.decodeIfPresent(Bool.self, forKey: .idleDetectionEnabled) ?? true
         pauseMediaDuringBreak = try c.decodeIfPresent(Bool.self, forKey: .pauseMediaDuringBreak) ?? true
+        soundBeforeBreak = try c.decodeIfPresent(Bool.self, forKey: .soundBeforeBreak) ?? false
+        soundAfterBreak = try c.decodeIfPresent(Bool.self, forKey: .soundAfterBreak) ?? false
         resetIntervalOnSkip = try c.decodeIfPresent(Bool.self, forKey: .resetIntervalOnSkip) ?? true
         showFullWorkTimer = try c.decodeIfPresent(Bool.self, forKey: .showFullWorkTimer) ?? false
         menuBarCountdownMinutes = try c.decodeIfPresent(Int.self, forKey: .menuBarCountdownMinutes) ?? 1
         breakScreen = try c.decodeIfPresent(BreakScreenPreferences.self, forKey: .breakScreen) ?? BreakScreenPreferences()
+    }
+}
+
+extension AppPreferences {
+    /// A specific selection that holds nothing yet starts with every calendar ticked, so the
+    /// switch to it changes nothing until the user narrows it down.
+    public var needsCalendarPreCheck: Bool {
+        calendarSelectionMode == .selected && selectedCalendarIdentifiers.isEmpty
+    }
+
+    public mutating func setCalendar(_ id: String, isSelected: Bool) {
+        if isSelected {
+            if !selectedCalendarIdentifiers.contains(id) { selectedCalendarIdentifiers.append(id) }
+        } else {
+            selectedCalendarIdentifiers.removeAll { $0 == id }
+        }
     }
 }
 

@@ -297,6 +297,19 @@ struct ScheduleModelTests {
         #expect(decoded.postponeReturnDelay == TimeInterval(120))
     }
 
+    @Test func breakSoundsDefaultToOff() throws {
+        let decoded = try JSONDecoder().decode(AppPreferences.self, from: Data("{}".utf8))
+        #expect(!decoded.soundBeforeBreak)
+        #expect(!decoded.soundAfterBreak)
+    }
+
+    @Test func breakSoundsRoundTrip() throws {
+        let preferences = AppPreferences(soundBeforeBreak: true, soundAfterBreak: true)
+        let decoded = try JSONDecoder().decode(AppPreferences.self, from: JSONEncoder().encode(preferences))
+        #expect(decoded.soundBeforeBreak)
+        #expect(decoded.soundAfterBreak)
+    }
+
     @Test func postponeReturnDelayRoundTrips() throws {
         let data = try JSONEncoder().encode(AppPreferences(postponeReturnDelay: 300))
         let decoded = try JSONDecoder().decode(AppPreferences.self, from: data)

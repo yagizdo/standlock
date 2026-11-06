@@ -23,15 +23,28 @@ struct StandLockApp: App {
         }
         .menuBarExtraStyle(.window)
 
-        Settings {
+        Window("Settings", id: SettingsNavigation.windowID) {
             LocalizedRoot(store: appCoordinator.languageStore) {
-                SettingsView(selectedTab: $appCoordinator.selectedSettingsTab, updater: appDelegate.updaterController.updater)
+                SettingsView(
+                    navigation: appCoordinator.settingsNavigation,
+                    coordinator: appCoordinator,
+                    updater: appDelegate.updaterController.updater
+                )
                     .environmentObject(appCoordinator)
                     .environmentObject(appCoordinator.permissionChecker)
                     .environmentObject(appCoordinator.themeStore)
+                    .environmentObject(appDelegate.updateObserver)
             }
         }
+        .windowStyle(.hiddenTitleBar)
+        .defaultSize(width: 860, height: 620)
+        .windowResizability(.contentMinSize)
+        // Before `.commands`: the other order removes those commands too.
+        .commandsRemoved()
         .commands {
+            CommandGroup(replacing: .appSettings) {
+                OpenSettingsCommand(navigation: appCoordinator.settingsNavigation)
+            }
             CommandGroup(after: .appInfo) {
                 CheckForUpdatesView(updater: appDelegate.updaterController.updater)
             }
