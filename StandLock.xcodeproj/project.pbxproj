@@ -72,6 +72,7 @@
 		9CE3B1904556E5F701466351 /* BreakSoundPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 570EE1706B3BD156F7F6FB6A /* BreakSoundPlayer.swift */; };
 		9D77F7B7F12048E4399B8B25 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD06AD45022B6D147E26C4A6 /* AppDelegate.swift */; };
 		9EC3DB7CD0C70E2BA71F7117 /* WindowCloseGuard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED1AF99472834C9823F0D6A /* WindowCloseGuard.swift */; };
+		A60D5B46AD4C89605351E708 /* CatScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 197D81279CAB2964AC559DA5 /* CatScene.swift */; };
 		A6C60C181FF99EA8F84AA488 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = EE28EF9957F31C9560EE4439 /* Localizable.xcstrings */; };
 		A90BBE014C28C0EE022F3E96 /* SettingsPage+Presentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 045E2DB0FA1DABBAEE991FDC /* SettingsPage+Presentation.swift */; };
 		AB3F1CBBEDAE966CEBE240F6 /* MenuBarPillStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FC046224F3CBC19F654A996 /* MenuBarPillStyle.swift */; };
@@ -110,6 +111,7 @@
 		07D76C4C05AEF8916D063F51 /* SettingsIconChip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsIconChip.swift; sourceTree = "<group>"; };
 		0ECFF53DE04217DC4398CB8C /* SidebarBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarBackground.swift; sourceTree = "<group>"; };
 		12184C2234D04E8FE035B701 /* PermissionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionsView.swift; sourceTree = "<group>"; };
+		197D81279CAB2964AC559DA5 /* CatScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatScene.swift; sourceTree = "<group>"; };
 		1D4A9BCE77DF93E823C10D87 /* MenuBarStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarStatusView.swift; sourceTree = "<group>"; };
 		1D816A891C5FD51B89E4D0E2 /* DisciplineSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisciplineSettingsView.swift; sourceTree = "<group>"; };
 		20227808D86E5CC2E786ADAA /* BreakScreenSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakScreenSettingsView.swift; sourceTree = "<group>"; };
@@ -417,6 +419,7 @@
 		F55A26B9BA70F54DCD4A7862 /* Scenes */ = {
 			isa = PBXGroup;
 			children = (
+				197D81279CAB2964AC559DA5 /* CatScene.swift */,
 				24E37F0725B2E389ACEC601F /* DeskScene.swift */,
 				39E5EFA4AB6411AD0176ED38 /* HourglassScene.swift */,
 				73072AEAC528F616B0FD5DB2 /* MenuSceneCard.swift */,
@@ -542,6 +545,7 @@
 				9282BD07119596D0242E67D6 /* BreakScreenSettingsView.swift in Sources */,
 				9CE3B1904556E5F701466351 /* BreakSoundPlayer.swift in Sources */,
 				AB84ADC15C8263AFD995E8B5 /* BreakTypography.swift in Sources */,
+				A60D5B46AD4C89605351E708 /* CatScene.swift in Sources */,
 				B2FF3CCDF5FB0EFC3C60C8BF /* DayButtons.swift in Sources */,
 				877287617D7DDBAB2346687C /* DayPreviewCard.swift in Sources */,
 				E6C55A4F70CDBF7DB5403B1F /* DeleteConfirmationView.swift in Sources */,

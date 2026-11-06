@@ -111,7 +111,7 @@ A dedicated Statistics page in Settings tracks break history over time.
 - Break stats: completions, streak, and skips for today
 - Pause/resume controls
 - Warns when the active schedule's Strict level is inactive and running as Firm
-- A drawn scene that follows the break state: Hourglass or Desk, or Off, chosen in Settings › Menu Bar
+- A drawn scene that follows the break state, chosen in Settings › Menu Bar, or Off
 
 <img src="assets/menubar.png" width="280" alt="Menu bar panel with the hourglass scene, the countdown to the next break and today's stats">
 

@@ -12,7 +12,11 @@ struct MenuScenePicker: View {
     private static let height: CGFloat = 136 * scale
 
     var body: some View {
-        HStack(alignment: .top, spacing: SettingsTokens.cardSpacing) {
+        // A grid, so a scene that does not fit the row at the window's minimum width wraps.
+        LazyVGrid(
+            columns: [GridItem(.adaptive(minimum: Self.width), spacing: SettingsTokens.cardSpacing)],
+            spacing: SettingsTokens.cardSpacing
+        ) {
             ForEach(MenuScene.allCases, id: \.self) { scene in
                 Button {
                     selection = scene
@@ -27,14 +31,14 @@ struct MenuScenePicker: View {
                                 }
                             }
                             .padding(.bottom, SettingsTokens.stripItemSpacing)
-                        Text(title(of: scene))
+                        title(of: scene)
                             .foregroundStyle(selection == scene ? .primary : .secondary)
                     }
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
                 .frame(maxWidth: .infinity)
-                .accessibilityLabel(Text(title(of: scene)))
+                .accessibilityLabel(title(of: scene))
                 .accessibilityAddTraits(selection == scene ? .isSelected : [])
             }
         }
@@ -55,11 +59,12 @@ struct MenuScenePicker: View {
         }
     }
 
-    private func title(of scene: MenuScene) -> LocalizedStringKey {
+    private func title(of scene: MenuScene) -> Text {
         switch scene {
-        case .hourglass: "Hourglass"
-        case .desk: "Desk"
-        case .off: "Off"
+        case .hourglass: Text("Hourglass")
+        case .desk: Text("Desk")
+        case .cat: Text(verbatim: "Yosun Yosun")
+        case .off: Text("Off")
         }
     }
 }
