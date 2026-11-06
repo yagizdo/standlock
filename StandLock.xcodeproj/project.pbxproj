@@ -60,6 +60,7 @@
 		9282BD07119596D0242E67D6 /* BreakScreenSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20227808D86E5CC2E786ADAA /* BreakScreenSettingsView.swift */; };
 		939B26A31A39AED7A89760CE /* PermissionsStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F5AA3BD882ECB78BB3099D /* PermissionsStepView.swift */; };
 		959469674E2A16E84F15F50B /* LanguageStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35EA7054F16243AE0575478E /* LanguageStore.swift */; };
+		9CE3B1904556E5F701466351 /* BreakSoundPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 570EE1706B3BD156F7F6FB6A /* BreakSoundPlayer.swift */; };
 		9D77F7B7F12048E4399B8B25 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD06AD45022B6D147E26C4A6 /* AppDelegate.swift */; };
 		9EC3DB7CD0C70E2BA71F7117 /* WindowCloseGuard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED1AF99472834C9823F0D6A /* WindowCloseGuard.swift */; };
 		A6C60C181FF99EA8F84AA488 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = EE28EF9957F31C9560EE4439 /* Localizable.xcstrings */; };
@@ -113,6 +114,7 @@
 		540564FDDCA36A0411155BC1 /* StandLock.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = StandLock.entitlements; sourceTree = "<group>"; };
 		5586791BF5D81FC7CE5AE185 /* MediaController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaController.swift; sourceTree = "<group>"; };
 		55E666594049BE353F6E6FF6 /* SettingsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSection.swift; sourceTree = "<group>"; };
+		570EE1706B3BD156F7F6FB6A /* BreakSoundPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakSoundPlayer.swift; sourceTree = "<group>"; };
 		5F3E46265727E4E3D2C1578A /* HexColorField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HexColorField.swift; sourceTree = "<group>"; };
 		644D55BA77E73588DF358AC7 /* SettingsSidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSidebar.swift; sourceTree = "<group>"; };
 		6CDB4CFBD38A25482A8B215B /* WeekdaySymbols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekdaySymbols.swift; sourceTree = "<group>"; };
@@ -255,6 +257,7 @@
 			children = (
 				A81F2ED91290AD26CB5B672E /* AppCoordinator.swift */,
 				37C6854B70D7BA6C7DDE4D09 /* AppTheme.swift */,
+				570EE1706B3BD156F7F6FB6A /* BreakSoundPlayer.swift */,
 				35EA7054F16243AE0575478E /* LanguageStore.swift */,
 				5586791BF5D81FC7CE5AE185 /* MediaController.swift */,
 				FDC1758B39501153DCF68061 /* NextBreakClock.swift */,
@@ -484,6 +487,7 @@
 				7BF1946EE4BC2EF26F5CE641 /* BreakScreenLook.swift in Sources */,
 				16C25FF6FB1CDC9B466ACB0D /* BreakScreenPreviewCard.swift in Sources */,
 				9282BD07119596D0242E67D6 /* BreakScreenSettingsView.swift in Sources */,
+				9CE3B1904556E5F701466351 /* BreakSoundPlayer.swift in Sources */,
 				AB84ADC15C8263AFD995E8B5 /* BreakTypography.swift in Sources */,
 				E6C55A4F70CDBF7DB5403B1F /* DeleteConfirmationView.swift in Sources */,
 				B0B45CBAC1620814C7F443D0 /* DetectionSettingsView.swift in Sources */,

@@ -69,6 +69,21 @@ struct BreakScreenSettingsView: View {
                     description: "Pause audio playback when a break starts",
                     isOn: $coordinator.preferences.pauseMediaDuringBreak
                 )
+
+                Divider()
+
+                SettingsToggleRow(
+                    "Sound when a break ends",
+                    isOn: $coordinator.preferences.soundAfterBreak
+                )
+
+                Divider()
+
+                SettingsToggleRow(
+                    "Sound before a break",
+                    description: "Plays one minute before a break",
+                    isOn: $coordinator.preferences.soundBeforeBreak
+                )
             }
         }
     }

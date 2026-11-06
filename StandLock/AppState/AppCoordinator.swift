@@ -43,6 +43,7 @@ final class AppCoordinator: ObservableObject {
     let themeStore = ThemeStore()
     let settingsNavigation = SettingsNavigation()
     let permissionChecker: PermissionChecker
+    private let breakSoundPlayer = BreakSoundPlayer()
 
     private var coordinator: BreakCoordinator?
     /// Survives the coordinator-less interval between a teardown and the next build.
@@ -478,8 +479,8 @@ final class AppCoordinator: ObservableObject {
             pausedUntil = nil
             updateMenuBarTimer()
 
-        case .breakCue:
-            break
+        case .breakCue(let cue):
+            breakSoundPlayer.play(cue)
 
         case .statisticsUpdated(let stats):
             todayStats = stats

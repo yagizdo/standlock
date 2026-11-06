@@ -6977,6 +6977,54 @@
           }
         }
       }
+    },
+    "Sound when a break ends" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mola bitince ses çal"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "休息结束时播放声音"
+          }
+        }
+      }
+    },
+    "Sound before a break" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moladan önce ses çal"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "休息开始前播放声音"
+          }
+        }
+      }
+    },
+    "Plays one minute before a break" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moladan bir dakika önce çalar"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在休息开始前一分钟播放"
+          }
+        }
+      }
     }
   },
   "version" : "1.1"
