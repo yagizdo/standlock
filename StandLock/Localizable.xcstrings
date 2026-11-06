@@ -1044,38 +1044,6 @@
         }
       }
     },
-    "⌘," : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "⌘,"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "⌘,"
-          }
-        }
-      }
-    },
-    "⌘Q" : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "⌘Q"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "⌘Q"
-          }
-        }
-      }
-    },
     "✕" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -4218,22 +4186,6 @@
         }
       }
     },
-    "Next break %@" : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sonraki mola %@"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "下次休息：%@"
-          }
-        }
-      }
-    },
     "NEXT: %@" : {
       "localizations" : {
         "tr" : {
@@ -4532,22 +4484,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "暂停媒体"
-          }
-        }
-      }
-    },
-    "Pause Schedule" : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Programı Duraklat"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "暂停日程"
           }
         }
       }
@@ -4916,22 +4852,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "立即重新启动"
-          }
-        }
-      }
-    },
-    "Resume Schedule" : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Programı Sürdür"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "恢复日程"
           }
         }
       }
@@ -5316,22 +5236,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "跳过休息"
-          }
-        }
-      }
-    },
-    "Skip Next Break" : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sonraki Molayı Atla"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "跳过下次休息"
           }
         }
       }

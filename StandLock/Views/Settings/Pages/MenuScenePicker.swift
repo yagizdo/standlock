@@ -10,7 +10,6 @@ struct MenuScenePicker: View {
     private static let scale: CGFloat = 0.5
     private static let width: CGFloat = 256 * scale
     private static let height: CGFloat = 136 * scale
-    private static let radius: CGFloat = 6
 
     var body: some View {
         HStack(alignment: .top, spacing: SettingsTokens.cardSpacing) {
@@ -22,12 +21,12 @@ struct MenuScenePicker: View {
                         thumbnail(scene)
                             .overlay {
                                 if selection == scene {
-                                    RoundedRectangle(cornerRadius: Self.radius + 3)
+                                    RoundedRectangle(cornerRadius: SettingsTokens.previewRadius)
                                         .strokeBorder(Color.accentColor, lineWidth: 2)
-                                        .padding(-3)
+                                        .padding(SettingsTokens.chipRadius - SettingsTokens.previewRadius)
                                 }
                             }
-                            .padding(.bottom, 4)
+                            .padding(.bottom, SettingsTokens.stripItemSpacing)
                         Text(title(of: scene))
                             .foregroundStyle(selection == scene ? .primary : .secondary)
                     }
@@ -45,7 +44,7 @@ struct MenuScenePicker: View {
     @ViewBuilder
     private func thumbnail(_ scene: MenuScene) -> some View {
         if scene == .off {
-            RoundedRectangle(cornerRadius: Self.radius)
+            RoundedRectangle(cornerRadius: SettingsTokens.chipRadius)
                 .fill(Color.secondary.opacity(0.12))
                 .overlay(Image(systemName: "nosign").foregroundStyle(.secondary))
                 .frame(width: Self.width, height: Self.height)

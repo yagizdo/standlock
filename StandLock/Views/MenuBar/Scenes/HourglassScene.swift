@@ -30,7 +30,7 @@ struct HourglassScene: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.leading, 20)
                 .padding(.bottom, 24)
-            HourglassFigure(look: look, progress: CGFloat(min(1, max(0, progress))), time: time)
+            HourglassFigure(look: look, progress: CGFloat(progress), time: time)
                 .padding(.bottom, 16)
             if let bubble {
                 SceneBubble(text: bubble).offset(x: -56, y: -86)

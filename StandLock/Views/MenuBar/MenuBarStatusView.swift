@@ -16,7 +16,7 @@ struct MenuBarStatusView: View {
     @State private var isOpen = true
 
     var body: some View {
-        TimelineView(.animation(minimumInterval: reduceMotion ? 1 : 1.0 / 12, paused: !isOpen)) { context in
+        TimelineView(.animation(minimumInterval: reduceMotion || scene == .off ? 1 : 1.0 / 12, paused: !isOpen)) { context in
             let look = MenuSceneLook(state: state, now: context.date)
             VStack(alignment: .leading, spacing: 10) {
                 if scene != .off {
@@ -32,16 +32,26 @@ struct MenuBarStatusView: View {
     }
 
     private func statusRow(look: MenuSceneLook, now: Date) -> some View {
-        HStack(alignment: .firstTextBaseline, spacing: 8) {
-            VStack(alignment: .leading, spacing: 2) {
-                Text(title(look))
-                    .font(.system(size: 16, weight: .semibold))
-                subtitle
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+        VStack(alignment: .leading, spacing: 4) {
+            HStack(alignment: .firstTextBaseline, spacing: 8) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(title(look))
+                        .font(.system(size: 16, weight: .semibold))
+                    subtitle
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                Spacer(minLength: 0)
+                trailing(now: now)
             }
-            Spacer(minLength: 0)
-            trailing(now: now)
+            // The panel names the level with nothing else around it, so an unqualified "Strict"
+            // is the one place the downgrade could pass for the real thing. Its own line, at full
+            // width: beside the countdown it would wrap and change the panel's height.
+            if schedule.map(checker.strictIsInactive) == true {
+                Text("Strict inactive, running as Firm")
+                    .font(.caption)
+                    .foregroundStyle(.orange)
+            }
         }
         .padding(.horizontal, 4)
         .accessibilityElement(children: .combine)
@@ -60,17 +70,9 @@ struct MenuBarStatusView: View {
 
     @ViewBuilder
     private var subtitle: some View {
-        // The panel names the level with nothing else around it, so an unqualified "Strict" here
-        // is the one place the downgrade could pass for the real thing.
-        let strictIsInactive = schedule.map(checker.strictIsInactive) ?? false
         if case .deferred(let reason) = state {
             Text(LocalizedStringKey(reason.displayName))
-        }
-        if strictIsInactive {
-            Text("Strict inactive, running as Firm")
-                .foregroundStyle(.orange)
-                .fixedSize(horizontal: false, vertical: true)
-        } else if let schedule, !isDeferred {
+        } else if let schedule {
             HStack(spacing: 4) {
                 Text(schedule.name)
                     .lineLimit(1)
@@ -79,11 +81,6 @@ struct MenuBarStatusView: View {
                     .fixedSize()
             }
         }
-    }
-
-    private var isDeferred: Bool {
-        if case .deferred = state { return true }
-        return false
     }
 
     @ViewBuilder
