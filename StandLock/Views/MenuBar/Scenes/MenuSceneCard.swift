@@ -32,6 +32,7 @@ struct MenuSceneCard: View {
             case .bread: BreadScene(look: look, time: time)
             case .reading: ReadingScene(look: look, time: time)
             case .fishing: FishingScene(look: look, time: time)
+            case .painting: PaintingScene(look: look, time: time)
             case .off: EmptyView()
             }
         }

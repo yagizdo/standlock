@@ -548,6 +548,22 @@
         }
       }
     },
+    "Painting" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Resim"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "画画"
+          }
+        }
+      }
+    },
     "Permission needed" : {
       "localizations" : {
         "tr" : {

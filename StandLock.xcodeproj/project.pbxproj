@@ -101,6 +101,7 @@
 		BF272D7E49CFE686A28BE539 /* PenguinScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = C851627E22E0B6855CD31121 /* PenguinScene.swift */; };
 		C144671C95E22BC38AD14FE8 /* ScheduleSidebarRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = F07BB496D038848FFC7FDB3F /* ScheduleSidebarRow.swift */; };
 		C5895F53358BDFD586A4A800 /* SettingsDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF887D81035A1FE4735344F3 /* SettingsDetail.swift */; };
+		C79B40CDB801534CB03F8D40 /* PaintingScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4F7EBA4EB133173F8CA622F /* PaintingScene.swift */; };
 		C9317350D818E7C826DA0966 /* CapybaraScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC56256F21155B8E45CAF6D /* CapybaraScene.swift */; };
 		CACA2A694D8386E2C52987E7 /* HomebrewUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41523222886A9E60C4A27DD /* HomebrewUpdater.swift */; };
 		CE55FB80048215F1C86DC99D /* DeskScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24E37F0725B2E389ACEC601F /* DeskScene.swift */; };
@@ -212,6 +213,7 @@
 		CECAC1DE354D80668B0437F6 /* DayPreviewCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayPreviewCard.swift; sourceTree = "<group>"; };
 		D2BDD3661430F1F997413023 /* PermissionBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionBadge.swift; sourceTree = "<group>"; };
 		D4C9A2DE6A39272C34D533B7 /* ScenePerson.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScenePerson.swift; sourceTree = "<group>"; };
+		D4F7EBA4EB133173F8CA622F /* PaintingScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaintingScene.swift; sourceTree = "<group>"; };
 		D5021A1A699359391AD0CEEB /* SettingsRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsRow.swift; sourceTree = "<group>"; };
 		DA2920940F5FB5690FF53B7B /* SettingsTokens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsTokens.swift; sourceTree = "<group>"; };
 		DA36456A98A86C04B5B4616B /* BreadScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreadScene.swift; sourceTree = "<group>"; };
@@ -466,6 +468,7 @@
 				648439978CA9BBF31921B4C5 /* HamsterScene.swift */,
 				39E5EFA4AB6411AD0176ED38 /* HourglassScene.swift */,
 				73072AEAC528F616B0FD5DB2 /* MenuSceneCard.swift */,
+				D4F7EBA4EB133173F8CA622F /* PaintingScene.swift */,
 				C851627E22E0B6855CD31121 /* PenguinScene.swift */,
 				0FCC1989904A9C3332CDE801 /* PixelGridView.swift */,
 				6162024620A7B5B6DDFC8C3A /* PixelParts.swift */,
@@ -636,6 +639,7 @@
 				FBB74759FC16BB2E5F728128 /* OnboardingView.swift in Sources */,
 				72EF8A3AE6FD2B14FA478D0F /* OpenSettingsCommand.swift in Sources */,
 				ED1A168BD55576065212E8ED /* OverlayWindowController.swift in Sources */,
+				C79B40CDB801534CB03F8D40 /* PaintingScene.swift in Sources */,
 				BF272D7E49CFE686A28BE539 /* PenguinScene.swift in Sources */,
 				B2DDDE67D0C30F62374D0BBE /* PermissionBadge.swift in Sources */,
 				B3DAE3D0009EA570806955F3 /* PermissionCard.swift in Sources */,
