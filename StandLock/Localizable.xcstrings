@@ -3197,6 +3197,22 @@
         }
       }
     },
+    "Hamster" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hamster"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "仓鼠"
+          }
+        }
+      }
+    },
     "Hamstring Stretch" : {
       "comment" : "Exercise title",
       "extractionState" : "manual",

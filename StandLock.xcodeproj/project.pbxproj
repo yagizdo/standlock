@@ -21,6 +21,7 @@
 		17A849E1BB7551F62825BF5F /* GeneralSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88D72443C7D064247ADFE6D0 /* GeneralSettingsView.swift */; };
 		18504F805D34BF50C5E6729A /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 109FDEA57D0C0F3D6F9C1809 /* Sparkle */; };
 		1895F27AD369A832CA280556 /* AppTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37C6854B70D7BA6C7DDE4D09 /* AppTheme.swift */; };
+		18D266FA0E028EAD727A93E6 /* HamsterScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 648439978CA9BBF31921B4C5 /* HamsterScene.swift */; };
 		1CCAA6FDBBB854DCBC1968EA /* MenuBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A2D12AD9D89928096A633C /* MenuBarView.swift */; };
 		2030E658A07F36AC7B1141D5 /* MenuBarIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2FA6CDE8744BCE072FEDAF9 /* MenuBarIcon.swift */; };
 		21816E071409DEA5FC6A0BCE /* PermissionChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE0E2C708B760F809144B756 /* PermissionChecker.swift */; };
@@ -151,6 +152,7 @@
 		5F3E46265727E4E3D2C1578A /* HexColorField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HexColorField.swift; sourceTree = "<group>"; };
 		6162024620A7B5B6DDFC8C3A /* PixelParts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PixelParts.swift; sourceTree = "<group>"; };
 		644D55BA77E73588DF358AC7 /* SettingsSidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSidebar.swift; sourceTree = "<group>"; };
+		648439978CA9BBF31921B4C5 /* HamsterScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HamsterScene.swift; sourceTree = "<group>"; };
 		6AFF45DCD02D27949394DEF3 /* FoxScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoxScene.swift; sourceTree = "<group>"; };
 		6CDB4CFBD38A25482A8B215B /* WeekdaySymbols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekdaySymbols.swift; sourceTree = "<group>"; };
 		6EB7CBA12B287EE7D1683389 /* SettingsSearchField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSearchField.swift; sourceTree = "<group>"; };
@@ -444,6 +446,7 @@
 				24E37F0725B2E389ACEC601F /* DeskScene.swift */,
 				6AFF45DCD02D27949394DEF3 /* FoxScene.swift */,
 				0CFC6AC33A81C46E517592CB /* FrogScene.swift */,
+				648439978CA9BBF31921B4C5 /* HamsterScene.swift */,
 				39E5EFA4AB6411AD0176ED38 /* HourglassScene.swift */,
 				73072AEAC528F616B0FD5DB2 /* MenuSceneCard.swift */,
 				C851627E22E0B6855CD31121 /* PenguinScene.swift */,
@@ -586,6 +589,7 @@
 				769FC5C08D86A729FB78CAF4 /* FoxScene.swift in Sources */,
 				EF7FA04B2E3E977765AAC231 /* FrogScene.swift in Sources */,
 				17A849E1BB7551F62825BF5F /* GeneralSettingsView.swift in Sources */,
+				18D266FA0E028EAD727A93E6 /* HamsterScene.swift in Sources */,
 				4B8B1109D2B1AC920AF4656C /* HexColor+SwiftUI.swift in Sources */,
 				F7C1F8F46303DE4B861765D2 /* HexColorField.swift in Sources */,
 				CACA2A694D8386E2C52987E7 /* HomebrewUpdater.swift in Sources */,

@@ -26,6 +26,7 @@ struct MenuSceneCard: View {
             case .capybara: CapybaraScene(look: look, time: time)
             case .robot: RobotScene(look: look, time: time)
             case .campfire: CampfireScene(look: look, time: time)
+            case .hamster: HamsterScene(look: look, time: time)
             case .off: EmptyView()
             }
         }
