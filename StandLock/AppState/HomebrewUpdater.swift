@@ -89,9 +89,9 @@ final class HomebrewUpdater {
         await run(["update"], timeout: .seconds(120))
 
         // ponytail: no timeout, so a hung brew leaves the row on running until quit. Killing it
-        // mid-swap could leave a broken bundle. A bundle older than a current receipt also ends
-        // in failed: the upgrade is a no-op and there is no `reinstall` branch, which keeps no
-        // backup. Add one if that case turns up in reports.
+        // mid-swap could leave a broken bundle. `upgrade`, not `reinstall`, because only
+        // `upgrade` keeps a backup; a bundle older than a current receipt ends in failed, and
+        // the manual `reinstall` command shown then covers it.
         await run(["upgrade", "--cask", HomebrewCask.fullName], extraEnvironment: ["HOMEBREW_NO_AUTO_UPDATE": "1"])
 
         // Not `Bundle`: it keeps returning the running version after the swap.

@@ -4,7 +4,9 @@ import Foundation
 /// ahead of it: the release workflow pushes the cask last.
 public enum HomebrewCask {
     public static let fullName = "yagizdo/tap/standlock"
-    public static let manualCommand = "brew upgrade --cask \(fullName)"
+    /// `reinstall`, not `upgrade`: a swap that failed and could not roll back leaves its backup
+    /// in the Caskroom, and `upgrade` then stops at "already an App". Measured 2026-11-07.
+    public static let manualCommand = "brew reinstall --cask \(fullName)"
     public static let sourceURL = URL(
         string: "https://raw.githubusercontent.com/yagizdo/homebrew-tap/master/Casks/standlock.rb"
     )!
