@@ -197,7 +197,7 @@ struct CapybaraScene: View {
         "...DDDD.........DDDD........",
     ], palette: capybaraColors)
 
-    private static let eye = PixelSprite(["KK", "KK"], palette: capybaraColors)
+    private static let eye = PixelSprite(["KW", "KK"], palette: capybaraColors.merging(["W": 0xFFFFFF]) { $1 })
     private static let closedEye = PixelSprite(["BB", "KK"], palette: capybaraColors)
 
     private static let mandarin = PixelSprite([

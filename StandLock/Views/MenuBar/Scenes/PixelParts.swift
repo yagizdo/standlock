@@ -25,6 +25,18 @@ enum PixelParts {
         grid.stamp(bigZ, x: x + 6 + rise / 2, y: y - 6 - rise)
     }
 
+    /// Darker ground under a hopping character: a row `width` wide around `centerX` and a
+    /// shorter one below it, both narrowing as `hop` rises. Darkens what is already there.
+    static func stampShadow(on grid: inout PixelGrid, centerX: Int, y: Int, width: Int, hop: Int) {
+        for (row, rowWidth) in [max(4, width - hop), max(2, width - hop - 4)].enumerated() {
+            for x in (centerX - rowWidth / 2)..<(centerX - rowWidth / 2 + rowWidth) {
+                guard let color = grid[x: x, y: y + row] else { continue }
+                let dark = (((color >> 16) & 0xFF) * 13 / 20) << 16 | (((color >> 8) & 0xFF) * 13 / 20) << 8 | (color & 0xFF) * 13 / 20
+                grid.stamp(PixelSprite(["S"], palette: ["S": dark]), x: x, y: y + row)
+            }
+        }
+    }
+
     private static let starPositions: [(x: Int, y: Int)] = [
         (4, 3), (15, 9), (27, 2), (33, 15), (44, 6), (60, 14), (22, 18), (8, 16),
     ]

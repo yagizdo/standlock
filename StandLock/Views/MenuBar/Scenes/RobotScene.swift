@@ -23,6 +23,9 @@ struct RobotScene: View {
         grid.stamp(isNight ? Self.nightRug : Self.rug, x: left - 2, y: 30)
 
         let top = look == .timeToStand ? 4 - hopHeight : 4
+        if look == .timeToStand {
+            PixelParts.stampShadow(on: &grid, centerX: left + 10, y: 31, width: 18, hop: hopHeight)
+        }
         grid.stamp(Self.robot, x: left, y: top)
         grid.stamp(PixelSprite(["AA", "AA"], palette: ["A": antennaColor]), x: left + 9, y: top)
         grid.stamp(face, x: left + 4, y: top + 5)
@@ -167,11 +170,11 @@ struct RobotScene: View {
         "....DDDDD..DDDDD....",
     ], palette: ["D": 0x2E3440, "M": 0xC9D3DE, "S": 0x9AA7B6, "F": 0x1D2B36, "A": 0x7ED67A])
 
-    private static let screenColors: [Character: UInt] = ["F": 0x1D2B36, "C": 0x6EF0E0, "c": 0x2F6E6A]
+    private static let screenColors: [Character: UInt] = ["F": 0x1D2B36, "C": 0x6EF0E0, "c": 0x2F6E6A, "W": 0xFFFFFF]
 
     private static let calmFace = PixelSprite([
         "FFFFFFFFFFFF",
-        "FFCCFFFFCCFF",
+        "FFCWFFFFCWFF",
         "FFCCFFFFCCFF",
         "FFFFFFFFFFFF",
         "FFFFCFFCFFFF",

@@ -54,6 +54,7 @@ struct FrogScene: View {
         let head: (x: Int, y: Int)
         if look == .timeToStand {
             let height = hopHeight
+            PixelParts.stampShadow(on: &grid, centerX: 25, y: 26, width: 14, hop: height)
             grid.stamp(Self.standingFrog, x: 15, y: 9 - height)
             head = (17, 9 - height)
         } else {
@@ -156,7 +157,7 @@ struct FrogScene: View {
         "....KKK......KKK....",
     ], palette: frogColors)
 
-    private static let pupil = PixelSprite(["BB", "BB"], palette: ["B": 0x1B1B1B])
+    private static let pupil = PixelSprite(["BW", "BB"], palette: ["B": 0x1B1B1B, "W": 0xFFFFFF])
 
     /// Covers one eye's white with a lid and a dark line.
     private static let closedEye = PixelSprite(["GGG", "GGG", "KKK", "GGG"], palette: frogColors)

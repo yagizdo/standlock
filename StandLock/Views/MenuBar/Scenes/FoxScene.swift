@@ -55,6 +55,7 @@ struct FoxScene: View {
         let top: Int
         if look == .timeToStand {
             top = 6 - hopHeight
+            PixelParts.stampShadow(on: &grid, centerX: 26, y: 28, width: 14, hop: hopHeight)
             grid.stamp(Self.standingFox, x: 14, y: top)
         } else {
             top = 8
@@ -178,7 +179,7 @@ struct FoxScene: View {
         "...DDDD....DDDD.........",
     ], palette: foxColors)
 
-    private static let eye = PixelSprite(["KK", "KK"], palette: foxColors)
+    private static let eye = PixelSprite(["KW", "KK"], palette: foxColors.merging(["W": 0xFFFFFF]) { $1 })
     private static let closedEye = PixelSprite(["OO", "KK"], palette: foxColors)
 
     private static let stump = PixelSprite([
