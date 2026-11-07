@@ -260,6 +260,22 @@
         }
       }
     },
+    "Fishing" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Balık tutma"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "钓鱼"
+          }
+        }
+      }
+    },
     "Granted" : {
       "localizations" : {
         "tr" : {

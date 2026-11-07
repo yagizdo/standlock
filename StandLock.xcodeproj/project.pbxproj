@@ -69,6 +69,7 @@
 		877287617D7DDBAB2346687C /* DayPreviewCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECAC1DE354D80668B0437F6 /* DayPreviewCard.swift */; };
 		897387E26C50A633291C6545 /* QuickSetupStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7259326030030D8F49258219 /* QuickSetupStepView.swift */; };
 		8ABB22099BF5F67DCC2A0FA3 /* DisciplineSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D816A891C5FD51B89E4D0E2 /* DisciplineSettingsView.swift */; };
+		8D7F5DB4AE3653B913EF154C /* FishingScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 494CCBDAD86F56F31B1CC38C /* FishingScene.swift */; };
 		8F12EBA0D68AC2F92C03B096 /* MenuSceneCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73072AEAC528F616B0FD5DB2 /* MenuSceneCard.swift */; };
 		8F6AC147C464B1A28A96E798 /* SettingsRowTone.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9413FF43C324512A68D3038A /* SettingsRowTone.swift */; };
 		90D5E71A0446AFE3673A03EA /* Scheduling in Frameworks */ = {isa = PBXBuildFile; productRef = 316964B56B03AC1F35947883 /* Scheduling */; };
@@ -147,6 +148,7 @@
 		434445F0717D4FC94E284CB8 /* ExerciseBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseBlock.swift; sourceTree = "<group>"; };
 		43B1BE95A60D5294C770AEDE /* StatsFooter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsFooter.swift; sourceTree = "<group>"; };
 		4462E8D161113596647BD19E /* OverlayWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayWindowController.swift; sourceTree = "<group>"; };
+		494CCBDAD86F56F31B1CC38C /* FishingScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FishingScene.swift; sourceTree = "<group>"; };
 		4A15609AB3FB09316E35B9DA /* SceneFace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneFace.swift; sourceTree = "<group>"; };
 		4A2AFE6DEC61C501B7EFE3CE /* CoffeeScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoffeeScene.swift; sourceTree = "<group>"; };
 		4EC56256F21155B8E45CAF6D /* CapybaraScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CapybaraScene.swift; sourceTree = "<group>"; };
@@ -458,6 +460,7 @@
 				197D81279CAB2964AC559DA5 /* CatScene.swift */,
 				4A2AFE6DEC61C501B7EFE3CE /* CoffeeScene.swift */,
 				24E37F0725B2E389ACEC601F /* DeskScene.swift */,
+				494CCBDAD86F56F31B1CC38C /* FishingScene.swift */,
 				6AFF45DCD02D27949394DEF3 /* FoxScene.swift */,
 				0CFC6AC33A81C46E517592CB /* FrogScene.swift */,
 				648439978CA9BBF31921B4C5 /* HamsterScene.swift */,
@@ -606,6 +609,7 @@
 				0E1C2D941E09D0DF09384EE0 /* DisciplineLevelPicker.swift in Sources */,
 				8ABB22099BF5F67DCC2A0FA3 /* DisciplineSettingsView.swift in Sources */,
 				75E31F36751D55F051D6FF34 /* ExerciseBlock.swift in Sources */,
+				8D7F5DB4AE3653B913EF154C /* FishingScene.swift in Sources */,
 				769FC5C08D86A729FB78CAF4 /* FoxScene.swift in Sources */,
 				EF7FA04B2E3E977765AAC231 /* FrogScene.swift in Sources */,
 				17A849E1BB7551F62825BF5F /* GeneralSettingsView.swift in Sources */,
