@@ -200,6 +200,11 @@ final class PermissionChecker: ObservableObject {
         try task.run()
         isRelaunching = true
         NSApp.terminate(nil)
+        // Reached only when the quit was refused (a SwiftUI `.sheet` does that). Left running,
+        // the shell would reopen the app after the user's next deliberate quit.
+        task.terminate()
+        isRelaunching = false
+        throw CocoaError(.userCancelled)
     }
 
     func relaunchApp() {
