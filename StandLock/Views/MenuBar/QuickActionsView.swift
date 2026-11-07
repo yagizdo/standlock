@@ -5,9 +5,11 @@ struct QuickActionsView: View {
     @EnvironmentObject private var coordinator: AppCoordinator
     @EnvironmentObject private var languageStore: LanguageStore
     @Environment(\.openWindow) private var openWindow
+    @State private var isConfirmingQuit = false
 
     var body: some View {
-        HStack(spacing: 6) {
+        // Tight spacing leaves the two equal pills room for the longest title, Turkish "Duraklat".
+        HStack(spacing: 5) {
             if coordinator.isPaused {
                 Button {
                     coordinator.resumeSchedule()
@@ -33,20 +35,40 @@ struct QuickActionsView: View {
                 .disabled(coordinator.schedules.isEmpty)
             }
 
-            Button {
-                showMoreMenu()
-            } label: {
-                Image(systemName: "gearshape")
-                    .foregroundStyle(.secondary)
+            iconButton("About StandLock", symbol: "info.circle") {
+                coordinator.settingsNavigation.open(.about, using: openWindow)
             }
-            .buttonStyle(MenuBarPillStyle())
-            .frame(width: 34)
-            .accessibilityLabel("Menu")
+
+            iconButton("Settings", symbol: "gearshape") {
+                coordinator.settingsNavigation.open(.general, using: openWindow)
+            }
+
+            iconButton("Quit StandLock", symbol: "power") {
+                isConfirmingQuit = true
+            }
+            .disabled(coordinator.isBreakActive)
+            .popover(isPresented: $isConfirmingQuit, arrowEdge: .bottom) {
+                // A popover is a new hosting root, so the language does not reach it otherwise.
+                LocalizedRoot(store: languageStore) {
+                    QuitConfirmationView(cancel: { isConfirmingQuit = false }, quit: { NSApp.terminate(nil) })
+                }
+            }
         }
     }
 
+    private func iconButton(_ title: LocalizedStringKey, symbol: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Image(systemName: symbol)
+                .foregroundStyle(.secondary)
+        }
+        .buttonStyle(MenuBarPillStyle())
+        .frame(width: 28)
+        .help(title)
+        .accessibilityLabel(title)
+    }
+
     private func pill(_ title: LocalizedStringKey, symbol: String) -> some View {
-        HStack(spacing: 6) {
+        HStack(spacing: 4) {
             Image(systemName: symbol)
                 .foregroundStyle(.secondary)
             Text(title)
@@ -73,31 +95,6 @@ struct QuickActionsView: View {
 
         menu.popUp(positioning: nil, at: NSEvent.mouseLocation, in: nil)
     }
-
-    private func showMoreMenu() {
-        let handler = MoreMenuHandler(coordinator: coordinator, openWindow: openWindow)
-        let menu = NSMenu()
-        // An `NSMenu` item ignores SwiftUI's `.disabled`, and without this it would ignore
-        // `isEnabled` too.
-        menu.autoenablesItems = false
-
-        let settings = NSMenuItem(title: languageStore.string("Settings..."), action: #selector(MoreMenuHandler.settings), keyEquivalent: ",")
-        settings.target = handler
-        menu.addItem(settings)
-
-        let about = NSMenuItem(title: languageStore.string("About StandLock"), action: #selector(MoreMenuHandler.about), keyEquivalent: "")
-        about.target = handler
-        menu.addItem(about)
-
-        menu.addItem(.separator())
-
-        let quit = NSMenuItem(title: languageStore.string("Quit StandLock"), action: #selector(MoreMenuHandler.quit), keyEquivalent: "")
-        quit.target = handler
-        quit.isEnabled = !coordinator.isBreakActive
-        menu.addItem(quit)
-
-        menu.popUp(positioning: nil, at: NSEvent.mouseLocation, in: nil)
-    }
 }
 
 @MainActor
@@ -111,19 +108,4 @@ private final class PauseMenuHandler: NSObject {
     @objc func pause30() { coordinator.pauseSchedule(for: 30 * 60) }
     @objc func pause60() { coordinator.pauseSchedule(for: 60 * 60) }
     @objc func pause120() { coordinator.pauseSchedule(for: 2 * 60 * 60) }
-}
-
-@MainActor
-private final class MoreMenuHandler: NSObject {
-    let coordinator: AppCoordinator
-    let openWindow: OpenWindowAction
-
-    init(coordinator: AppCoordinator, openWindow: OpenWindowAction) {
-        self.coordinator = coordinator
-        self.openWindow = openWindow
-    }
-
-    @objc func settings() { coordinator.settingsNavigation.open(.general, using: openWindow) }
-    @objc func about() { coordinator.settingsNavigation.open(.about, using: openWindow) }
-    @objc func quit() { NSApp.terminate(nil) }
 }
