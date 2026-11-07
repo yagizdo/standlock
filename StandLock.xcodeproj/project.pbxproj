@@ -56,6 +56,7 @@
 		769FC5C08D86A729FB78CAF4 /* FoxScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AFF45DCD02D27949394DEF3 /* FoxScene.swift */; };
 		7BF1946EE4BC2EF26F5CE641 /* BreakScreenLook.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB803AB21175A8E54B5A2191 /* BreakScreenLook.swift */; };
 		7D2C20F63E9C2C051EE354DE /* SettingsSidebarRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7832761FE83C21F870E571C7 /* SettingsSidebarRow.swift */; };
+		7FAD5E79A4B910ECDB633365 /* ReadingScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F0CB1A8BFD3077844E794D4 /* ReadingScene.swift */; };
 		82BDAFFF1661ED2476DDCAD3 /* Detection in Frameworks */ = {isa = PBXBuildFile; productRef = F19E05A1FA932709D406DD8F /* Detection */; };
 		8392C29716F63661BC5BBF34 /* LocalizedRoot.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCAC5A6BBBB241EEA90944F4 /* LocalizedRoot.swift */; };
 		845AD4900EBFEE715DB4D06C /* CoffeeScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A2AFE6DEC61C501B7EFE3CE /* CoffeeScene.swift */; };
@@ -160,6 +161,7 @@
 		6AFF45DCD02D27949394DEF3 /* FoxScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoxScene.swift; sourceTree = "<group>"; };
 		6CDB4CFBD38A25482A8B215B /* WeekdaySymbols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekdaySymbols.swift; sourceTree = "<group>"; };
 		6EB7CBA12B287EE7D1683389 /* SettingsSearchField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSearchField.swift; sourceTree = "<group>"; };
+		6F0CB1A8BFD3077844E794D4 /* ReadingScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadingScene.swift; sourceTree = "<group>"; };
 		7259326030030D8F49258219 /* QuickSetupStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickSetupStepView.swift; sourceTree = "<group>"; };
 		73072AEAC528F616B0FD5DB2 /* MenuSceneCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuSceneCard.swift; sourceTree = "<group>"; };
 		765091196991FB6E7E8B8185 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
@@ -460,6 +462,7 @@
 				C851627E22E0B6855CD31121 /* PenguinScene.swift */,
 				0FCC1989904A9C3332CDE801 /* PixelGridView.swift */,
 				6162024620A7B5B6DDFC8C3A /* PixelParts.swift */,
+				6F0CB1A8BFD3077844E794D4 /* ReadingScene.swift */,
 				E4C53062EDA5469F4E031D21 /* RobotScene.swift */,
 				F2A85DF7A9AA67198838FE47 /* SceneBubble.swift */,
 				B3BF2AEA58FF986A4E89264E /* SproutScene.swift */,
@@ -634,6 +637,7 @@
 				3F24521CD8A9CA8C9156A1B9 /* PreferencesSaveOwner.swift in Sources */,
 				4A537C55B992DF62814F9857 /* QuickActionsView.swift in Sources */,
 				897387E26C50A633291C6545 /* QuickSetupStepView.swift in Sources */,
+				7FAD5E79A4B910ECDB633365 /* ReadingScene.swift in Sources */,
 				354BBE2CE0040FB1FE1928BA /* RhythmTile.swift in Sources */,
 				AEA17D2F86B24BE5FE56B024 /* RobotScene.swift in Sources */,
 				E9A645EF57C9276206BF0394 /* SceneBubble.swift in Sources */,

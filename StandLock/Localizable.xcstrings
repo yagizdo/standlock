@@ -564,6 +564,22 @@
         }
       }
     },
+    "Reading" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kitap"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "读书"
+          }
+        }
+      }
+    },
     "Remove Interval" : {
       "localizations" : {
         "tr" : {
