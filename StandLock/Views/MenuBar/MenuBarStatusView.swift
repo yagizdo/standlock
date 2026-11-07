@@ -1,7 +1,7 @@
 import SwiftUI
 import StandLockCore
 
-/// The scene and the status row. One timeline drives the motion, the countdown and the change to
+/// The scene and the status row. One clock drives the motion, the countdown and the change to
 /// the last minute, because the coordinator only publishes every 10 s before that minute.
 struct MenuBarStatusView: View {
     let state: NextBreakState
@@ -11,23 +11,43 @@ struct MenuBarStatusView: View {
 
     @EnvironmentObject private var checker: PermissionChecker
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    /// The first open creates this view. A timeline keeps ticking in a closed panel, so this stops
-    /// it. Occlusion, not key: the panel stays up without key while the update window is open.
+    /// The first open creates this view. The clock would keep ticking in a closed panel, so this
+    /// stops it. Occlusion, not key: the panel stays up without key while the update window is open.
     @State private var isOpen = true
+    /// Started here rather than on appear, so the countdown runs from the first frame.
+    @StateObject private var clock: PanelClock
+
+    init(state: NextBreakState, progress: Double, scene: MenuScene, schedule: Schedule?) {
+        self.state = state
+        self.progress = progress
+        self.scene = scene
+        self.schedule = schedule
+        let reduceMotion = NSWorkspace.shared.accessibilityDisplayShouldReduceMotion
+        _clock = StateObject(wrappedValue: PanelClock(every: Self.tickInterval(scene: scene, reduceMotion: reduceMotion, isOpen: true)))
+    }
+
+    /// Twelve frames a second for a moving scene, one for the countdown alone, none when closed.
+    private static func tickInterval(scene: MenuScene, reduceMotion: Bool, isOpen: Bool) -> TimeInterval? {
+        guard isOpen else { return nil }
+        return reduceMotion || scene == .off ? 1 : 1.0 / 12
+    }
 
     var body: some View {
-        TimelineView(.animation(minimumInterval: reduceMotion || scene == .off ? 1 : 1.0 / 12, paused: !isOpen)) { context in
-            let look = MenuSceneLook(state: state, now: context.date)
-            VStack(alignment: .leading, spacing: 10) {
-                if scene != .off {
-                    MenuSceneCard(scene: scene, look: look, progress: progress, date: context.date, isMoving: !reduceMotion)
-                }
-                statusRow(look: look, now: context.date)
+        let look = MenuSceneLook(state: state, now: clock.now)
+        VStack(alignment: .leading, spacing: 10) {
+            if scene != .off {
+                MenuSceneCard(scene: scene, look: look, progress: progress, date: clock.now, isMoving: !reduceMotion)
             }
+            statusRow(look: look, now: clock.now)
+        }
+        .onChange(of: Self.tickInterval(scene: scene, reduceMotion: reduceMotion, isOpen: isOpen)) { interval in
+            clock.run(every: interval)
         }
         .onReceive(NotificationCenter.default.publisher(for: NSWindow.didChangeOcclusionStateNotification)) { note in
             guard let window = note.object as? NSWindow, window.isMenuBarPanel else { return }
             isOpen = window.occlusionState.contains(.visible)
+            // Here, not only in `onChange`: that never ran once the panel was hidden.
+            clock.run(every: Self.tickInterval(scene: scene, reduceMotion: reduceMotion, isOpen: isOpen))
         }
     }
 
