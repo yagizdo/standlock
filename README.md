@@ -77,7 +77,7 @@ Or [download the DMG](https://github.com/yagizdo/StandLock/releases/latest) and 
 - Your own break screen colours and message
 - Pauses your media during a break, with optional sounds before and after
 - System, Light or Dark, in English, Turkish or Simplified Chinese
-- Launch at login, and automatic updates through Sparkle (off by default)
+- Launch at login, and updates through Sparkle (automatic checks off by default) or Homebrew (daily check, one click)
 
 <p align="center">
   <img src="assets/statistics.png" height="330" alt="Statistics page with six metric cards and a year heatmap">
