@@ -186,14 +186,25 @@ final class PermissionChecker: ObservableObject {
 
     private(set) static var isRelaunching = false
 
-    func relaunchApp() {
+    /// Skips both quit vetoes, so a caller checks them first. The new process opens only once
+    /// this one is gone: it has to read the `enforcementState` written on `willTerminate`.
+    static func relaunch() throws {
         let task = Process()
-        task.executableURL = URL(fileURLWithPath: "/usr/bin/open")
-        task.arguments = ["-n", Bundle.main.bundlePath]
+        task.executableURL = URL(fileURLWithPath: "/bin/sh")
+        task.arguments = [
+            "-c",
+            #"while /bin/kill -0 "$1" 2>/dev/null; do /bin/sleep 0.2; done; /usr/bin/open -n "$0""#,
+            Bundle.main.bundlePath,
+            String(ProcessInfo.processInfo.processIdentifier),
+        ]
+        try task.run()
+        isRelaunching = true
+        NSApp.terminate(nil)
+    }
+
+    func relaunchApp() {
         do {
-            try task.run()
-            Self.isRelaunching = true
-            NSApp.terminate(nil)
+            try Self.relaunch()
         } catch {
             let alert = NSAlert()
             alert.messageText = languageStore.string("Restart Failed")
