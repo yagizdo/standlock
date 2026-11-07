@@ -5538,6 +5538,22 @@
         }
       }
     },
+    "Sprout" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Filiz"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "嫩芽"
+          }
+        }
+      }
+    },
     "Stand against a wall with your head, shoulders, and hips touching it. Hold this posture for 15 seconds." : {
       "comment" : "Exercise description",
       "extractionState" : "manual",

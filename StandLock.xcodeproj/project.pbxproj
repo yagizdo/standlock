@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		009F1339F2742632532208AA /* SoftwareUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 303422D10B9C319038D63E32 /* SoftwareUpdate.swift */; };
+		011A9BA489625FDEA37D14DA /* SproutScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3BF2AEA58FF986A4E89264E /* SproutScene.swift */; };
 		01D54F07B3A6061A184C04BF /* MenuScenePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = C64B592ED400D7D67ABD591A /* MenuScenePicker.swift */; };
 		040AE413C982CD1E84472CDA /* SettingsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E666594049BE353F6E6FF6 /* SettingsSection.swift */; };
 		08AEDD7B79B9125648BCDA93 /* ScheduleDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6255027F43C988785C9635D /* ScheduleDetailView.swift */; };
@@ -185,6 +186,7 @@
 		B06BD317C6ADEBC1F1D16043 /* DayButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayButtons.swift; sourceTree = "<group>"; };
 		B1524D749BB78A875E5FD51F /* StandLockApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StandLockApp.swift; sourceTree = "<group>"; };
 		B387012391C6BC0360436B50 /* WelcomeStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeStepView.swift; sourceTree = "<group>"; };
+		B3BF2AEA58FF986A4E89264E /* SproutScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SproutScene.swift; sourceTree = "<group>"; };
 		B6255027F43C988785C9635D /* ScheduleDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleDetailView.swift; sourceTree = "<group>"; };
 		B87A8947B73CA1C6C6D091F7 /* TemplateRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplateRow.swift; sourceTree = "<group>"; };
 		BCAC5A6BBBB241EEA90944F4 /* LocalizedRoot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizedRoot.swift; sourceTree = "<group>"; };
@@ -454,6 +456,7 @@
 				6162024620A7B5B6DDFC8C3A /* PixelParts.swift */,
 				E4C53062EDA5469F4E031D21 /* RobotScene.swift */,
 				F2A85DF7A9AA67198838FE47 /* SceneBubble.swift */,
+				B3BF2AEA58FF986A4E89264E /* SproutScene.swift */,
 			);
 			path = Scenes;
 			sourceTree = "<group>";
@@ -649,6 +652,7 @@
 				85380886D037B53802511647 /* SettingsView.swift in Sources */,
 				12E5EB862AA08D86DF45D9F1 /* SidebarBackground.swift in Sources */,
 				009F1339F2742632532208AA /* SoftwareUpdate.swift in Sources */,
+				011A9BA489625FDEA37D14DA /* SproutScene.swift in Sources */,
 				2CD0D3C3CF795626E50A5EAA /* StandLockApp.swift in Sources */,
 				BB64F88461355BFECA64390F /* StatisticsView.swift in Sources */,
 				D588F2EB46E9B8124422C5EE /* StatsFooter.swift in Sources */,
