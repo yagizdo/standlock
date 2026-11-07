@@ -74,6 +74,7 @@
 		9CE3B1904556E5F701466351 /* BreakSoundPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 570EE1706B3BD156F7F6FB6A /* BreakSoundPlayer.swift */; };
 		9D77F7B7F12048E4399B8B25 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD06AD45022B6D147E26C4A6 /* AppDelegate.swift */; };
 		9EC3DB7CD0C70E2BA71F7117 /* WindowCloseGuard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED1AF99472834C9823F0D6A /* WindowCloseGuard.swift */; };
+		A268E6CE19D5C4A293265117 /* CampfireScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 965A365DE45518756693885F /* CampfireScene.swift */; };
 		A60D5B46AD4C89605351E708 /* CatScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 197D81279CAB2964AC559DA5 /* CatScene.swift */; };
 		A6C60C181FF99EA8F84AA488 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = EE28EF9957F31C9560EE4439 /* Localizable.xcstrings */; };
 		A90BBE014C28C0EE022F3E96 /* SettingsPage+Presentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 045E2DB0FA1DABBAEE991FDC /* SettingsPage+Presentation.swift */; };
@@ -168,6 +169,7 @@
 		9413FF43C324512A68D3038A /* SettingsRowTone.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsRowTone.swift; sourceTree = "<group>"; };
 		946A989D9EC41AFA82920166 /* NextBreakStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NextBreakStatus.swift; sourceTree = "<group>"; };
 		94B7BAAC1837524EF3DD6B90 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		965A365DE45518756693885F /* CampfireScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampfireScene.swift; sourceTree = "<group>"; };
 		9685AC67A3B1CA0D154BC6DB /* DisciplineLevelPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisciplineLevelPicker.swift; sourceTree = "<group>"; };
 		99BB0E055C4BD25865AD3EE1 /* ManuscriptBreakView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManuscriptBreakView.swift; sourceTree = "<group>"; };
 		99FB6FBBABD55844628B8DA3 /* BreakTypography.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakTypography.swift; sourceTree = "<group>"; };
@@ -436,6 +438,7 @@
 		F55A26B9BA70F54DCD4A7862 /* Scenes */ = {
 			isa = PBXGroup;
 			children = (
+				965A365DE45518756693885F /* CampfireScene.swift */,
 				4EC56256F21155B8E45CAF6D /* CapybaraScene.swift */,
 				197D81279CAB2964AC559DA5 /* CatScene.swift */,
 				24E37F0725B2E389ACEC601F /* DeskScene.swift */,
@@ -569,6 +572,7 @@
 				9282BD07119596D0242E67D6 /* BreakScreenSettingsView.swift in Sources */,
 				9CE3B1904556E5F701466351 /* BreakSoundPlayer.swift in Sources */,
 				AB84ADC15C8263AFD995E8B5 /* BreakTypography.swift in Sources */,
+				A268E6CE19D5C4A293265117 /* CampfireScene.swift in Sources */,
 				C9317350D818E7C826DA0966 /* CapybaraScene.swift in Sources */,
 				A60D5B46AD4C89605351E708 /* CatScene.swift in Sources */,
 				B2FF3CCDF5FB0EFC3C60C8BF /* DayButtons.swift in Sources */,

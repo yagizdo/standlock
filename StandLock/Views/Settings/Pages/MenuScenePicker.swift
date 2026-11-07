@@ -121,6 +121,7 @@ struct MenuScenePicker: View {
         case .fox: Text("Fox")
         case .capybara: Text("Capybara")
         case .robot: Text("Robot")
+        case .campfire: Text("Campfire")
         case .off: Text("Off")
         }
     }

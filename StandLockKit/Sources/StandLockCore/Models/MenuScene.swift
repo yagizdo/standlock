@@ -8,5 +8,6 @@ public enum MenuScene: String, Codable, Sendable, CaseIterable {
     case fox
     case capybara
     case robot
+    case campfire
     case off
 }

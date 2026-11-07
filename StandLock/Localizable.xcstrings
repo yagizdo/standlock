@@ -1965,6 +1965,22 @@
         }
       }
     },
+    "Campfire" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kamp ateşi"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "篝火"
+          }
+        }
+      }
+    },
     "Capybara" : {
       "localizations" : {
         "tr" : {
