@@ -113,19 +113,20 @@ struct MenuBarView: View {
         }
     }
 
-    /// The hidden button holds the banner's height: panel height stays steady across its states.
+    /// A hidden zero-width button holds the banner's height, so the panel stays steady across
+    /// these states without the button's width cutting the longer titles.
     @ViewBuilder
     private var bannerAction: some View {
         switch updateObserver.homebrewUpgrade {
         case .idle, .blocked:
             updateButton
         case .running:
-            updateButton
-                .hidden()
-                .overlay(ProgressView().controlSize(.small))
+            ZStack {
+                heightHolder
+                ProgressView().controlSize(.small)
+            }
         case .waitingToRestart:
-            updateButton
-                .hidden()
+            heightHolder
         case .failed:
             Button("Details") {
                 coordinator.settingsNavigation.open(.about, using: openWindow)
@@ -133,6 +134,13 @@ struct MenuBarView: View {
             .buttonStyle(.bordered)
             .controlSize(.small)
         }
+    }
+
+    private var heightHolder: some View {
+        updateButton
+            .fixedSize()
+            .hidden()
+            .frame(width: 0)
     }
 
     private var updateButton: some View {
