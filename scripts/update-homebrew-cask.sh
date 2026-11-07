@@ -1,9 +1,11 @@
 #!/bin/bash
 set -euo pipefail
 
+# Homebrew installs update only from the tap, so a skipped push leaves them on the
+# old version with a green release run. Fail instead.
 if [ -z "$TAP_TOKEN" ]; then
-  echo "TAP_GITHUB_TOKEN not set, skipping Homebrew cask update"
-  exit 0
+  echo "TAP_GITHUB_TOKEN not set, Homebrew cask not updated"
+  exit 1
 fi
 
 git clone "https://github.com/yagizdo/homebrew-tap.git" "$RUNNER_TEMP/homebrew-tap"

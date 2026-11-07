@@ -89,6 +89,7 @@
 		BF272D7E49CFE686A28BE539 /* PenguinScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = C851627E22E0B6855CD31121 /* PenguinScene.swift */; };
 		C144671C95E22BC38AD14FE8 /* ScheduleSidebarRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = F07BB496D038848FFC7FDB3F /* ScheduleSidebarRow.swift */; };
 		C5895F53358BDFD586A4A800 /* SettingsDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF887D81035A1FE4735344F3 /* SettingsDetail.swift */; };
+		CACA2A694D8386E2C52987E7 /* HomebrewUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41523222886A9E60C4A27DD /* HomebrewUpdater.swift */; };
 		CE55FB80048215F1C86DC99D /* DeskScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24E37F0725B2E389ACEC601F /* DeskScene.swift */; };
 		D588F2EB46E9B8124422C5EE /* StatsFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43B1BE95A60D5294C770AEDE /* StatsFooter.swift */; };
 		D6409DD8838F0ED91DC848C5 /* NextIntervalLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33012BFC809E077C2D638165 /* NextIntervalLabel.swift */; };
@@ -199,6 +200,7 @@
 		EE28EF9957F31C9560EE4439 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		F07BB496D038848FFC7FDB3F /* ScheduleSidebarRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleSidebarRow.swift; sourceTree = "<group>"; };
 		F2A85DF7A9AA67198838FE47 /* SceneBubble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneBubble.swift; sourceTree = "<group>"; };
+		F41523222886A9E60C4A27DD /* HomebrewUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomebrewUpdater.swift; sourceTree = "<group>"; };
 		F9AA3E0D667AF2DB2D988625 /* SettingsToggleRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsToggleRow.swift; sourceTree = "<group>"; };
 		FDC1758B39501153DCF68061 /* NextBreakClock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NextBreakClock.swift; sourceTree = "<group>"; };
 		FE0E2C708B760F809144B756 /* PermissionChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionChecker.swift; sourceTree = "<group>"; };
@@ -296,6 +298,7 @@
 				A81F2ED91290AD26CB5B672E /* AppCoordinator.swift */,
 				37C6854B70D7BA6C7DDE4D09 /* AppTheme.swift */,
 				570EE1706B3BD156F7F6FB6A /* BreakSoundPlayer.swift */,
+				F41523222886A9E60C4A27DD /* HomebrewUpdater.swift */,
 				35EA7054F16243AE0575478E /* LanguageStore.swift */,
 				5586791BF5D81FC7CE5AE185 /* MediaController.swift */,
 				FDC1758B39501153DCF68061 /* NextBreakClock.swift */,
@@ -560,6 +563,7 @@
 				17A849E1BB7551F62825BF5F /* GeneralSettingsView.swift in Sources */,
 				4B8B1109D2B1AC920AF4656C /* HexColor+SwiftUI.swift in Sources */,
 				F7C1F8F46303DE4B861765D2 /* HexColorField.swift in Sources */,
+				CACA2A694D8386E2C52987E7 /* HomebrewUpdater.swift in Sources */,
 				293548DD12593304DAE64D91 /* HourglassScene.swift in Sources */,
 				959469674E2A16E84F15F50B /* LanguageStore.swift in Sources */,
 				726D144CA2B3B5AF4D4503AE /* LevelPill.swift in Sources */,

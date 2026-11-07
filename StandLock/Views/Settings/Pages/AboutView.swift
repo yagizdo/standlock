@@ -2,6 +2,8 @@ import SwiftUI
 @preconcurrency import Sparkle
 
 struct AboutView: View {
+    @EnvironmentObject private var updateObserver: UpdateObserver
+
     let updater: SPUUpdater
 
     private var version: String {
@@ -28,7 +30,7 @@ struct AboutView: View {
                 UpdaterSettingsView(updater: updater)
                 SettingsRowDivider()
                 SettingsRow("Version \(version)", symbol: "number") {
-                    CheckForUpdatesView(updater: updater)
+                    CheckForUpdatesView(updater: updater, observer: updateObserver)
                         .controlSize(.small)
                 }
                 Divider()
