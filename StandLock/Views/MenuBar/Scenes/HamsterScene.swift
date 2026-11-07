@@ -48,6 +48,7 @@ struct HamsterScene: View {
                     let p = phase.truncatingRemainder(dividingBy: 1.0)
                     return p < 0.4 ? sin(p / 0.4 * .pi) * 10 : 0
                 } ?? 6
+                Ellipse().fill(Color.black.opacity(0.12)).frame(width: 40 - hop, height: 5).position(x: 152, y: 104)
                 standingHamster.position(x: 152, y: 76 - hop)
             case .paused:
                 sleepingHamster.position(x: 118, y: 106)
@@ -102,8 +103,8 @@ struct HamsterScene: View {
         }
     }
 
-    private func eye(open: Bool) -> some View {
-        Circle().fill(ink).frame(width: 5, height: 5).scaleEffect(y: open && !sceneIsBlinking(time) ? 1 : 0.15)
+    private var eye: some View {
+        SceneFace.eye(sceneIsBlinking(time) ? .closed : .open(lookingUp: look == .breakSoon), ink: ink)
     }
 
     private var runningHamster: some View {
@@ -115,7 +116,8 @@ struct HamsterScene: View {
             Ellipse().fill(belly).frame(width: 30, height: 13).offset(x: 3, y: 8)
             Circle().fill(fur).frame(width: 12, height: 12).offset(x: 6, y: -14)
             Circle().fill(pink).frame(width: 6, height: 6).offset(x: 6, y: -14)
-            eye(open: true).offset(x: 13, y: look == .breakSoon ? -6 : -3)
+            eye.offset(x: 13, y: -4)
+            Ellipse().fill(Color(hex: 0xF29A8A, opacity: 0.75)).frame(width: 6, height: 4).offset(x: 15, y: 3)
             Circle().fill(pink).frame(width: 5, height: 5).offset(x: 22, y: 1)
         }
     }
@@ -128,13 +130,8 @@ struct HamsterScene: View {
             Circle().fill(pink).frame(width: 7, height: 7).offset(x: 13, y: -24)
             Capsule().fill(fur).frame(width: 40, height: 50)
             Ellipse().fill(belly).frame(width: 26, height: 30).offset(y: 9)
-            HStack(spacing: 12) { eye(open: true); eye(open: true) }.offset(y: -12)
-            Circle().fill(pink).frame(width: 5, height: 4).offset(y: -6)
-            HStack(spacing: 20) {
-                Circle().fill(pink.opacity(0.7)).frame(width: 6, height: 6)
-                Circle().fill(pink.opacity(0.7)).frame(width: 6, height: 6)
-            }
-            .offset(y: -6)
+            SceneFace(eyes: .happy, mouth: .grin, eyeSpacing: 17, blushSpacing: 26, mouthDrop: 9).offset(y: -12)
+            Circle().fill(pink).frame(width: 5, height: 4).offset(y: -7)
             HStack(spacing: 4) {
                 Capsule().fill(pink).frame(width: 7, height: 6)
                 Capsule().fill(pink).frame(width: 7, height: 6)
@@ -154,7 +151,7 @@ struct HamsterScene: View {
             Ellipse().fill(belly).frame(width: 18, height: 12).offset(x: 10, y: 5)
             Circle().fill(fur).frame(width: 11, height: 11).offset(x: -8, y: -12)
             Circle().fill(pink).frame(width: 5, height: 5).offset(x: -8, y: -12)
-            Capsule().fill(ink).frame(width: 6, height: 1.6).offset(x: -10, y: -1)
+            SceneFace.eye(.closed, ink: ink).offset(x: -10, y: -2)
         }
     }
 }

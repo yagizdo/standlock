@@ -33,6 +33,9 @@ struct CoffeeScene: View {
             plate
             Ellipse().fill(Color(hex: 0xD9D0C0)).frame(width: 92, height: 14).position(x: 118, y: 100)
             Ellipse().fill(Color(hex: 0xF4EEE2)).frame(width: 84, height: 10).position(x: 118, y: 97)
+            if look == .timeToStand {
+                Ellipse().fill(Color.black.opacity(0.12)).frame(width: 50 - hop * 1.2, height: 5).position(x: 116, y: 98)
+            }
             mugGroup
             switch look {
             case .breakSoon:
@@ -77,58 +80,37 @@ struct CoffeeScene: View {
                 }
             }
             if standing {
-                HStack(spacing: 14) {
-                    Capsule().fill(ink).frame(width: 4, height: 12)
-                    Capsule().fill(ink).frame(width: 4, height: 12)
+                HStack(spacing: 12) {
+                    ForEach(0..<2, id: \.self) { _ in
+                        VStack(spacing: -2) {
+                            Capsule().fill(ink).frame(width: 4.5, height: 11)
+                            Ellipse().fill(ink).frame(width: 9, height: 4.5)
+                        }
+                    }
                 }
-                .position(x: 114, y: 103)
+                .position(x: 114, y: 102)
             }
             Circle().stroke(mugColor, lineWidth: 6).frame(width: 22, height: 22).position(x: 144, y: 72)
             MugBody().fill(mugColor).frame(width: 56, height: 48).position(x: 114, y: 72)
             Ellipse().fill(Color(hex: 0x8CD3CC)).frame(width: 56, height: 12).position(x: 114, y: 49)
             Ellipse().fill(Color(hex: isNight ? 0x3E8F8B : 0x6B4226)).frame(width: 46, height: 8).position(x: 114, y: 49)
-            face.position(x: 114, y: 74)
+            Capsule().fill(Color.white.opacity(0.3)).frame(width: 5, height: 22).position(x: 94, y: 74)
+            face.position(x: 114, y: 70)
         }
         .offset(y: -lift)
     }
 
-    private var face: some View {
-        let closed = isNight || sceneIsBlinking(time)
-        let happy = look == .timeToStand
-        let surprised = look == .breakSoon || happy
-        return ZStack {
-            HStack(spacing: 14) {
-                ForEach(0..<2, id: \.self) { _ in
-                    if happy {
-                        Path { path in
-                            path.move(to: CGPoint(x: 0, y: 4))
-                            path.addQuadCurve(to: CGPoint(x: 8, y: 4), control: CGPoint(x: 4, y: -2))
-                        }
-                        .stroke(ink, style: StrokeStyle(lineWidth: 2, lineCap: .round))
-                        .frame(width: 8, height: 6)
-                    } else {
-                        Capsule().fill(ink).frame(width: closed ? 7 : 4.5, height: closed ? 1.8 : 6.5)
-                    }
-                }
-            }
-            .offset(y: look == .breakSoon ? -6 : -4)
-            HStack(spacing: 26) {
-                Circle().fill(Color(hex: 0xF0A08A)).frame(width: 6, height: 6)
-                Circle().fill(Color(hex: 0xF0A08A)).frame(width: 6, height: 6)
-            }
-            .offset(y: 3)
-            if surprised {
-                Ellipse().fill(ink).frame(width: 6, height: 7).offset(y: 6)
-            } else {
-                Path { path in
-                    path.move(to: CGPoint(x: 0, y: 0))
-                    path.addQuadCurve(to: CGPoint(x: 10, y: 0), control: CGPoint(x: 5, y: 5))
-                }
-                .stroke(ink, style: StrokeStyle(lineWidth: 1.8, lineCap: .round))
-                .frame(width: 10, height: 5)
-                .offset(y: 6)
-            }
+    private var face: SceneFace {
+        let eyes: SceneFace.Eyes
+        let mouth: SceneFace.Mouth
+        switch look {
+        case .paused: eyes = .closed; mouth = .smile
+        case .timeToStand: eyes = .happy; mouth = .grin
+        case .breakSoon: eyes = .open(lookingUp: true); mouth = .open
+        case .working, .breakWaiting, .noSchedules:
+            eyes = sceneIsBlinking(time) ? .closed : .open(lookingUp: false); mouth = .smile
         }
+        return SceneFace(eyes: eyes, mouth: mouth, eyeSpacing: 19, blushSpacing: 32, mouthDrop: 10)
     }
 
     private var plate: some View {

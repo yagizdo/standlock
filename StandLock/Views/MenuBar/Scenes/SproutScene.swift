@@ -11,7 +11,6 @@ struct SproutScene: View {
 
     private let stem = Color(hex: 0x4F9A3A)
     private let leaf = Color(hex: 0x6CC24A)
-    private let ink = Color(hex: 0x3B2A20)
 
     var body: some View {
         ZStack {
@@ -88,8 +87,7 @@ struct SproutScene: View {
     }
 
     private var pot: some View {
-        let closed = look == .paused || sceneIsBlinking(time)
-        return ZStack {
+        ZStack {
             Path { path in
                 path.move(to: CGPoint(x: 108, y: 82))
                 path.addLine(to: CGPoint(x: 148, y: 82))
@@ -99,26 +97,22 @@ struct SproutScene: View {
             }
             .fill(Color(hex: 0xC9683F))
             RoundedRectangle(cornerRadius: 3).fill(Color(hex: 0xD9774A)).frame(width: 50, height: 10).position(x: 128, y: 78)
-            HStack(spacing: 11) {
-                Capsule().fill(ink).frame(width: closed ? 6 : 4, height: closed ? 1.6 : 5)
-                Capsule().fill(ink).frame(width: closed ? 6 : 4, height: closed ? 1.6 : 5)
-            }
-            .position(x: 128, y: look == .breakSoon ? 89 : 91)
-            HStack(spacing: 20) {
-                Circle().fill(Color(hex: 0xE8907A)).frame(width: 5, height: 5)
-                Circle().fill(Color(hex: 0xE8907A)).frame(width: 5, height: 5)
-            }
-            .position(x: 128, y: 96)
-            if look == .breakSoon || look == .timeToStand {
-                Ellipse().fill(ink).frame(width: 5, height: 5).position(x: 128, y: 98)
-            } else {
-                Path { path in
-                    path.move(to: CGPoint(x: 124, y: 97))
-                    path.addQuadCurve(to: CGPoint(x: 132, y: 97), control: CGPoint(x: 128, y: 101))
-                }
-                .stroke(ink, style: StrokeStyle(lineWidth: 1.6, lineCap: .round))
-            }
+            Capsule().fill(Color.white.opacity(0.28)).frame(width: 4, height: 15).rotationEffect(.degrees(-12)).position(x: 116, y: 93)
+            face.position(x: 128, y: 89)
         }
+    }
+
+    private var face: SceneFace {
+        let eyes: SceneFace.Eyes
+        let mouth: SceneFace.Mouth
+        switch look {
+        case .paused: eyes = .closed; mouth = .smile
+        case .timeToStand: eyes = .happy; mouth = .grin
+        case .breakSoon: eyes = .open(lookingUp: true); mouth = .open
+        case .working, .breakWaiting, .noSchedules:
+            eyes = sceneIsBlinking(time) ? .closed : .open(lookingUp: false); mouth = .smile
+        }
+        return SceneFace(eyes: eyes, mouth: mouth, eyeSpacing: 15, blushSpacing: 26, mouthDrop: 8)
     }
 
     private var cactus: some View {

@@ -28,6 +28,9 @@ struct BreadScene: View {
             Rectangle().fill(Color(hex: isNight ? 0x5E4A3C : 0xCC9A5E)).frame(height: 6).position(x: 128, y: 102)
             Ellipse().fill(Color(hex: isNight ? 0x5A4A40 : 0xE9C99A)).frame(width: 118, height: 12).position(x: 124, y: 101)
             timer
+            if look == .timeToStand {
+                Ellipse().fill(Color.black.opacity(0.12)).frame(width: 70 - hop * 1.5, height: 6).position(x: 124, y: 104)
+            }
             loafGroup
             switch look {
             case .paused:
@@ -60,11 +63,15 @@ struct BreadScene: View {
         let lift = hop + (standing ? 8 : 0)
         return ZStack {
             if standing {
-                HStack(spacing: 22) {
-                    Capsule().fill(ink).frame(width: 5, height: 12)
-                    Capsule().fill(ink).frame(width: 5, height: 12)
+                HStack(spacing: 18) {
+                    ForEach(0..<2, id: \.self) { _ in
+                        VStack(spacing: -2) {
+                            Capsule().fill(ink).frame(width: 5, height: 11)
+                            Ellipse().fill(ink).frame(width: 10, height: 5)
+                        }
+                    }
                 }
-                .position(x: 124, y: 103)
+                .position(x: 124, y: 102)
             }
             ZStack {
                 LoafShape().fill(crust)
@@ -74,10 +81,11 @@ struct BreadScene: View {
                         .rotationEffect(.degrees(35))
                         .position(x: 30 + CGFloat(index) * 18, y: 17 + CGFloat(index == 1 ? -3 : 0))
                 }
+                Capsule().fill(Color.white.opacity(0.3)).frame(width: 14, height: 4).rotationEffect(.degrees(-28)).position(x: 18, y: 18)
                 if isNight {
                     towel
                 }
-                face.position(x: 48, y: 40)
+                face.position(x: 48, y: 37)
             }
             .frame(width: 96, height: 58)
             .scaleEffect(x: 1, y: rise, anchor: .bottom)
@@ -86,43 +94,17 @@ struct BreadScene: View {
         .offset(y: -lift)
     }
 
-    private var face: some View {
-        let closed = isNight || sceneIsBlinking(time)
-        let happy = look == .timeToStand
-        let surprised = look == .breakSoon
-        return ZStack {
-            HStack(spacing: 16) {
-                ForEach(0..<2, id: \.self) { _ in
-                    if happy {
-                        Path { path in
-                            path.move(to: CGPoint(x: 0, y: 4))
-                            path.addQuadCurve(to: CGPoint(x: 8, y: 4), control: CGPoint(x: 4, y: -2))
-                        }
-                        .stroke(ink, style: StrokeStyle(lineWidth: 2, lineCap: .round))
-                        .frame(width: 8, height: 6)
-                    } else {
-                        Capsule().fill(ink).frame(width: closed ? 7 : 4.5, height: closed ? 1.8 : 6.5)
-                    }
-                }
-            }
-            .offset(y: surprised ? -6 : -4)
-            HStack(spacing: 28) {
-                Circle().fill(Color(hex: 0xF08A7A, opacity: 0.8)).frame(width: 7, height: 7)
-                Circle().fill(Color(hex: 0xF08A7A, opacity: 0.8)).frame(width: 7, height: 7)
-            }
-            .offset(y: 3)
-            if surprised || happy {
-                Ellipse().fill(ink).frame(width: 6, height: 7).offset(y: 6)
-            } else {
-                Path { path in
-                    path.move(to: CGPoint(x: 0, y: 0))
-                    path.addQuadCurve(to: CGPoint(x: 10, y: 0), control: CGPoint(x: 5, y: 5))
-                }
-                .stroke(ink, style: StrokeStyle(lineWidth: 1.8, lineCap: .round))
-                .frame(width: 10, height: 5)
-                .offset(y: 6)
-            }
+    private var face: SceneFace {
+        let eyes: SceneFace.Eyes
+        let mouth: SceneFace.Mouth
+        switch look {
+        case .paused: eyes = .closed; mouth = .smile
+        case .timeToStand: eyes = .happy; mouth = .grin
+        case .breakSoon: eyes = .open(lookingUp: true); mouth = .open
+        case .working, .breakWaiting, .noSchedules:
+            eyes = sceneIsBlinking(time) ? .closed : .open(lookingUp: false); mouth = .smile
         }
+        return SceneFace(eyes: eyes, mouth: mouth, eyeSpacing: 20, blushSpacing: 32)
     }
 
     /// A checked tea towel tucked over the loaf for the night.
