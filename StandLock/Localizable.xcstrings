@@ -628,6 +628,22 @@
         }
       }
     },
+    "Quit StandLock?" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "StandLock'tan çıkılsın mı?"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "退出 StandLock？"
+          }
+        }
+      }
+    },
     "Rainy Day" : {
       "localizations" : {
         "tr" : {
@@ -928,6 +944,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "时间"
+          }
+        }
+      }
+    },
+    "You won't get break reminders until you open StandLock again." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "StandLock'u yeniden açana kadar mola hatırlatması almayacaksın."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重新打开 StandLock 之前，你不会收到休息提醒。"
           }
         }
       }
@@ -4908,6 +4940,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "快速设置"
+          }
+        }
+      }
+    },
+    "Quit" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Çık"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "退出"
           }
         }
       }
