@@ -58,6 +58,7 @@
 		7D2C20F63E9C2C051EE354DE /* SettingsSidebarRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7832761FE83C21F870E571C7 /* SettingsSidebarRow.swift */; };
 		82BDAFFF1661ED2476DDCAD3 /* Detection in Frameworks */ = {isa = PBXBuildFile; productRef = F19E05A1FA932709D406DD8F /* Detection */; };
 		8392C29716F63661BC5BBF34 /* LocalizedRoot.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCAC5A6BBBB241EEA90944F4 /* LocalizedRoot.swift */; };
+		845AD4900EBFEE715DB4D06C /* CoffeeScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A2AFE6DEC61C501B7EFE3CE /* CoffeeScene.swift */; };
 		85380886D037B53802511647 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 765091196991FB6E7E8B8185 /* SettingsView.swift */; };
 		853D7752B3F522DFB3E0AA02 /* WeekdaySymbols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CDB4CFBD38A25482A8B215B /* WeekdaySymbols.swift */; };
 		861C544CEA9B855BFE8724B6 /* SettingsSidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 644D55BA77E73588DF358AC7 /* SettingsSidebar.swift */; };
@@ -142,6 +143,7 @@
 		434445F0717D4FC94E284CB8 /* ExerciseBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseBlock.swift; sourceTree = "<group>"; };
 		43B1BE95A60D5294C770AEDE /* StatsFooter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsFooter.swift; sourceTree = "<group>"; };
 		4462E8D161113596647BD19E /* OverlayWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayWindowController.swift; sourceTree = "<group>"; };
+		4A2AFE6DEC61C501B7EFE3CE /* CoffeeScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoffeeScene.swift; sourceTree = "<group>"; };
 		4EC56256F21155B8E45CAF6D /* CapybaraScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CapybaraScene.swift; sourceTree = "<group>"; };
 		4ED1AF99472834C9823F0D6A /* WindowCloseGuard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowCloseGuard.swift; sourceTree = "<group>"; };
 		4FBAA74EE852DF8AA45C0909 /* HexColor+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HexColor+SwiftUI.swift"; sourceTree = "<group>"; };
@@ -445,6 +447,7 @@
 				965A365DE45518756693885F /* CampfireScene.swift */,
 				4EC56256F21155B8E45CAF6D /* CapybaraScene.swift */,
 				197D81279CAB2964AC559DA5 /* CatScene.swift */,
+				4A2AFE6DEC61C501B7EFE3CE /* CoffeeScene.swift */,
 				24E37F0725B2E389ACEC601F /* DeskScene.swift */,
 				6AFF45DCD02D27949394DEF3 /* FoxScene.swift */,
 				0CFC6AC33A81C46E517592CB /* FrogScene.swift */,
@@ -581,6 +584,7 @@
 				A268E6CE19D5C4A293265117 /* CampfireScene.swift in Sources */,
 				C9317350D818E7C826DA0966 /* CapybaraScene.swift in Sources */,
 				A60D5B46AD4C89605351E708 /* CatScene.swift in Sources */,
+				845AD4900EBFEE715DB4D06C /* CoffeeScene.swift in Sources */,
 				B2FF3CCDF5FB0EFC3C60C8BF /* DayButtons.swift in Sources */,
 				877287617D7DDBAB2346687C /* DayPreviewCard.swift in Sources */,
 				E6C55A4F70CDBF7DB5403B1F /* DeleteConfirmationView.swift in Sources */,

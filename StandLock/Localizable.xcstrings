@@ -2067,6 +2067,22 @@
         }
       }
     },
+    "Coffee" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kahve"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "咖啡"
+          }
+        }
+      }
+    },
     "Completed" : {
       "localizations" : {
         "tr" : {
