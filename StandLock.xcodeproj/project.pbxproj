@@ -51,6 +51,7 @@
 		73D55EC0B43E3538ED4157C1 /* SettingsRowDivider.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7F941253F684FB262B426B9 /* SettingsRowDivider.swift */; };
 		742A80C38BAB206209CC4213 /* WelcomeStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B387012391C6BC0360436B50 /* WelcomeStepView.swift */; };
 		75E31F36751D55F051D6FF34 /* ExerciseBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 434445F0717D4FC94E284CB8 /* ExerciseBlock.swift */; };
+		769FC5C08D86A729FB78CAF4 /* FoxScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AFF45DCD02D27949394DEF3 /* FoxScene.swift */; };
 		7BF1946EE4BC2EF26F5CE641 /* BreakScreenLook.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB803AB21175A8E54B5A2191 /* BreakScreenLook.swift */; };
 		7D2C20F63E9C2C051EE354DE /* SettingsSidebarRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7832761FE83C21F870E571C7 /* SettingsSidebarRow.swift */; };
 		82BDAFFF1661ED2476DDCAD3 /* Detection in Frameworks */ = {isa = PBXBuildFile; productRef = F19E05A1FA932709D406DD8F /* Detection */; };
@@ -105,6 +106,7 @@
 		F7C1F8F46303DE4B861765D2 /* HexColorField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F3E46265727E4E3D2C1578A /* HexColorField.swift */; };
 		F7D293B2C83521B31C5FCF7B /* SettingsPageLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA4E43A1C69B7789F4968823 /* SettingsPageLayout.swift */; };
 		FBB74759FC16BB2E5F728128 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A85E4C082C8E3C5083ABAEB /* OnboardingView.swift */; };
+		FC583BA99EE50EF0303C3DC6 /* PixelParts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6162024620A7B5B6DDFC8C3A /* PixelParts.swift */; };
 		FF4C7AAB3CFF56C574A3EAA2 /* BreakPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C3B7E68FDF3C989BA50F367 /* BreakPalette.swift */; };
 		FFA79495C2E273B9AFDE5F0A /* TemplateRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = B87A8947B73CA1C6C6D091F7 /* TemplateRow.swift */; };
 /* End PBXBuildFile section */
@@ -143,7 +145,9 @@
 		55E666594049BE353F6E6FF6 /* SettingsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSection.swift; sourceTree = "<group>"; };
 		570EE1706B3BD156F7F6FB6A /* BreakSoundPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakSoundPlayer.swift; sourceTree = "<group>"; };
 		5F3E46265727E4E3D2C1578A /* HexColorField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HexColorField.swift; sourceTree = "<group>"; };
+		6162024620A7B5B6DDFC8C3A /* PixelParts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PixelParts.swift; sourceTree = "<group>"; };
 		644D55BA77E73588DF358AC7 /* SettingsSidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSidebar.swift; sourceTree = "<group>"; };
+		6AFF45DCD02D27949394DEF3 /* FoxScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoxScene.swift; sourceTree = "<group>"; };
 		6CDB4CFBD38A25482A8B215B /* WeekdaySymbols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekdaySymbols.swift; sourceTree = "<group>"; };
 		6EB7CBA12B287EE7D1683389 /* SettingsSearchField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSearchField.swift; sourceTree = "<group>"; };
 		7259326030030D8F49258219 /* QuickSetupStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickSetupStepView.swift; sourceTree = "<group>"; };
@@ -430,11 +434,13 @@
 			children = (
 				197D81279CAB2964AC559DA5 /* CatScene.swift */,
 				24E37F0725B2E389ACEC601F /* DeskScene.swift */,
+				6AFF45DCD02D27949394DEF3 /* FoxScene.swift */,
 				0CFC6AC33A81C46E517592CB /* FrogScene.swift */,
 				39E5EFA4AB6411AD0176ED38 /* HourglassScene.swift */,
 				73072AEAC528F616B0FD5DB2 /* MenuSceneCard.swift */,
 				C851627E22E0B6855CD31121 /* PenguinScene.swift */,
 				0FCC1989904A9C3332CDE801 /* PixelGridView.swift */,
+				6162024620A7B5B6DDFC8C3A /* PixelParts.swift */,
 				F2A85DF7A9AA67198838FE47 /* SceneBubble.swift */,
 			);
 			path = Scenes;
@@ -566,6 +572,7 @@
 				0E1C2D941E09D0DF09384EE0 /* DisciplineLevelPicker.swift in Sources */,
 				8ABB22099BF5F67DCC2A0FA3 /* DisciplineSettingsView.swift in Sources */,
 				75E31F36751D55F051D6FF34 /* ExerciseBlock.swift in Sources */,
+				769FC5C08D86A729FB78CAF4 /* FoxScene.swift in Sources */,
 				EF7FA04B2E3E977765AAC231 /* FrogScene.swift in Sources */,
 				17A849E1BB7551F62825BF5F /* GeneralSettingsView.swift in Sources */,
 				4B8B1109D2B1AC920AF4656C /* HexColor+SwiftUI.swift in Sources */,
@@ -597,6 +604,7 @@
 				939B26A31A39AED7A89760CE /* PermissionsStepView.swift in Sources */,
 				EAC5C8BAB2FC5D5FB1D845C5 /* PermissionsView.swift in Sources */,
 				231BA9A6E5E6E06DD9B6CA91 /* PixelGridView.swift in Sources */,
+				FC583BA99EE50EF0303C3DC6 /* PixelParts.swift in Sources */,
 				3F24521CD8A9CA8C9156A1B9 /* PreferencesSaveOwner.swift in Sources */,
 				4A537C55B992DF62814F9857 /* QuickActionsView.swift in Sources */,
 				897387E26C50A633291C6545 /* QuickSetupStepView.swift in Sources */,

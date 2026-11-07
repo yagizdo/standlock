@@ -2923,6 +2923,22 @@
         }
       }
     },
+    "Fox" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tilki"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "狐狸"
+          }
+        }
+      }
+    },
     "Frog" : {
       "localizations" : {
         "tr" : {

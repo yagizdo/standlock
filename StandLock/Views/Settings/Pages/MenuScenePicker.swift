@@ -79,6 +79,7 @@ struct MenuScenePicker: View {
         case .cat: Text(verbatim: "Yosun")
         case .penguin: Text("Penguin")
         case .frog: Text("Frog")
+        case .fox: Text("Fox")
         case .off: Text("Off")
         }
     }

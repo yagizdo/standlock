@@ -18,16 +18,13 @@ struct FrogScene: View {
         var grid = PixelGrid(width: 64, height: 34) { x, y in background(x: x, y: y) }
 
         if isNight {
-            for (index, star) in Self.stars.enumerated() where time == nil || (Int(tick * 2) + index) % 7 != 0 {
-                grid.stamp(Self.star, x: star.x, y: star.y)
-            }
-            grid.stamp(Self.moon, x: 52, y: 3)
+            PixelParts.stampNight(on: &grid, time: time)
         } else {
-            grid.stamp(Self.sun, x: 52, y: 4)
+            grid.stamp(PixelParts.sun, x: 52, y: 4)
         }
-        let cloud = isNight ? Self.nightCloud : Self.cloud
-        grid.stamp(cloud, x: drift(from: 6, speed: 0.5), y: 5)
-        grid.stamp(cloud, x: drift(from: 36, speed: 0.8), y: 10)
+        let cloud = isNight ? PixelParts.nightCloud : PixelParts.cloud
+        grid.stamp(cloud, x: PixelParts.drift(from: 6, speed: 0.5, width: PixelParts.cloudWidth, time: time), y: 5)
+        grid.stamp(cloud, x: PixelParts.drift(from: 36, speed: 0.8, width: PixelParts.cloudWidth, time: time), y: 10)
         grid.stamp(Self.reeds, x: 52, y: 17)
 
         // The pad rocks one pixel on the water while the frog rests on it.
@@ -37,13 +34,11 @@ struct FrogScene: View {
 
         switch look {
         case .paused:
-            let rise = time == nil ? 2 : Int(tick * 1.5) % 6
-            grid.stamp(Self.smallZ, x: 34 + rise / 2, y: 11 - rise)
-            grid.stamp(Self.bigZ, x: 40 + rise / 2, y: 5 - rise)
+            PixelParts.stampSleep(on: &grid, x: 34, y: 11, time: time)
         case .breakWaiting:
-            grid.stamp(Self.waitingBubble, x: 33, y: 4)
+            grid.stamp(PixelParts.waitingBubble, x: 33, y: 4)
         case .noSchedules:
-            grid.stamp(Self.questionBubble, x: 33, y: 3)
+            grid.stamp(PixelParts.questionBubble, x: 33, y: 3)
         case .breakSoon:
             grid.stamp(Self.fly, x: flyPosition.x, y: flyPosition.y)
         case .working, .timeToStand:
@@ -115,16 +110,8 @@ struct FrogScene: View {
         return isNight ? 0x234662 : 0x4FA3C7
     }
 
-    /// A column that moves `speed` pixels a second and wraps from the right edge to the left.
-    private func drift(from start: Int, speed: Double) -> Int {
-        guard time != nil else { return start }
-        let width = 12
-        return (start + width + Int(tick * speed)) % (64 + width) - width
-    }
-
     private static let daySky: [UInt] = [0x8FCBEB, 0xA3D6EF, 0xB8E0F3, 0xCCE9F6]
     private static let nightSky: [UInt] = [0x1E2A4A, 0x253456, 0x2D3E63, 0x354870]
-    private static let stars: [(x: Int, y: Int)] = [(4, 3), (15, 9), (27, 2), (33, 15), (44, 6), (60, 14), (22, 18), (8, 16)]
 
     // MARK: - Sprites
 
@@ -182,35 +169,6 @@ struct FrogScene: View {
         ".DDDDDDDDDDDDDDDDDDDD.",
     ], palette: ["D": 0x245C2B, "L": 0x3E8E41])
 
-    private static let cloudRows = [
-        "...WWWW.....",
-        ".WWWWWWWW...",
-        "WWWWWWWWWWWW",
-        ".SSSSSSSSSS.",
-    ]
-    private static let cloud = PixelSprite(cloudRows, palette: ["W": 0xFFFFFF, "S": 0xDCEBF3])
-    private static let nightCloud = PixelSprite(cloudRows, palette: ["W": 0x4A5A80, "S": 0x3E4D70])
-
-    private static let sun = PixelSprite([
-        ".YYYY.",
-        "YYYYYY",
-        "YYYYYY",
-        "YYYYYY",
-        "YYYYYY",
-        ".YYYY.",
-    ], palette: ["Y": 0xFFE39A])
-
-    private static let moon = PixelSprite([
-        "..MMM.",
-        ".MMM..",
-        "MMM...",
-        "MMM...",
-        ".MMM..",
-        "..MMM.",
-    ], palette: ["M": 0xF4E9C1])
-
-    private static let star = PixelSprite(["S"], palette: ["S": 0xF4E9C1])
-
     private static let reeds = PixelSprite([
         ".C...C",
         ".C.C.C",
@@ -223,31 +181,4 @@ struct FrogScene: View {
     ], palette: ["C": 0x7A4A2A, "R": 0x4F8A3A])
 
     private static let fly = PixelSprite(["W..W", ".BB.", ".BB."], palette: ["W": 0xF4FAFD, "B": 0x1B1B1B])
-
-    private static let smallZ = PixelSprite(["ZZZZ", "..Z.", ".Z..", "ZZZZ"], palette: ["Z": 0xE8F0FF])
-    private static let bigZ = PixelSprite(["ZZZZZ", "...Z.", "..Z..", ".Z...", "ZZZZZ"], palette: ["Z": 0xE8F0FF])
-
-    private static let bubbleColors: [Character: UInt] = ["W": 0xF3EFE6, "B": 0x1B2437]
-
-    private static let waitingBubble = PixelSprite([
-        ".WWWWWWWWW.",
-        "WWWWWWWWWWW",
-        "WWBWWBWWBWW",
-        "WWWWWWWWWWW",
-        ".WWWWWWWWW.",
-        ".WW........",
-        "W..........",
-    ], palette: bubbleColors)
-
-    private static let questionBubble = PixelSprite([
-        ".WWWWWWW.",
-        "WWWBBBWWW",
-        "WWWWWBWWW",
-        "WWWWBWWWW",
-        "WWWWWWWWW",
-        "WWWWBWWWW",
-        ".WWWWWWW.",
-        ".WW......",
-        "W........",
-    ], palette: bubbleColors)
 }
