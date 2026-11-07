@@ -8,6 +8,11 @@ public enum HomebrewUpgradeState: Equatable, Sendable {
     case waitingToRestart
     case blocked
     case failed
+
+    /// An upgrade is under way or done, so another check or click must wait.
+    public var isBusy: Bool {
+        self == .running || self == .waitingToRestart
+    }
 }
 
 /// What the About page may say about updates. A date alone proves a check was attempted, not

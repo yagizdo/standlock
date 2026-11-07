@@ -40,7 +40,7 @@ final class HomebrewUpdater {
     }
 
     func check() {
-        guard !isChecking, !isBusy else { return }
+        guard !isChecking, !observer.homebrewUpgrade.isBusy else { return }
         isChecking = true
         observer.homebrewUpgrade = .idle
         Task {
@@ -50,17 +50,13 @@ final class HomebrewUpdater {
     }
 
     func upgrade() {
-        guard !isBusy, let target = observer.availableVersion else { return }
+        guard !observer.homebrewUpgrade.isBusy, let target = observer.availableVersion else { return }
         guard canRestart() else {
             observer.homebrewUpgrade = .blocked
             return
         }
         observer.homebrewUpgrade = .running
         Task { await performUpgrade(to: target) }
-    }
-
-    private var isBusy: Bool {
-        observer.homebrewUpgrade == .running || observer.homebrewUpgrade == .waitingToRestart
     }
 
     private func performCheck() async {

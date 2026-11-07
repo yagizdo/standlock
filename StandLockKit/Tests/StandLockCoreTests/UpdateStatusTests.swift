@@ -88,4 +88,12 @@ struct UpdateStatusTests {
         )
         #expect(status == .upToDate)
     }
+
+    @Test func onlyARunningOrWaitingUpgradeIsBusy() {
+        #expect(HomebrewUpgradeState.running.isBusy)
+        #expect(HomebrewUpgradeState.waitingToRestart.isBusy)
+        #expect(!HomebrewUpgradeState.idle.isBusy)
+        #expect(!HomebrewUpgradeState.blocked.isBusy)
+        #expect(!HomebrewUpgradeState.failed.isBusy)
+    }
 }

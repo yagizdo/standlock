@@ -89,16 +89,23 @@ struct UpdaterSettingsView: View {
 
 struct CheckForUpdatesView: View {
     @ObservedObject private var checkForUpdatesViewModel: CheckForUpdatesViewModel
+    @ObservedObject private var observer: UpdateObserver
     private let updater: SPUUpdater
 
-    init(updater: SPUUpdater) {
+    init(updater: SPUUpdater, observer: UpdateObserver) {
         self.updater = updater
+        self.observer = observer
         self.checkForUpdatesViewModel = CheckForUpdatesViewModel(updater: updater)
     }
 
     var body: some View {
-        Button("Check for Updates…", action: updater.checkForUpdates)
-            .disabled(!checkForUpdatesViewModel.canCheckForUpdates)
+        if let homebrew = observer.homebrew {
+            Button("Check for Updates…", action: homebrew.check)
+                .disabled(observer.homebrewUpgrade.isBusy)
+        } else {
+            Button("Check for Updates…", action: updater.checkForUpdates)
+                .disabled(!checkForUpdatesViewModel.canCheckForUpdates)
+        }
     }
 }
 
@@ -113,23 +120,46 @@ struct UpdateStatusRow: View {
         let status = UpdateStatus(
             availableVersion: updateObserver.availableVersion,
             onLatestVersion: updateObserver.onLatestVersion,
-            lastCheckDate: lastCheck
+            lastCheckDate: lastCheck,
+            homebrewUpgrade: updateObserver.homebrewUpgrade
         )
         let mark = mark(for: status)
 
-        HStack(spacing: 0) {
-            Image(systemName: mark.symbol)
-                .foregroundStyle(mark.color)
-                .frame(width: SettingsTokens.statusMarkWidth)
-                .padding(.leading, SettingsTokens.rowInsets.leading)
-                .accessibilityHidden(true)
+        VStack(alignment: .leading, spacing: 0) {
+            HStack(spacing: 0) {
+                Image(systemName: mark.symbol)
+                    .foregroundStyle(mark.color)
+                    .frame(width: SettingsTokens.statusMarkWidth)
+                    .padding(.leading, SettingsTokens.rowInsets.leading)
+                    .accessibilityHidden(true)
 
-            SettingsRow(title(for: status), symbol: nil) {
-                if let lastCheck {
-                    Text(lastCheck, format: Date.FormatStyle(date: .abbreviated, time: .shortened))
-                        .font(SettingsTokens.descriptionFont)
-                        .foregroundStyle(.secondary)
+                SettingsRow(title(for: status), symbol: nil) {
+                    control(for: status, lastCheck: lastCheck)
                 }
+            }
+
+            if updateObserver.homebrew != nil {
+                HomebrewUpdateNotes(status: status)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func control(for status: UpdateStatus, lastCheck: Date?) -> some View {
+        switch (updateObserver.homebrew, status) {
+        case (let homebrew?, .available), (let homebrew?, .upgradeBlocked):
+            Button("Update", action: homebrew.upgrade)
+                .controlSize(.small)
+        case (_?, .upgrading):
+            ProgressView()
+                .controlSize(.small)
+        case (_?, .upgradeWaiting):
+            EmptyView()
+        default:
+            if let lastCheck {
+                Text(lastCheck, format: Date.FormatStyle(date: .abbreviated, time: .shortened))
+                    .font(SettingsTokens.descriptionFont)
+                    .foregroundStyle(.secondary)
             }
         }
     }
@@ -141,7 +171,7 @@ struct UpdateStatusRow: View {
         case .checked: "Last checked"
         case .neverChecked: "Not checked yet"
         case .upgrading: "Updating with Homebrew…"
-        case .upgradeWaiting: "Update ready, waiting to restart"
+        case .upgradeWaiting: "Waiting to restart"
         case .upgradeBlocked: "Can't update right now"
         case .upgradeFailed: "Update failed"
         }
@@ -156,5 +186,41 @@ struct UpdateStatusRow: View {
         case .upgradeBlocked: ("pause.circle", .secondary)
         case .upgradeFailed: ("exclamationmark.triangle.fill", .orange)
         }
+    }
+}
+
+/// States, not help: outside `SettingsDescription`, so Show help cannot hide them.
+private struct HomebrewUpdateNotes: View {
+    let status: UpdateStatus
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: SettingsTokens.rowTextSpacing) {
+            Text("Managed by Homebrew")
+
+            switch status {
+            case .upgradeBlocked, .upgradeWaiting:
+                Text("End the break and finish your changes in Settings.")
+            case .upgradeFailed:
+                Text("Run this in Terminal:")
+                HStack {
+                    Text(verbatim: HomebrewCask.manualCommand)
+                        .font(SettingsTokens.descriptionFont.monospaced())
+                        .textSelection(.enabled)
+                    Spacer()
+                    Button("Copy") {
+                        NSPasteboard.general.clearContents()
+                        NSPasteboard.general.setString(HomebrewCask.manualCommand, forType: .string)
+                    }
+                    .controlSize(.small)
+                }
+            default:
+                EmptyView()
+            }
+        }
+        .font(SettingsTokens.descriptionFont)
+        .foregroundStyle(.secondary)
+        .padding(.leading, SettingsTokens.statusMarkWidth + SettingsTokens.rowInsets.leading * 2)
+        .padding(.trailing, SettingsTokens.rowInsets.trailing)
+        .padding(.bottom, SettingsTokens.rowInsets.bottom)
     }
 }

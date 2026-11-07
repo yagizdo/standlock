@@ -46,7 +46,10 @@ struct StandLockApp: App {
                 OpenSettingsCommand(navigation: appCoordinator.settingsNavigation)
             }
             CommandGroup(after: .appInfo) {
-                CheckForUpdatesView(updater: appDelegate.updaterController.updater)
+                CheckForUpdatesView(
+                    updater: appDelegate.updaterController.updater,
+                    observer: appDelegate.updateObserver
+                )
             }
         }
     }

@@ -7574,18 +7574,18 @@
         }
       }
     },
-    "Update ready, waiting to restart" : {
+    "Waiting to restart" : {
       "localizations" : {
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Güncelleme hazır, yeniden başlatma bekliyor"
+            "value" : "Yeniden başlatma bekliyor"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "更新已就绪，正在等待重启"
+            "value" : "正在等待重启"
           }
         }
       }
@@ -7618,6 +7618,70 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "更新失败"
+          }
+        }
+      }
+    },
+    "Managed by Homebrew" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Homebrew ile yönetiliyor"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "由 Homebrew 管理"
+          }
+        }
+      }
+    },
+    "End the break and finish your changes in Settings." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Molayı bitir ve Ayarlar'daki değişikliklerini tamamla."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请结束休息并完成设置中的更改。"
+          }
+        }
+      }
+    },
+    "Run this in Terminal:" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bunu Terminal'de çalıştır:"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请在终端中运行："
+          }
+        }
+      }
+    },
+    "Copy" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kopyala"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "复制"
           }
         }
       }
