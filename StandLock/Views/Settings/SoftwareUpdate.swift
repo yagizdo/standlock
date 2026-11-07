@@ -13,6 +13,10 @@ final class UpdateObserver: NSObject, ObservableObject, SPUUpdaterDelegate {
     /// When the last check ended. `lastUpdateCheckDate` already moves as a check starts, which
     /// would put a running check's time beside the previous check's result.
     @Published var finishedCheckDate: Date?
+    @Published var homebrewUpgrade = HomebrewUpgradeState.idle
+    /// Set on a copy Homebrew owns. Sparkle is not started there, so every check and install
+    /// goes through this instead.
+    var homebrew: HomebrewUpdater?
 
     nonisolated override init() {
         super.init()
