@@ -112,6 +112,7 @@
 		D6409DD8838F0ED91DC848C5 /* NextIntervalLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33012BFC809E077C2D638165 /* NextIntervalLabel.swift */; };
 		D751E70A3ADA8406061C5A90 /* ManuscriptBreakView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99BB0E055C4BD25865AD3EE1 /* ManuscriptBreakView.swift */; };
 		E390B98931E7EE42E14FF2BD /* ActionArea.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5A68046037D0CAAE70C0F88 /* ActionArea.swift */; };
+		E53542CFD208972C8A8BD5C7 /* PanelClock.swift in Sources */ = {isa = PBXBuildFile; fileRef = C74EB53DDDC340414AD64BE2 /* PanelClock.swift */; };
 		E6C55A4F70CDBF7DB5403B1F /* DeleteConfirmationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF82AC0C965E52DC46B97A8C /* DeleteConfirmationView.swift */; };
 		E9A645EF57C9276206BF0394 /* SceneBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2A85DF7A9AA67198838FE47 /* SceneBubble.swift */; };
 		EAC5C8BAB2FC5D5FB1D845C5 /* PermissionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12184C2234D04E8FE035B701 /* PermissionsView.swift */; };
@@ -213,6 +214,7 @@
 		C48598983576EA3F15F8B4F7 /* CookingScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookingScene.swift; sourceTree = "<group>"; };
 		C5BBDBF97CFAA5FF490CBD00 /* BreakOverlayWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakOverlayWindow.swift; sourceTree = "<group>"; };
 		C64B592ED400D7D67ABD591A /* MenuScenePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuScenePicker.swift; sourceTree = "<group>"; };
+		C74EB53DDDC340414AD64BE2 /* PanelClock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelClock.swift; sourceTree = "<group>"; };
 		C80FA2B8295FD72CAA075B38 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 		C851627E22E0B6855CD31121 /* PenguinScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PenguinScene.swift; sourceTree = "<group>"; };
 		CD5052FB7ADFF1C72A819672 /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
@@ -341,6 +343,7 @@
 				5586791BF5D81FC7CE5AE185 /* MediaController.swift */,
 				FDC1758B39501153DCF68061 /* NextBreakClock.swift */,
 				4462E8D161113596647BD19E /* OverlayWindowController.swift */,
+				C74EB53DDDC340414AD64BE2 /* PanelClock.swift */,
 				FE0E2C708B760F809144B756 /* PermissionChecker.swift */,
 				29B46D4E8DC400FCF4E57374 /* SettingsNavigation.swift */,
 				8180C020203FB970C798C84E /* ThemeStore.swift */,
@@ -651,6 +654,7 @@
 				72EF8A3AE6FD2B14FA478D0F /* OpenSettingsCommand.swift in Sources */,
 				ED1A168BD55576065212E8ED /* OverlayWindowController.swift in Sources */,
 				C79B40CDB801534CB03F8D40 /* PaintingScene.swift in Sources */,
+				E53542CFD208972C8A8BD5C7 /* PanelClock.swift in Sources */,
 				BF272D7E49CFE686A28BE539 /* PenguinScene.swift in Sources */,
 				B2DDDE67D0C30F62374D0BBE /* PermissionBadge.swift in Sources */,
 				B3DAE3D0009EA570806955F3 /* PermissionCard.swift in Sources */,
