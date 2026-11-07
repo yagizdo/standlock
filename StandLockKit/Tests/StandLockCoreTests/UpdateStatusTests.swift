@@ -48,4 +48,44 @@ struct UpdateStatusTests {
         )
         #expect(status == .neverChecked)
     }
+
+    @Test func aRunningUpgradeBeatsAnAvailableVersion() {
+        let status = UpdateStatus(
+            availableVersion: "1.2", onLatestVersion: false, lastCheckDate: date,
+            homebrewUpgrade: .running
+        )
+        #expect(status == .upgrading)
+    }
+
+    @Test func aFinishedUpgradeWaitingToRestartBeatsAnAvailableVersion() {
+        let status = UpdateStatus(
+            availableVersion: "1.2", onLatestVersion: false, lastCheckDate: date,
+            homebrewUpgrade: .waitingToRestart
+        )
+        #expect(status == .upgradeWaiting)
+    }
+
+    @Test func aBlockedUpgradeBeatsAnAvailableVersion() {
+        let status = UpdateStatus(
+            availableVersion: "1.2", onLatestVersion: false, lastCheckDate: date,
+            homebrewUpgrade: .blocked
+        )
+        #expect(status == .upgradeBlocked)
+    }
+
+    @Test func aFailedUpgradeBeatsAnAvailableVersion() {
+        let status = UpdateStatus(
+            availableVersion: "1.2", onLatestVersion: false, lastCheckDate: date,
+            homebrewUpgrade: .failed
+        )
+        #expect(status == .upgradeFailed)
+    }
+
+    @Test func anIdleUpgradeLeavesTheCheckResultAlone() {
+        let status = UpdateStatus(
+            availableVersion: nil, onLatestVersion: true, lastCheckDate: date,
+            homebrewUpgrade: .idle
+        )
+        #expect(status == .upToDate)
+    }
 }

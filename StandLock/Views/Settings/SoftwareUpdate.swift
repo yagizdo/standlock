@@ -136,6 +136,10 @@ struct UpdateStatusRow: View {
         case .upToDate: "StandLock is up to date"
         case .checked: "Last checked"
         case .neverChecked: "Not checked yet"
+        case .upgrading: "Updating with Homebrew…"
+        case .upgradeWaiting: "Update ready, waiting to restart"
+        case .upgradeBlocked: "Can't update right now"
+        case .upgradeFailed: "Update failed"
         }
     }
 
@@ -143,7 +147,10 @@ struct UpdateStatusRow: View {
         switch status {
         case .available: ("arrow.down.circle.fill", .green)
         case .upToDate: ("checkmark.circle.fill", .green)
-        case .checked, .neverChecked: ("clock", .secondary)
+        case .checked, .neverChecked, .upgradeWaiting: ("clock", .secondary)
+        case .upgrading: ("arrow.triangle.2.circlepath", .secondary)
+        case .upgradeBlocked: ("pause.circle", .secondary)
+        case .upgradeFailed: ("exclamationmark.triangle.fill", .orange)
         }
     }
 }
