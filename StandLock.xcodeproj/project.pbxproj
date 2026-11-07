@@ -91,6 +91,7 @@
 		BF272D7E49CFE686A28BE539 /* PenguinScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = C851627E22E0B6855CD31121 /* PenguinScene.swift */; };
 		C144671C95E22BC38AD14FE8 /* ScheduleSidebarRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = F07BB496D038848FFC7FDB3F /* ScheduleSidebarRow.swift */; };
 		C5895F53358BDFD586A4A800 /* SettingsDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF887D81035A1FE4735344F3 /* SettingsDetail.swift */; };
+		C9317350D818E7C826DA0966 /* CapybaraScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC56256F21155B8E45CAF6D /* CapybaraScene.swift */; };
 		CACA2A694D8386E2C52987E7 /* HomebrewUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41523222886A9E60C4A27DD /* HomebrewUpdater.swift */; };
 		CE55FB80048215F1C86DC99D /* DeskScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24E37F0725B2E389ACEC601F /* DeskScene.swift */; };
 		D588F2EB46E9B8124422C5EE /* StatsFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43B1BE95A60D5294C770AEDE /* StatsFooter.swift */; };
@@ -137,6 +138,7 @@
 		434445F0717D4FC94E284CB8 /* ExerciseBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseBlock.swift; sourceTree = "<group>"; };
 		43B1BE95A60D5294C770AEDE /* StatsFooter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsFooter.swift; sourceTree = "<group>"; };
 		4462E8D161113596647BD19E /* OverlayWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayWindowController.swift; sourceTree = "<group>"; };
+		4EC56256F21155B8E45CAF6D /* CapybaraScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CapybaraScene.swift; sourceTree = "<group>"; };
 		4ED1AF99472834C9823F0D6A /* WindowCloseGuard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowCloseGuard.swift; sourceTree = "<group>"; };
 		4FBAA74EE852DF8AA45C0909 /* HexColor+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HexColor+SwiftUI.swift"; sourceTree = "<group>"; };
 		52A2D12AD9D89928096A633C /* MenuBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarView.swift; sourceTree = "<group>"; };
@@ -432,6 +434,7 @@
 		F55A26B9BA70F54DCD4A7862 /* Scenes */ = {
 			isa = PBXGroup;
 			children = (
+				4EC56256F21155B8E45CAF6D /* CapybaraScene.swift */,
 				197D81279CAB2964AC559DA5 /* CatScene.swift */,
 				24E37F0725B2E389ACEC601F /* DeskScene.swift */,
 				6AFF45DCD02D27949394DEF3 /* FoxScene.swift */,
@@ -563,6 +566,7 @@
 				9282BD07119596D0242E67D6 /* BreakScreenSettingsView.swift in Sources */,
 				9CE3B1904556E5F701466351 /* BreakSoundPlayer.swift in Sources */,
 				AB84ADC15C8263AFD995E8B5 /* BreakTypography.swift in Sources */,
+				C9317350D818E7C826DA0966 /* CapybaraScene.swift in Sources */,
 				A60D5B46AD4C89605351E708 /* CatScene.swift in Sources */,
 				B2FF3CCDF5FB0EFC3C60C8BF /* DayButtons.swift in Sources */,
 				877287617D7DDBAB2346687C /* DayPreviewCard.swift in Sources */,

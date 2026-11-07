@@ -1965,6 +1965,22 @@
         }
       }
     },
+    "Capybara" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kapibara"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "水豚"
+          }
+        }
+      }
+    },
     "Check for Updates…" : {
       "localizations" : {
         "tr" : {
