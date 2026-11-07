@@ -59,6 +59,7 @@
 		82BDAFFF1661ED2476DDCAD3 /* Detection in Frameworks */ = {isa = PBXBuildFile; productRef = F19E05A1FA932709D406DD8F /* Detection */; };
 		8392C29716F63661BC5BBF34 /* LocalizedRoot.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCAC5A6BBBB241EEA90944F4 /* LocalizedRoot.swift */; };
 		845AD4900EBFEE715DB4D06C /* CoffeeScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A2AFE6DEC61C501B7EFE3CE /* CoffeeScene.swift */; };
+		846FDB118F1535CFBBE5A4E6 /* BreadScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA36456A98A86C04B5B4616B /* BreadScene.swift */; };
 		85380886D037B53802511647 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 765091196991FB6E7E8B8185 /* SettingsView.swift */; };
 		853D7752B3F522DFB3E0AA02 /* WeekdaySymbols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CDB4CFBD38A25482A8B215B /* WeekdaySymbols.swift */; };
 		861C544CEA9B855BFE8724B6 /* SettingsSidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 644D55BA77E73588DF358AC7 /* SettingsSidebar.swift */; };
@@ -205,6 +206,7 @@
 		D2BDD3661430F1F997413023 /* PermissionBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionBadge.swift; sourceTree = "<group>"; };
 		D5021A1A699359391AD0CEEB /* SettingsRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsRow.swift; sourceTree = "<group>"; };
 		DA2920940F5FB5690FF53B7B /* SettingsTokens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsTokens.swift; sourceTree = "<group>"; };
+		DA36456A98A86C04B5B4616B /* BreadScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreadScene.swift; sourceTree = "<group>"; };
 		DB803AB21175A8E54B5A2191 /* BreakScreenLook.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakScreenLook.swift; sourceTree = "<group>"; };
 		DBF6A31515CC4248B938E982 /* DetectionSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetectionSettingsView.swift; sourceTree = "<group>"; };
 		DC6421DB3A1D7F3131B3B7F4 /* StandLockKit */ = {isa = PBXFileReference; lastKnownFileType = folder; name = StandLockKit; path = StandLockKit; sourceTree = SOURCE_ROOT; };
@@ -444,6 +446,7 @@
 		F55A26B9BA70F54DCD4A7862 /* Scenes */ = {
 			isa = PBXGroup;
 			children = (
+				DA36456A98A86C04B5B4616B /* BreadScene.swift */,
 				965A365DE45518756693885F /* CampfireScene.swift */,
 				4EC56256F21155B8E45CAF6D /* CapybaraScene.swift */,
 				197D81279CAB2964AC559DA5 /* CatScene.swift */,
@@ -574,6 +577,7 @@
 				4FCB9EE133A8300CC965E687 /* AppCoordinator.swift in Sources */,
 				9D77F7B7F12048E4399B8B25 /* AppDelegate.swift in Sources */,
 				1895F27AD369A832CA280556 /* AppTheme.swift in Sources */,
+				846FDB118F1535CFBBE5A4E6 /* BreadScene.swift in Sources */,
 				44D9EB3E27CF114DDF7E3735 /* BreakOverlayWindow.swift in Sources */,
 				FF4C7AAB3CFF56C574A3EAA2 /* BreakPalette.swift in Sources */,
 				7BF1946EE4BC2EF26F5CE641 /* BreakScreenLook.swift in Sources */,

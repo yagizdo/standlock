@@ -116,6 +116,22 @@
         }
       }
     },
+    "Bread" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ekmek"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "面包"
+          }
+        }
+      }
+    },
     "Calls" : {
       "localizations" : {
         "tr" : {
