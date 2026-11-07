@@ -116,6 +116,22 @@
         }
       }
     },
+    "Bread" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ekmek"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "面包"
+          }
+        }
+      }
+    },
     "Calls" : {
       "localizations" : {
         "tr" : {
@@ -144,6 +160,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "内容"
+          }
+        }
+      }
+    },
+    "Cooking" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yemek"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "做饭"
           }
         }
       }
@@ -244,6 +276,22 @@
         }
       }
     },
+    "Fishing" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Balık tutma"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "钓鱼"
+          }
+        }
+      }
+    },
     "Granted" : {
       "localizations" : {
         "tr" : {
@@ -256,6 +304,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "已授予"
+          }
+        }
+      }
+    },
+    "Hammock" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hamak"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "吊床"
           }
         }
       }
@@ -516,6 +580,22 @@
         }
       }
     },
+    "Painting" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Resim"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "画画"
+          }
+        }
+      }
+    },
     "Permission needed" : {
       "localizations" : {
         "tr" : {
@@ -544,6 +624,38 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "预览"
+          }
+        }
+      }
+    },
+    "Rainy Day" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yağmurlu gün"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "雨天"
+          }
+        }
+      }
+    },
+    "Reading" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kitap"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "读书"
           }
         }
       }
@@ -1965,6 +2077,38 @@
         }
       }
     },
+    "Campfire" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kamp ateşi"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "篝火"
+          }
+        }
+      }
+    },
+    "Capybara" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kapibara"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "水豚"
+          }
+        }
+      }
+    },
     "Check for Updates…" : {
       "localizations" : {
         "tr" : {
@@ -2031,6 +2175,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "轻轻闭上眼睛放松。让眼部肌肉完全休息 20 秒。"
+          }
+        }
+      }
+    },
+    "Coffee" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kahve"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "咖啡"
           }
         }
       }
@@ -2923,6 +3083,38 @@
         }
       }
     },
+    "Fox" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tilki"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "狐狸"
+          }
+        }
+      }
+    },
+    "Frog" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kurbağa"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "青蛙"
+          }
+        }
+      }
+    },
     "Full input blocking with emergency escape combo" : {
       "comment" : "DisciplineLevel.description",
       "extractionState" : "manual",
@@ -3129,6 +3321,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "授予"
+          }
+        }
+      }
+    },
+    "Hamster" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hamster"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "仓鼠"
           }
         }
       }
@@ -3988,6 +4196,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "多"
+          }
+        }
+      }
+    },
+    "More scenes" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Daha fazla sahne"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "更多场景"
           }
         }
       }
@@ -4856,6 +5080,22 @@
         }
       }
     },
+    "Robot" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Robot"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "机器人"
+          }
+        }
+      }
+    },
     "Roll your shoulders forward 10 times, then backward 10 times. Keep movements slow and controlled." : {
       "comment" : "Exercise description",
       "extractionState" : "manual",
@@ -5422,6 +5662,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "STAND"
+          }
+        }
+      }
+    },
+    "Sprout" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Filiz"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "嫩芽"
           }
         }
       }

@@ -7,13 +7,10 @@ struct DeskScene: View {
     let time: TimeInterval?
 
     private let wall = Color(hex: 0x314F4D)
-    private let skin = Color(hex: 0xF4C98E)
-    private let hair = Color(hex: 0x4A3428)
-    private let shirt = Color(hex: 0xE8695A)
-    private let eyeColor = Color(hex: 0x2B2B2B)
+    private let skinHex: UInt = 0xF4C98E
+    private let hairHex: UInt = 0x4A3428
+    private let shirtHex: UInt = 0xE8695A
     private let cream = Color(hex: 0xF3EFE6)
-
-    private var blinkScale: CGFloat { sceneIsBlinking(time) ? 0.12 : 1 }
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -22,10 +19,10 @@ struct DeskScene: View {
             shelf
 
             switch look {
-            case .working: bust().padding(.bottom, 14)
-            case .breakSoon: bust(eyeShiftX: -3, eyeShiftY: -2, wide: true).padding(.bottom, 14)
-            case .breakWaiting: bust(headset: true).padding(.bottom, 14)
-            case .paused: RoundedRectangle(cornerRadius: 14).fill(shirt).frame(width: 58, height: 44).padding(.bottom, 24)
+            case .working: bust().padding(.bottom, 19)
+            case .breakSoon: bust(lookingUp: true, surprised: true).padding(.bottom, 19)
+            case .breakWaiting: bust(headset: true).padding(.bottom, 19)
+            case .paused: RoundedRectangle(cornerRadius: 14).fill(Color(hex: shirtHex)).frame(width: 58, height: 44).padding(.bottom, 24)
             case .noSchedules: chair.padding(.bottom, 26)
             case .timeToStand: chair.offset(x: 24).padding(.bottom, 26)
             }
@@ -47,9 +44,8 @@ struct DeskScene: View {
 
             if look == .paused {
                 ZStack {
-                    Capsule().fill(shirt).frame(width: 74, height: 15).offset(y: 14)
-                    Circle().fill(skin).frame(width: 34, height: 34)
-                    Capsule().fill(hair).frame(width: 35, height: 15).offset(y: -11)
+                    Capsule().fill(Color(hex: shirtHex)).frame(width: 74, height: 15).offset(y: 14)
+                    head(eyes: .closed, mouth: .smile).rotationEffect(.degrees(10))
                 }
                 .padding(.bottom, 26)
                 SceneBubble(text: "z z").offset(x: 40, y: -82)
@@ -94,20 +90,17 @@ struct DeskScene: View {
         .padding(.bottom, 24)
     }
 
-    private func eyes(size: CGFloat, spacing: CGFloat) -> some View {
-        HStack(spacing: spacing) {
-            Circle().fill(eyeColor).frame(width: size, height: size)
-            Circle().fill(eyeColor).frame(width: size, height: size)
-        }
-        .scaleEffect(y: blinkScale)
+    /// The shared head, shrunk to the 34 pt this scene's people were drawn at.
+    private func head(eyes: SceneFace.Eyes, mouth: SceneFace.Mouth) -> some View {
+        SceneHead(hair: .short, hairColor: hairHex, skin: skinHex, eyes: eyes, mouth: mouth)
+            .scaleEffect(34.0 / 52)
+            .frame(width: 34, height: 34)
     }
 
-    private func bust(eyeShiftX: CGFloat = 0, eyeShiftY: CGFloat = 0, wide: Bool = false, headset: Bool = false) -> some View {
+    private func bust(lookingUp: Bool = false, surprised: Bool = false, headset: Bool = false) -> some View {
         VStack(spacing: -6) {
             ZStack(alignment: .top) {
-                Circle().fill(skin).frame(width: 34, height: 34)
-                Capsule().fill(hair).frame(width: 35, height: 15).offset(y: -2)
-                eyes(size: wide ? 6 : 4.5, spacing: 11).offset(x: eyeShiftX, y: 17 + eyeShiftY)
+                head(eyes: sceneIsBlinking(time) ? .closed : .open(lookingUp: lookingUp), mouth: surprised ? .open : .smile)
                 if headset {
                     Circle().trim(from: 0.5, to: 1).stroke(Color(hex: 0x20262E), lineWidth: 3).frame(width: 40, height: 40).offset(y: -3)
                     HStack(spacing: 32) {
@@ -117,7 +110,8 @@ struct DeskScene: View {
                     .offset(y: 13)
                 }
             }
-            RoundedRectangle(cornerRadius: 14).fill(shirt).frame(width: 58, height: 52)
+            .zIndex(1)
+            SceneTop(color: shirtHex).frame(width: 58, height: 52)
         }
     }
 
@@ -137,29 +131,7 @@ struct DeskScene: View {
     }
 
     private var standing: some View {
-        ZStack(alignment: .top) {
-            Path { path in
-                path.move(to: CGPoint(x: 14, y: 46))
-                path.addQuadCurve(to: CGPoint(x: 4, y: 8), control: CGPoint(x: 0, y: 34))
-                path.move(to: CGPoint(x: 46, y: 46))
-                path.addQuadCurve(to: CGPoint(x: 56, y: 8), control: CGPoint(x: 60, y: 34))
-            }
-            .stroke(shirt, style: StrokeStyle(lineWidth: 8, lineCap: .round))
-            .frame(width: 60, height: 60)
-            VStack(spacing: -4) {
-                ZStack(alignment: .top) {
-                    Circle().fill(skin).frame(width: 30, height: 30)
-                    Capsule().fill(hair).frame(width: 31, height: 13).offset(y: -2)
-                    eyes(size: 4, spacing: 10).offset(y: 15)
-                }
-                RoundedRectangle(cornerRadius: 11).fill(shirt).frame(width: 40, height: 46)
-                HStack(spacing: 5) {
-                    RoundedRectangle(cornerRadius: 4).fill(Color(hex: 0x33475E)).frame(width: 15, height: 38)
-                    RoundedRectangle(cornerRadius: 4).fill(Color(hex: 0x33475E)).frame(width: 15, height: 38)
-                }
-            }
-            .padding(.top, 8)
-        }
-        .frame(width: 60, height: 122, alignment: .top)
+        SceneStretch(head: SceneHead(hair: .short, hairColor: hairHex, skin: skinHex, eyes: .happy, mouth: .grin),
+                     top: shirtHex, pants: 0x33475E, time: time)
     }
 }

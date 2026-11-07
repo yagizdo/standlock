@@ -4,5 +4,20 @@ public enum MenuScene: String, Codable, Sendable, CaseIterable {
     case desk
     case cat
     case penguin
+    case frog
+    case fox
+    case capybara
+    case robot
+    case campfire
+    case hamster
+    case sprout
+    case coffee
+    case bread
+    case reading
+    case fishing
+    case painting
+    case cooking
+    case rainyDay
+    case hammock
     case off
 }

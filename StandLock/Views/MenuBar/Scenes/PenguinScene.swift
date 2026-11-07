@@ -12,6 +12,14 @@ struct PenguinScene: View {
         return sin(time * 2.4) * 3
     }
 
+    /// A happy hop when it is time to stand.
+    private var hop: CGFloat {
+        guard look == .timeToStand else { return 0 }
+        guard let time else { return 6 }
+        let p = time.truncatingRemainder(dividingBy: 1.1) / 1.1
+        return p < 0.45 ? sin(p / 0.45 * .pi) * 7 : 0
+    }
+
     private var tilt: Double {
         look == .noSchedules ? 8 : 0
     }
@@ -24,9 +32,10 @@ struct PenguinScene: View {
             Ellipse().fill(Color(hex: 0xF4FAFD)).frame(width: 360, height: 76).position(x: 128, y: 136)
             igloo
             snow
+            Ellipse().fill(Color(hex: 0x24344A, opacity: 0.12)).frame(width: 72 - hop, height: 7).position(x: 128, y: 126)
             PenguinFigure(look: look, time: time)
                 .rotationEffect(.degrees(waddle + tilt), anchor: .bottom)
-                .position(x: 128, y: 74)
+                .position(x: 128, y: 74 - hop)
             switch look {
             case .paused: SceneBubble(text: "z z").position(x: 74, y: 34)
             case .breakWaiting: SceneBubble(text: "...").position(x: 74, y: 34)
@@ -126,8 +135,8 @@ private struct PenguinFigure: View {
             Ellipse().fill(belly).frame(width: 34, height: 20).position(x: 42, y: 38)
             eye(x: 30)
             eye(x: 54)
-            Circle().fill(Color(hex: 0xF7B7BE, opacity: 0.8)).frame(width: 8, height: 8).position(x: 19, y: 37)
-            Circle().fill(Color(hex: 0xF7B7BE, opacity: 0.8)).frame(width: 8, height: 8).position(x: 65, y: 37)
+            Ellipse().fill(Color(hex: 0xF29A8A, opacity: 0.75)).frame(width: 10, height: 6).position(x: 19, y: 37)
+            Ellipse().fill(Color(hex: 0xF29A8A, opacity: 0.75)).frame(width: 10, height: 6).position(x: 65, y: 37)
             bill
         }
     }
@@ -145,7 +154,9 @@ private struct PenguinFigure: View {
 
     @ViewBuilder
     private func eye(x: CGFloat) -> some View {
-        if look == .paused {
+        if look == .timeToStand {
+            SceneFace.eye(.happy, ink: ink).scaleEffect(1.7).position(x: x, y: 25)
+        } else if look == .paused {
             Path { path in
                 path.move(to: CGPoint(x: x - 6, y: 25))
                 path.addQuadCurve(to: CGPoint(x: x + 6, y: 25), control: CGPoint(x: x, y: 30))
