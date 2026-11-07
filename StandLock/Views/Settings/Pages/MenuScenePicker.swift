@@ -130,6 +130,7 @@ struct MenuScenePicker: View {
         case .fishing: Text("Fishing")
         case .painting: Text("Painting")
         case .cooking: Text("Cooking")
+        case .rainyDay: Text("Rainy Day")
         case .off: Text("Off")
         }
     }

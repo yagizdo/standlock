@@ -612,6 +612,22 @@
         }
       }
     },
+    "Rainy Day" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yağmurlu gün"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "雨天"
+          }
+        }
+      }
+    },
     "Reading" : {
       "localizations" : {
         "tr" : {

@@ -10,6 +10,7 @@
 		009F1339F2742632532208AA /* SoftwareUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 303422D10B9C319038D63E32 /* SoftwareUpdate.swift */; };
 		011A9BA489625FDEA37D14DA /* SproutScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3BF2AEA58FF986A4E89264E /* SproutScene.swift */; };
 		01D54F07B3A6061A184C04BF /* MenuScenePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = C64B592ED400D7D67ABD591A /* MenuScenePicker.swift */; };
+		034D0ADC1966552BA8A77C1F /* RainyDayScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13C49519A31A083C9E53FCCF /* RainyDayScene.swift */; };
 		040AE413C982CD1E84472CDA /* SettingsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E666594049BE353F6E6FF6 /* SettingsSection.swift */; };
 		08AEDD7B79B9125648BCDA93 /* ScheduleDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6255027F43C988785C9635D /* ScheduleDetailView.swift */; };
 		0961DAEECC3F5E489E40FBC0 /* WordmarkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85C5398AE9D97E6B58618468 /* WordmarkView.swift */; };
@@ -132,6 +133,7 @@
 		0ECFF53DE04217DC4398CB8C /* SidebarBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarBackground.swift; sourceTree = "<group>"; };
 		0FCC1989904A9C3332CDE801 /* PixelGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PixelGridView.swift; sourceTree = "<group>"; };
 		12184C2234D04E8FE035B701 /* PermissionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionsView.swift; sourceTree = "<group>"; };
+		13C49519A31A083C9E53FCCF /* RainyDayScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RainyDayScene.swift; sourceTree = "<group>"; };
 		197D81279CAB2964AC559DA5 /* CatScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatScene.swift; sourceTree = "<group>"; };
 		1D4A9BCE77DF93E823C10D87 /* MenuBarStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarStatusView.swift; sourceTree = "<group>"; };
 		1D816A891C5FD51B89E4D0E2 /* DisciplineSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisciplineSettingsView.swift; sourceTree = "<group>"; };
@@ -475,6 +477,7 @@
 				C851627E22E0B6855CD31121 /* PenguinScene.swift */,
 				0FCC1989904A9C3332CDE801 /* PixelGridView.swift */,
 				6162024620A7B5B6DDFC8C3A /* PixelParts.swift */,
+				13C49519A31A083C9E53FCCF /* RainyDayScene.swift */,
 				6F0CB1A8BFD3077844E794D4 /* ReadingScene.swift */,
 				E4C53062EDA5469F4E031D21 /* RobotScene.swift */,
 				F2A85DF7A9AA67198838FE47 /* SceneBubble.swift */,
@@ -655,6 +658,7 @@
 				3F24521CD8A9CA8C9156A1B9 /* PreferencesSaveOwner.swift in Sources */,
 				4A537C55B992DF62814F9857 /* QuickActionsView.swift in Sources */,
 				897387E26C50A633291C6545 /* QuickSetupStepView.swift in Sources */,
+				034D0ADC1966552BA8A77C1F /* RainyDayScene.swift in Sources */,
 				7FAD5E79A4B910ECDB633365 /* ReadingScene.swift in Sources */,
 				354BBE2CE0040FB1FE1928BA /* RhythmTile.swift in Sources */,
 				AEA17D2F86B24BE5FE56B024 /* RobotScene.swift in Sources */,
