@@ -10,10 +10,7 @@ struct ReadingScene: View {
     private var isNight: Bool { look == .paused }
     private var standing: Bool { look == .timeToStand }
 
-    private let ink = Color(hex: 0x2E2430)
     private let skin = Color(hex: 0xF2C49A)
-    private let hair = Color(hex: 0x6B4226)
-    private let sweater = Color(hex: 0xD9774A)
 
     var body: some View {
         ZStack {
@@ -65,7 +62,7 @@ struct ReadingScene: View {
         let lowered: CGFloat = look == .breakSoon ? 8 : 0
         let flipping = look == .working && (time.map { $0.truncatingRemainder(dividingBy: 5) < 0.4 } ?? false)
         return ZStack {
-            RoundedRectangle(cornerRadius: 14).fill(sweater).frame(width: 56, height: 36).position(x: 124, y: 86)
+            SceneTop(color: 0xD9774A).frame(width: 56, height: 38).position(x: 124, y: 86)
             head.rotationEffect(.degrees(isNight ? 12 : 0), anchor: .bottom).position(x: 124, y: 46)
             if isNight {
                 Path { path in
@@ -86,80 +83,20 @@ struct ReadingScene: View {
     }
 
     private var standingReader: some View {
-        let swing = time.map { (sin($0 * 3) + 1) / 2 } ?? 0.5
-        let angle = 10 + swing * 25
-        return ZStack {
-            ForEach([-1.0, 1], id: \.self) { side in
-                ZStack(alignment: .top) {
-                    Capsule().fill(sweater).frame(width: 11, height: 40)
-                    Circle().fill(skin).frame(width: 11, height: 11).offset(y: -4)
-                }
-                .frame(width: 11, height: 40)
-                .rotationEffect(.degrees(side * angle), anchor: .bottom)
-                .position(x: 124 + side * 22, y: 38)
-            }
-            ForEach([-1.0, 1], id: \.self) { side in
-                Capsule().fill(Color(hex: 0x3A4660)).frame(width: 14, height: 28).position(x: 124 + side * 9, y: 98)
-                Ellipse().fill(Color(hex: 0x3B2A20)).frame(width: 18, height: 8).position(x: 124 + side * 10, y: 112)
-            }
-            RoundedRectangle(cornerRadius: 14).fill(sweater).frame(width: 52, height: 40).position(x: 124, y: 72)
-            head.position(x: 124, y: 30)
-        }
+        SceneStretch(head: head, top: 0xD9774A, pants: 0x3A4660, time: time).position(x: 124, y: 116 - 58)
     }
 
-    /// Hair, face and glasses, 52 tall with the bun.
-    private var head: some View {
-        let closed = isNight || (look == .breakSoon || look == .noSchedules) && sceneIsBlinking(time)
-        let eyeShift: CGFloat = look == .breakSoon || look == .noSchedules ? -2 : 2
-        return ZStack {
-            Circle().fill(hair).frame(width: 18, height: 18).offset(y: -22)
-            Circle().fill(hair).frame(width: 46, height: 46)
-            Ellipse().fill(skin).frame(width: 38, height: 32).offset(y: 6)
-            Ellipse().fill(hair).frame(width: 42, height: 18).offset(y: -9)
-            ForEach([-1.0, 1], id: \.self) { side in
-                Group {
-                    if standing {
-                        Path { path in
-                            path.move(to: CGPoint(x: 0, y: 3))
-                            path.addQuadCurve(to: CGPoint(x: 6, y: 3), control: CGPoint(x: 3, y: -1.5))
-                        }
-                        .stroke(ink, style: StrokeStyle(lineWidth: 1.8, lineCap: .round))
-                        .frame(width: 6, height: 4)
-                    } else if closed {
-                        Capsule().fill(ink).frame(width: 6, height: 1.6).offset(y: 2)
-                    } else {
-                        Capsule().fill(ink).frame(width: 3.5, height: 4.5).offset(y: eyeShift)
-                    }
-                }
-                .offset(x: side * 9, y: 6)
-                Circle().stroke(Color(hex: 0x3A3040), lineWidth: 1.8).frame(width: 14, height: 14).offset(x: side * 9, y: 6)
-                Circle().fill(Color(hex: 0xF0A08A)).frame(width: 6, height: 6).offset(x: side * 13, y: 15)
-            }
-            Rectangle().fill(Color(hex: 0x3A3040)).frame(width: 4, height: 1.8).offset(y: 5)
-            mouth.offset(y: 16)
+    private var head: SceneHead {
+        let eyes: SceneHead.Eyes
+        let mouth: SceneHead.Mouth
+        switch look {
+        case .paused: eyes = .closed; mouth = .smile
+        case .timeToStand: eyes = .happy; mouth = .grin
+        case .breakSoon: eyes = sceneIsBlinking(time) ? .closed : .open(lookingUp: true); mouth = .open
+        case .noSchedules: eyes = sceneIsBlinking(time) ? .closed : .open(lookingUp: true); mouth = .smile
+        case .working, .breakWaiting: eyes = .open(lookingUp: false); mouth = .smile
         }
-        .frame(width: 52, height: 52)
-    }
-
-    @ViewBuilder private var mouth: some View {
-        if look == .breakSoon {
-            Ellipse().fill(ink).frame(width: 5, height: 6)
-        } else if standing {
-            Path { path in
-                path.move(to: CGPoint(x: 0, y: 0))
-                path.addQuadCurve(to: CGPoint(x: 10, y: 0), control: CGPoint(x: 5, y: 7))
-                path.closeSubpath()
-            }
-            .fill(ink)
-            .frame(width: 10, height: 5)
-        } else {
-            Path { path in
-                path.move(to: CGPoint(x: 0, y: 0))
-                path.addQuadCurve(to: CGPoint(x: 7, y: 0), control: CGPoint(x: 3.5, y: 3.5))
-            }
-            .stroke(ink, style: StrokeStyle(lineWidth: 1.6, lineCap: .round))
-            .frame(width: 7, height: 4)
-        }
+        return SceneHead(hair: .bun, hairColor: 0x6B4226, skin: 0xF2C49A, glasses: true, eyes: eyes, mouth: mouth)
     }
 
     private var book: some View {
