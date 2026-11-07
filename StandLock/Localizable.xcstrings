@@ -2923,6 +2923,22 @@
         }
       }
     },
+    "Frog" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kurbağa"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "青蛙"
+          }
+        }
+      }
+    },
     "Full input blocking with emergency escape combo" : {
       "comment" : "DisciplineLevel.description",
       "extractionState" : "manual",
