@@ -164,6 +164,22 @@
         }
       }
     },
+    "Cooking" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yemek"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "做饭"
+          }
+        }
+      }
+    },
     "Daily skip limits" : {
       "localizations" : {
         "tr" : {

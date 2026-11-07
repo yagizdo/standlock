@@ -55,6 +55,7 @@
 		742A80C38BAB206209CC4213 /* WelcomeStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B387012391C6BC0360436B50 /* WelcomeStepView.swift */; };
 		75E31F36751D55F051D6FF34 /* ExerciseBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 434445F0717D4FC94E284CB8 /* ExerciseBlock.swift */; };
 		769FC5C08D86A729FB78CAF4 /* FoxScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AFF45DCD02D27949394DEF3 /* FoxScene.swift */; };
+		7A2143A0695F8455C834C0C3 /* CookingScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = C48598983576EA3F15F8B4F7 /* CookingScene.swift */; };
 		7BF1946EE4BC2EF26F5CE641 /* BreakScreenLook.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB803AB21175A8E54B5A2191 /* BreakScreenLook.swift */; };
 		7D2C20F63E9C2C051EE354DE /* SettingsSidebarRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7832761FE83C21F870E571C7 /* SettingsSidebarRow.swift */; };
 		7FAD5E79A4B910ECDB633365 /* ReadingScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F0CB1A8BFD3077844E794D4 /* ReadingScene.swift */; };
@@ -205,6 +206,7 @@
 		C1BB7EC878B3C641D2888AD2 /* StatisticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsView.swift; sourceTree = "<group>"; };
 		C2FA6CDE8744BCE072FEDAF9 /* MenuBarIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarIcon.swift; sourceTree = "<group>"; };
 		C3663C539337040D9472D8D1 /* ScheduleFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleFormView.swift; sourceTree = "<group>"; };
+		C48598983576EA3F15F8B4F7 /* CookingScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookingScene.swift; sourceTree = "<group>"; };
 		C5BBDBF97CFAA5FF490CBD00 /* BreakOverlayWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakOverlayWindow.swift; sourceTree = "<group>"; };
 		C64B592ED400D7D67ABD591A /* MenuScenePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuScenePicker.swift; sourceTree = "<group>"; };
 		C80FA2B8295FD72CAA075B38 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
@@ -461,6 +463,7 @@
 				4EC56256F21155B8E45CAF6D /* CapybaraScene.swift */,
 				197D81279CAB2964AC559DA5 /* CatScene.swift */,
 				4A2AFE6DEC61C501B7EFE3CE /* CoffeeScene.swift */,
+				C48598983576EA3F15F8B4F7 /* CookingScene.swift */,
 				24E37F0725B2E389ACEC601F /* DeskScene.swift */,
 				494CCBDAD86F56F31B1CC38C /* FishingScene.swift */,
 				6AFF45DCD02D27949394DEF3 /* FoxScene.swift */,
@@ -604,6 +607,7 @@
 				C9317350D818E7C826DA0966 /* CapybaraScene.swift in Sources */,
 				A60D5B46AD4C89605351E708 /* CatScene.swift in Sources */,
 				845AD4900EBFEE715DB4D06C /* CoffeeScene.swift in Sources */,
+				7A2143A0695F8455C834C0C3 /* CookingScene.swift in Sources */,
 				B2FF3CCDF5FB0EFC3C60C8BF /* DayButtons.swift in Sources */,
 				877287617D7DDBAB2346687C /* DayPreviewCard.swift in Sources */,
 				E6C55A4F70CDBF7DB5403B1F /* DeleteConfirmationView.swift in Sources */,
