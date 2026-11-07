@@ -81,6 +81,7 @@
 		AB84ADC15C8263AFD995E8B5 /* BreakTypography.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99FB6FBBABD55844628B8DA3 /* BreakTypography.swift */; };
 		ABE16985BBC55C65ED6E8824 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C80FA2B8295FD72CAA075B38 /* AboutView.swift */; };
 		AD18B90CCF07CB58B8312CDB /* Locking in Frameworks */ = {isa = PBXBuildFile; productRef = 3F23054B7AE15E61C38C884E /* Locking */; };
+		AEA17D2F86B24BE5FE56B024 /* RobotScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4C53062EDA5469F4E031D21 /* RobotScene.swift */; };
 		AFCD8E682F3B7C00A263441C /* SettingsSearchField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB7CBA12B287EE7D1683389 /* SettingsSearchField.swift */; };
 		B0B45CBAC1620814C7F443D0 /* DetectionSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF6A31515CC4248B938E982 /* DetectionSettingsView.swift */; };
 		B2DDDE67D0C30F62374D0BBE /* PermissionBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2BDD3661430F1F997413023 /* PermissionBadge.swift */; };
@@ -204,6 +205,7 @@
 		DF887D81035A1FE4735344F3 /* SettingsDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsDetail.swift; sourceTree = "<group>"; };
 		E1F5AA3BD882ECB78BB3099D /* PermissionsStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionsStepView.swift; sourceTree = "<group>"; };
 		E2436E0F3F20FE12F920ADE7 /* QuickActionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickActionsView.swift; sourceTree = "<group>"; };
+		E4C53062EDA5469F4E031D21 /* RobotScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RobotScene.swift; sourceTree = "<group>"; };
 		E5A68046037D0CAAE70C0F88 /* ActionArea.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionArea.swift; sourceTree = "<group>"; };
 		E940304A1CB44B2B8CC0FC8C /* BreakScreenPreviewCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakScreenPreviewCard.swift; sourceTree = "<group>"; };
 		EB686878D805A9466970EFA3 /* MenuBarSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarSettingsView.swift; sourceTree = "<group>"; };
@@ -444,6 +446,7 @@
 				C851627E22E0B6855CD31121 /* PenguinScene.swift */,
 				0FCC1989904A9C3332CDE801 /* PixelGridView.swift */,
 				6162024620A7B5B6DDFC8C3A /* PixelParts.swift */,
+				E4C53062EDA5469F4E031D21 /* RobotScene.swift */,
 				F2A85DF7A9AA67198838FE47 /* SceneBubble.swift */,
 			);
 			path = Scenes;
@@ -613,6 +616,7 @@
 				4A537C55B992DF62814F9857 /* QuickActionsView.swift in Sources */,
 				897387E26C50A633291C6545 /* QuickSetupStepView.swift in Sources */,
 				354BBE2CE0040FB1FE1928BA /* RhythmTile.swift in Sources */,
+				AEA17D2F86B24BE5FE56B024 /* RobotScene.swift in Sources */,
 				E9A645EF57C9276206BF0394 /* SceneBubble.swift in Sources */,
 				08AEDD7B79B9125648BCDA93 /* ScheduleDetailView.swift in Sources */,
 				4B80C2E0DB86C0724C97A49F /* ScheduleFormView.swift in Sources */,

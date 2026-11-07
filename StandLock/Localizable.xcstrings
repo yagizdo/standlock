@@ -4904,6 +4904,22 @@
         }
       }
     },
+    "Robot" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Robot"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "机器人"
+          }
+        }
+      }
+    },
     "Roll your shoulders forward 10 times, then backward 10 times. Keep movements slow and controlled." : {
       "comment" : "Exercise description",
       "extractionState" : "manual",
