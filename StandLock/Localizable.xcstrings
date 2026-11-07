@@ -4040,6 +4040,22 @@
         }
       }
     },
+    "More scenes" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Daha fazla sahne"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "更多场景"
+          }
+        }
+      }
+    },
     "Most of these are red. Just saying." : {
       "comment" : "Break challenge copy",
       "extractionState" : "manual",
