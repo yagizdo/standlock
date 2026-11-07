@@ -43,6 +43,7 @@
 		4A537C55B992DF62814F9857 /* QuickActionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2436E0F3F20FE12F920ADE7 /* QuickActionsView.swift */; };
 		4B80C2E0DB86C0724C97A49F /* ScheduleFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3663C539337040D9472D8D1 /* ScheduleFormView.swift */; };
 		4B8B1109D2B1AC920AF4656C /* HexColor+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FBAA74EE852DF8AA45C0909 /* HexColor+SwiftUI.swift */; };
+		4DA4765FC2B14993E850AA0B /* HammockScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DDFFDDA606933D2B511DEFE /* HammockScene.swift */; };
 		4F9FCDEAA10641DE215D0663 /* StandLockCore in Frameworks */ = {isa = PBXBuildFile; productRef = 72A6FAE1CB69E8D0DE33B641 /* StandLockCore */; };
 		4FCB9EE133A8300CC965E687 /* AppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A81F2ED91290AD26CB5B672E /* AppCoordinator.swift */; };
 		51FC83BD2349C694BF8C11DD /* TimerNumerals.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEAF9C8AFAF33310B45445B2 /* TimerNumerals.swift */; };
@@ -137,6 +138,7 @@
 		197D81279CAB2964AC559DA5 /* CatScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatScene.swift; sourceTree = "<group>"; };
 		1D4A9BCE77DF93E823C10D87 /* MenuBarStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarStatusView.swift; sourceTree = "<group>"; };
 		1D816A891C5FD51B89E4D0E2 /* DisciplineSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisciplineSettingsView.swift; sourceTree = "<group>"; };
+		1DDFFDDA606933D2B511DEFE /* HammockScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HammockScene.swift; sourceTree = "<group>"; };
 		20227808D86E5CC2E786ADAA /* BreakScreenSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakScreenSettingsView.swift; sourceTree = "<group>"; };
 		2063FDE70AFCC135664A8FD4 /* Exercises.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Exercises.json; sourceTree = "<group>"; };
 		2442916C24424F076D8711A6 /* PermissionCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionCard.swift; sourceTree = "<group>"; };
@@ -470,6 +472,7 @@
 				494CCBDAD86F56F31B1CC38C /* FishingScene.swift */,
 				6AFF45DCD02D27949394DEF3 /* FoxScene.swift */,
 				0CFC6AC33A81C46E517592CB /* FrogScene.swift */,
+				1DDFFDDA606933D2B511DEFE /* HammockScene.swift */,
 				648439978CA9BBF31921B4C5 /* HamsterScene.swift */,
 				39E5EFA4AB6411AD0176ED38 /* HourglassScene.swift */,
 				73072AEAC528F616B0FD5DB2 /* MenuSceneCard.swift */,
@@ -623,6 +626,7 @@
 				769FC5C08D86A729FB78CAF4 /* FoxScene.swift in Sources */,
 				EF7FA04B2E3E977765AAC231 /* FrogScene.swift in Sources */,
 				17A849E1BB7551F62825BF5F /* GeneralSettingsView.swift in Sources */,
+				4DA4765FC2B14993E850AA0B /* HammockScene.swift in Sources */,
 				18D266FA0E028EAD727A93E6 /* HamsterScene.swift in Sources */,
 				4B8B1109D2B1AC920AF4656C /* HexColor+SwiftUI.swift in Sources */,
 				F7C1F8F46303DE4B861765D2 /* HexColorField.swift in Sources */,

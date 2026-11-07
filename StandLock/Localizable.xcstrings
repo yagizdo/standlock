@@ -308,6 +308,22 @@
         }
       }
     },
+    "Hammock" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hamak"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "吊床"
+          }
+        }
+      }
+    },
     "Idle" : {
       "localizations" : {
         "tr" : {

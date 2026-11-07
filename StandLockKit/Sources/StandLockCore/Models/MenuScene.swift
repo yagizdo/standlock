@@ -18,5 +18,6 @@ public enum MenuScene: String, Codable, Sendable, CaseIterable {
     case painting
     case cooking
     case rainyDay
+    case hammock
     case off
 }
