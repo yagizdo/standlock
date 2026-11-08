@@ -70,16 +70,27 @@ public struct SettingsExport: Codable, Sendable, Equatable {
         return copy
     }
 
+    /// Far above any setting a person uses, far below where `Int(...)`, `Duration` and
+    /// minute-to-second arithmetic overflow.
+    private static let maxDuration: TimeInterval = 366 * 86_400
+    private static let maxCount = 100_000
+
     /// Values the app would trap or loop on. Not the form's ranges: older stored
     /// schedules can sit outside them, such as sub-minute intervals.
     private var isRunnable: Bool {
-        guard Set(schedules.map(\.id)).count == schedules.count else { return false }
+        let p = preferences
+        guard Set(schedules.map(\.id)).count == schedules.count,
+              [p.firmSkipDelay, p.strictEscapeHoldDuration, p.postponeReturnDelay]
+                  .allSatisfy({ $0.isFinite && (0...Self.maxDuration).contains($0) }),
+              [p.gentleDailySkipLimit, p.firmDailySkipLimit, p.menuBarCountdownMinutes, p.calendarLookAheadMinutes]
+                  .allSatisfy({ (0...Self.maxCount).contains($0) })
+        else { return false }
         return schedules.allSatisfy { schedule in
             let durations = [schedule.breakInterval, schedule.breakDuration]
                 + (schedule.intervalCycle ?? []).map(\.duration)
                 + [schedule.repetitionRule?.shortBreakDuration, schedule.repetitionRule?.longBreakDuration].compactMap { $0 }
-            return durations.allSatisfy { $0.isFinite && $0 > 0 }
-                && (schedule.repetitionRule?.shortBreakCount ?? 0) >= 0
+            return durations.allSatisfy { $0.isFinite && $0 > 0 && $0 <= Self.maxDuration }
+                && (0...Self.maxCount).contains(schedule.repetitionRule?.shortBreakCount ?? 0)
                 && schedule.windows.allSatisfy { window in
                     (0...23).contains(window.startHour) && (0...23).contains(window.endHour)
                         && (0...59).contains(window.startMinute) && (0...59).contains(window.endMinute)

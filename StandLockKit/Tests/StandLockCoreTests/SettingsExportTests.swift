@@ -240,6 +240,28 @@ struct SettingsExportTests {
         #expect(Self.decodeError(data) == .unreadable)
     }
 
+    /// Finite but huge: each traps in arithmetic or an `Int`/`Duration` conversion after import.
+    static let hugeValues: [(String, @Sendable (inout SettingsExport) -> Void)] = [
+        ("breakInterval", { $0.schedules[0].breakInterval = 1e30 }),
+        ("breakDuration", { $0.schedules[0].breakDuration = 1e30 }),
+        ("cycle step", { $0.schedules[0].intervalCycle?[0].duration = 1e30 }),
+        ("long break", { $0.schedules[0].repetitionRule?.longBreakDuration = 1e30 }),
+        ("shortBreakCount", { $0.schedules[0].repetitionRule?.shortBreakCount = .max }),
+        ("menuBarCountdownMinutes", { $0.preferences.menuBarCountdownMinutes = .max }),
+        ("calendarLookAheadMinutes", { $0.preferences.calendarLookAheadMinutes = .max }),
+        ("gentleDailySkipLimit", { $0.preferences.gentleDailySkipLimit = -1 }),
+        ("firmSkipDelay", { $0.preferences.firmSkipDelay = 1e300 }),
+        ("strictEscapeHoldDuration", { $0.preferences.strictEscapeHoldDuration = 1e300 }),
+        ("postponeReturnDelay", { $0.preferences.postponeReturnDelay = -1 }),
+    ]
+
+    @Test(arguments: hugeValues.indices)
+    func valuesTheAppTrapsOnAreUnreadable(index: Int) throws {
+        var export = Self.full()
+        Self.hugeValues[index].1(&export)
+        #expect(Self.decodeError(try export.encoded()) == .unreadable, "\(Self.hugeValues[index].0)")
+    }
+
     @Test func subMinuteValuesStayReadable() throws {
         // Older stored schedules can sit below the form's ranges; the file must still load.
         let data = try Self.editedSchedule { schedule in
