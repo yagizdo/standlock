@@ -105,6 +105,7 @@
 		BF272D7E49CFE686A28BE539 /* PenguinScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = C851627E22E0B6855CD31121 /* PenguinScene.swift */; };
 		C144671C95E22BC38AD14FE8 /* ScheduleSidebarRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = F07BB496D038848FFC7FDB3F /* ScheduleSidebarRow.swift */; };
 		C5895F53358BDFD586A4A800 /* SettingsDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF887D81035A1FE4735344F3 /* SettingsDetail.swift */; };
+		C5DEDF986BE39818EC35A762 /* LaunchAtLogin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F162EB6AEFC34DC88D7D57E /* LaunchAtLogin.swift */; };
 		C79B40CDB801534CB03F8D40 /* PaintingScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4F7EBA4EB133173F8CA622F /* PaintingScene.swift */; };
 		C9317350D818E7C826DA0966 /* CapybaraScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC56256F21155B8E45CAF6D /* CapybaraScene.swift */; };
 		CACA2A694D8386E2C52987E7 /* HomebrewUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41523222886A9E60C4A27DD /* HomebrewUpdater.swift */; };
@@ -182,6 +183,7 @@
 		7A85E4C082C8E3C5083ABAEB /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		7BE7F1FDA447F8791ACCD2BB /* SettingsGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsGroup.swift; sourceTree = "<group>"; };
 		7EA489010EA8A9B969CE5227 /* PreferencesSaveOwner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesSaveOwner.swift; sourceTree = "<group>"; };
+		7F162EB6AEFC34DC88D7D57E /* LaunchAtLogin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAtLogin.swift; sourceTree = "<group>"; };
 		8180C020203FB970C798C84E /* ThemeStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeStore.swift; sourceTree = "<group>"; };
 		85C5398AE9D97E6B58618468 /* WordmarkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordmarkView.swift; sourceTree = "<group>"; };
 		88D72443C7D064247ADFE6D0 /* GeneralSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralSettingsView.swift; sourceTree = "<group>"; };
@@ -342,6 +344,7 @@
 				570EE1706B3BD156F7F6FB6A /* BreakSoundPlayer.swift */,
 				F41523222886A9E60C4A27DD /* HomebrewUpdater.swift */,
 				35EA7054F16243AE0575478E /* LanguageStore.swift */,
+				7F162EB6AEFC34DC88D7D57E /* LaunchAtLogin.swift */,
 				5586791BF5D81FC7CE5AE185 /* MediaController.swift */,
 				FDC1758B39501153DCF68061 /* NextBreakClock.swift */,
 				4462E8D161113596647BD19E /* OverlayWindowController.swift */,
@@ -639,6 +642,7 @@
 				CACA2A694D8386E2C52987E7 /* HomebrewUpdater.swift in Sources */,
 				293548DD12593304DAE64D91 /* HourglassScene.swift in Sources */,
 				959469674E2A16E84F15F50B /* LanguageStore.swift in Sources */,
+				C5DEDF986BE39818EC35A762 /* LaunchAtLogin.swift in Sources */,
 				726D144CA2B3B5AF4D4503AE /* LevelPill.swift in Sources */,
 				8392C29716F63661BC5BBF34 /* LocalizedRoot.swift in Sources */,
 				D751E70A3ADA8406061C5A90 /* ManuscriptBreakView.swift in Sources */,

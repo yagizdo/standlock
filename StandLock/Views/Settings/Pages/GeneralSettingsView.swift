@@ -1,10 +1,9 @@
 import SwiftUI
-import ServiceManagement
 
 struct GeneralSettingsView: View {
     @EnvironmentObject private var languageStore: LanguageStore
     @EnvironmentObject private var themeStore: ThemeStore
-    @State private var launchAtStartup = SMAppService.mainApp.status == .enabled
+    @State private var launchAtStartup = LaunchAtLogin.isEnabled
     @State private var errorMessage: String?
     @State private var isUpdating = false
 
@@ -71,11 +70,7 @@ struct GeneralSettingsView: View {
         isUpdating = true
         defer { isUpdating = false }
         do {
-            if enabled {
-                try SMAppService.mainApp.register()
-            } else {
-                try SMAppService.mainApp.unregister()
-            }
+            try LaunchAtLogin.set(enabled)
             errorMessage = nil
         } catch {
             launchAtStartup = !enabled
