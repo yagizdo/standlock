@@ -1,5 +1,25 @@
 # Changelog
 
+## StandLock v0.12.0
+
+**Features**
+- Fifteen new menu bar scenes: a frog, a fox, a capybara, a robot, a campfire, a hamster, a sprout, a coffee mug, a bread loaf, reading, fishing, painting, cooking, a rainy day and a hammock. Each one follows your break like the first four, and the desk worker and the penguin now get up and hop when it is time to stand. Settings › Menu Bar shows two rows of scenes, and "More scenes" opens the rest (48f0ce8)
+- Export and import your settings in Settings › General. The file holds preferences, schedules, theme, language and Show help. Import lists what will change and applies nothing until you confirm, and a file StandLock cannot use shows why and changes nothing. Calendar choices are not carried over, because calendars have different identifiers on each Mac (3d12c9e)
+- A copy installed with Homebrew now updates from inside the app. StandLock checks the tap once a day and installs through `brew` from the menu bar banner or Settings › About (3f21dfa)
+- The first-launch setup is rebuilt in four steps: welcome, your first schedule, a menu bar scene, and where the app lives. Permissions are asked only if you pick Strict, and launch at login starts off and is offered on the last step. Closing the window finishes setup instead of bringing it back on every launch (5a46c6c)
+- Opening StandLock again from Finder, Spotlight or Launchpad while it runs opens Settings. On macOS 26 and later the menu bar icon can be hidden, which left no way into the app (5a46c6c)
+
+**Improvements**
+- About, Settings and Quit are now buttons in the menu bar panel's bottom row, so each takes one click. Quit asks first (9ba7423)
+- The open menu bar panel uses less CPU with a moving scene: 2-5%, down from 8-13% (661ebde)
+
+**Bug Fixes**
+- The Update button in the menu bar update banner now opens the update window. It did nothing beyond bringing the app forward (7b45164)
+- The Dock icon goes away again after first-launch setup. It used to stay until you quit (5a46c6c)
+- The schedule made during first-launch setup is named in your language. It was always saved as "Work Hours" (5a46c6c)
+
+**Full Changelog:** https://github.com/yagizdo/StandLock/compare/v0.11.0...v0.12.0
+
 ## StandLock v0.11.0
 
 **Features**
