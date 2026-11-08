@@ -9,7 +9,7 @@ struct StandLockApp: App {
     var body: some Scene {
         MenuBarExtra {
             LocalizedRoot(store: appCoordinator.languageStore) {
-                MenuBarView()
+                MenuBarView(updater: appDelegate.updaterController.updater)
                     .environmentObject(appCoordinator)
                     .environmentObject(appCoordinator.permissionChecker)
                     .environmentObject(appDelegate.updateObserver)

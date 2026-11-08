@@ -1,10 +1,13 @@
 import SwiftUI
+@preconcurrency import Sparkle
 import StandLockCore
 
 struct MenuBarView: View {
     @EnvironmentObject private var coordinator: AppCoordinator
     @EnvironmentObject private var updateObserver: UpdateObserver
     @Environment(\.openWindow) private var openWindow
+
+    let updater: SPUUpdater
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -148,8 +151,12 @@ struct MenuBarView: View {
             if let homebrew = updateObserver.homebrew {
                 homebrew.upgrade()
             } else {
+                let panel = NSApp.keyWindow
                 NSApp.activate(ignoringOtherApps: true)
-                (NSApp.delegate as? AppDelegate)?.updaterController.updater.checkForUpdates()
+                updater.checkForUpdates()
+                // The panel sits above Sparkle's window and does not hide on its own.
+                // `orderOut`, not `close`: see `SettingsNavigation.dismissMenuBarPanel`.
+                if let panel, panel.isMenuBarPanel { panel.orderOut(nil) }
             }
         }
         .buttonStyle(.bordered)
