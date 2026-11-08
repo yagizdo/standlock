@@ -65,6 +65,9 @@ final class AppCoordinator: ObservableObject {
     private var loadedExercises: [Exercise] = []
     private var onboardingWindow: NSWindow?
     private var onboardingWindowDelegate: OnboardingWindowCloseDelegate?
+    /// Restored when onboarding ends. Not found by scanning `NSApp.windows`: the status bar
+    /// window is always there and visible, so a scan never let the Dock icon go.
+    private var policyBeforeOnboarding: NSApplication.ActivationPolicy = .accessory
     private var permissionSyncCancellable: AnyCancellable?
     private var calendarStatusCancellable: AnyCancellable?
     /// Tracks the calendar grant so the store is reset exactly on the false -> true transition.
@@ -89,6 +92,14 @@ final class AppCoordinator: ObservableObject {
         ) { [weak self] _ in
             MainActor.assumeIsolated {
                 self?.saveEnforcementState()
+            }
+        }
+        NotificationCenter.default.addObserver(
+            forName: .standLockReopen, object: nil, queue: .main
+        ) { [weak self] _ in
+            MainActor.assumeIsolated {
+                guard let self, !self.bringOnboardingForward() else { return }
+                self.settingsNavigation.open(nil)
             }
         }
         permissionSyncCancellable = permissionChecker.objectWillChange
@@ -626,7 +637,7 @@ final class AppCoordinator: ObservableObject {
         guard !hasCompletedOnboarding, onboardingWindow == nil else { return }
 
         let window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 480, height: 520),
+            contentRect: NSRect(x: 0, y: 0, width: OnboardingView.size.width, height: OnboardingView.size.height),
             styleMask: [.titled, .closable, .fullSizeContentView],
             backing: .buffered,
             defer: false
@@ -634,25 +645,45 @@ final class AppCoordinator: ObservableObject {
         window.titlebarAppearsTransparent = true
         window.titleVisibility = .hidden
         window.isReleasedWhenClosed = false
-        window.contentView = NSHostingView(
+        let hostingView = NSHostingView(
             rootView: LocalizedRoot(store: languageStore) {
-                OnboardingView()
+                OnboardingView(scene: self.preferences.menuScene)
                     .environmentObject(self)
                     .environmentObject(self.permissionChecker)
             }
         )
+        // The root has a fixed frame; without this SwiftUI resizes the window to each step.
+        hostingView.sizingOptions = []
+        window.contentView = hostingView
         window.center()
 
+        // Closing means finished with nothing set up, so the window does not come back.
         let delegate = OnboardingWindowCloseDelegate { [weak self] in
-            self?.dismissOnboardingWindow()
+            self?.completeOnboarding()
         }
         window.delegate = delegate
         onboardingWindowDelegate = delegate
         onboardingWindow = window
 
         window.makeKeyAndOrderFront(nil)
+        policyBeforeOnboarding = NSApp.activationPolicy()
         NSApp.setActivationPolicy(.regular)
         NSApp.activate(ignoringOtherApps: true)
+    }
+
+    /// Stores what onboarding chose. The login item goes first: if it throws, nothing else is
+    /// stored and the window stays, so a retry does not add a second schedule.
+    func finishOnboarding(with choices: OnboardingChoices) throws {
+        if choices.launchAtLogin {
+            try LaunchAtLogin.set(true)
+        }
+        // `preferences` has no observer that saves it while Settings is closed.
+        preferences.menuScene = choices.scene
+        savePreferences()
+        if let schedule = choices.schedule(named: languageStore.string("Work Hours")) {
+            addSchedule(schedule)
+        }
+        completeOnboarding()
     }
 
     func completeOnboarding() {
@@ -661,29 +692,20 @@ final class AppCoordinator: ObservableObject {
         dismissOnboardingWindow()
     }
 
+    /// Returns false when no onboarding window is up.
+    func bringOnboardingForward() -> Bool {
+        guard let window = onboardingWindow else { return false }
+        window.makeKeyAndOrderFront(nil)
+        NSApp.activate(ignoringOtherApps: true)
+        return true
+    }
+
     private func dismissOnboardingWindow() {
         guard let window = onboardingWindow else { return }
         window.contentView = nil
         window.orderOut(nil)
         onboardingWindow = nil
         onboardingWindowDelegate = nil
-
-        let hasOtherVisible = NSApp.windows.contains { $0.isVisible && !($0 is NSPanel) }
-        if !hasOtherVisible {
-            NSApp.setActivationPolicy(.accessory)
-        }
-    }
-
-    func createDefaultSchedule(progressiveEnforcement: Bool = false) {
-        let defaultSchedule = Schedule(
-            name: "Work Hours",
-            days: .weekdays,
-            windows: [TimeWindow(startHour: 9, startMinute: 0, endHour: 17, endMinute: 0)],
-            breakInterval: 45 * 60,
-            breakDuration: 5 * 60,
-            disciplineLevel: .gentle,
-            progressiveEnforcement: progressiveEnforcement
-        )
-        addSchedule(defaultSchedule)
+        NSApp.setActivationPolicy(policyBeforeOnboarding)
     }
 }

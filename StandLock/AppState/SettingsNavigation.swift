@@ -24,6 +24,15 @@ final class SettingsNavigation: ObservableObject {
     /// Fires when Settings is opened from outside it. The scene keeps the closed window, so its
     /// views never reappear.
     let opened = PassthroughSubject<Void, Never>()
+    /// Handed over by `OpenSettingsCommand`: only a view gets one, and a reopen from Finder
+    /// comes with no view.
+    var openWindow: OpenWindowAction?
+
+    /// Opens Settings with the stored `openWindow`. Does nothing before it is set.
+    func open(_ page: SettingsPage?) {
+        guard let openWindow else { return }
+        open(page, using: openWindow)
+    }
 
     /// Opens Settings on `page`, or on the last page when `page` is nil.
     func open(_ page: SettingsPage?, using openWindow: OpenWindowAction) {

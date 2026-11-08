@@ -1301,38 +1301,6 @@
         }
       }
     },
-    "5 minute breaks" : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "5 dakikalık molalar"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "5 分钟休息"
-          }
-        }
-      }
-    },
-    "09:00 – 17:00" : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "09:00 – 17:00"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "09:00 – 17:00"
-          }
-        }
-      }
-    },
     "20-20-20 Rule" : {
       "comment" : "Exercise title",
       "extractionState" : "manual",
@@ -1741,22 +1709,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "休息间隔"
-          }
-        }
-      }
-    },
-    "Break every 45 minutes" : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "45 dakikada bir mola"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "每 45 分钟休息一次"
           }
         }
       }
@@ -2459,22 +2411,6 @@
         }
       }
     },
-    "Defer breaks during calendar events." : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Takvim etkinliklerinde molaları erteler."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "在日历事件期间推迟休息。"
-          }
-        }
-      }
-    },
     "Defer breaks during screen sharing or recording" : {
       "localizations" : {
         "tr" : {
@@ -2671,22 +2607,6 @@
         }
       }
     },
-    "Each permission unlocks a feature. You can grant them now or later in Settings." : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Her izin bir özelliği açar. Şimdi ya da sonra Ayarlar'dan izin verebilirsiniz."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "每项权限都会解锁一项功能。你可以现在授予，也可以稍后在“设置”中授予。"
-          }
-        }
-      }
-    },
     "Emergency" : {
       "localizations" : {
         "tr" : {
@@ -2715,38 +2635,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "本周紧急退出次数"
-          }
-        }
-      }
-    },
-    "Enables Strict mode to fully block input during breaks." : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Katı modun molalarda girdiyi tümüyle engellemesini sağlar."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "让强制模式在休息期间完全屏蔽输入。"
-          }
-        }
-      }
-    },
-    "Enables the escape key combo that ends a Strict break." : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Katı molayı bitiren çıkış tuş birleşimini etkinleştirir."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "启用结束强制休息的退出组合键。"
           }
         }
       }
@@ -3233,22 +3121,6 @@
         }
       }
     },
-    "Gentle mode" : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Esnek mod"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "宽松模式"
-          }
-        }
-      }
-    },
     "Genuinely impressive" : {
       "comment" : "Break challenge copy",
       "extractionState" : "manual",
@@ -3281,22 +3153,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "是真有点厉害。行，去吧。"
-          }
-        }
-      }
-    },
-    "Get Started" : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Başla"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "开始使用"
           }
         }
       }
@@ -3633,22 +3489,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "我宁愿丢脸也不休息"
-          }
-        }
-      }
-    },
-    "I'll configure later" : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sonra yapılandıracağım"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "稍后再设置"
           }
         }
       }
@@ -4082,22 +3922,6 @@
         }
       }
     },
-    "Make breaks harder to skip over time" : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Molaları zamanla atlaması zorlaştır"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "让休息随着时间越来越难跳过"
-          }
-        }
-      }
-    },
     "Makes each skipped break harder to dismiss" : {
       "localizations" : {
         "tr" : {
@@ -4178,22 +4002,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "分钟"
-          }
-        }
-      }
-    },
-    "Monday – Friday" : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pazartesi – Cuma"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "周一 – 周五"
           }
         }
       }
@@ -4924,22 +4732,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "股四头肌伸展"
-          }
-        }
-      }
-    },
-    "Quick Setup" : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hızlı Kurulum"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "快速设置"
           }
         }
       }
@@ -5920,22 +5712,6 @@
         }
       }
     },
-    "Start with a recommended schedule, or configure your own later." : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Önerilen bir programla başlayın ya da kendinizinkini sonra yapılandırın."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "先用推荐的日程开始，之后再设置自己的。"
-          }
-        }
-      }
-    },
     "Statistics" : {
       "localizations" : {
         "tr" : {
@@ -6258,22 +6034,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "在房间或办公室里走一小圈。活动双腿，促进血液循环。"
-          }
-        }
-      }
-    },
-    "Take healthy standing breaks while you work" : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Çalışırken sağlıklı ayakta mola verin"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "工作时站起来，健康地休息一下"
           }
         }
       }
@@ -6658,22 +6418,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "有可用更新"
-          }
-        }
-      }
-    },
-    "Use Default Schedule" : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Varsayılan Programı Kullan"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "使用默认日程"
           }
         }
       }
@@ -8002,6 +7746,454 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "详细信息"
+          }
+        }
+      }
+    },
+    "Breaks you can't ignore" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Görmezden gelemeyeceğin molalar"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法忽视的休息"
+          }
+        }
+      }
+    },
+    "When a break is due, StandLock covers your screen with a countdown and an exercise. You decide how hard it is to get out." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mola vakti gelince StandLock ekranını bir geri sayım ve bir egzersizle kaplar. Ne kadar zor çıkılacağına sen karar verirsin."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "休息时间一到，StandLock 会用倒计时和一个练习覆盖你的屏幕。退出有多难，由你决定。"
+          }
+        }
+      }
+    },
+    "Breaks wait for meetings, calls and screen sharing." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Molalar toplantı, arama ve ekran paylaşımı bitene kadar bekler."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "休息会等到会议、通话和屏幕共享结束。"
+          }
+        }
+      }
+    },
+    "Already away from your desk? The break counts as done." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zaten masadan kalktıysan mola yapılmış sayılır."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已经离开座位了？这次休息算作完成。"
+          }
+        }
+      }
+    },
+    "No account and no analytics. Everything stays on this Mac." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hesap yok, analiz yok. Her şey bu Mac'te kalır."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无需账户，没有数据分析。一切都留在这台 Mac 上。"
+          }
+        }
+      }
+    },
+    "Your first schedule" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İlk programın"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你的第一个日程"
+          }
+        }
+      }
+    },
+    "Weekdays, 09:00 to 17:00. You can change any of it later in Settings." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hafta içi, 09:00-17:00. Hepsini sonra Ayarlar'dan değiştirebilirsin."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "工作日，09:00 至 17:00。之后可以在设置中更改任何一项。"
+          }
+        }
+      }
+    },
+    "Every 45 minutes, a 5 minute break" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "45 dakikada bir, 5 dakika mola"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "每 45 分钟休息 5 分钟"
+          }
+        }
+      }
+    },
+    "Recommended" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Önerilen"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "推荐"
+          }
+        }
+      }
+    },
+    "Every 25 minutes, a 5 minute break" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "25 dakikada bir, 5 dakika mola"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "每 25 分钟休息 5 分钟"
+          }
+        }
+      }
+    },
+    "Every 52 minutes, a 17 minute break" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "52 dakikada bir, 17 dakika mola"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "每 52 分钟休息 17 分钟"
+          }
+        }
+      }
+    },
+    "Every 20 minutes, 20 seconds away from the screen" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "20 dakikada bir, 20 saniye ekrandan uzak"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "每 20 分钟离开屏幕 20 秒"
+          }
+        }
+      }
+    },
+    "How you get out of a break" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moladan nasıl çıkarsın"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "如何结束休息"
+          }
+        }
+      }
+    },
+    "Click Skip." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Atla'ya tıkla."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "点击“跳过”。"
+          }
+        }
+      }
+    },
+    "Wait, then type a phrase." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bekle, sonra bir cümle yaz."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "等待，然后输入一句话。"
+          }
+        }
+      }
+    },
+    "Keyboard and mouse are blocked. Hold Control, Option and Command to leave. Needs permission in System Settings." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Klavye ve fare kilitlenir. Çıkmak için Control, Option ve Command'a basılı tut. Sistem Ayarları'ndan izin ister."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "键盘和鼠标会被锁定。按住 Control、Option 和 Command 即可退出。需要在系统设置中授权。"
+          }
+        }
+      }
+    },
+    "Set Up Later" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sonra Kurarım"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "稍后设置"
+          }
+        }
+      }
+    },
+    "Back" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Geri"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "返回"
+          }
+        }
+      }
+    },
+    "Create Schedule" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Program Oluştur"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "创建日程"
+          }
+        }
+      }
+    },
+    "Pick a scene" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir sahne seç"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "选择一个场景"
+          }
+        }
+      }
+    },
+    "It sits at the top of the menu bar panel and changes as your break gets closer." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Menü çubuğu panelinin üstünde durur, mola yaklaştıkça değişir."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "它位于菜单栏面板顶部，会随着休息临近而变化。"
+          }
+        }
+      }
+    },
+    "StandLock lives in the menu bar" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "StandLock menü çubuğunda"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "StandLock 在菜单栏中"
+          }
+        }
+      }
+    },
+    "Click the circle for the next break, Skip and Pause. It fills up as the next break gets closer." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sıradaki mola, Atla ve Duraklat için daireye tıkla. Mola yaklaştıkça daire dolar."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "点击圆圈可查看下次休息，以及跳过和暂停。下次休息越近，圆圈越满。"
+          }
+        }
+      }
+    },
+    "Turn on so breaks keep coming after you restart the Mac." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Açarsan Mac'i yeniden başlattıktan sonra da molalar gelir."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打开后，重新启动 Mac 后仍会提醒休息。"
+          }
+        }
+      }
+    },
+    "Can't see the icon? Open StandLock again from Applications and Settings opens." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İkonu göremiyor musun? StandLock'u Uygulamalar'dan tekrar aç, Ayarlar açılır."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "看不到图标？从“应用程序”中再次打开 StandLock，就会打开设置。"
+          }
+        }
+      }
+    },
+    "Done" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bitti"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "完成"
+          }
+        }
+      }
+    },
+    "Step %lld of 4" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adım %lld / 4"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "第 %lld 步，共 4 步"
+          }
+        }
+      }
+    },
+    "Work Hours" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Çalışma Saatleri"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "工作时间"
           }
         }
       }

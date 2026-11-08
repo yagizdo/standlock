@@ -49,6 +49,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         NSApp.setActivationPolicy(.accessory)
     }
 
+    /// Opening the running app again is the way back when the system hides the menu bar icon.
+    /// False: the default would do nothing useful for an app with no regular window.
+    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+        NotificationCenter.default.post(name: .standLockReopen, object: nil)
+        return false
+    }
+
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
         if PermissionChecker.isRelaunching { return .terminateNow }
         let hasActiveOverlay = sender.windows.contains { $0 is BreakOverlayWindow && $0.isVisible }
