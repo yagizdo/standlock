@@ -169,6 +169,12 @@ struct SettingsExportTests {
         #expect(Self.decodeError(data) == .notSettingsFile)
     }
 
+    @Test func truncatedSettingsFileIsUnreadable() throws {
+        // Cut mid-way, past the format marker: it is StandLock's file, damaged.
+        let data = try Self.full().encoded()
+        #expect(Self.decodeError(data.prefix(data.count / 2)) == .unreadable)
+    }
+
     @Test func jsonArrayIsNotASettingsFile() {
         #expect(Self.decodeError(Data("[1, 2]".utf8)) == .notSettingsFile)
     }

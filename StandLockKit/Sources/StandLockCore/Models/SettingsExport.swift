@@ -38,8 +38,12 @@ public struct SettingsExport: Codable, Sendable, Equatable {
     /// Reads a whole file or throws; a caller applies nothing unless this returns.
     public static func decode(_ data: Data) throws -> SettingsExport {
         let decoder = JSONDecoder()
-        guard let header = try? decoder.decode(Header.self, from: data),
-              header.format == formatIdentifier,
+        guard let header = try? decoder.decode(Header.self, from: data) else {
+            // `format` sorts first, so a cut-off file of ours still carries the marker.
+            throw data.range(of: Data("\"\(formatIdentifier)\"".utf8)) == nil
+                ? SettingsImportError.notSettingsFile : SettingsImportError.unreadable
+        }
+        guard header.format == formatIdentifier,
               let version = header.version, version >= 1
         else { throw SettingsImportError.notSettingsFile }
         guard version <= currentVersion else { throw SettingsImportError.newerVersion }
