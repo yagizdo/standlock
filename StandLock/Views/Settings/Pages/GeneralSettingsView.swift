@@ -63,6 +63,8 @@ struct GeneralSettingsView: View {
                     .fixedSize()
                 }
             }
+
+            SettingsFileSection()
         }
     }
 
