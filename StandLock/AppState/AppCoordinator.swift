@@ -94,6 +94,14 @@ final class AppCoordinator: ObservableObject {
                 self?.saveEnforcementState()
             }
         }
+        NotificationCenter.default.addObserver(
+            forName: .standLockReopen, object: nil, queue: .main
+        ) { [weak self] _ in
+            MainActor.assumeIsolated {
+                guard let self, !self.bringOnboardingForward() else { return }
+                self.settingsNavigation.open(nil)
+            }
+        }
         permissionSyncCancellable = permissionChecker.objectWillChange
             .receive(on: RunLoop.main)
             .sink { [weak self] _ in
