@@ -522,6 +522,17 @@ final class AppCoordinator: ObservableObject {
         restartCoordinator()
     }
 
+    /// Replaces preferences and schedules from a settings file. Preferences go first so the
+    /// rebuilt coordinator starts with them; the restart carries today's counters.
+    func applyImport(preferences: AppPreferences, schedules: [Schedule]) {
+        self.preferences = preferences
+        savePreferences()
+        syncPreferencesWithPermissions()
+        self.schedules = schedules
+        saveSchedules()
+        restartCoordinator()
+    }
+
     // MARK: - Quick Actions
 
     func skipNextBreak() {

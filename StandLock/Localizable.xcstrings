@@ -116,6 +116,22 @@
         }
       }
     },
+    "Adds schedules: %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eklenecek programlar: %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "将添加日程：%@"
+          }
+        }
+      }
+    },
     "Bread" : {
       "localizations" : {
         "tr" : {
@@ -132,6 +148,22 @@
         }
       }
     },
+    "Calendar Integration will check all calendars. The file does not carry your calendar choices." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Takvim Entegrasyonu tüm takvimlere bakacak. Dosya takvim seçimlerini taşımaz."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "日历集成将检查所有日历。文件不包含你选择的日历。"
+          }
+        }
+      }
+    },
     "Calls" : {
       "localizations" : {
         "tr" : {
@@ -144,6 +176,38 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "通话"
+          }
+        }
+      }
+    },
+    "Changes schedules: %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Değişecek programlar: %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "将更改日程：%@"
+          }
+        }
+      }
+    },
+    "Changes settings: %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Değişecek ayarlar: %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "将更改设置：%@"
           }
         }
       }
@@ -176,6 +240,38 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "做饭"
+          }
+        }
+      }
+    },
+    "Could Not Export Settings" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ayarlar Dışa Aktarılamadı"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法导出设置"
+          }
+        }
+      }
+    },
+    "Could Not Import Settings" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ayarlar İçe Aktarılamadı"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法导入设置"
           }
         }
       }
@@ -276,6 +372,38 @@
         }
       }
     },
+    "Export Settings" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ayarları Dışa Aktar"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "导出设置"
+          }
+        }
+      }
+    },
+    "Export…" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dışa Aktar…"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "导出…"
+          }
+        }
+      }
+    },
     "Fishing" : {
       "localizations" : {
         "tr" : {
@@ -336,6 +464,70 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "无操作"
+          }
+        }
+      }
+    },
+    "Import" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İçe Aktar"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "导入"
+          }
+        }
+      }
+    },
+    "Import Settings" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ayarları İçe Aktar"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "导入设置"
+          }
+        }
+      }
+    },
+    "Import Settings?" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ayarlar İçe Aktarılsın mı?"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "要导入设置吗？"
+          }
+        }
+      }
+    },
+    "Import…" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İçe Aktar…"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "导入…"
           }
         }
       }
@@ -564,6 +756,22 @@
         }
       }
     },
+    "OK" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tamam"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "好"
+          }
+        }
+      }
+    },
     "Optional" : {
       "localizations" : {
         "tr" : {
@@ -708,6 +916,38 @@
         }
       }
     },
+    "Removes schedules: %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Silinecek programlar: %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "将删除日程：%@"
+          }
+        }
+      }
+    },
+    "Replace your settings and schedules with the ones in a file" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ayarlarını ve programlarını bir dosyadakilerle değiştir"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "用文件中的设置和日程替换当前的"
+          }
+        }
+      }
+    },
     "Restart needed" : {
       "localizations" : {
         "tr" : {
@@ -740,6 +980,22 @@
         }
       }
     },
+    "Save your settings and schedules to a file" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ayarlarını ve programlarını bir dosyaya kaydet"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "将设置和日程存储到文件"
+          }
+        }
+      }
+    },
     "Screen sharing" : {
       "localizations" : {
         "tr" : {
@@ -768,6 +1024,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "搜索设置"
+          }
+        }
+      }
+    },
+    "Settings File" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ayar Dosyası"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "设置文件"
           }
         }
       }
@@ -820,6 +1092,22 @@
         }
       }
     },
+    "StandLock Settings" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "StandLock Ayarları"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "StandLock 设置"
+          }
+        }
+      }
+    },
     "StandLock works without any of them." : {
       "localizations" : {
         "tr" : {
@@ -848,6 +1136,70 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "启动"
+          }
+        }
+      }
+    },
+    "This file could not be read. It may be damaged or made by a newer version of StandLock." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu dosya okunamadı. Bozuk olabilir ya da StandLock'un daha yeni bir sürümüyle yapılmış olabilir."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法读取此文件。它可能已损坏，或由更新版本的 StandLock 创建。"
+          }
+        }
+      }
+    },
+    "This file is not a StandLock settings file." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu dosya bir StandLock ayar dosyası değil."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此文件不是 StandLock 设置文件。"
+          }
+        }
+      }
+    },
+    "This file matches your current settings." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu dosya şu anki ayarlarınla aynı."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此文件与你当前的设置相同。"
+          }
+        }
+      }
+    },
+    "This file was made by a newer version of StandLock. Update StandLock to import it." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu dosya StandLock'un daha yeni bir sürümüyle yapıldı. İçe aktarmak için StandLock'u güncelle."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此文件由更新版本的 StandLock 创建。请更新 StandLock 后再导入。"
           }
         }
       }

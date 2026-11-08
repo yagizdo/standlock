@@ -6,7 +6,10 @@ extension SettingsPage {
     static let sidebarBreakPages: [SettingsPage] = [.breakScreen, .discipline, .detection]
     static let sidebarBottomPages: [SettingsPage] = [.permissions, .statistics, .about]
 
-    var title: LocalizedStringKey {
+    var title: LocalizedStringKey { LocalizedStringKey(titleResource.key) }
+
+    /// The title for text composed outside a `Text`, such as an alert message.
+    var titleResource: LocalizedStringResource {
         switch self {
         case .general: "General"
         case .menuBar: "Menu Bar"
@@ -51,7 +54,10 @@ extension SettingsPage {
     var searchTerms: [LocalizedStringResource] {
         switch self {
         case .general:
-            ["General", "Startup", "Launch at Startup", "Language and appearance", "Language", "Appearance"]
+            [
+                "General", "Startup", "Launch at Startup", "Language and appearance", "Language", "Appearance",
+                "Settings File", "Export Settings", "Import Settings",
+            ]
         case .menuBar:
             ["Menu Bar", "Scene", "Timer", "Show Full Work Timer", "Countdown Start", "Preview"]
         case .breakScreen:
