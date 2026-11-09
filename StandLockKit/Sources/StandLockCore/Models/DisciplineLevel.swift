@@ -44,19 +44,19 @@ extension DisciplineLevel {
             let phrase = preferences.firmEscapePhrase
             let base = preferences.firmSkipDelay
             return EnforcementPolicy(tiers: [
-                EnforcementTier(skipDelay: base, dismissMechanism: .typePhrase(phrase: phrase, requiresConfirmation: false)),
-                EnforcementTier(skipDelay: base + 5, dismissMechanism: .typePhrase(phrase: phrase, requiresConfirmation: false)),
-                EnforcementTier(skipDelay: base + 10, dismissMechanism: .slotMachine(reelCount: 3, maxAttempts: 3)),
-                EnforcementTier(skipDelay: base + 15, dismissMechanism: .typePhrase(phrase: phrase, requiresConfirmation: true)),
-                EnforcementTier(skipDelay: base + 20, dismissMechanism: .roastChallenge(sentenceCount: 3)),
+                EnforcementTier(skipDelay: BreakSafety.skipDelay(base), dismissMechanism: .typePhrase(phrase: phrase, requiresConfirmation: false)),
+                EnforcementTier(skipDelay: BreakSafety.skipDelay(base + 5), dismissMechanism: .typePhrase(phrase: phrase, requiresConfirmation: false)),
+                EnforcementTier(skipDelay: BreakSafety.skipDelay(base + 10), dismissMechanism: .slotMachine(reelCount: 3, maxAttempts: 3)),
+                EnforcementTier(skipDelay: BreakSafety.skipDelay(base + 15), dismissMechanism: .typePhrase(phrase: phrase, requiresConfirmation: true)),
+                EnforcementTier(skipDelay: BreakSafety.skipDelay(base + 20), dismissMechanism: .roastChallenge(sentenceCount: 3)),
             ])
         case .strict:
             let hold = preferences.strictEscapeHoldDuration
             return EnforcementPolicy(tiers: [
-                EnforcementTier(skipDelay: 0, dismissMechanism: .keyCombo(duration: hold)),
-                EnforcementTier(skipDelay: 0, dismissMechanism: .keyCombo(duration: hold + 5)),
-                EnforcementTier(skipDelay: 0, dismissMechanism: .keyCombo(duration: hold + 10)),
-                EnforcementTier(skipDelay: 0, dismissMechanism: .keyCombo(duration: hold + 15)),
+                EnforcementTier(skipDelay: 0, dismissMechanism: .keyCombo(duration: BreakSafety.escapeHoldDuration(hold))),
+                EnforcementTier(skipDelay: 0, dismissMechanism: .keyCombo(duration: BreakSafety.escapeHoldDuration(hold + 5))),
+                EnforcementTier(skipDelay: 0, dismissMechanism: .keyCombo(duration: BreakSafety.escapeHoldDuration(hold + 10))),
+                EnforcementTier(skipDelay: 0, dismissMechanism: .keyCombo(duration: BreakSafety.escapeHoldDuration(hold + 15))),
             ])
         }
     }
