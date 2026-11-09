@@ -287,7 +287,10 @@ struct ScheduleModelTests {
 
     /// The phrase has no Settings field: a bad one from a file or an old default would leave a
     /// Firm break that no typing can skip.
-    @Test(arguments: ["", "   ", "skip\nnow", String(repeating: "a", count: 101)])
+    @Test(arguments: [
+        "", "   ", "skip\nnow", "skip\u{7}now", "skip\tnow", "skip\u{2028}now",
+        String(repeating: "a", count: 101), "a" + String(repeating: "\u{301}", count: 500),
+    ])
     func untypeableFirmPhraseFallsBackToDefault(phrase: String) {
         let policy = DisciplineLevel.firm.enforcementPolicy(preferences: AppPreferences(firmEscapePhrase: phrase))
         let expected = AppPreferences.defaultFirmEscapePhrase

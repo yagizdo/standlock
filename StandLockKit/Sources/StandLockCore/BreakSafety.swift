@@ -16,8 +16,12 @@ public enum BreakSafety {
     /// The phrase has no Settings field, so one that cannot be typed falls back to the default.
     public static func escapePhrase(_ phrase: String) -> String {
         let trimmed = phrase.trimmingCharacters(in: .whitespacesAndNewlines)
+        // Scalars are counted too: one grapheme can hide hundreds of combining marks. Control
+        // characters (Cc) cannot be typed; format characters (Cf) can, inside ZWJ emoji.
         guard !trimmed.isEmpty, trimmed.count <= maximumEscapePhraseLength,
-              trimmed.rangeOfCharacter(from: .newlines) == nil
+              trimmed.unicodeScalars.count <= maximumEscapePhraseLength * 4,
+              trimmed.rangeOfCharacter(from: .newlines) == nil,
+              !trimmed.unicodeScalars.contains(where: { $0.properties.generalCategory == .control })
         else { return AppPreferences.defaultFirmEscapePhrase }
         return trimmed
     }

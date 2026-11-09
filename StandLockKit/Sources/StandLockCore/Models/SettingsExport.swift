@@ -75,8 +75,8 @@ public struct SettingsExport: Codable, Sendable, Equatable {
     private static let maxDuration: TimeInterval = 366 * 86_400
     private static let maxCount = 100_000
 
-    /// Values the app would trap or loop on. Not the form's ranges: older stored
-    /// schedules can sit outside them, such as sub-minute intervals.
+    /// Values the app would trap, loop or hold the user on. Not the form's ranges: older
+    /// stored schedules can sit outside them, such as sub-minute breaks.
     private var isRunnable: Bool {
         let p = preferences
         guard Set(schedules.map(\.id)).count == schedules.count,
