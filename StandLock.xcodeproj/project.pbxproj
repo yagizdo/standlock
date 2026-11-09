@@ -115,6 +115,7 @@
 		C79B40CDB801534CB03F8D40 /* PaintingScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4F7EBA4EB133173F8CA622F /* PaintingScene.swift */; };
 		C9317350D818E7C826DA0966 /* CapybaraScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC56256F21155B8E45CAF6D /* CapybaraScene.swift */; };
 		CACA2A694D8386E2C52987E7 /* HomebrewUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41523222886A9E60C4A27DD /* HomebrewUpdater.swift */; };
+		CC482A757960812107868A0E /* PomodoroChipView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB88FC9A43EC36467F5FA0D5 /* PomodoroChipView.swift */; };
 		CE55FB80048215F1C86DC99D /* DeskScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24E37F0725B2E389ACEC601F /* DeskScene.swift */; };
 		D588F2EB46E9B8124422C5EE /* StatsFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43B1BE95A60D5294C770AEDE /* StatsFooter.swift */; };
 		D6409DD8838F0ED91DC848C5 /* NextIntervalLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33012BFC809E077C2D638165 /* NextIntervalLabel.swift */; };
@@ -260,6 +261,7 @@
 		F2A85DF7A9AA67198838FE47 /* SceneBubble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneBubble.swift; sourceTree = "<group>"; };
 		F41523222886A9E60C4A27DD /* HomebrewUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomebrewUpdater.swift; sourceTree = "<group>"; };
 		F9AA3E0D667AF2DB2D988625 /* SettingsToggleRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsToggleRow.swift; sourceTree = "<group>"; };
+		FB88FC9A43EC36467F5FA0D5 /* PomodoroChipView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PomodoroChipView.swift; sourceTree = "<group>"; };
 		FDC1758B39501153DCF68061 /* NextBreakClock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NextBreakClock.swift; sourceTree = "<group>"; };
 		FE0E2C708B760F809144B756 /* PermissionChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionChecker.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -330,6 +332,7 @@
 				AF6724F4176D1F398DF9A697 /* LevelPill.swift */,
 				99BB0E055C4BD25865AD3EE1 /* ManuscriptBreakView.swift */,
 				33012BFC809E077C2D638165 /* NextIntervalLabel.swift */,
+				FB88FC9A43EC36467F5FA0D5 /* PomodoroChipView.swift */,
 				43B1BE95A60D5294C770AEDE /* StatsFooter.swift */,
 				DEAF9C8AFAF33310B45445B2 /* TimerNumerals.swift */,
 				85C5398AE9D97E6B58618468 /* WordmarkView.swift */,
@@ -697,6 +700,7 @@
 				EAC5C8BAB2FC5D5FB1D845C5 /* PermissionsView.swift in Sources */,
 				231BA9A6E5E6E06DD9B6CA91 /* PixelGridView.swift in Sources */,
 				FC583BA99EE50EF0303C3DC6 /* PixelParts.swift in Sources */,
+				CC482A757960812107868A0E /* PomodoroChipView.swift in Sources */,
 				2FED2DBCC817D32B80CBE7AA /* PomodoroRow.swift in Sources */,
 				74A65286E3635E9A799AB935 /* PomodoroSettingsView.swift in Sources */,
 				3F24521CD8A9CA8C9156A1B9 /* PreferencesSaveOwner.swift in Sources */,

@@ -72,6 +72,7 @@ final class OverlayWindowController: LockPresenting {
                 exercise: exercise, preferences: preferences,
                 statistics: statistics, escalationTier: escalationTier,
                 nextIntervalLabel: nextIntervalLabel,
+                pomodoroChip: pomodoroChip,
                 canPostpone: canPostpone,
                 onSkip: { [weak self] in self?.handleSkip() },
                 onPostpone: { [weak self] in self?.handlePostpone() },

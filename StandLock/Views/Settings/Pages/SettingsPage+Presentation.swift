@@ -65,7 +65,7 @@ extension SettingsPage {
         case .breakScreen:
             [
                 "Break Screen", "Look", "Custom Break Colors", "Background", "Text", "Preview", "Content",
-                "Show Statistics", "Break Message", "During a break", "Pause Media",
+                "Show Statistics", "Show Pomodoro chip", "Break Message", "During a break", "Pause Media",
                 "Sound when a break ends", "Sound before a break",
             ]
         case .discipline:

@@ -916,6 +916,70 @@
         }
       }
     },
+    "Pomodoro, long break" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pomodoro, uzun mola"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "番茄钟，长休息"
+          }
+        }
+      }
+    },
+    "Pomodoro, round %lld of %lld" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pomodoro, %lld. tur, toplam %lld"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "番茄钟，第 %lld 轮，共 %lld 轮"
+          }
+        }
+      }
+    },
+    "Show Pomodoro chip" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pomodoro etiketini göster"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "显示番茄钟标签"
+          }
+        }
+      }
+    },
+    "Only changes this preview" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yalnız bu önizlemeyi değiştirir"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "仅更改此预览"
+          }
+        }
+      }
+    },
     "Preview" : {
       "localizations" : {
         "tr" : {
