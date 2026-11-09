@@ -176,7 +176,7 @@ struct ScheduleDraftTests {
         #expect(built.intervalCycle?.map(\.duration) == [TimeInterval(60), TimeInterval(180 * 60)])
         #expect(built.breakInterval == TimeInterval(60))
         #expect(built.breakDuration == TimeInterval(6))
-        #expect(built.repetitionRule?.shortBreakDuration == TimeInterval(30 * 60))
+        #expect(built.repetitionRule?.shortBreakDuration == TimeInterval(60 * 60))
     }
 
     /// A number field parses "NaN". It would stop the whole schedule list encoding.

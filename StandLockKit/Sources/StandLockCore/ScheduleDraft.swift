@@ -20,7 +20,9 @@ public struct IntervalRow: Identifiable, Equatable, Sendable {
 public struct ScheduleDraft: Equatable, Sendable {
     public static let intervalRange = 1...180
     public static let breakRange = 0.1...60.0
-    public static let shortBreakRange = 0.1...30.0
+    public static let shortBreakRange = breakRange
+    public static let longBreakRange = 5.0...60.0
+    public static let shortBreakCountRange = 1...10
 
     public var name = ""
     public var days = DaySelection.weekdays.activeDays
@@ -30,7 +32,7 @@ public struct ScheduleDraft: Equatable, Sendable {
     public var useRepetition = false
     public var shortBreakCount = 3
     public var shortBreakMinutes: Double = 10
-    public var longBreakMinutes = 30
+    public var longBreakMinutes: Double = 30
     public var disciplineLevel = DisciplineLevel.gentle
     public var progressiveEnforcement = false
 
@@ -53,7 +55,7 @@ public struct ScheduleDraft: Equatable, Sendable {
             useRepetition = true
             shortBreakCount = rule.shortBreakCount
             shortBreakMinutes = rule.shortBreakDuration / 60
-            longBreakMinutes = Int(rule.longBreakDuration / 60)
+            longBreakMinutes = rule.longBreakDuration / 60
         }
     }
 
@@ -62,7 +64,32 @@ public struct ScheduleDraft: Equatable, Sendable {
     }
 
     public var canSave: Bool {
-        hasName && !days.isEmpty
+        hasName && !days.isEmpty && hasValidLongBreak
+    }
+
+    /// The first rhythm sentence edits the break duration currently used by the evaluator.
+    public var rhythmBreakMinutes: Double {
+        get { useRepetition ? shortBreakMinutes : breakDurationMinutes }
+        set {
+            if useRepetition { shortBreakMinutes = newValue }
+            else { breakDurationMinutes = newValue }
+        }
+    }
+
+    public mutating func setLongBreaksEnabled(_ enabled: Bool) {
+        guard enabled != useRepetition else { return }
+        let visibleDuration = rhythmBreakMinutes
+        useRepetition = enabled
+        rhythmBreakMinutes = visibleDuration
+    }
+
+    public var hasValidLongBreak: Bool {
+        guard useRepetition else { return true }
+        guard shortBreakMinutes.isFinite, Self.shortBreakRange.contains(shortBreakMinutes),
+              Self.shortBreakCountRange.contains(shortBreakCount), Self.longBreakRange.contains(longBreakMinutes)
+        else { return false }
+        // Two values that round to the same stored second are not different-length breaks.
+        return (longBreakMinutes * 60).rounded() > (shortBreakMinutes * 60).rounded()
     }
 
     public func canSubmit(from baseline: ScheduleDraft) -> Bool {
@@ -75,9 +102,9 @@ public struct ScheduleDraft: Equatable, Sendable {
     public func build(existing: Schedule?) -> Schedule {
         let repetitionRule: RepetitionRule? = useRepetition
             ? RepetitionRule(
-                shortBreakCount: shortBreakCount,
+                shortBreakCount: Self.clamped(shortBreakCount, to: Self.shortBreakCountRange),
                 shortBreakDuration: (Self.clamped(shortBreakMinutes, to: Self.shortBreakRange) * 60).rounded(),
-                longBreakDuration: TimeInterval(longBreakMinutes * 60)
+                longBreakDuration: (Self.clamped(longBreakMinutes, to: Self.longBreakRange) * 60).rounded()
             )
             : nil
 

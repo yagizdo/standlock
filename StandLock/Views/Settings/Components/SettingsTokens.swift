@@ -35,7 +35,7 @@ enum SettingsTokens {
     static let timeChipMinWidth: CGFloat = 68
     static let timeChipInset: CGFloat = 5
     static let numberFieldWidth: CGFloat = 50
-    static let timePickerWidth: CGFloat = 60
+    static let timePickerWidth: CGFloat = 52
     static let permissionChipSize: CGFloat = 30
     static let permissionNoteSpacing: CGFloat = 3
     static let permissionNoteIconWidth: CGFloat = 13

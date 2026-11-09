@@ -6,7 +6,15 @@ public struct DayPreview: Equatable, Sendable {
     public struct Item: Equatable, Sendable {
         public let hour: Int
         public let minute: Int
+        public let second: Int
         public let duration: TimeInterval
+
+        public init(hour: Int, minute: Int, second: Int = 0, duration: TimeInterval) {
+            self.hour = hour
+            self.minute = minute
+            self.second = second
+            self.duration = duration
+        }
     }
 
     public let items: [Item]
@@ -42,8 +50,8 @@ public struct DayPreview: Equatable, Sendable {
         while let next = evaluator.nextBreakTime(for: schedule, after: cursor, cycleIndex: index),
               next > cursor, next < dayEnd {
             let duration = evaluator.breakDuration(for: schedule, breakIndex: index)
-            let time = calendar.dateComponents([.hour, .minute], from: next)
-            items.append(Item(hour: time.hour ?? 0, minute: time.minute ?? 0, duration: duration))
+            let time = calendar.dateComponents([.hour, .minute, .second], from: next)
+            items.append(Item(hour: time.hour ?? 0, minute: time.minute ?? 0, second: time.second ?? 0, duration: duration))
             cursor = next.addingTimeInterval(duration)
             index += 1
         }

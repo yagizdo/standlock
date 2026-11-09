@@ -119,6 +119,14 @@ struct DayPreviewTests {
         #expect(preview.longestBreak == nil)
     }
 
+    @Test func fractionalMinuteBreaksKeepSecondsInTheirStartTimes() {
+        let preview = DayPreview.make(for: schedule(
+            windows: [TimeWindow(startHour: 9, startMinute: 0, endHour: 10, endMinute: 0)],
+            interval: 1200, duration: 20
+        ), from: monday)
+        #expect(preview.items.map(\.second) == [0, 20])
+    }
+
     @Test func groupsSplitAtNoonAndSix() {
         let preview = DayPreview(items: [
             DayPreview.Item(hour: 11, minute: 59, duration: 60),

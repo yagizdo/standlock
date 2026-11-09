@@ -100,6 +100,9 @@ private struct SchedulePage: View {
                 ? "Pick at least one day to save this schedule, or discard your changes."
                 : "Name this schedule and pick at least one day to save it, or discard your changes."
         }
+        if draft.hasName && !draft.hasValidLongBreak {
+            return "Make the longer break longer than the short break to save this schedule, or discard your changes."
+        }
         return "Name this schedule to save it, or discard your changes."
     }
 

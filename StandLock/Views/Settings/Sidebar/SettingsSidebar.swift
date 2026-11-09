@@ -48,6 +48,7 @@ struct SettingsSidebar: View {
     private var list: some View {
         let visible = visiblePages
         return List(selection: selection) {
+            rows([.newSchedule].filter(visible.contains))
             rows(SettingsPage.sidebarTopPages.filter(visible.contains))
 
             let breakPages = SettingsPage.sidebarBreakPages.filter(visible.contains)
@@ -60,13 +61,12 @@ struct SettingsSidebar: View {
             }
 
             let scheduleRows = schedules.filter { visible.contains(.schedule($0.id)) }
-            if !scheduleRows.isEmpty || visible.contains(.newSchedule) {
+            if !scheduleRows.isEmpty {
                 Section {
                     ForEach(scheduleRows) { schedule in
                         ScheduleSidebarRow(schedule: schedule, isSelected: navigation.page == .schedule(schedule.id))
                             .tag(SettingsPage.schedule(schedule.id))
                     }
-                    rows([.newSchedule].filter(visible.contains))
                 } header: {
                     HStack {
                         Text("Schedules")

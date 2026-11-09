@@ -100,5 +100,8 @@ extension SettingsPage {
         "Schedules", "Enabled", "Name", "When", "Hours", "Rhythm", "Break every", "Break lasts",
         "Alternating intervals", "Repetition Cycle", "Short breaks", "Short break", "Long break", "Discipline",
         "Gentle", "Firm", "Strict", "Progressive Enforcement", "Your day",
+        "Vary work intervals", "Add longer breaks", "Work duration", "Short break duration",
+        "Short breaks before a longer break", "Longer break duration", "24-hour day", "Clock",
+        "Short break time", "Long break time",
     ]
 }

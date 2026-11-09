@@ -11,6 +11,7 @@ struct DayPreviewCard: View, Equatable {
 
     let draft: ScheduleDraft
     let schedule: Schedule?
+    @State private var selectedSegment: DayClock.Segment?
 
     @EnvironmentObject private var languageStore: LanguageStore
     @Environment(\.locale) private var locale
@@ -23,17 +24,23 @@ struct DayPreviewCard: View, Equatable {
     var body: some View {
         let built = draft.build(existing: schedule)
         let preview = DayPreview.make(for: built, from: Date())
+        let dial = DayClock(schedule: built, preview: preview)
 
         SettingsSection("Your day") {
             VStack(alignment: .leading, spacing: SettingsTokens.cardSpacing) {
                 if draft.days.isEmpty {
                     stateText("Pick at least one day")
-                } else if preview.items.isEmpty {
-                    stateText("No breaks in these hours")
+                } else if !draft.hasValidLongBreak {
+                    stateText("Make the longer break longer than the short break to preview your day.")
                 } else {
-                    header(preview, built)
+                    if preview.items.isEmpty {
+                        stateText("No breaks in these hours")
+                    } else {
+                        header(preview, built)
+                    }
+                    DayPreviewClock(clock: dial, windows: built.windows, hasLongBreaks: draft.useRepetition, selection: $selectedSegment)
                     ForEach(groups(of: preview), id: \.symbol) { group in
-                        groupRow(group)
+                        groupRow(group, dial: dial)
                     }
                     if preview.items.count > Self.listLimit {
                         Text("and \(preview.items.count - Self.listLimit) more")
@@ -45,10 +52,10 @@ struct DayPreviewCard: View, Equatable {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(SettingsTokens.previewInsets)
-            .accessibilityElement(children: .ignore)
+            .accessibilityElement(children: .contain)
             .accessibilityLabel(accessibilitySummary(preview, built))
-            .accessibilityValue(preview.items.prefix(Self.listLimit).map(clock).joined(separator: ", "))
         }
+        .onChange(of: draft) { _ in selectedSegment = nil }
     }
 
     // MARK: - Pieces
@@ -93,7 +100,7 @@ struct DayPreviewCard: View, Equatable {
         ].filter { !$0.items.isEmpty }
     }
 
-    private func groupRow(_ group: TimeGroup) -> some View {
+    private func groupRow(_ group: TimeGroup, dial: DayClock) -> some View {
         HStack(alignment: .top, spacing: SettingsTokens.cardSpacing) {
             HStack(spacing: SettingsTokens.listItemSpacing) {
                 Image(systemName: group.symbol)
@@ -110,12 +117,24 @@ struct DayPreviewCard: View, Equatable {
                 spacing: SettingsTokens.listItemSpacing
             ) {
                 ForEach(Array(group.items.enumerated()), id: \.offset) { _, item in
-                    Text(clock(item))
-                        .font(SettingsTokens.timeChipFont)
-                        .monospacedDigit()
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, SettingsTokens.timeChipInset)
-                        .background(Color.secondary.opacity(0.12), in: RoundedRectangle(cornerRadius: SettingsTokens.chipRadius))
+                    let start = TimeInterval(item.hour * 3600 + item.minute * 60 + item.second)
+                    let segment = dial.segments.first { $0.kind != .work && $0.start == start }
+                    let isSelected = segment != nil && selectedSegment == segment
+                    Button {
+                        selectedSegment = isSelected ? nil : segment
+                    } label: {
+                        Text(clock(item))
+                            .font(SettingsTokens.timeChipFont)
+                            .monospacedDigit()
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, SettingsTokens.timeChipInset)
+                            .background(isSelected ? Color.accentColor : Color.secondary.opacity(0.12), in: RoundedRectangle(cornerRadius: SettingsTokens.chipRadius))
+                            .foregroundStyle(isSelected ? Color.white : Color.primary)
+                    }
+                    .buttonStyle(.plain)
+                    .help(Text("\(length(item.duration)) break"))
+                    .accessibilityLabel(Text("Break at \(clock(item)), \(length(item.duration))"))
+                    .accessibilityAddTraits(isSelected ? .isSelected : [])
                 }
             }
         }
@@ -126,7 +145,10 @@ struct DayPreviewCard: View, Equatable {
     /// Not `DateFormatter`: `LanguageStore.locale` can give an English reader 12-hour text, and
     /// the time pickers above always read 24-hour.
     private func clock(_ item: DayPreview.Item) -> String {
-        clock(hour: item.hour, minute: item.minute)
+        if item.second != 0 {
+            return String(format: "%02d:%02d:%02d", item.hour, item.minute, item.second)
+        }
+        return clock(hour: item.hour, minute: item.minute)
     }
 
     private func clock(hour: Int, minute: Int) -> String {
@@ -161,7 +183,7 @@ struct DayPreviewCard: View, Equatable {
     }
 
     private func minutes(_ seconds: TimeInterval) -> String {
-        (seconds / 60).formatted(.number.precision(.fractionLength(0...1)).locale(locale))
+        (seconds / 60).formatted(.number.precision(.fractionLength(0...2)).locale(locale))
     }
 
     private func whenLine(_ built: Schedule) -> String {
@@ -170,7 +192,11 @@ struct DayPreviewCard: View, Equatable {
         if built.windows.count == 1, let window = built.windows.first {
             let from = clock(hour: window.startHour, minute: window.startMinute)
             let to = clock(hour: window.endHour, minute: window.endMinute)
-            hours = languageStore.string("between \(from) and \(to)")
+            if window.startHour * 60 + window.startMinute > window.endHour * 60 + window.endMinute {
+                hours = languageStore.string("00:00–\(to) and \(from)–24:00")
+            } else {
+                hours = languageStore.string("between \(from) and \(to)")
+            }
         } else {
             hours = languageStore.string("in \(built.windows.count) time windows")
         }
@@ -195,6 +221,9 @@ struct DayPreviewCard: View, Equatable {
 
     private func accessibilitySummary(_ preview: DayPreview, _ built: Schedule) -> String {
         if draft.days.isEmpty { return languageStore.string("Pick at least one day") }
+        if !draft.hasValidLongBreak {
+            return languageStore.string("Make the longer break longer than the short break to preview your day.")
+        }
         if preview.items.isEmpty { return languageStore.string("No breaks in these hours") }
         return sentence(preview) + ". " + whenLine(built)
     }
