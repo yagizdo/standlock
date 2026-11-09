@@ -34,11 +34,28 @@ struct ScheduleTemplateTests {
         draft.intervalRows = [IntervalRow(minutes: 10), IntervalRow(minutes: 20)]
         draft.useRepetition = true
 
-        let result = applied(.pomodoro, to: draft)
+        let result = applied(.fiftyTwoSeventeen, to: draft)
 
-        #expect(result.intervalRows.map(\.minutes) == [25])
+        #expect(result.intervalRows.map(\.minutes) == [52])
         #expect(!result.useRepetition)
         #expect(result.build(existing: nil).intervalCycle == nil)
+    }
+
+    @Test func pomodoroTemplateTurnsRepetitionOnThreeShortFifteenLong() {
+        var draft = ScheduleDraft(schedule: nil)
+        draft.intervalRows = [IntervalRow(minutes: 10), IntervalRow(minutes: 20)]
+
+        let built = applied(.pomodoro, to: draft).build(existing: nil)
+
+        #expect(built.intervalCycle == nil)
+        #expect(built.repetitionRule == RepetitionRule(shortBreakCount: 3, shortBreakDuration: 5 * 60, longBreakDuration: 15 * 60))
+    }
+
+    @Test(arguments: [ScheduleTemplate.twentyTwentyTwenty, .fiftyTwoSeventeen])
+    func templatesOtherThanPomodoroLeaveRepetitionOff(template: ScheduleTemplate) {
+        var draft = ScheduleDraft(schedule: nil)
+        draft.useRepetition = true
+        #expect(applied(template, to: draft).build(existing: nil).repetitionRule == nil)
     }
 
     @Test func leavesDaysWindowsAndDisciplineAlone() {
