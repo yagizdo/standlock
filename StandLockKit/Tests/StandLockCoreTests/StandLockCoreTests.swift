@@ -334,6 +334,26 @@ struct ScheduleModelTests {
         else { Issue.record("Expected .keyCombo") }
     }
 
+    @Test(arguments: [25.0, 366.0 * 86_400, Double.infinity, Double.nan])
+    func strictPolicyAlwaysOffersPracticalEmergencyEscape(hold: Double) {
+        let policy = DisciplineLevel.strict.enforcementPolicy(
+            preferences: AppPreferences(strictEscapeHoldDuration: hold)
+        )
+        for tier in policy.tiers {
+            guard case .keyCombo(let duration) = tier.dismissMechanism else {
+                Issue.record("Expected emergency key combo")
+                continue
+            }
+            #expect(duration.isFinite && (0...30).contains(duration))
+        }
+    }
+
+    @Test(arguments: [366.0 * 86_400, Double.infinity, Double.nan])
+    func firmPolicyKeepsItsRecoveryDelayBounded(delay: Double) {
+        let policy = DisciplineLevel.firm.enforcementPolicy(preferences: AppPreferences(firmSkipDelay: delay))
+        #expect(policy.tiers.allSatisfy { $0.skipDelay.isFinite && (0...60).contains($0.skipDelay) })
+    }
+
     @Test func enforcementPolicyTierClampsToRange() {
         let policy = DisciplineLevel.gentle.enforcementPolicy(preferences: AppPreferences())
         let last = policy.tier(at: 99)

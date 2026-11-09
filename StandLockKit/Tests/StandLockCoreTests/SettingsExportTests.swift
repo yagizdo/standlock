@@ -272,6 +272,42 @@ struct SettingsExportTests {
         #expect(decoded.schedules[0].breakInterval == TimeInterval(6))
     }
 
+    @Test(arguments: [3601.0, 366.0 * 86_400])
+    func unsafeBreakDurationsAreUnreadable(duration: Double) throws {
+        let data = try Self.editedSchedule { $0["breakDuration"] = duration }
+        #expect(Self.decodeError(data) == .unreadable)
+    }
+
+    @Test(arguments: ["shortBreakDuration", "longBreakDuration"])
+    func unsafeRepetitionDurationsAreUnreadable(key: String) throws {
+        let data = try Self.editedSchedule { schedule in
+            var rule = schedule["repetitionRule"] as! [String: Any]
+            rule[key] = 3601.0
+            schedule["repetitionRule"] = rule
+        }
+        #expect(Self.decodeError(data) == .unreadable)
+    }
+
+    @Test func unsafeEmergencyHoldIsUnreadable() throws {
+        var export = Self.full()
+        export.preferences.strictEscapeHoldDuration = 31
+        #expect(Self.decodeError(try export.encoded()) == .unreadable)
+    }
+
+    @Test func unsafeFirmDelayIsUnreadable() throws {
+        var export = Self.full()
+        export.preferences.firmSkipDelay = 61
+        #expect(Self.decodeError(try export.encoded()) == .unreadable)
+    }
+
+    @Test func safetyBoundaryValuesStayReadable() throws {
+        var export = Self.full()
+        export.preferences.strictEscapeHoldDuration = 30
+        export.schedules[0].breakDuration = 3600
+        export.schedules[0].repetitionRule?.longBreakDuration = 3600
+        #expect(try SettingsExport.decode(export.encoded()) == export)
+    }
+
     // MARK: - Calendar selection
 
     @Test func encodedDropsCalendarSelection() throws {
