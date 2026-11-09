@@ -146,3 +146,236 @@ struct ExternalBreakTests {
         #expect(await waitUntil { locker.isShowing })
     }
 }
+
+private let oneMinute = PomodoroConfiguration(focus: 60, shortBreak: 60, longBreak: 120, rounds: 4)
+
+@Suite("BreakCoordinator Pomodoro session")
+@MainActor
+struct PomodoroSessionCoordinationTests {
+
+    /// A start dated just under one focus ago, so the first focus ends at once.
+    private func startEndingFocus(_ coordinator: BreakCoordinator, level: DisciplineLevel = .gentle,
+                                  configuration: PomodoroConfiguration = oneMinute) {
+        coordinator.startPomodoro(configuration, level: level, now: Date().addingTimeInterval(0.05 - configuration.focus))
+    }
+
+    @Test
+    func sessionCancelsScheduleTimer() async {
+        let scheduler = MockScheduler()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.1)
+        let (coordinator, _, locker, _) = makeCoordinator(schedules: [makeSchedule()], scheduler: scheduler)
+        defer { coordinator.stop() }
+        coordinator.startPomodoro(oneMinute, level: .gentle, now: Date())
+        try? await Task.sleep(for: .milliseconds(300))
+        #expect(!locker.showOverlayCalled)
+    }
+
+    @Test
+    func focusEmitsNextBreakScheduledAtFocusEnd() async {
+        let (coordinator, _, _, log) = makeCoordinator()
+        defer { coordinator.stop() }
+        let now = Date()
+        coordinator.startPomodoro(oneMinute, level: .gentle, now: now)
+        #expect(await waitUntil { log.nextBreaks.last == now.addingTimeInterval(60) })
+        #expect(coordinator.pomodoroSession?.phase == .focus(round: 1))
+    }
+
+    @Test
+    func focusEndOpensExternalBreakWithChipTwoOfFour() async {
+        let (coordinator, _, locker, _) = makeCoordinator()
+        defer { coordinator.stop() }
+        startEndingFocus(coordinator, level: .firm)
+        #expect(await waitUntil { locker.isShowing })
+        #expect(locker.lastPomodoroChip == PomodoroChip(round: 1, rounds: 4, isLong: false))
+        coordinator.completeActiveBreak()
+        coordinator.skipPomodoroPhase()
+        #expect(await waitUntil { locker.showCount == 2 })
+        #expect(locker.lastPomodoroChip == PomodoroChip(round: 2, rounds: 4, isLong: false))
+        #expect(locker.lastLevel == .firm)
+        #expect(locker.lastDuration == TimeInterval(60))
+    }
+
+    @Test
+    func doneAfterShortBreakStartsNextFocus() async {
+        let (coordinator, _, locker, log) = makeCoordinator()
+        defer { coordinator.stop() }
+        startEndingFocus(coordinator)
+        #expect(await waitUntil { locker.isShowing })
+        let before = Date()
+        coordinator.completeActiveBreak()
+        #expect(coordinator.pomodoroSession?.phase == .focus(round: 2))
+        let end = coordinator.pomodoroSession?.phaseEnd ?? .distantPast
+        #expect(end >= before.addingTimeInterval(60) && end <= Date().addingTimeInterval(60))
+        #expect(await waitUntil { log.nextBreaks.last == end })
+        #expect(log.completed == 1)
+    }
+
+    @Test
+    func fourthFocusOpensLongBreakWithLongChip() async {
+        let (coordinator, _, locker, _) = makeCoordinator()
+        defer { coordinator.stop() }
+        coordinator.startPomodoro(oneMinute, level: .gentle, now: Date())
+        for round in 1...3 {
+            coordinator.skipPomodoroPhase()
+            #expect(await waitUntil { locker.showCount == round })
+            coordinator.completeActiveBreak()
+        }
+        coordinator.skipPomodoroPhase()
+        #expect(await waitUntil { locker.showCount == 4 })
+        #expect(locker.lastPomodoroChip == PomodoroChip(round: 4, rounds: 4, isLong: true))
+        #expect(locker.lastDuration == TimeInterval(120))
+        #expect(coordinator.pomodoroSession?.phase == .longBreak)
+    }
+
+    @Test
+    func longBreakDoneFinishesSessionAndRearmsSchedule() async {
+        let scheduler = MockScheduler()
+        let far = Date().addingTimeInterval(3600)
+        scheduler.nextBreakTimeToReturn = far
+        let (coordinator, _, locker, log) = makeCoordinator(schedules: [makeSchedule()], scheduler: scheduler)
+        defer { coordinator.stop() }
+        coordinator.startPomodoro(PomodoroConfiguration(focus: 60, shortBreak: 60, longBreak: 60, rounds: 1),
+                                  level: .gentle, now: Date())
+        coordinator.skipPomodoroPhase()
+        #expect(await waitUntil { locker.isShowing })
+        let afterStart = log.nextBreaks.count
+        coordinator.completeActiveBreak()
+        #expect(coordinator.pomodoroSession == nil)
+        #expect(await waitUntil { log.statuses.last == .some(nil) })
+        #expect(await waitUntil { log.nextBreaks.count > afterStart && log.nextBreaks.last == far })
+    }
+
+    @Test
+    func stopIsNotSkipAndRearmsSchedule() async {
+        let scheduler = MockScheduler()
+        let far = Date().addingTimeInterval(3600)
+        scheduler.nextBreakTimeToReturn = far
+        let (coordinator, _, _, log) = makeCoordinator(schedules: [makeSchedule()], scheduler: scheduler)
+        defer { coordinator.stop() }
+        coordinator.startPomodoro(oneMinute, level: .gentle, now: Date())
+        #expect(await waitUntil { log.nextBreaks.last != far })
+        coordinator.stopPomodoro()
+        #expect(coordinator.pomodoroSession == nil)
+        #expect(await waitUntil { log.nextBreaks.last == far && log.statuses.last == .some(nil) })
+        #expect(log.skipped == 0)
+    }
+
+    @Test
+    func skipPhaseDuringFocusOpensBreakNow() async {
+        let (coordinator, _, locker, _) = makeCoordinator()
+        defer { coordinator.stop() }
+        coordinator.startPomodoro(oneMinute, level: .gentle, now: Date())
+        coordinator.skipPomodoroPhase()
+        #expect(await waitUntil { locker.isShowing })
+        #expect(coordinator.pomodoroSession?.phase == .shortBreak(afterRound: 1))
+    }
+
+    @Test
+    func emitsPomodoroChangedOnEveryPhase() async {
+        let (coordinator, _, locker, log) = makeCoordinator()
+        defer { coordinator.stop() }
+        coordinator.startPomodoro(oneMinute, level: .firm, now: Date())
+        coordinator.skipPomodoroPhase()
+        #expect(await waitUntil { locker.isShowing })
+        coordinator.completeActiveBreak()
+        coordinator.stopPomodoro()
+        #expect(await waitUntil { log.statuses.last == .some(nil) })
+        let phases = log.statuses.map { $0?.phase }
+        #expect(phases.first == .focus(round: 1))
+        #expect(phases.contains(.shortBreak(afterRound: 1)))
+        #expect(phases.contains(.focus(round: 2)))
+        #expect(log.statuses.compactMap { $0 }.allSatisfy { $0.level == .firm && $0.rounds == 4 })
+    }
+
+    @Test
+    func startWhilePausedClearsPause() async {
+        let (coordinator, _, locker, log) = makeCoordinator(schedules: [makeSchedule()])
+        defer { coordinator.stop() }
+        coordinator.pause(for: 3600)
+        startEndingFocus(coordinator)
+        #expect(await waitUntil { locker.isShowing })
+        #expect(log.events.contains { if case .scheduleResumed = $0 { true } else { false } })
+    }
+
+    @Test
+    func escapeDuringSessionBreakAdvancesToNextFocus() async {
+        let (coordinator, _, locker, log) = makeCoordinator()
+        defer { coordinator.stop() }
+        startEndingFocus(coordinator)
+        #expect(await waitUntil { locker.isShowing })
+        coordinator.escapeActiveBreak()
+        #expect(coordinator.pomodoroSession?.phase == .focus(round: 2))
+        #expect(await waitUntil { log.stats?.breaksEscaped == 1 })
+        #expect(log.completed == 0)
+    }
+
+    @Test
+    func deferredBreakPhaseEndStartsAtOverlay() async {
+        let (coordinator, detector, locker, _) = makeCoordinator(
+            preferences: AppPreferences(cameraDetection: .deferBreak, idleDetectionEnabled: false)
+        )
+        defer { coordinator.stop() }
+        detector.contextToReturn = DetectionContext(cameraActive: true)
+        startEndingFocus(coordinator)
+        try? await Task.sleep(for: .milliseconds(400))
+        detector.contextToReturn = .clear
+        #expect(await waitUntil { locker.isShowing })
+        let opened = Date()
+        let end = coordinator.pomodoroSession?.phaseEnd ?? .distantPast
+        #expect(abs(end.timeIntervalSince(opened.addingTimeInterval(60))) < 0.2)
+    }
+
+    @Test
+    func skipPhaseDuringDeferredBreakCountsSkipAndStartsFocus() async {
+        let (coordinator, detector, locker, log) = makeCoordinator(
+            preferences: AppPreferences(cameraDetection: .deferBreak, idleDetectionEnabled: false)
+        )
+        defer { coordinator.stop() }
+        detector.contextToReturn = DetectionContext(cameraActive: true)
+        startEndingFocus(coordinator)
+        #expect(await waitUntil { coordinator.pomodoroSession?.phase == .shortBreak(afterRound: 1) })
+        try? await Task.sleep(for: .milliseconds(100))
+        coordinator.skipPomodoroPhase()
+        #expect(coordinator.pomodoroSession?.phase == .focus(round: 2))
+        #expect(await waitUntil { log.skipped == 1 })
+        detector.contextToReturn = .clear
+        try? await Task.sleep(for: .milliseconds(200))
+        #expect(!locker.showOverlayCalled)
+    }
+
+    @Test
+    func sessionEndWithoutSchedulesEmitsNoNextBreak() async {
+        let (coordinator, _, _, log) = makeCoordinator()
+        defer { coordinator.stop() }
+        coordinator.startPomodoro(oneMinute, level: .gentle, now: Date())
+        #expect(await waitUntil { log.nextBreaks.count == 1 })
+        coordinator.stopPomodoro()
+        #expect(await waitUntil { log.statuses.last == .some(nil) })
+        try? await Task.sleep(for: .milliseconds(50))
+        #expect(log.nextBreaks.count == 1)
+    }
+
+    @Test
+    func menuSkipAndPauseDoNothingDuringSession() async {
+        let (coordinator, _, _, log) = makeCoordinator(schedules: [makeSchedule()])
+        defer { coordinator.stop() }
+        coordinator.startPomodoro(oneMinute, level: .gentle, now: Date())
+        coordinator.skipNextBreak()
+        coordinator.pause(for: 60)
+        try? await Task.sleep(for: .milliseconds(50))
+        #expect(log.skipped == 0)
+        #expect(!log.events.contains { if case .schedulePaused = $0 { true } else { false } })
+        #expect(coordinator.pomodoroSession?.phase == .focus(round: 1))
+    }
+
+    @Test
+    func outOfBoundsConfigurationFallsBackToStandard() {
+        let (coordinator, _, _, _) = makeCoordinator()
+        defer { coordinator.stop() }
+        let now = Date()
+        coordinator.startPomodoro(PomodoroConfiguration(focus: 0, shortBreak: 0, longBreak: 1e300, rounds: 0),
+                                  level: .strict, now: now)
+        #expect(coordinator.pomodoroSession?.configuration == .standard)
+        #expect(coordinator.pomodoroSession?.phaseEnd == now.addingTimeInterval(25 * 60))
+    }
+}
