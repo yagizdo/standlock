@@ -77,7 +77,7 @@ struct ActionArea: View {
         case .typePhrase(let phrase, let requiresConfirmation):
             // A phrase the user chose themselves is shown exactly as stored. Only the
             // shipped default is a catalog key, so it can be translated.
-            let isCustom = phrase == preferences.firmEscapePhrase
+            let isCustom = phrase == BreakSafety.escapePhrase(preferences.firmEscapePhrase)
                 && phrase != AppPreferences.defaultFirmEscapePhrase
             let base = isCustom ? phrase : languageStore.string(key: phrase)
             let resolved = requiresConfirmation

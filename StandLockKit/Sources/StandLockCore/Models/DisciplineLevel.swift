@@ -41,7 +41,7 @@ extension DisciplineLevel {
                 EnforcementTier(skipDelay: 16, dismissMechanism: .typePhrase(phrase: "My legs are decorative", requiresConfirmation: false)),
             ])
         case .firm:
-            let phrase = preferences.firmEscapePhrase
+            let phrase = BreakSafety.escapePhrase(preferences.firmEscapePhrase)
             let base = preferences.firmSkipDelay
             return EnforcementPolicy(tiers: [
                 EnforcementTier(skipDelay: BreakSafety.skipDelay(base), dismissMechanism: .typePhrase(phrase: phrase, requiresConfirmation: false)),

@@ -138,7 +138,9 @@ struct BreakCoordinatorTests {
             TimeWindow(startHour: 0, startMinute: 0, endHour: 12, endMinute: 0),
             TimeWindow(startHour: 12, startMinute: 0, endHour: 0, endMinute: 0),
         ]
-        coordinator.start(with: [schedule], preferences: AppPreferences(idleDetectionEnabled: false))
+        // The interval floor keeps the first break a minute away too; a carried slot opens it now.
+        let slot = EnforcementState(pendingBreakDates: [schedule.id: Date().addingTimeInterval(0.01)])
+        coordinator.start(with: [schedule], preferences: AppPreferences(idleDetectionEnabled: false), restoring: slot)
         #expect(await waitUntil { locker.showOverlayCalled })
 
         locker.showOverlayCalled = false
@@ -147,6 +149,33 @@ struct BreakCoordinatorTests {
 
         let next = coordinator.captureEnforcementState().pendingBreakDates[schedule.id]
         #expect(next.map { $0.timeIntervalSince(escapedAt) >= 59 } == true)
+        try? await Task.sleep(for: .milliseconds(50))
+        #expect(!locker.showOverlayCalled)
+    }
+
+    /// A skip or a finished break must not open the next one on the spot: with an interval
+    /// from an old file or a hand-edited default, that loop has no way out but the skip limit.
+    @Test(arguments: [false, true]) @MainActor
+    func endingABreakLeavesTimeToRecoverFromTinyIntervals(skip: Bool) async {
+        let locker = MockLocker()
+        let coordinator = BreakCoordinator(scheduler: ScheduleEvaluator(), detector: MockDetector(), locker: locker)
+        defer { coordinator.stop() }
+        var schedule = makeSchedule(level: .firm, breakInterval: 1e-300, breakDuration: 3600)
+        schedule.windows = [
+            TimeWindow(startHour: 0, startMinute: 0, endHour: 12, endMinute: 0),
+            TimeWindow(startHour: 12, startMinute: 0, endHour: 0, endMinute: 0),
+        ]
+        // The interval floor keeps the first break a minute away too; a carried slot opens it now.
+        let slot = EnforcementState(pendingBreakDates: [schedule.id: Date().addingTimeInterval(0.01)])
+        coordinator.start(with: [schedule], preferences: AppPreferences(idleDetectionEnabled: false), restoring: slot)
+        #expect(await waitUntil { locker.showOverlayCalled })
+
+        locker.showOverlayCalled = false
+        let endedAt = Date()
+        if skip { coordinator.skipActiveBreak() } else { coordinator.completeActiveBreak() }
+
+        let next = coordinator.captureEnforcementState().pendingBreakDates[schedule.id]
+        #expect(next.map { $0.timeIntervalSince(endedAt) >= 59 } == true)
         try? await Task.sleep(for: .milliseconds(50))
         #expect(!locker.showOverlayCalled)
     }
