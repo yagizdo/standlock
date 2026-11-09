@@ -38,6 +38,8 @@ final class AppCoordinator: ObservableObject {
     @Published private(set) var breakProgress: Double = 0
     @Published private(set) var menuBarTimerText: String?
     @Published var breakHistory: BreakHistory = BreakHistory()
+    /// The running Pomodoro session, nil when none runs.
+    @Published private(set) var pomodoroStatus: PomodoroStatus?
 
     let languageStore = LanguageStore()
     let themeStore = ThemeStore()
@@ -92,6 +94,7 @@ final class AppCoordinator: ObservableObject {
         ) { [weak self] _ in
             MainActor.assumeIsolated {
                 self?.saveEnforcementState()
+                self?.savePomodoroSession()
             }
         }
         NotificationCenter.default.addObserver(
@@ -115,9 +118,9 @@ final class AppCoordinator: ObservableObject {
                 self?.handleCalendarAuthorizationChange()
             }
         Task { await permissionChecker.pollContinuously() }
-        if !schedules.isEmpty {
-            startCoordinator(restoring: carriedStateForToday())
-        }
+        // Always built: a Pomodoro session runs with no schedule enabled.
+        startCoordinator(restoring: carriedStateForToday())
+        restoreSavedPomodoroSession()
         if !hasCompletedOnboarding {
             Task { @MainActor in
                 try? await Task.sleep(for: .seconds(0.5))
@@ -377,6 +380,8 @@ final class AppCoordinator: ObservableObject {
         overlayController.onPostpone = nil
         clearActiveBreakState()
         deferralReason = nil
+        // The rebuilt coordinator reports a carried session again.
+        pomodoroStatus = nil
     }
 
     /// Nobody else can clear the published break state once the coordinator is gone: `stop()`
@@ -417,6 +422,54 @@ final class AppCoordinator: ObservableObject {
         UserDefaults.standard.set(carriedEnforcementDay, forKey: "enforcementStateDay")
     }
 
+    // MARK: - Pomodoro
+
+    private static let pomodoroSessionKey = "pomodoroSession"
+
+    func startPomodoro() {
+        coordinator?.startPomodoro(
+            preferences.pomodoro,
+            level: DisciplineLevel.strictest(of: enforceableSchedules().map(\.disciplineLevel))
+        )
+    }
+
+    func stopPomodoro() {
+        coordinator?.stopPomodoro()
+    }
+
+    func skipPomodoroPhase() {
+        coordinator?.skipPomodoroPhase()
+    }
+
+    private func savePomodoroSession() {
+        guard let session = coordinator?.pomodoroSession,
+              let data = try? JSONEncoder().encode(session)
+        else {
+            UserDefaults.standard.removeObject(forKey: Self.pomodoroSessionKey)
+            return
+        }
+        UserDefaults.standard.set(data, forKey: Self.pomodoroSessionKey)
+    }
+
+    /// Same day only, as `EnforcementState`; an older session is dropped (its tally as
+    /// abandoned arrives with the statistics step). The level is picked again: permissions
+    /// may have changed while the app was closed.
+    private func restoreSavedPomodoroSession() {
+        guard let data = UserDefaults.standard.data(forKey: Self.pomodoroSessionKey) else { return }
+        UserDefaults.standard.removeObject(forKey: Self.pomodoroSessionKey)
+        guard let session = try? JSONDecoder().decode(PomodoroSession.self, from: data),
+              Calendar.current.isDateInToday(session.startedAt)
+        else { return }
+        coordinator?.restorePomodoro(
+            session, level: DisciplineLevel.strictest(of: enforceableSchedules().map(\.disciplineLevel))
+        )
+    }
+
+    /// Strict needs its permissions now, as in `enforceableSchedules`.
+    private func enforceable(_ level: DisciplineLevel) -> DisciplineLevel {
+        level == .strict && !permissionChecker.strictModeAvailable ? .firm : level
+    }
+
     private func restartCoordinator() {
         // Captured before the teardown: every counter below lives on the coordinator instance,
         // so a rebuild would otherwise re-arm the daily cap from zero and restart the interval
@@ -428,19 +481,31 @@ final class AppCoordinator: ObservableObject {
         // the next break lands during the hour they meant to keep clear. Re-applying it yields
         // `schedulePaused`, which restores the published flags below through `handleEvent`.
         let pauseRemaining = pausedUntil?.timeIntervalSinceNow
+        // A session keeps its own level across a rebuild (S87 picks it at start).
+        let session = coordinator?.pomodoroSession
+        let sessionLevel = pomodoroStatus?.level
         stopCoordinator()
         isPaused = false
         pausedUntil = nil
-        if !schedules.filter(\.isEnabled).isEmpty {
-            startCoordinator(restoring: carriedStateForToday())
-            if let pauseRemaining, pauseRemaining > 0 {
-                coordinator?.pause(for: pauseRemaining)
-            }
-        } else {
-            nextBreakTime = nil
-            breakScheduledAt = nil
-            breakProgress = 0
+        startCoordinator(restoring: carriedStateForToday())
+        if let session, let sessionLevel {
+            // Starting a session ended any pause, so there is none to re-apply.
+            coordinator?.restorePomodoro(session, level: enforceable(sessionLevel))
+        } else if let pauseRemaining, pauseRemaining > 0 {
+            coordinator?.pause(for: pauseRemaining)
         }
+        clearNextBreakIfIdle()
+    }
+
+    /// With no enabled schedule and no session nothing is armed; the stale countdown would
+    /// otherwise stay on the menu bar and keep `NextBreakState` counting down.
+    private func clearNextBreakIfIdle() {
+        guard pomodoroStatus == nil, coordinator?.pomodoroSession == nil,
+              schedules.filter(\.isEnabled).isEmpty else { return }
+        nextBreakTime = nil
+        breakScheduledAt = nil
+        breakProgress = 0
+        updateMenuBarTimer()
     }
 
     // MARK: - Event Handling
@@ -492,6 +557,11 @@ final class AppCoordinator: ObservableObject {
 
         case .breakCue(let cue):
             breakSoundPlayer.play(cue)
+
+        case .pomodoroChanged(let status):
+            pomodoroStatus = status
+            savePomodoroSession()
+            clearNextBreakIfIdle()
 
         case .statisticsUpdated(let stats):
             todayStats = stats

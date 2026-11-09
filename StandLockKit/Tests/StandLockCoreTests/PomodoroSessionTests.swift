@@ -203,3 +203,15 @@ struct PomodoroRestoreBoundsTests {
         #expect(session.bounded(now: Self.now)?.phaseEnd == Self.now.addingTimeInterval(5 * 60))
     }
 }
+
+@Suite("Pomodoro level")
+struct PomodoroLevelTests {
+    @Test func strictestEnabledLevelWins() {
+        #expect(DisciplineLevel.strictest(of: [.gentle, .strict, .firm]) == .strict)
+        #expect(DisciplineLevel.strictest(of: [.gentle, .firm]) == .firm)
+    }
+
+    @Test func noScheduleMeansGentle() {
+        #expect(DisciplineLevel.strictest(of: []) == .gentle)
+    }
+}
