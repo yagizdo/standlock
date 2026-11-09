@@ -89,6 +89,21 @@ public struct PomodoroSession: Codable, Sendable, Equatable {
         return .openBreak(remaining: remaining, session: open)
     }
 
+    /// A saved session made safe to run, or nil to drop it: lengths outside the form's ranges
+    /// (a zero-length phase loops), or a round the session does not have. The phase end is pulled
+    /// back to one phase length after `now`, so a clock set back cannot stretch it.
+    public func bounded(now: Date) -> PomodoroSession? {
+        guard configuration.isWithinBounds, phaseEnd.timeIntervalSinceReferenceDate.isFinite else { return nil }
+        switch phase {
+        case .focus(let round): guard (1...configuration.rounds).contains(round) else { return nil }
+        case .shortBreak(let round): guard (1..<configuration.rounds).contains(round) else { return nil }
+        case .longBreak: break
+        }
+        var copy = self
+        copy.phaseEnd = min(phaseEnd, now.addingTimeInterval(duration(of: phase)))
+        return copy
+    }
+
     private enum CodingKeys: String, CodingKey {
         case id, startedAt, configuration, phase, phaseEnd, focusSecondsDone
     }

@@ -82,6 +82,8 @@ public final class BreakCoordinator {
     /// Set while the screen is locked or the machine is asleep. Distinct from `isPaused`, which
     /// is the user-facing pause; suspension only blocks work being started behind a dark screen.
     private var isSuspended: Bool = false
+    /// When the first of sleep or lock arrived; a session's catch-up measures time away from it.
+    private var suspendedAt: Date?
     private var currentBreak: BreakEvent?
     private var currentSource: BreakSource?
     private var currentSchedule: Schedule? { currentSource?.schedule }
@@ -264,28 +266,37 @@ public final class BreakCoordinator {
         eventContinuation.yield(.statisticsUpdated(statistics))
     }
 
-    public func handleSystemSleep() {
+    public func handleSystemSleep(now: Date = Date()) {
+        beginSuspension(now: now)
+    }
+
+    public func handleSystemWake(now: Date = Date()) {
+        endSuspension(now: now)
+    }
+
+    public func handleScreenLock(now: Date = Date()) {
+        beginSuspension(now: now)
+    }
+
+    public func handleScreenUnlock(now: Date = Date()) {
+        endSuspension(now: now)
+    }
+
+    private func beginSuspension(now: Date) {
         isSuspended = true
+        suspendedAt = suspendedAt ?? now
         cancelAndDismissIfShowing()
     }
 
-    public func handleSystemWake() {
+    /// Wake and unlock often both arrive; a session catches up on the first only.
+    private func endSuspension(now: Date) {
         isSuspended = false
-        if isPaused {
-            resume()
-        } else {
-            rearm()
-        }
-    }
-
-    public func handleScreenLock() {
-        isSuspended = true
-        cancelAndDismissIfShowing()
-    }
-
-    public func handleScreenUnlock() {
-        isSuspended = false
-        if isPaused {
+        let awayFrom = suspendedAt
+        suspendedAt = nil
+        if pomodoro != nil {
+            guard let awayFrom else { return }
+            catchUpPomodoro(awayFrom: awayFrom, to: now)
+        } else if isPaused {
             resume()
         } else {
             rearm()
@@ -298,7 +309,9 @@ public final class BreakCoordinator {
         clearPendingBreak()
         if locker.isShowing {
             locker.dismissOverlay()
-            if let event = currentBreak {
+            // A session's break waits for the return instead (S84): time away may cover it.
+            let isSessionBreak = currentSource?.schedule == nil && pomodoro != nil
+            if let event = currentBreak, !isSessionBreak {
                 eventContinuation.yield(.breakSkipped(event))
                 countSkippedBreak()
             }
@@ -462,6 +475,20 @@ public final class BreakCoordinator {
         clearPendingBreak()
         postponedExternal = nil
         endPomodoro(.stopped)
+    }
+
+    /// Picks up a session saved before a relaunch or a coordinator rebuild, caught up as after
+    /// a wake. Time the app was not running is not credited as rest. A session outside the
+    /// form's ranges is dropped.
+    public func restorePomodoro(_ session: PomodoroSession, level: DisciplineLevel, now: Date = Date()) {
+        guard pomodoro == nil, currentBreak == nil, let session = session.bounded(now: now) else { return }
+        breakTimer?.cancel()
+        breakTimer = nil
+        clearPendingBreak()
+        pomodoroLevel = level
+        pomodoro = session
+        emitPomodoro()
+        catchUpPomodoro(awayFrom: now, to: now)
     }
 
     /// During focus, opens the break now. During a break that is waiting (deferred or
@@ -858,6 +885,53 @@ public final class BreakCoordinator {
         let context = await detector.currentContext()
         guard !Task.isCancelled, pomodoro?.phase.isBreak == true else { return }
         await triggerBreak(for: .external(request), context: context)
+    }
+
+    /// Applies time away (S84). A break the time covered counts once, here, with no overlay;
+    /// only a break left partly owed opens, through the external entry.
+    private func catchUpPomodoro(awayFrom: Date, to now: Date) {
+        guard let session = pomodoro?.bounded(now: now) else {
+            if pomodoro != nil { endPomodoro(.stopped) }
+            return
+        }
+        pomodoro = session
+        breakTimer?.cancel()
+        breakTimer = nil
+        clearPendingBreak()
+        switch session.catchUp(awayFrom: awayFrom, to: now) {
+        case .unchanged:
+            guard session.phase.isBreak else {
+                emitPomodoro()
+                armPomodoroFocus()
+                return
+            }
+            if let request = postponedExternal {
+                startPostponeWait(for: .external(request))
+            } else {
+                let remaining = session.phaseEnd.timeIntervalSince(now)
+                breakTimer = Task { await self.openPomodoroBreak(duration: remaining) }
+            }
+        case .creditedBreaks(_, let next):
+            if case .focus = session.phase { recordPomodoroTally(.focusEnded) }
+            postponedExternal = nil
+            let credited = session.phase.isBreak ? session.phase : (session.next(at: now)?.phase ?? .longBreak)
+            eventContinuation.yield(.breakCompleted(BreakEvent(
+                scheduledAt: now, duration: session.duration(of: credited), level: pomodoroLevel, scheduleId: nil
+            )))
+            countCompletedBreak()
+            if let next {
+                pomodoro = next
+                emitPomodoro()
+                armPomodoroFocus()
+            } else {
+                endPomodoro(.finished)
+            }
+        case .openBreak(let remaining, let next):
+            recordPomodoroTally(.focusEnded)
+            pomodoro = next
+            emitPomodoro()
+            breakTimer = Task { await self.openPomodoroBreak(duration: remaining) }
+        }
     }
 
     /// After a session break: the next focus, or the end of the session after the long break.
