@@ -3,7 +3,7 @@ import StandLockCore
 
 extension SettingsPage {
     static let sidebarTopPages: [SettingsPage] = [.general, .menuBar]
-    static let sidebarBreakPages: [SettingsPage] = [.breakScreen, .discipline, .detection]
+    static let sidebarBreakPages: [SettingsPage] = [.breakScreen, .discipline, .detection, .pomodoro]
     static let sidebarBottomPages: [SettingsPage] = [.permissions, .statistics, .about]
 
     var title: LocalizedStringKey { LocalizedStringKey(titleResource.key) }
@@ -18,6 +18,7 @@ extension SettingsPage {
         case .schedule: "Schedules"
         case .newSchedule: "Add Schedule"
         case .detection: "Detection"
+        case .pomodoro: "Pomodoro"
         case .permissions: "Permissions"
         case .statistics: "Statistics"
         case .about: "About"
@@ -33,6 +34,7 @@ extension SettingsPage {
         case .schedule: "calendar.badge.clock"
         case .newSchedule: "plus"
         case .detection: "eye"
+        case .pomodoro: "timer"
         case .permissions: "lock.shield"
         case .statistics: "chart.bar.xaxis"
         case .about: "info.circle"
@@ -45,7 +47,7 @@ extension SettingsPage {
         case .general, .schedule, .newSchedule, .permissions, .about: nil
         case .detection: .strict
         case .menuBar, .breakScreen, .statistics: .gentle
-        case .discipline: .firm
+        case .discipline, .pomodoro: .firm
         }
     }
 
@@ -81,6 +83,8 @@ extension SettingsPage {
                 "Calendar", "Calendar Integration", "Look-ahead", "Calendars",
                 "Screen Sharing", "After sharing ends", "Idle", "Idle as Break",
             ]
+        case .pomodoro:
+            ["Pomodoro", "Focus length", "Short break", "Long break", "Rounds"]
         case .permissions:
             ["Permissions", "Accessibility", "Input Monitoring", "Calendar Access"]
         case .statistics:

@@ -61,7 +61,8 @@ struct SettingsExportTests {
             showFullWorkTimer: true,
             menuBarCountdownMinutes: 3,
             menuScene: .off,
-            breakScreen: BreakScreenPreferences(backgroundHex: "#112233", textHex: "#EEEEEE", showsStatistics: false, message: "Stretch")
+            breakScreen: BreakScreenPreferences(backgroundHex: "#112233", textHex: "#EEEEEE", showsStatistics: false, message: "Stretch"),
+            pomodoro: PomodoroConfiguration(focus: 50 * 60, shortBreak: 10 * 60, longBreak: 30 * 60, rounds: 3)
         )
     }
 
@@ -253,6 +254,10 @@ struct SettingsExportTests {
         ("firmSkipDelay", { $0.preferences.firmSkipDelay = 1e300 }),
         ("strictEscapeHoldDuration", { $0.preferences.strictEscapeHoldDuration = 1e300 }),
         ("postponeReturnDelay", { $0.preferences.postponeReturnDelay = -1 }),
+        ("pomodoro focus", { $0.preferences.pomodoro.focus = 1e30 }),
+        ("pomodoro short break", { $0.preferences.pomodoro.shortBreak = 0 }),
+        ("pomodoro long break", { $0.preferences.pomodoro.longBreak = -60 }),
+        ("pomodoro rounds", { $0.preferences.pomodoro.rounds = .max }),
     ]
 
     @Test(arguments: hugeValues.indices)
@@ -260,6 +265,24 @@ struct SettingsExportTests {
         var export = Self.full()
         Self.hugeValues[index].1(&export)
         #expect(Self.decodeError(try export.encoded()) == .unreadable, "\(Self.hugeValues[index].0)")
+    }
+
+    @Test func exportRoundTripsPomodoro() throws {
+        let decoded = try SettingsExport.decode(Self.full().encoded())
+        #expect(decoded.preferences.pomodoro == Self.fullPreferences().pomodoro)
+        #expect(decoded.preferences.pomodoro != .standard)
+    }
+
+    @Test func preferencesWithoutPomodoroDecodeToStandard() throws {
+        // A v0.12.0 file or stored value has no `pomodoro` key.
+        let data = try Self.edited { object in
+            var preferences = object["preferences"] as! [String: Any]
+            preferences["pomodoro"] = nil
+            object["preferences"] = preferences
+        }
+        #expect(try SettingsExport.decode(data).preferences.pomodoro == .standard)
+        let stored = try JSONSerialization.data(withJSONObject: ["gentleDailySkipLimit": 3])
+        #expect(try JSONDecoder().decode(AppPreferences.self, from: stored).pomodoro == .standard)
     }
 
     @Test func subMinuteValuesStayReadable() throws {

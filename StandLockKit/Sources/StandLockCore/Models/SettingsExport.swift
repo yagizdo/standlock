@@ -83,7 +83,8 @@ public struct SettingsExport: Codable, Sendable, Equatable {
               [p.firmSkipDelay, p.strictEscapeHoldDuration, p.postponeReturnDelay]
                   .allSatisfy({ $0.isFinite && (0...Self.maxDuration).contains($0) }),
               [p.gentleDailySkipLimit, p.firmDailySkipLimit, p.menuBarCountdownMinutes, p.calendarLookAheadMinutes]
-                  .allSatisfy({ (0...Self.maxCount).contains($0) })
+                  .allSatisfy({ (0...Self.maxCount).contains($0) }),
+              p.pomodoro.isWithinBounds
         else { return false }
         return schedules.allSatisfy { schedule in
             let durations = [schedule.breakInterval, schedule.breakDuration]

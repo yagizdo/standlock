@@ -65,4 +65,11 @@ struct SettingsSearchTests {
     @Test func noTermsNoMatch() {
         #expect(!settingsSearchMatches(query: "general", terms: []))
     }
+
+    @Test func findsPomodoroRowTitles() {
+        let terms = ["Pomodoro", "Focus length", "Short break", "Long break", "Rounds"]
+        #expect(settingsSearchMatches(query: "pomo", terms: terms))
+        #expect(settingsSearchMatches(query: "focus", terms: terms))
+        #expect(settingsSearchMatches(query: "rounds", terms: terms))
+    }
 }
