@@ -17,9 +17,11 @@ struct MenuBarView: View {
                     state: coordinator.nextBreakState,
                     progress: coordinator.breakProgress,
                     scene: coordinator.preferences.menuScene,
-                    schedule: coordinator.schedules.first(where: \.isEnabled)
+                    schedule: coordinator.schedules.first(where: \.isEnabled),
+                    pomodoro: coordinator.pomodoroStatus
                 )
                 statsBar
+                PomodoroRow()
             }
             .padding(.bottom, 10)
 

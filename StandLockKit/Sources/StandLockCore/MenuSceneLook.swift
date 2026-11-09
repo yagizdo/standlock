@@ -24,4 +24,14 @@ public enum MenuSceneLook: Equatable, Sendable {
             self = .noSchedules
         }
     }
+
+    /// During a session, a break phase that is not on screen waits: a postponed break counts
+    /// down to its return through `.countingDown`, which would otherwise read as focus.
+    public init(state: NextBreakState, pomodoro: PomodoroStatus?, now: Date = Date()) {
+        if pomodoro?.phase.isBreak == true, state != .breakActive {
+            self = .breakWaiting
+        } else {
+            self.init(state: state, now: now)
+        }
+    }
 }
