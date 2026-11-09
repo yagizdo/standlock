@@ -48,21 +48,10 @@ struct SettingsSidebar: View {
     private var list: some View {
         let visible = visiblePages
         return List(selection: selection) {
-            rows([.newSchedule].filter(visible.contains))
-            rows(SettingsPage.sidebarTopPages.filter(visible.contains))
-
-            let breakPages = SettingsPage.sidebarBreakPages.filter(visible.contains)
-            if !breakPages.isEmpty {
-                Section("Breaks") {
-                    rows(breakPages)
-                }
-                // macOS 13 lets a sidebar section collapse, which could hide the selected row.
-                .collapsible(false)
-            }
-
             let scheduleRows = schedules.filter { visible.contains(.schedule($0.id)) }
-            if !scheduleRows.isEmpty {
+            if visible.contains(.newSchedule) || !scheduleRows.isEmpty {
                 Section {
+                    rows([.newSchedule].filter(visible.contains))
                     ForEach(scheduleRows) { schedule in
                         ScheduleSidebarRow(schedule: schedule, isSelected: navigation.page == .schedule(schedule.id))
                             .tag(SettingsPage.schedule(schedule.id))
@@ -75,15 +64,17 @@ struct SettingsSidebar: View {
                             .padding(.trailing, SettingsTokens.sidebarHeaderInset)
                     }
                 }
+                // macOS 13 lets a sidebar section collapse, which could hide the selected row.
                 .collapsible(false)
             }
 
-            let bottomPages = SettingsPage.sidebarBottomPages.filter(visible.contains)
-            if !bottomPages.isEmpty {
-                // Headerless, so these rows do not read as part of Schedules.
-                Section {
-                    rows(bottomPages)
+            let generalPages = (SettingsPage.sidebarTopPages + SettingsPage.sidebarBreakPages
+                + SettingsPage.sidebarBottomPages).filter(visible.contains)
+            if !generalPages.isEmpty {
+                Section("General") {
+                    rows(generalPages)
                 }
+                .collapsible(false)
             }
         }
         .listStyle(.sidebar)
