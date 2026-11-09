@@ -79,7 +79,7 @@ extension SettingsPage {
             [
                 "Detection", "Calls", "Camera Detection", "Microphone Detection", "Return after call",
                 "Calendar", "Calendar Integration", "Look-ahead", "Calendars",
-                "Screen Sharing", "After sharing ends", "Idle", "Idle as Break",
+                "Screen Sharing", "After sharing ends", "Time away", "Time away counts as a break after",
             ]
         case .permissions:
             ["Permissions", "Accessibility", "Input Monitoring", "Calendar Access"]
@@ -99,6 +99,7 @@ extension SettingsPage {
     private static let scheduleFormTerms: [LocalizedStringResource] = [
         "Schedules", "Enabled", "Name", "When", "Hours", "Rhythm", "Break every", "Break lasts",
         "Alternating intervals", "Repetition Cycle", "Short breaks", "Short break", "Long break", "Discipline",
-        "Gentle", "Firm", "Strict", "Progressive Enforcement", "Your day",
+        "Gentle", "Firm", "Strict", "Progressive Enforcement", "Limit consecutive skips",
+        "Maximum consecutive skips", "Your day",
     ]
 }

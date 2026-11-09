@@ -1,6 +1,42 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "After this many completed short breaks since your last long break." : {
+      "extractionState" : "manual"
+    },
+
+    "Skip up to %lld breaks in a row. After that, skipping and Control + Option + Command are disabled until you complete a break." : {
+      "extractionState" : "manual"
+    },
+    "Skip Next Break and emergency exits count toward this limit. Completing a break resets it; enough time locked or asleep does too." : {
+      "extractionState" : "manual"
+    },
+    "Time locked or asleep can count as a break." : {
+      "extractionState" : "manual"
+    },
+
+    "Complete this break to skip again." : {
+      "extractionState" : "manual"
+    },
+    "Time away" : {
+      "extractionState" : "manual"
+    },
+    "Time away counts as a break after" : {
+      "extractionState" : "manual"
+    },
+    "Only screen lock and system sleep count. Videos, reading, and calls remain active time." : {
+      "extractionState" : "manual"
+    },
+    "Limit consecutive skips" : {
+      "extractionState" : "manual"
+    },
+    "Maximum consecutive skips" : {
+      "extractionState" : "manual"
+    },
+    "Emergency escape remains available unless a schedule’s consecutive skip limit is reached." : {
+      "extractionState" : "manual"
+    },
+
     "" : {
 
     },

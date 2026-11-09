@@ -9,6 +9,7 @@ struct QuickActionsView: View {
 
     var body: some View {
         // Tight spacing leaves the two equal pills room for the longest title, Turkish "Duraklat".
+        let slotID = coordinator.pendingSkipSlotID
         HStack(spacing: 5) {
             if coordinator.isPaused {
                 Button {
@@ -19,12 +20,12 @@ struct QuickActionsView: View {
                 .buttonStyle(MenuBarPillStyle())
             } else {
                 Button {
-                    coordinator.skipNextBreak()
+                    coordinator.skipNextBreak(expectedSlotID: slotID)
                 } label: {
                     pill("Skip", symbol: "forward.end")
                 }
                 .buttonStyle(MenuBarPillStyle())
-                .disabled(!coordinator.schedules.contains(where: \.isEnabled) || coordinator.isBreakActive)
+                .disabled(!coordinator.canSkipNextBreak)
 
                 Button {
                     showPauseMenu()

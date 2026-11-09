@@ -15,7 +15,7 @@ struct ManuscriptBreakView: View {
     let onSkip: () -> Void
     let onPostpone: () -> Void
     let onEscape: () -> Void
-    let onComplete: () -> Void
+    @ObservedObject var dismissalState: BreakDismissalState
 
     @State private var remainingSeconds: TimeInterval
     @State private var isVisible = false
@@ -27,11 +27,10 @@ struct ManuscriptBreakView: View {
          preferences: AppPreferences, statistics: BreakStatistics,
          escalationTier: Int = 0,
          nextIntervalLabel: String? = nil,
-         canPostpone: Bool,
+         canPostpone: Bool, dismissalState: BreakDismissalState,
          onSkip: @escaping () -> Void,
          onPostpone: @escaping () -> Void,
-         onEscape: @escaping () -> Void,
-         onComplete: @escaping () -> Void) {
+         onEscape: @escaping () -> Void) {
         self.level = level
         self.look = look
         self.totalDuration = totalDuration
@@ -46,7 +45,7 @@ struct ManuscriptBreakView: View {
         self.onSkip = onSkip
         self.onPostpone = onPostpone
         self.onEscape = onEscape
-        self.onComplete = onComplete
+        self.dismissalState = dismissalState
         self._remainingSeconds = State(initialValue: totalDuration)
     }
 
@@ -98,6 +97,7 @@ struct ManuscriptBreakView: View {
                             preferences: preferences, statistics: statistics,
                             disciplineLevel: level,
                             escalationTier: escalationTierIndex,
+                            availability: dismissalState.availability,
                             onDismiss: onSkip,
                             onEscape: onEscape
                         )
@@ -209,15 +209,7 @@ struct ManuscriptBreakView: View {
             guard !Task.isCancelled else { return }
             remainingSeconds = breakSecondsRemaining(until: end)
         }
-        if !reduceMotion {
-            withAnimation(.easeOut(duration: 0.3)) {
-                isVisible = false
-            }
-            try? await Task.sleep(for: .milliseconds(300))
-        } else {
-            isVisible = false
-        }
-        onComplete()
+
     }
 }
 

@@ -15,6 +15,14 @@ public final class EventTapController: @unchecked Sendable {
     private let onEscapeTriggered: @Sendable () -> Void
     var escapeDetector: EscapeDetector
     private var holdTimer: Timer?
+    public var escapeEnabled: Bool = true {
+        didSet {
+            guard !escapeEnabled else { return }
+            cancelHoldTimer()
+            escapeDetector.reset()
+            NotificationCenter.default.post(name: .escapeHoldEnded, object: nil)
+        }
+    }
 
     public init(
         escapeHoldDuration: TimeInterval = 10.0,
@@ -90,7 +98,7 @@ public final class EventTapController: @unchecked Sendable {
             return Unmanaged.passUnretained(event)
         }
 
-        if type == .flagsChanged {
+        if type == .flagsChanged && escapeEnabled {
             let flags = event.flags
             let wasHolding = escapeDetector.isHolding
             escapeDetector.flagsChanged(
@@ -123,7 +131,7 @@ public final class EventTapController: @unchecked Sendable {
             repeats: false
         ) { [weak self] _ in
             guard let self else { return }
-            if self.escapeDetector.isEscapeTriggered(at: Date()) {
+            if self.escapeEnabled && self.escapeDetector.isEscapeTriggered(at: Date()) {
                 self.onEscapeTriggered()
             }
             self.holdTimer = nil

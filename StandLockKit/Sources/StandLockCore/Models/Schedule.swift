@@ -13,6 +13,7 @@ public struct Schedule: Codable, Sendable, Identifiable, Equatable {
     public var disciplineLevel: DisciplineLevel
     public var dailyBreakCap: Int?
     public var progressiveEnforcement: Bool
+    public var consecutiveSkipLimit: Int?
 
     public init(
         id: UUID = UUID(), name: String, isEnabled: Bool = true,
@@ -22,7 +23,8 @@ public struct Schedule: Codable, Sendable, Identifiable, Equatable {
         repetitionRule: RepetitionRule? = nil,
         disciplineLevel: DisciplineLevel = .gentle,
         dailyBreakCap: Int? = nil,
-        progressiveEnforcement: Bool = false
+        progressiveEnforcement: Bool = false,
+        consecutiveSkipLimit: Int? = nil
     ) {
         self.id = id; self.name = name; self.isEnabled = isEnabled
         self.days = days; self.windows = windows
@@ -31,12 +33,13 @@ public struct Schedule: Codable, Sendable, Identifiable, Equatable {
         self.repetitionRule = repetitionRule
         self.disciplineLevel = disciplineLevel; self.dailyBreakCap = dailyBreakCap
         self.progressiveEnforcement = progressiveEnforcement
+        self.consecutiveSkipLimit = consecutiveSkipLimit
     }
 
     private enum CodingKeys: String, CodingKey {
         case id, name, isEnabled, days, windows
         case breakInterval, breakDuration, intervalCycle, repetitionRule
-        case disciplineLevel, dailyBreakCap, progressiveEnforcement
+        case disciplineLevel, dailyBreakCap, progressiveEnforcement, consecutiveSkipLimit
     }
 
     public init(from decoder: Decoder) throws {
@@ -53,6 +56,7 @@ public struct Schedule: Codable, Sendable, Identifiable, Equatable {
         disciplineLevel = try c.decodeIfPresent(DisciplineLevel.self, forKey: .disciplineLevel) ?? .gentle
         dailyBreakCap = try c.decodeIfPresent(Int.self, forKey: .dailyBreakCap)
         progressiveEnforcement = try c.decodeIfPresent(Bool.self, forKey: .progressiveEnforcement) ?? false
+        consecutiveSkipLimit = try c.decodeIfPresent(Int.self, forKey: .consecutiveSkipLimit)
     }
 }
 

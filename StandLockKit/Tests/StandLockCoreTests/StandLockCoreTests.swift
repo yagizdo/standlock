@@ -195,7 +195,7 @@ struct ScheduleModelTests {
             calendarDetectionEnabled: false,
             calendarLookAheadMinutes: 10,
             screenSharingDetectionEnabled: false,
-            idleDetectionEnabled: false,
+            naturalBreakThresholdMinutes: 7,
             pauseMediaDuringBreak: false,
             resetIntervalOnSkip: false
         )

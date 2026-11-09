@@ -21,6 +21,7 @@
 		0E1C2D941E09D0DF09384EE0 /* DisciplineLevelPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9685AC67A3B1CA0D154BC6DB /* DisciplineLevelPicker.swift */; };
 		0FC31DE3B8B3966243347B9B /* SceneFace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A15609AB3FB09316E35B9DA /* SceneFace.swift */; };
 		10EB4FC225CCCB669122BFED /* MediaController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5586791BF5D81FC7CE5AE185 /* MediaController.swift */; };
+		123FA2FC55B51A003CA3CF40 /* SystemAwayMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0608FA6D030185CE5DFBB1B1 /* SystemAwayMonitor.swift */; };
 		12E5EB862AA08D86DF45D9F1 /* SidebarBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ECFF53DE04217DC4398CB8C /* SidebarBackground.swift */; };
 		16C25FF6FB1CDC9B466ACB0D /* BreakScreenPreviewCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E940304A1CB44B2B8CC0FC8C /* BreakScreenPreviewCard.swift */; };
 		17A849E1BB7551F62825BF5F /* GeneralSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88D72443C7D064247ADFE6D0 /* GeneralSettingsView.swift */; };
@@ -55,6 +56,7 @@
 		525A004E07BB31DB91651F08 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = CD5052FB7ADFF1C72A819672 /* InfoPlist.xcstrings */; };
 		525B69F011F29FD72647967A /* SettingsToggleRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9AA3E0D667AF2DB2D988625 /* SettingsToggleRow.swift */; };
 		582B4596E90BF1EAA3CFE508 /* OnboardingHeading.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1D4A4E40ECE0D5BFB913BD9 /* OnboardingHeading.swift */; };
+		6426413F2EFE6682E8D4A780 /* BreakDismissalState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E56984FFAC711E464B1B2F7 /* BreakDismissalState.swift */; };
 		69A429EE405DE1B8A2E568BC /* NextBreakStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946A989D9EC41AFA82920166 /* NextBreakStatus.swift */; };
 		6F9C00664AAD42633900A642 /* Exercises.json in Resources */ = {isa = PBXBuildFile; fileRef = 2063FDE70AFCC135664A8FD4 /* Exercises.json */; };
 		726D144CA2B3B5AF4D4503AE /* LevelPill.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF6724F4176D1F398DF9A697 /* LevelPill.swift */; };
@@ -137,6 +139,7 @@
 /* Begin PBXFileReference section */
 		045E2DB0FA1DABBAEE991FDC /* SettingsPage+Presentation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SettingsPage+Presentation.swift"; sourceTree = "<group>"; };
 		05CE8593F3F5EBFD2FD7DD08 /* StandLock.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StandLock.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		0608FA6D030185CE5DFBB1B1 /* SystemAwayMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemAwayMonitor.swift; sourceTree = "<group>"; };
 		07D76C4C05AEF8916D063F51 /* SettingsIconChip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsIconChip.swift; sourceTree = "<group>"; };
 		0CFC6AC33A81C46E517592CB /* FrogScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrogScene.swift; sourceTree = "<group>"; };
 		0ECFF53DE04217DC4398CB8C /* SidebarBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarBackground.swift; sourceTree = "<group>"; };
@@ -159,6 +162,7 @@
 		35EA7054F16243AE0575478E /* LanguageStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageStore.swift; sourceTree = "<group>"; };
 		37C6854B70D7BA6C7DDE4D09 /* AppTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTheme.swift; sourceTree = "<group>"; };
 		39E5EFA4AB6411AD0176ED38 /* HourglassScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HourglassScene.swift; sourceTree = "<group>"; };
+		3E56984FFAC711E464B1B2F7 /* BreakDismissalState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakDismissalState.swift; sourceTree = "<group>"; };
 		42215A75B39382916D51D614 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		434445F0717D4FC94E284CB8 /* ExerciseBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseBlock.swift; sourceTree = "<group>"; };
 		43B1BE95A60D5294C770AEDE /* StatsFooter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsFooter.swift; sourceTree = "<group>"; };
@@ -317,6 +321,7 @@
 			isa = PBXGroup;
 			children = (
 				E5A68046037D0CAAE70C0F88 /* ActionArea.swift */,
+				3E56984FFAC711E464B1B2F7 /* BreakDismissalState.swift */,
 				C5BBDBF97CFAA5FF490CBD00 /* BreakOverlayWindow.swift */,
 				9C3B7E68FDF3C989BA50F367 /* BreakPalette.swift */,
 				DB803AB21175A8E54B5A2191 /* BreakScreenLook.swift */,
@@ -362,6 +367,7 @@
 				C74EB53DDDC340414AD64BE2 /* PanelClock.swift */,
 				FE0E2C708B760F809144B756 /* PermissionChecker.swift */,
 				29B46D4E8DC400FCF4E57374 /* SettingsNavigation.swift */,
+				0608FA6D030185CE5DFBB1B1 /* SystemAwayMonitor.swift */,
 				8180C020203FB970C798C84E /* ThemeStore.swift */,
 			);
 			path = AppState;
@@ -626,6 +632,7 @@
 				9D77F7B7F12048E4399B8B25 /* AppDelegate.swift in Sources */,
 				1895F27AD369A832CA280556 /* AppTheme.swift in Sources */,
 				846FDB118F1535CFBBE5A4E6 /* BreadScene.swift in Sources */,
+				6426413F2EFE6682E8D4A780 /* BreakDismissalState.swift in Sources */,
 				44D9EB3E27CF114DDF7E3735 /* BreakOverlayWindow.swift in Sources */,
 				FF4C7AAB3CFF56C574A3EAA2 /* BreakPalette.swift in Sources */,
 				7BF1946EE4BC2EF26F5CE641 /* BreakScreenLook.swift in Sources */,
@@ -729,6 +736,7 @@
 				2CD0D3C3CF795626E50A5EAA /* StandLockApp.swift in Sources */,
 				BB64F88461355BFECA64390F /* StatisticsView.swift in Sources */,
 				D588F2EB46E9B8124422C5EE /* StatsFooter.swift in Sources */,
+				123FA2FC55B51A003CA3CF40 /* SystemAwayMonitor.swift in Sources */,
 				FFA79495C2E273B9AFDE5F0A /* TemplateRow.swift in Sources */,
 				45EEC3830A30A1175EBD1FCE /* ThemeStore.swift in Sources */,
 				51FC83BD2349C694BF8C11DD /* TimerNumerals.swift in Sources */,

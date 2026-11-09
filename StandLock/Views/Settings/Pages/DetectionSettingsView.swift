@@ -97,12 +97,12 @@ struct DetectionSettingsView: View {
                 }
             }
 
-            SettingsSection("Idle") {
-                SettingsToggleRow(
-                    "Idle as Break",
-                    symbol: "moon.zzz",
-                    description: "Count inactivity as a break taken",
-                    isOn: $coordinator.preferences.idleDetectionEnabled
+            SettingsSection("Time away") {
+                minutesRow(
+                    "Time away counts as a break after",
+                    description: "Only screen lock and system sleep count. Videos, reading, and calls remain active time.",
+                    value: $coordinator.preferences.naturalBreakThresholdMinutes,
+                    in: 1...30
                 )
             }
         }

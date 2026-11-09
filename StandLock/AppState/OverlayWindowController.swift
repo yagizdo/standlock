@@ -26,12 +26,13 @@ final class OverlayWindowController: LockPresenting {
     private var lastScreenChangeHandled: Date = .distantPast
     private var policyBeforeOverlay: NSApplication.ActivationPolicy = .accessory
 
-    var onSkip: (() -> Void)?
-    var onComplete: (() -> Void)?
-    var onEscape: (() -> Void)?
-    var onPostpone: (() -> Void)?
+    private let dismissalState = BreakDismissalState()
+    private var currentBreakID: UUID?
+    var onSkip: ((UUID) -> Void)?
+    var onEscape: ((UUID) -> Void)?
+    var onPostpone: ((UUID) -> Void)?
 
-    nonisolated init(languageStore: LanguageStore, themeStore: ThemeStore) {
+    init(languageStore: LanguageStore, themeStore: ThemeStore) {
         self.languageStore = languageStore
         self.themeStore = themeStore
     }
@@ -40,7 +41,8 @@ final class OverlayWindowController: LockPresenting {
         level: DisciplineLevel, duration: TimeInterval,
         exercise: Exercise?, preferences: AppPreferences,
         statistics: BreakStatistics, escalationTier: Int = 0,
-        nextIntervalLabel: String? = nil, canPostpone: Bool = false
+        nextIntervalLabel: String? = nil, canPostpone: Bool = false,
+        breakID: UUID, dismissalAvailability: DismissalAvailability
     ) {
         let isRecreation = isShowing
         dismissOverlay()
@@ -48,6 +50,8 @@ final class OverlayWindowController: LockPresenting {
             breakStartDate = Date()
         }
 
+        currentBreakID = breakID
+        dismissalState.availability = dismissalAvailability
         currentLevel = level
         currentDuration = duration
         currentExercise = exercise
@@ -69,11 +73,10 @@ final class OverlayWindowController: LockPresenting {
                 exercise: exercise, preferences: preferences,
                 statistics: statistics, escalationTier: escalationTier,
                 nextIntervalLabel: nextIntervalLabel,
-                canPostpone: canPostpone,
-                onSkip: { [weak self] in self?.handleSkip() },
-                onPostpone: { [weak self] in self?.handlePostpone() },
-                onEscape: { [weak self] in self?.handleEscape() },
-                onComplete: { [weak self] in self?.handleComplete() }
+                canPostpone: canPostpone, dismissalState: dismissalState,
+                onSkip: { [weak self] in self?.onSkip?(breakID) },
+                onPostpone: { [weak self] in self?.onPostpone?(breakID) },
+                onEscape: { [weak self] in self?.onEscape?(breakID) }
             )
             window.setContent(LocalizedRoot(store: languageStore) { contentView })
             window.orderFrontRegardless()
@@ -92,7 +95,7 @@ final class OverlayWindowController: LockPresenting {
         NSApp.activate(ignoringOtherApps: true)
 
         if level == .strict {
-            startEventTap(preferences: preferences)
+            startEventTap(preferences: preferences, breakID: breakID)
         }
 
         forceFocus()
@@ -131,7 +134,12 @@ final class OverlayWindowController: LockPresenting {
         NSApp.setActivationPolicy(policyBeforeOverlay)
     }
 
-    private func startEventTap(preferences: AppPreferences) {
+    func updateDismissalAvailability(_ availability: DismissalAvailability) {
+        dismissalState.availability = availability
+        eventTapController?.escapeEnabled = availability.emergencyEscapeAllowed
+    }
+
+    private func startEventTap(preferences: AppPreferences, breakID: UUID) {
         let level = currentLevel ?? .strict
         let policy = level.enforcementPolicy(preferences: preferences)
         let enforcementTier = policy.tier(at: currentEscalationTier)
@@ -144,34 +152,11 @@ final class OverlayWindowController: LockPresenting {
         eventTapController = EventTapController(
             escapeHoldDuration: effectiveHold,
             onEscapeTriggered: { [weak self] in
-                Task { @MainActor in self?.handleEscape() }
+                Task { @MainActor in self?.onEscape?(breakID) }
             }
         )
+        eventTapController?.escapeEnabled = dismissalState.availability.emergencyEscapeAllowed
         eventTapController?.startBlocking()
-    }
-
-    private func handleSkip() {
-        breakStartDate = nil
-        dismissOverlay()
-        onSkip?()
-    }
-
-    private func handlePostpone() {
-        breakStartDate = nil
-        dismissOverlay()
-        onPostpone?()
-    }
-
-    private func handleComplete() {
-        breakStartDate = nil
-        dismissOverlay()
-        onComplete?()
-    }
-
-    private func handleEscape() {
-        breakStartDate = nil
-        dismissOverlay()
-        onEscape?()
     }
 
     private func forceFocus() {
@@ -208,12 +193,12 @@ final class OverlayWindowController: LockPresenting {
 
         guard isShowing,
               let level = currentLevel,
+              let breakID = currentBreakID,
               let prefs = currentPreferences,
               let stats = currentStatistics else { return }
 
         let elapsed = breakStartDate.map { now.timeIntervalSince($0) } ?? 0
         guard elapsed < currentDuration else {
-            handleComplete()
             return
         }
 
@@ -227,7 +212,8 @@ final class OverlayWindowController: LockPresenting {
             level: level, duration: remaining,
             exercise: exercise, preferences: prefs,
             statistics: stats, escalationTier: tier,
-            nextIntervalLabel: nextLabel, canPostpone: canPostpone
+            nextIntervalLabel: nextLabel, canPostpone: canPostpone,
+            breakID: breakID, dismissalAvailability: dismissalState.availability
         )
     }
 }
