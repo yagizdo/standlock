@@ -100,6 +100,9 @@ public final class BreakCoordinator {
     private var pomodoro: PomodoroSession?
     /// Picked by the app at session start (S87); a session break uses its base tier.
     private var pomodoroLevel: DisciplineLevel = .gentle
+    /// The session's break has used its one postpone. Kept apart from `activeBreakCanPostpone`
+    /// because a lock takes the break off screen and the return opens it afresh.
+    private var pomodoroBreakPostponed = false
     public var pomodoroSession: PomodoroSession? { pomodoro }
     private var statistics: BreakStatistics = BreakStatistics()
     private var dailyBreakCounts: [UUID: Int] = [:]
@@ -125,6 +128,9 @@ public final class BreakCoordinator {
     /// A carried postponed break whose schedule this coordinator was not given, handed on the
     /// same way as `dormantPendingBreaks`.
     private var dormantPostponedScheduleID: UUID?
+    /// Carried short-break positions of schedules this coordinator was not given, handed on the
+    /// same way: with every schedule off the coordinator still runs, for a Pomodoro session.
+    private var dormantRepetitionIndices: [UUID: Int] = [:]
     public var exercises: [Exercise] = []
 
     /// Floor between a skip and the break it schedules, for the case where the anchored slot
@@ -168,6 +174,7 @@ public final class BreakCoordinator {
                 )
             }
         }
+        dormantRepetitionIndices = state.repetitionIndices.filter { repetitionTrackers[$0.key] == nil }
         restoredPendingBreaks = state.pendingBreakDates
         if let id = state.postponedScheduleID {
             if let schedule = schedules.first(where: { $0.id == id && $0.isEnabled }) {
@@ -191,7 +198,7 @@ public final class BreakCoordinator {
             dailyBreakCounts: dailyBreakCounts,
             escalationTiers: escalationTiers,
             cycleIndices: cycleIndices,
-            repetitionIndices: repetitionTrackers.mapValues(\.currentBreakIndex),
+            repetitionIndices: dormantRepetitionIndices.merging(repetitionTrackers.mapValues(\.currentBreakIndex)) { _, live in live },
             pendingBreakDates: pendingBreakDates,
             postponedScheduleID: postponedSchedule?.id ?? dormantPostponedScheduleID
         )
@@ -210,6 +217,7 @@ public final class BreakCoordinator {
         escalationTiers.removeAll()
     }
 
+    /// Ignored while a Pomodoro session runs: stop the session instead.
     public func pause(for duration: TimeInterval) {
         // Pause and the phase timer share `breakTimer`; a session is stopped, not paused.
         guard pomodoro == nil else { return }
@@ -284,6 +292,12 @@ public final class BreakCoordinator {
 
     private func beginSuspension(now: Date) {
         isSuspended = true
+        // A session break that is waiting (deferred, postponed) has not been rested yet: it is
+        // owed in full from here, so only time away can credit it.
+        if suspendedAt == nil, var session = pomodoro, session.phase.isBreak, !locker.isShowing {
+            session.phaseEnd = now.addingTimeInterval(postponedExternal?.duration ?? session.duration(of: session.phase))
+            pomodoro = session
+        }
         suspendedAt = suspendedAt ?? now
         cancelAndDismissIfShowing()
     }
@@ -320,6 +334,7 @@ public final class BreakCoordinator {
         }
     }
 
+    /// Ignored while a Pomodoro session runs: use `skipPomodoroPhase()`.
     public func skipNextBreak() {
         guard pomodoro == nil else { return }
         breakTimer?.cancel()
@@ -381,7 +396,9 @@ public final class BreakCoordinator {
         currentSource = nil
         switch source {
         case .schedule(let schedule): postponedSchedule = schedule
-        case .external(let request): postponedExternal = request
+        case .external(let request):
+            postponedExternal = request
+            if pomodoro != nil { pomodoroBreakPostponed = true }
         }
         eventContinuation.yield(.breakDeferred(.postponed, nextAttempt: Date().addingTimeInterval(deferralPollingInterval)))
         updateStatistics { $0.breaksDeferred += 1 }
@@ -437,7 +454,8 @@ public final class BreakCoordinator {
     }
 
     /// Opens a break no schedule owns. A pending schedule slot is dropped; the schedules arm
-    /// afresh once this break ends.
+    /// afresh once this break ends. Ignored while a break is on screen or when the duration
+    /// bounds to zero.
     public func startExternalBreak(_ request: ExternalBreak) {
         guard currentBreak == nil, BreakSafety.breakDuration(request.duration) > 0 else { return }
         breakTimer?.cancel()
@@ -481,7 +499,11 @@ public final class BreakCoordinator {
     /// a wake. Time the app was not running is not credited as rest. A session outside the
     /// form's ranges is dropped.
     public func restorePomodoro(_ session: PomodoroSession, level: DisciplineLevel, now: Date = Date()) {
-        guard pomodoro == nil, currentBreak == nil, let session = session.bounded(now: now) else { return }
+        guard pomodoro == nil, currentBreak == nil, var session = session.bounded(now: now) else { return }
+        // A break that ran out while the app was closed was not rest: it opens in full.
+        if session.phase.isBreak, session.phaseEnd <= now {
+            session.phaseEnd = now.addingTimeInterval(session.duration(of: session.phase))
+        }
         breakTimer?.cancel()
         breakTimer = nil
         clearPendingBreak()
@@ -726,6 +748,7 @@ public final class BreakCoordinator {
             scheduledAt: Date(), duration: duration,
             level: effectiveLevel, scheduleId: schedule?.id
         )
+        let canPostpone = canPostpone && !(schedule == nil && pomodoroBreakPostponed)
         currentBreak = breakEvent
         currentSource = source
         activeBreakCanPostpone = canPostpone
@@ -914,6 +937,7 @@ public final class BreakCoordinator {
         case .creditedBreaks(_, let next):
             if case .focus = session.phase { recordPomodoroTally(.focusEnded) }
             postponedExternal = nil
+            pomodoroBreakPostponed = false
             let credited = session.phase.isBreak ? session.phase : (session.next(at: now)?.phase ?? .longBreak)
             eventContinuation.yield(.breakCompleted(BreakEvent(
                 scheduledAt: now, duration: session.duration(of: credited), level: pomodoroLevel, scheduleId: nil
@@ -937,6 +961,7 @@ public final class BreakCoordinator {
     /// After a session break: the next focus, or the end of the session after the long break.
     private func advancePomodoro() {
         guard let session = pomodoro else { return }
+        pomodoroBreakPostponed = false
         if let next = session.next(at: Date()) {
             pomodoro = next
             emitPomodoro()
@@ -950,6 +975,7 @@ public final class BreakCoordinator {
     private func endPomodoro(_ tally: PomodoroTally) {
         recordPomodoroTally(tally)
         pomodoro = nil
+        pomodoroBreakPostponed = false
         emitPomodoro()
         rearm()
     }

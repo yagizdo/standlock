@@ -89,6 +89,11 @@ public struct PomodoroSession: Codable, Sendable, Equatable {
         return .openBreak(remaining: remaining, session: open)
     }
 
+    /// A saved session comes back after a relaunch on the day it started only, as `EnforcementState`.
+    public func isRestorable(now: Date, calendar: Calendar = .current) -> Bool {
+        calendar.isDate(startedAt, inSameDayAs: now)
+    }
+
     /// A saved session made safe to run, or nil to drop it: lengths outside the form's ranges
     /// (a zero-length phase loops), or a round the session does not have. The phase end is pulled
     /// back to one phase length after `now`, so a clock set back cannot stretch it.

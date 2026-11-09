@@ -320,9 +320,9 @@ struct PomodoroSessionCoordinationTests {
         try? await Task.sleep(for: .milliseconds(400))
         detector.contextToReturn = .clear
         #expect(await waitUntil { locker.isShowing })
-        let opened = Date()
+        let shown = locker.lastShownAt ?? .distantPast
         let end = coordinator.pomodoroSession?.phaseEnd ?? .distantPast
-        #expect(abs(end.timeIntervalSince(opened.addingTimeInterval(60))) < 0.2)
+        #expect(abs(end.timeIntervalSince(shown.addingTimeInterval(60))) < 0.05)
     }
 
     @Test
@@ -469,7 +469,7 @@ struct PomodoroLifetimeTests {
         let start = Date()
         coordinator.startPomodoro(oneMinute, level: .gentle, now: start)
         coordinator.handleScreenLock(now: start.addingTimeInterval(30))
-        // Away 50 s: focus ended at 60, 20 s of the break are covered.
+        // Away 50 s, all counted as rest: 10 s of the 60 s break are left.
         coordinator.handleScreenUnlock(now: start.addingTimeInterval(80))
         #expect(await waitUntil { locker.isShowing })
         #expect(locker.lastDuration == TimeInterval(10))
@@ -491,9 +491,10 @@ struct PomodoroLifetimeTests {
         try? await Task.sleep(for: .milliseconds(500))
         detector.contextToReturn = .clear
         #expect(await waitUntil { locker.isShowing })
-        coordinator.handleScreenLock()
+        let shown = locker.lastShownAt ?? Date()
+        coordinator.handleScreenLock(now: shown.addingTimeInterval(59.7))
         // Past a phase end counted from the focus end, short of one counted from the overlay.
-        coordinator.handleScreenUnlock(now: Date().addingTimeInterval(59.8))
+        coordinator.handleScreenUnlock(now: shown.addingTimeInterval(59.8))
         #expect(await waitUntil { locker.showCount == 2 })
         #expect(log.completed == 0)
     }
@@ -528,12 +529,19 @@ struct PomodoroLifetimeTests {
         #expect(focusDone.pomodoroSession?.phase == .shortBreak(afterRound: 2))
         focusDone.stop()
 
-        // Break ended while the app was closed: credited once, next focus.
+        // Break ran out while the app was closed: that time was not rest, the break opens in full.
         let (breakDone, breakLocker, breakLog) = await restored(.shortBreak(afterRound: 2), end: now.addingTimeInterval(-10))
-        #expect(await waitUntil { breakLog.completed == 1 })
-        #expect(!breakLocker.showOverlayCalled)
-        #expect(breakDone.pomodoroSession?.phase == .focus(round: 3))
+        #expect(await waitUntil { breakLocker.isShowing })
+        #expect(breakLocker.lastDuration == TimeInterval(60))
+        #expect(breakLog.completed == 0)
+        #expect(breakDone.pomodoroSession?.phase == .shortBreak(afterRound: 2))
         breakDone.stop()
+
+        // Break still running when the app went away: what is left of it opens.
+        let (midBreak, midLocker, _) = await restored(.shortBreak(afterRound: 2), end: now.addingTimeInterval(25))
+        #expect(await waitUntil { midLocker.isShowing })
+        #expect(abs((midLocker.lastDuration ?? 0) - 25) < 1)
+        midBreak.stop()
     }
 
     @Test
@@ -545,5 +553,116 @@ struct PomodoroLifetimeTests {
         session.configuration.focus = 0
         coordinator.restorePomodoro(session, level: .gentle, now: Date())
         #expect(coordinator.pomodoroSession == nil)
+    }
+}
+
+@Suite("BreakCoordinator Pomodoro waiting breaks")
+@MainActor
+struct PomodoroWaitingBreakTests {
+
+    private func deferredSession() -> (BreakCoordinator, MockDetector, MockLocker, EventLog) {
+        let detector = MockDetector()
+        let locker = MockLocker()
+        let coordinator = BreakCoordinator(scheduler: MockScheduler(), detector: detector, locker: locker,
+                                           deferralPollingInterval: 0.05)
+        let log = EventLog(coordinator)
+        coordinator.start(with: [], preferences: AppPreferences(cameraDetection: .deferBreak, postponeReturnDelay: 0.1,
+                                                                idleDetectionEnabled: false))
+        return (coordinator, detector, locker, log)
+    }
+
+    @Test
+    func shortLockAfterADeferredBreakRanPastItsEndCreditsNothing() async {
+        let (coordinator, detector, locker, log) = deferredSession()
+        defer { coordinator.stop() }
+        detector.contextToReturn = DetectionContext(cameraActive: true)
+        coordinator.startPomodoro(oneMinute, level: .gentle, now: Date())
+        coordinator.skipPomodoroPhase()
+        #expect(await waitUntil { coordinator.pomodoroSession?.phase.isBreak == true })
+        let late = Date().addingTimeInterval(100)
+        coordinator.handleScreenLock(now: late)
+        detector.contextToReturn = .clear
+        // Owed in full from the lock; the one second away counts as rest.
+        coordinator.handleScreenUnlock(now: late.addingTimeInterval(1))
+        #expect(await waitUntil { locker.isShowing })
+        #expect(locker.lastDuration == TimeInterval(59))
+        #expect(log.completed == 0)
+    }
+
+    @Test
+    func shortLockDuringADeferralOpensTheFullBreak() async {
+        let (coordinator, detector, locker, _) = deferredSession()
+        defer { coordinator.stop() }
+        detector.contextToReturn = DetectionContext(cameraActive: true)
+        coordinator.startPomodoro(oneMinute, level: .gentle, now: Date())
+        coordinator.skipPomodoroPhase()
+        #expect(await waitUntil { coordinator.pomodoroSession?.phase.isBreak == true })
+        let soon = Date().addingTimeInterval(20)
+        coordinator.handleScreenLock(now: soon)
+        detector.contextToReturn = .clear
+        coordinator.handleScreenUnlock(now: soon.addingTimeInterval(1))
+        #expect(await waitUntil { locker.isShowing })
+        #expect(locker.lastDuration == TimeInterval(59))
+    }
+
+    @Test
+    func shortLockDuringAPostponeCreditsNothingAndKeepsTheWait() async {
+        let (coordinator, detector, locker, log) = deferredSession()
+        defer { coordinator.stop() }
+        coordinator.startPomodoro(oneMinute, level: .gentle, now: Date())
+        coordinator.skipPomodoroPhase()
+        #expect(await waitUntil { locker.isShowing })
+        detector.contextToReturn = DetectionContext(cameraActive: true)
+        coordinator.postponeActiveBreak()
+        let late = Date().addingTimeInterval(100)
+        coordinator.handleScreenLock(now: late)
+        coordinator.handleScreenUnlock(now: late.addingTimeInterval(1))
+        try? await Task.sleep(for: .milliseconds(300))
+        #expect(log.completed == 0)
+        #expect(locker.showCount == 1)
+        detector.contextToReturn = .clear
+        #expect(await waitUntil { locker.showCount == 2 })
+        #expect(locker.lastCanPostpone == false)
+        #expect(locker.lastDuration == TimeInterval(60))
+    }
+
+    @Test
+    func lockAfterAPostponedBreakReturnsDoesNotOfferPostponeAgain() async {
+        let (coordinator, _, locker, _) = deferredSession()
+        defer { coordinator.stop() }
+        coordinator.startPomodoro(oneMinute, level: .gentle, now: Date())
+        coordinator.skipPomodoroPhase()
+        #expect(await waitUntil { locker.isShowing })
+        coordinator.postponeActiveBreak()
+        #expect(await waitUntil { locker.showCount == 2 })
+        coordinator.handleScreenLock()
+        coordinator.handleScreenUnlock(now: Date().addingTimeInterval(5))
+        #expect(await waitUntil { locker.showCount == 3 })
+        #expect(locker.lastCanPostpone == false)
+        coordinator.completeActiveBreak()
+        coordinator.skipPomodoroPhase()
+        #expect(await waitUntil { locker.showCount == 4 })
+        #expect(locker.lastCanPostpone == true)
+    }
+
+    @Test
+    func skipPhaseDuringAPostponeLeavesNoBreakBehind() async {
+        let (coordinator, detector, locker, log) = deferredSession()
+        defer { coordinator.stop() }
+        coordinator.startPomodoro(PomodoroConfiguration(focus: 60, shortBreak: 60, longBreak: 60, rounds: 2),
+                                  level: .gentle, now: Date())
+        coordinator.skipPomodoroPhase()
+        #expect(await waitUntil { locker.isShowing })
+        detector.contextToReturn = DetectionContext(cameraActive: true)
+        coordinator.postponeActiveBreak()
+        coordinator.skipPomodoroPhase()
+        #expect(await waitUntil { log.skipped == 1 })
+        detector.contextToReturn = .clear
+        coordinator.skipPomodoroPhase()
+        #expect(await waitUntil { locker.showCount == 2 })
+        coordinator.completeActiveBreak()
+        #expect(coordinator.pomodoroSession == nil)
+        try? await Task.sleep(for: .milliseconds(300))
+        #expect(locker.showCount == 2)
     }
 }

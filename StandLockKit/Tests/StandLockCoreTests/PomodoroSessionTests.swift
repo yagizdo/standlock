@@ -215,3 +215,14 @@ struct PomodoroLevelTests {
         #expect(DisciplineLevel.strictest(of: []) == .gentle)
     }
 }
+
+@Suite("Pomodoro relaunch")
+struct PomodoroRelaunchTests {
+    @Test func sessionFromTodayIsRestorable() {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(identifier: "UTC")!
+        let session = PomodoroSessionTests.session(.focus(round: 1))
+        #expect(session.isRestorable(now: PomodoroSessionTests.start.addingTimeInterval(3600), calendar: calendar))
+        #expect(!session.isRestorable(now: PomodoroSessionTests.start.addingTimeInterval(86_400), calendar: calendar))
+    }
+}
