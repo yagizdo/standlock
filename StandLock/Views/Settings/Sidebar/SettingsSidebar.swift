@@ -68,13 +68,27 @@ struct SettingsSidebar: View {
                 .collapsible(false)
             }
 
-            let generalPages = (SettingsPage.sidebarTopPages + SettingsPage.sidebarBreakPages
-                + SettingsPage.sidebarBottomPages).filter(visible.contains)
+            let generalPages = SettingsPage.sidebarTopPages.filter(visible.contains)
             if !generalPages.isEmpty {
                 Section("General") {
                     rows(generalPages)
                 }
                 .collapsible(false)
+            }
+
+            let breakPages = SettingsPage.sidebarBreakPages.filter(visible.contains)
+            if !breakPages.isEmpty {
+                Section("Breaks") {
+                    rows(breakPages)
+                }
+                .collapsible(false)
+            }
+
+            let bottomPages = SettingsPage.sidebarBottomPages.filter(visible.contains)
+            if !bottomPages.isEmpty {
+                Section {
+                    rows(bottomPages)
+                }
             }
         }
         .listStyle(.sidebar)
