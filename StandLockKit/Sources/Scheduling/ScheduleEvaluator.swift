@@ -38,8 +38,10 @@ public struct ScheduleEvaluator: SchedulingEngine, Sendable {
     }
 
     private func interval(for schedule: Schedule, cycleIndex: Int) -> TimeInterval {
-        guard let cycle = schedule.intervalCycle, !cycle.isEmpty else { return schedule.breakInterval }
-        return cycle[cycleIndex % cycle.count].duration
+        guard let cycle = schedule.intervalCycle, !cycle.isEmpty else {
+            return BreakSafety.breakInterval(schedule.breakInterval)
+        }
+        return BreakSafety.breakInterval(cycle[cycleIndex % cycle.count].duration)
     }
 
     public func breakDuration(for schedule: Schedule, breakIndex: Int) -> TimeInterval {

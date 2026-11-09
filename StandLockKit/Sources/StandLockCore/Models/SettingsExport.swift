@@ -83,6 +83,7 @@ public struct SettingsExport: Codable, Sendable, Equatable {
               p.strictEscapeHoldDuration.isFinite,
               (0...BreakSafety.maximumEscapeHoldDuration).contains(p.strictEscapeHoldDuration),
               p.firmSkipDelay <= BreakSafety.maximumSkipDelay,
+              BreakSafety.escapePhrase(p.firmEscapePhrase) == p.firmEscapePhrase,
               [p.firmSkipDelay, p.postponeReturnDelay]
                   .allSatisfy({ $0.isFinite && (0...Self.maxDuration).contains($0) }),
               [p.gentleDailySkipLimit, p.firmDailySkipLimit, p.menuBarCountdownMinutes, p.calendarLookAheadMinutes]
@@ -93,7 +94,9 @@ public struct SettingsExport: Codable, Sendable, Equatable {
                 + (schedule.intervalCycle ?? []).map(\.duration)
             let breaks = [schedule.breakDuration]
                 + [schedule.repetitionRule?.shortBreakDuration, schedule.repetitionRule?.longBreakDuration].compactMap { $0 }
-            return intervals.allSatisfy { $0.isFinite && $0 > 0 && $0 <= Self.maxDuration }
+            return intervals.allSatisfy {
+                $0.isFinite && $0 >= BreakSafety.minimumBreakInterval && $0 <= Self.maxDuration
+            }
                 && breaks.allSatisfy { $0.isFinite && $0 > 0 && $0 <= BreakSafety.maximumBreakDuration }
                 && (0...Self.maxCount).contains(schedule.repetitionRule?.shortBreakCount ?? 0)
                 && schedule.windows.allSatisfy { window in

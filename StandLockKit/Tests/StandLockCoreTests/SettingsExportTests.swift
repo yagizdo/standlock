@@ -33,7 +33,7 @@ struct SettingsExportTests {
                 isEnabled: false,
                 days: .weekends,
                 windows: [TimeWindow(startHour: 18, startMinute: 15, endHour: 21, endMinute: 45)],
-                breakInterval: 6, breakDuration: 3,
+                breakInterval: 60, breakDuration: 3,
                 disciplineLevel: .firm
             ),
         ]
@@ -263,13 +263,12 @@ struct SettingsExportTests {
     }
 
     @Test func subMinuteValuesStayReadable() throws {
-        // Older stored schedules can sit below the form's ranges; the file must still load.
+        // Break lengths below a minute come from the form itself; the file must still load.
         let data = try Self.editedSchedule { schedule in
-            schedule["breakInterval"] = 6.0
             schedule["breakDuration"] = 3.0
         }
         let decoded = try SettingsExport.decode(data)
-        #expect(decoded.schedules[0].breakInterval == TimeInterval(6))
+        #expect(decoded.schedules[0].breakDuration == TimeInterval(3))
     }
 
     @Test(arguments: [3601.0, 366.0 * 86_400])
@@ -297,6 +296,28 @@ struct SettingsExportTests {
     @Test func unsafeFirmDelayIsUnreadable() throws {
         var export = Self.full()
         export.preferences.firmSkipDelay = 61
+        #expect(Self.decodeError(try export.encoded()) == .unreadable)
+    }
+
+    @Test(arguments: [1.0, 59.0])
+    func subMinuteIntervalsAreUnreadable(interval: Double) throws {
+        let data = try Self.editedSchedule { $0["breakInterval"] = interval }
+        #expect(Self.decodeError(data) == .unreadable)
+    }
+
+    @Test func subMinuteCycleStepIsUnreadable() throws {
+        let data = try Self.editedSchedule { schedule in
+            var steps = schedule["intervalCycle"] as! [[String: Any]]
+            steps[1]["duration"] = 30.0
+            schedule["intervalCycle"] = steps
+        }
+        #expect(Self.decodeError(data) == .unreadable)
+    }
+
+    @Test(arguments: ["", "   ", "skip\nnow", String(repeating: "a", count: 101)])
+    func untypeableFirmPhraseIsUnreadable(phrase: String) throws {
+        var export = Self.full()
+        export.preferences.firmEscapePhrase = phrase
         #expect(Self.decodeError(try export.encoded()) == .unreadable)
     }
 

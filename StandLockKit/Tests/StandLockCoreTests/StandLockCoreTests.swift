@@ -285,6 +285,21 @@ struct ScheduleModelTests {
         #expect(policy.tiers[4].skipDelay == 40)
     }
 
+    /// The phrase has no Settings field: a bad one from a file or an old default would leave a
+    /// Firm break that no typing can skip.
+    @Test(arguments: ["", "   ", "skip\nnow", String(repeating: "a", count: 101)])
+    func untypeableFirmPhraseFallsBackToDefault(phrase: String) {
+        let policy = DisciplineLevel.firm.enforcementPolicy(preferences: AppPreferences(firmEscapePhrase: phrase))
+        let expected = AppPreferences.defaultFirmEscapePhrase
+        #expect(policy.tiers[0].dismissMechanism == .typePhrase(phrase: expected, requiresConfirmation: false))
+        #expect(policy.tiers[3].dismissMechanism == .typePhrase(phrase: expected, requiresConfirmation: true))
+    }
+
+    @Test func firmPhraseIsTrimmedBeforeUse() {
+        let policy = DisciplineLevel.firm.enforcementPolicy(preferences: AppPreferences(firmEscapePhrase: " let me go "))
+        #expect(policy.tiers[0].dismissMechanism == .typePhrase(phrase: "let me go", requiresConfirmation: false))
+    }
+
     @Test func appPreferencesDefaultPhraseConstant() throws {
         #expect(AppPreferences().firmEscapePhrase == AppPreferences.defaultFirmEscapePhrase)
         let decoded = try JSONDecoder().decode(AppPreferences.self, from: Data("{}".utf8))
