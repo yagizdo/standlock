@@ -11,6 +11,7 @@ struct ManuscriptBreakView: View {
     let enforcementTier: EnforcementTier
     let escalationTierIndex: Int
     let nextIntervalLabel: String?
+    let pomodoroChip: PomodoroChip?
     let canPostpone: Bool
     let onSkip: () -> Void
     let onPostpone: () -> Void
@@ -27,6 +28,7 @@ struct ManuscriptBreakView: View {
          preferences: AppPreferences, statistics: BreakStatistics,
          escalationTier: Int = 0,
          nextIntervalLabel: String? = nil,
+         pomodoroChip: PomodoroChip? = nil,
          canPostpone: Bool,
          onSkip: @escaping () -> Void,
          onPostpone: @escaping () -> Void,
@@ -42,6 +44,7 @@ struct ManuscriptBreakView: View {
         self.enforcementTier = policy.tier(at: escalationTier)
         self.escalationTierIndex = escalationTier
         self.nextIntervalLabel = nextIntervalLabel
+        self.pomodoroChip = pomodoroChip
         self.canPostpone = canPostpone
         self.onSkip = onSkip
         self.onPostpone = onPostpone
@@ -70,7 +73,12 @@ struct ManuscriptBreakView: View {
                     Spacer()
 
                     VStack(spacing: compact ? 16 : 24) {
-                        LevelPill(level: level, palette: palette)
+                        HStack(spacing: 10) {
+                            LevelPill(level: level, palette: palette)
+                            if let pomodoroChip {
+                                PomodoroChipView(chip: pomodoroChip, palette: palette)
+                            }
+                        }
                         if let nextIntervalLabel, !nextIntervalLabel.isEmpty {
                             NextIntervalLabel(text: nextIntervalLabel, palette: palette)
                         }
