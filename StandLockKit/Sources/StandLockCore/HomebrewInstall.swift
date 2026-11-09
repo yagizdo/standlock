@@ -19,7 +19,8 @@ public enum HomebrewInstall {
 
         for caskroom in caskroomURLs {
             let token = caskroom.appendingPathComponent("standlock", isDirectory: true)
-            guard manager.isWritableFile(atPath: token.path),
+            guard HomebrewTrust.trustedLocation(token) != nil,
+                  manager.isWritableFile(atPath: token.path),
                   let versions = try? manager.contentsOfDirectory(
                       at: token,
                       includingPropertiesForKeys: nil,
@@ -28,14 +29,19 @@ public enum HomebrewInstall {
 
             let linked = versions.contains { version in
                 let artifact = version.appendingPathComponent("StandLock.app")
-                return (try? manager.destinationOfSymbolicLink(atPath: artifact.path)) != nil
+                return HomebrewTrust.trustedLink(artifact)
                     && artifact.resolvingSymlinksInPath().standardizedFileURL == bundle
             }
             let prefix = caskroom.deletingLastPathComponent()
-            if linked, manager.isExecutableFile(atPath: prefix.appendingPathComponent("bin/brew").path) {
+            if linked, trustedExecutable(in: prefix) != nil {
                 return prefix
             }
         }
         return nil
+    }
+
+    /// Rechecked immediately before each invocation because an update can replace Homebrew.
+    public static func trustedExecutable(in prefix: URL) -> URL? {
+        HomebrewTrust.executable(in: prefix)
     }
 }

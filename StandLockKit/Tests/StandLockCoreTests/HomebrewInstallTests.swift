@@ -152,4 +152,115 @@ struct HomebrewInstallTests {
 
         #expect(samePath(prefix, fixture.prefix))
     }
+
+    @Test(arguments: ["", "bin", "bin/brew", "Caskroom", "Caskroom/standlock", "Caskroom/standlock/0.11.0"])
+    func writableUpdaterPathsAreNotBrewManaged(relativePath: String) throws {
+        let fixture = try Fixture()
+        defer { fixture.cleanUp() }
+        try fixture.link()
+        let path = relativePath.isEmpty ? fixture.prefix : fixture.prefix.appendingPathComponent(relativePath)
+        try FileManager.default.setAttributes([.posixPermissions: 0o777], ofItemAtPath: path.path)
+
+        #expect(HomebrewInstall.prefix(appBundleURL: fixture.app, caskroomURLs: [fixture.caskroom]) == nil)
+    }
+
+    @Test func aWritableSymlinkTargetAncestorIsRejected() throws {
+        let fixture = try Fixture()
+        defer { fixture.cleanUp() }
+        try fixture.link()
+        let manager = FileManager.default
+        let writable = fixture.root.appendingPathComponent("Shared")
+        try manager.createDirectory(at: writable, withIntermediateDirectories: true)
+        try manager.setAttributes([.posixPermissions: 0o777], ofItemAtPath: writable.path)
+        let safeBrew = fixture.prefix.appendingPathComponent("bin/brew")
+        let intermediate = writable.appendingPathComponent("brew")
+        try manager.moveItem(at: safeBrew, to: fixture.root.appendingPathComponent("brew"))
+        try manager.createSymbolicLink(at: intermediate, withDestinationURL: fixture.root.appendingPathComponent("brew"))
+        try manager.createSymbolicLink(at: safeBrew, withDestinationURL: intermediate)
+
+        #expect(HomebrewInstall.prefix(appBundleURL: fixture.app, caskroomURLs: [fixture.caskroom]) == nil)
+    }
+
+    @Test func aTrustedSymlinkedExecutableStillMatches() throws {
+        let fixture = try Fixture()
+        defer { fixture.cleanUp() }
+        try fixture.link()
+        let manager = FileManager.default
+        let brew = fixture.prefix.appendingPathComponent("bin/brew")
+        let repository = fixture.prefix.appendingPathComponent("Homebrew")
+        try fixture.addBrew(to: repository)
+        try manager.removeItem(at: brew)
+        try manager.createSymbolicLink(atPath: brew.path, withDestinationPath: "../Homebrew/bin/brew")
+
+        #expect(samePath(HomebrewInstall.prefix(appBundleURL: fixture.app, caskroomURLs: [fixture.caskroom]), fixture.prefix))
+        #expect(samePath(HomebrewInstall.trustedExecutable(in: fixture.prefix), repository.appendingPathComponent("bin/brew")))
+    }
+
+    @Test(arguments: ["Library/Homebrew/brew.sh", "Library/Taps/example/tool.rb", ".git/config",
+                      "etc/homebrew/brew.env", "bin/git", "Caskroom/standlock/.metadata/1/1/Casks/standlock.rb"])
+    func writableLoadedCodeIsRejected(relativePath: String) throws {
+        let fixture = try Fixture()
+        defer { fixture.cleanUp() }
+        try fixture.link()
+        let file = fixture.prefix.appendingPathComponent(relativePath)
+        let manager = FileManager.default
+        try manager.createDirectory(at: file.deletingLastPathComponent(), withIntermediateDirectories: true)
+        manager.createFile(atPath: file.path, contents: Data())
+        try manager.setAttributes([.posixPermissions: 0o666], ofItemAtPath: file.path)
+
+        #expect(HomebrewInstall.trustedExecutable(in: fixture.prefix) == nil)
+    }
+
+    @Test func absentConfigurationCannotBeCreatedThroughWritableParent() throws {
+        let fixture = try Fixture()
+        defer { fixture.cleanUp() }
+        try fixture.link()
+        let directory = fixture.prefix.appendingPathComponent("etc")
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        try FileManager.default.setAttributes([.posixPermissions: 0o777], ofItemAtPath: directory.path)
+
+        #expect(HomebrewInstall.trustedExecutable(in: fixture.prefix) == nil)
+    }
+
+    @Test func invocationRechecksChangedPermissions() throws {
+        let fixture = try Fixture()
+        defer { fixture.cleanUp() }
+        try fixture.link()
+        #expect(HomebrewInstall.trustedExecutable(in: fixture.prefix) != nil)
+        try FileManager.default.setAttributes([.posixPermissions: 0o775], ofItemAtPath: fixture.prefix.appendingPathComponent("bin").path)
+        #expect(HomebrewInstall.trustedExecutable(in: fixture.prefix) == nil)
+    }
+
+    private func chmod(_ arguments: [String], at url: URL) throws {
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: "/bin/chmod")
+        process.arguments = arguments + [url.path]
+        process.standardOutput = FileHandle.nullDevice
+        process.standardError = FileHandle.nullDevice
+        try process.run()
+        process.waitUntilExit()
+        #expect(process.terminationStatus == 0)
+    }
+
+    @Test func writeACLIsRejected() throws {
+        let fixture = try Fixture()
+        defer { fixture.cleanUp() }
+        try fixture.link()
+        let brew = fixture.prefix.appendingPathComponent("bin/brew")
+        try chmod(["+a", "everyone allow write"], at: brew)
+        defer { try? chmod(["-N"], at: brew) }
+
+        #expect(HomebrewInstall.trustedExecutable(in: fixture.prefix) == nil)
+    }
+
+    @Test func denyOnlyACLStillAllowsTrustedExecutable() throws {
+        let fixture = try Fixture()
+        defer { fixture.cleanUp() }
+        try fixture.link()
+        let brew = fixture.prefix.appendingPathComponent("bin/brew")
+        try chmod(["+a", "everyone deny delete"], at: brew)
+        defer { try? chmod(["-N"], at: brew) }
+
+        #expect(HomebrewInstall.trustedExecutable(in: fixture.prefix) != nil)
+    }
 }

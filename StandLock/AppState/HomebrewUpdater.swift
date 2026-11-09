@@ -8,7 +8,7 @@ import StandLockCore
 final class HomebrewUpdater {
     private static let lastCheckKey = "homebrewLastCheckDate"
 
-    private let brew: URL
+    private let prefix: URL
     private let observer: UpdateObserver
     private let automaticChecks: @MainActor () -> Bool
     private let canRestart: @MainActor () -> Bool
@@ -20,7 +20,7 @@ final class HomebrewUpdater {
         automaticChecks: @escaping @MainActor () -> Bool,
         canRestart: @escaping @MainActor () -> Bool
     ) {
-        self.brew = prefix.appendingPathComponent("bin/brew")
+        self.prefix = prefix
         self.observer = observer
         self.automaticChecks = automaticChecks
         self.canRestart = canRestart
@@ -86,13 +86,19 @@ final class HomebrewUpdater {
     private func performUpgrade(to target: String) async {
         // Tolerated: an unrelated broken tap fails this too. If our tap stayed stale the upgrade
         // changes nothing, and the version read below reports it.
-        await run(["update"], timeout: .seconds(120))
+        guard await run(["update"], timeout: .seconds(120)) else {
+            observer.homebrewUpgrade = .failed
+            return
+        }
 
         // ponytail: no timeout, so a hung brew leaves the row on running until quit. Killing it
         // mid-swap could leave a broken bundle. `upgrade`, not `reinstall`, because only
         // `upgrade` keeps a backup; a bundle older than a current receipt ends in failed, and
         // the manual `reinstall` command shown then covers it.
-        await run(["upgrade", "--cask", HomebrewCask.fullName], extraEnvironment: ["HOMEBREW_NO_AUTO_UPDATE": "1"])
+        guard await run(["upgrade", "--cask", HomebrewCask.fullName], extraEnvironment: ["HOMEBREW_NO_AUTO_UPDATE": "1"]) else {
+            observer.homebrewUpgrade = .failed
+            return
+        }
 
         // Not `Bundle`: it keeps returning the running version after the swap.
         let plist = Bundle.main.bundleURL.appendingPathComponent("Contents/Info.plist")
@@ -117,12 +123,13 @@ final class HomebrewUpdater {
         info?["CFBundleShortVersionString"] as? String
     }
 
-    /// The result is not read: exit 0 proves nothing about the upgrade, the version on disk does.
+    /// A successful launch still needs the on-disk version check to establish an upgrade.
     private func run(
         _ arguments: [String],
         extraEnvironment: [String: String] = [:],
         timeout: Duration? = nil
-    ) async {
+    ) async -> Bool {
+        guard let brew = HomebrewInstall.trustedExecutable(in: prefix) else { return false }
         let process = Process()
         process.executableURL = brew
         process.arguments = arguments
@@ -138,13 +145,13 @@ final class HomebrewUpdater {
             ]) { _, new in new }
             .merging(extraEnvironment) { _, new in new }
 
-        await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
-            process.terminationHandler = { _ in continuation.resume() }
+        return await withCheckedContinuation { (continuation: CheckedContinuation<Bool, Never>) in
+            process.terminationHandler = { _ in continuation.resume(returning: true) }
             do {
                 try process.run()
             } catch {
                 process.terminationHandler = nil
-                continuation.resume()
+                continuation.resume(returning: false)
                 return
             }
             if let timeout {
