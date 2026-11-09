@@ -40,13 +40,20 @@ final class MockLocker: LockPresenting, @unchecked Sendable {
     var lastEscalationTier: Int?
     var lastNextIntervalLabel: String?
     var lastCanPostpone: Bool?
+    var lastPomodoroChip: PomodoroChip?
+    var lastShownAt: Date?
+    var showCount = 0
     var isShowing = false
 
     func showOverlay(level: DisciplineLevel, duration: TimeInterval,
                      exercise: Exercise?, preferences: AppPreferences,
                      statistics: BreakStatistics, escalationTier: Int,
-                     nextIntervalLabel: String?, canPostpone: Bool) {
+                     nextIntervalLabel: String?, canPostpone: Bool,
+                     pomodoroChip: PomodoroChip?) {
         showOverlayCalled = true
+        showCount += 1
+        lastShownAt = Date()
+        lastPomodoroChip = pomodoroChip
         lastLevel = level
         lastDuration = duration
         lastPreferences = preferences
@@ -1972,6 +1979,16 @@ struct BreakCoordinatorEnforcementStateTests {
         // scheduler is the signal that the exhausted cap was carried over.
         #expect(scheduler.receivedCycleIndices.isEmpty)
         rebuilt.stop()
+    }
+
+    @Test func repetitionProgressSurvivesEverySchedulePassingThrough() {
+        // Every schedule switched off: the coordinator is built with none and must hand the
+        // carried short-break position on untouched.
+        let id = UUID()
+        let coordinator = BreakCoordinator(scheduler: MockScheduler(), detector: MockDetector(), locker: MockLocker())
+        coordinator.start(with: [], preferences: AppPreferences(), restoring: EnforcementState(repetitionIndices: [id: 2]))
+        #expect(coordinator.captureEnforcementState().repetitionIndices[id] == 2)
+        coordinator.stop()
     }
 
     @Test func dailyCapReArmsWithoutRestore() async {

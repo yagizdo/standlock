@@ -175,3 +175,54 @@ struct PomodoroSessionTests {
         #expect(PomodoroStatus(session: Self.session(.focus(round: 1)), level: .gentle).chip == nil)
     }
 }
+
+@Suite("Pomodoro restore bounds")
+struct PomodoroRestoreBoundsTests {
+    static let now = Date(timeIntervalSince1970: 1_800_000_000)
+
+    @Test func sessionInsideBoundsIsKept() {
+        let session = PomodoroSessionTests.session(.focus(round: 2), endingAt: Self.now.addingTimeInterval(600))
+        #expect(session.bounded(now: Self.now) == session)
+    }
+
+    @Test func zeroLengthFocusIsDropped() {
+        var session = PomodoroSessionTests.session(.focus(round: 1))
+        session.configuration.focus = 0
+        #expect(session.bounded(now: Self.now) == nil)
+    }
+
+    @Test(arguments: [
+        PomodoroPhase.focus(round: 0), .focus(round: 5), .shortBreak(afterRound: 0), .shortBreak(afterRound: 4),
+    ])
+    func roundOutsideTheSessionIsDropped(phase: PomodoroPhase) {
+        #expect(PomodoroSessionTests.session(phase).bounded(now: Self.now) == nil)
+    }
+
+    @Test func clockSetBackCannotStretchAPhase() {
+        let session = PomodoroSessionTests.session(.shortBreak(afterRound: 1), endingAt: Self.now.addingTimeInterval(86_400))
+        #expect(session.bounded(now: Self.now)?.phaseEnd == Self.now.addingTimeInterval(5 * 60))
+    }
+}
+
+@Suite("Pomodoro level")
+struct PomodoroLevelTests {
+    @Test func strictestEnabledLevelWins() {
+        #expect(DisciplineLevel.strictest(of: [.gentle, .strict, .firm]) == .strict)
+        #expect(DisciplineLevel.strictest(of: [.gentle, .firm]) == .firm)
+    }
+
+    @Test func noScheduleMeansGentle() {
+        #expect(DisciplineLevel.strictest(of: []) == .gentle)
+    }
+}
+
+@Suite("Pomodoro relaunch")
+struct PomodoroRelaunchTests {
+    @Test func sessionFromTodayIsRestorable() {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(identifier: "UTC")!
+        let session = PomodoroSessionTests.session(.focus(round: 1))
+        #expect(session.isRestorable(now: PomodoroSessionTests.start.addingTimeInterval(3600), calendar: calendar))
+        #expect(!session.isRestorable(now: PomodoroSessionTests.start.addingTimeInterval(86_400), calendar: calendar))
+    }
+}

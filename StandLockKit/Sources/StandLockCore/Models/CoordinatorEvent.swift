@@ -11,4 +11,6 @@ public enum CoordinatorEvent: Sendable {
     case scheduleResumed
     case statisticsUpdated(BreakStatistics)
     case breakCue(BreakCue)
+    /// A session phase began or its end moved; nil when the session ended.
+    case pomodoroChanged(PomodoroStatus?)
 }
