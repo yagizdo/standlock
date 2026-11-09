@@ -420,6 +420,22 @@
         }
       }
     },
+    "Focus length" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Odak süresi"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "专注时长"
+          }
+        }
+      }
+    },
     "Granted" : {
       "localizations" : {
         "tr" : {
@@ -820,6 +836,22 @@
         }
       }
     },
+    "Pomodoro" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pomodoro"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "番茄钟"
+          }
+        }
+      }
+    },
     "Preview" : {
       "localizations" : {
         "tr" : {
@@ -980,6 +1012,22 @@
         }
       }
     },
+    "Rounds" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tur"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "轮数"
+          }
+        }
+      }
+    },
     "Save your settings and schedules to a file" : {
       "localizations" : {
         "tr" : {
@@ -1120,6 +1168,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "即使一项都不授予，StandLock 也能运行。"
+          }
+        }
+      }
+    },
+    "Start a session from the menu bar. Changes apply to the next session." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oturumu menü çubuğundan başlat. Değişiklikler sonraki oturumda geçerli olur."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "从菜单栏开始一次会话。更改将在下一次会话时生效。"
           }
         }
       }

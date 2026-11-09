@@ -60,6 +60,7 @@
 		726D144CA2B3B5AF4D4503AE /* LevelPill.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF6724F4176D1F398DF9A697 /* LevelPill.swift */; };
 		72EF8A3AE6FD2B14FA478D0F /* OpenSettingsCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D5900DFD7FAE70774438F1F /* OpenSettingsCommand.swift */; };
 		73D55EC0B43E3538ED4157C1 /* SettingsRowDivider.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7F941253F684FB262B426B9 /* SettingsRowDivider.swift */; };
+		74A65286E3635E9A799AB935 /* PomodoroSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A582C0BA5B8B79048543AF05 /* PomodoroSettingsView.swift */; };
 		75E31F36751D55F051D6FF34 /* ExerciseBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 434445F0717D4FC94E284CB8 /* ExerciseBlock.swift */; };
 		769FC5C08D86A729FB78CAF4 /* FoxScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AFF45DCD02D27949394DEF3 /* FoxScene.swift */; };
 		7A2143A0695F8455C834C0C3 /* CookingScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = C48598983576EA3F15F8B4F7 /* CookingScene.swift */; };
@@ -207,6 +208,7 @@
 		9A485172E288DBE02E326017 /* ScheduleStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleStatusView.swift; sourceTree = "<group>"; };
 		9C3B7E68FDF3C989BA50F367 /* BreakPalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakPalette.swift; sourceTree = "<group>"; };
 		A485E937F7D80FA3455BA910 /* RhythmTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RhythmTile.swift; sourceTree = "<group>"; };
+		A582C0BA5B8B79048543AF05 /* PomodoroSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PomodoroSettingsView.swift; sourceTree = "<group>"; };
 		A7F941253F684FB262B426B9 /* SettingsRowDivider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsRowDivider.swift; sourceTree = "<group>"; };
 		A81F2ED91290AD26CB5B672E /* AppCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
 		AA4E43A1C69B7789F4968823 /* SettingsPageLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPageLayout.swift; sourceTree = "<group>"; };
@@ -419,6 +421,7 @@
 				C64B592ED400D7D67ABD591A /* MenuScenePicker.swift */,
 				2442916C24424F076D8711A6 /* PermissionCard.swift */,
 				12184C2234D04E8FE035B701 /* PermissionsView.swift */,
+				A582C0BA5B8B79048543AF05 /* PomodoroSettingsView.swift */,
 				7EA489010EA8A9B969CE5227 /* PreferencesSaveOwner.swift */,
 				DF887D81035A1FE4735344F3 /* SettingsDetail.swift */,
 				B434EC205E6881076C098867 /* SettingsFileSection.swift */,
@@ -691,6 +694,7 @@
 				EAC5C8BAB2FC5D5FB1D845C5 /* PermissionsView.swift in Sources */,
 				231BA9A6E5E6E06DD9B6CA91 /* PixelGridView.swift in Sources */,
 				FC583BA99EE50EF0303C3DC6 /* PixelParts.swift in Sources */,
+				74A65286E3635E9A799AB935 /* PomodoroSettingsView.swift in Sources */,
 				3F24521CD8A9CA8C9156A1B9 /* PreferencesSaveOwner.swift in Sources */,
 				4A537C55B992DF62814F9857 /* QuickActionsView.swift in Sources */,
 				0B393CE81B833D5037CFDB55 /* QuitConfirmationView.swift in Sources */,
