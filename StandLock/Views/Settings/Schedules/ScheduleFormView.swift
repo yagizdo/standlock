@@ -22,11 +22,12 @@ struct ScheduleFormView: View {
 
     private var nameSection: some View {
         SettingsSection {
-            SettingsRow("Name", symbol: "textformat") {
+            SettingsRow("Name", symbol: "textformat", expandsTitle: false) {
                 TextField("e.g. Work Hours", text: $draft.name)
                     .labelsHidden()
+                    .accessibilityLabel("Name")
                     .textFieldStyle(.roundedBorder)
-                    .frame(width: SettingsTokens.textFieldWidth)
+                    .frame(maxWidth: .infinity)
             }
         }
     }

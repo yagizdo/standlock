@@ -18,15 +18,21 @@ struct DayButtons: View {
                 Button {
                     if isSelected { days.remove(day) } else { days.insert(day) }
                 } label: {
-                    Text(symbols.short(for: day))
-                        .font(SettingsTokens.dayButtonFont)
-                        .frame(maxWidth: .infinity)
-                        .padding(SettingsTokens.dayButtonInsets)
-                        .background(
-                            RoundedRectangle(cornerRadius: SettingsTokens.chipRadius)
-                                .fill(isSelected ? Color.accentColor : Color.secondary.opacity(0.12))
-                        )
-                        .foregroundStyle(isSelected ? .white : .secondary)
+                    HStack(spacing: SettingsTokens.stripItemSpacing) {
+                        if isSelected {
+                            Image(systemName: "checkmark")
+                                .accessibilityHidden(true)
+                        }
+                        Text(symbols.short(for: day))
+                    }
+                    .font(SettingsTokens.dayButtonFont)
+                    .frame(maxWidth: .infinity)
+                    .padding(SettingsTokens.dayButtonInsets)
+                    .background(
+                        RoundedRectangle(cornerRadius: SettingsTokens.chipRadius)
+                            .fill(isSelected ? Color.accentColor : Color.secondary.opacity(0.12))
+                    )
+                    .foregroundStyle(isSelected ? .white : .secondary)
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel(symbols.full(for: day))

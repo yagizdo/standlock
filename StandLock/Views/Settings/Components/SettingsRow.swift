@@ -9,17 +9,20 @@ struct SettingsRow<Control: View>: View {
     private let title: LocalizedStringKey
     private let symbol: String?
     private let description: LocalizedStringKey?
+    private let expandsTitle: Bool
     private let control: Control
 
     init(
         _ title: LocalizedStringKey,
         symbol: String?,
         description: LocalizedStringKey? = nil,
+        expandsTitle: Bool = true,
         @ViewBuilder control: () -> Control
     ) {
         self.title = title
         self.symbol = symbol
         self.description = description
+        self.expandsTitle = expandsTitle
         self.control = control()
     }
 
@@ -35,7 +38,7 @@ struct SettingsRow<Control: View>: View {
                     SettingsDescription(description)
                 }
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
+            .frame(maxWidth: expandsTitle ? .infinity : nil, alignment: .leading)
 
             control
         }
