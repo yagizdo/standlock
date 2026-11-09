@@ -2,9 +2,9 @@ name: Tests
 
 on:
   pull_request:
-    branches: [main]
+    branches: [main, feat/pomodoro]
   push:
-    branches: [main]
+    branches: [main, feat/pomodoro]
 
 concurrency:
   group: tests-${{ github.ref }}
