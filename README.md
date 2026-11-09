@@ -42,6 +42,7 @@ Or [download the DMG](https://github.com/yagizdo/StandLock/releases/latest) and 
 - Set a level per schedule and change it anytime
 - Turn on escalation and each skip makes the next break harder: a button that runs from your cursor, mini-games, sentences you'd rather not type
 - Complete a break and escalation resets
+- Optionally limit consecutive skips per schedule, including emergency exits; complete a break to restore the allowance
 - Daily skip limits for Gentle and Firm
 
 <p align="center">
@@ -56,7 +57,7 @@ Or [download the DMG](https://github.com/yagizdo/StandLock/releases/latest) and 
 - Alternating intervals, like 58 minutes sitting and 28 standing
 - Every break of the day listed before you save
 - Breaks wait for meetings, screen recordings, screen sharing and calendar events
-- If you were already away from your desk, the break counts as done
+- Screen lock or system sleep counts as a break after a configurable threshold (five minutes by default). Shorter absences pause the countdown; unlocked inactivity remains work time.
 - You can postpone a break once when a call comes up
 
 <p align="center"><img src="assets/schedules.png" width="460" alt="Schedule form with days, hours, alternating intervals and the day's break times"></p>

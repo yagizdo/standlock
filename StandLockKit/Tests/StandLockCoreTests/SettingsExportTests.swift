@@ -53,7 +53,7 @@ struct SettingsExportTests {
             screenSharingDetectionEnabled: false,
             screenSharingPostDeferral: .skipBreak,
             postponeReturnDelay: 60,
-            idleDetectionEnabled: false,
+            naturalBreakThresholdMinutes: 7,
             pauseMediaDuringBreak: false,
             soundBeforeBreak: true,
             soundAfterBreak: true,

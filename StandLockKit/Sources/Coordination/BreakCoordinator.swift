@@ -4,50 +4,12 @@ import Scheduling
 import Detection
 import Locking
 
-/// Per-schedule counters that have to outlive a coordinator rebuild. Editing a schedule tears
-/// the coordinator down and builds a new one, and every counter here lives on the instance: a
-/// fresh one re-arms `dailyBreakCap` from zero, sends `intervalCycle` back to its first entry,
-/// drops progressive enforcement to the base tier and forgets how far into the short-break run
-/// the user was. A day change still clears all of it, in `rolloverIfNeeded`. Codable so it can
-/// also outlive a quit: relaunching otherwise hands the user all of the above for free.
-public struct EnforcementState: Codable, Sendable {
-    public var dailyBreakCounts: [UUID: Int]
-    public var escalationTiers: [UUID: Int]
-    public var cycleIndices: [UUID: Int]
-    public var repetitionIndices: [UUID: Int]
-    /// Slots the outgoing coordinator was counting down to, by schedule. The interval is
-    /// measured from whenever the rebuilt coordinator starts, so without this any restart -- a
-    /// schedule edit, a Strict permission reading that flaps -- pushes the break out by however
-    /// far into the interval the user already was. Keyed by schedule because the slot decides
-    /// which break fires, and because a disabled schedule's slot has to wait out the rebuilds
-    /// that exclude it: switching a schedule off and on again must not buy a fresh interval.
-    public var pendingBreakDates: [UUID: Date]
-    /// The schedule whose break was postponed and is still owed. Carried across a rebuild so a
-    /// schedule edit during the wait cannot drop the break, but left out of `CodingKeys`: a
-    /// postponed break does not survive a quit.
-    public var postponedScheduleID: UUID?
-
-    private enum CodingKeys: String, CodingKey {
-        case dailyBreakCounts, escalationTiers, cycleIndices, repetitionIndices, pendingBreakDates
-    }
-
-    public init(dailyBreakCounts: [UUID: Int] = [:], escalationTiers: [UUID: Int] = [:],
-                cycleIndices: [UUID: Int] = [:], repetitionIndices: [UUID: Int] = [:],
-                pendingBreakDates: [UUID: Date] = [:], postponedScheduleID: UUID? = nil) {
-        self.dailyBreakCounts = dailyBreakCounts
-        self.escalationTiers = escalationTiers
-        self.cycleIndices = cycleIndices
-        self.repetitionIndices = repetitionIndices
-        self.pendingBreakDates = pendingBreakDates
-        self.postponedScheduleID = postponedScheduleID
-    }
-}
-
 @MainActor
 public final class BreakCoordinator {
     private let scheduler: any SchedulingEngine
     private let detector: any ContextDetecting
     private let locker: any LockPresenting
+    private let clock: CoordinatorClock
 
     private var activeSchedules: [Schedule] = []
     private var preferences: AppPreferences = AppPreferences()
@@ -56,7 +18,19 @@ public final class BreakCoordinator {
     private var isPaused: Bool = false
     /// Set while the screen is locked or the machine is asleep. Distinct from `isPaused`, which
     /// is the user-facing pause; suspension only blocks work being started behind a dark screen.
-    private var isSuspended: Bool = false
+    private var isSuspended: Bool { awayTracker.isAway }
+    private var awayTracker = AwaySessionTracker()
+    private var awayRemainingWork: [UUID: TimeInterval] = [:]
+    private var awayOwnerID: UUID?
+    private var pendingDates: [UUID: Date] = [:]
+    private var consecutiveDismissalCounts: [UUID: Int] = [:]
+    private var activeDeadline: TimeInterval?
+    private var currentExercise: Exercise?
+    private var completionTimer: Task<Void, Never>?
+    private var pauseTimer: Task<Void, Never>?
+    private var pauseDeadline: Date?
+    private var resumedDeferredScheduleID: UUID?
+    public private(set) var pendingSlotID: UUID?
     private var currentBreak: BreakEvent?
     private var currentSchedule: Schedule?
     /// A break may be postponed once; the one that comes back after the call cannot be again.
@@ -64,6 +38,7 @@ public final class BreakCoordinator {
     /// The break owed after a postpone, until it returns. The wait itself lives in `breakTimer`,
     /// which lock, sleep and pause cancel; this is what lets them start it again.
     private var postponedSchedule: Schedule?
+    private var postponedBreak: BreakEvent?
     private var statistics: BreakStatistics = BreakStatistics()
     private var dailyBreakCounts: [UUID: Int] = [:]
     private var escalationTiers: [UUID: Int] = [:]
@@ -102,10 +77,11 @@ public final class BreakCoordinator {
 
     public init(scheduler: any SchedulingEngine, detector: any ContextDetecting,
                 locker: any LockPresenting, deferralPollingInterval: TimeInterval = 10,
-                cueLead: TimeInterval = 60) {
+                cueLead: TimeInterval = 60, clock: CoordinatorClock = .live) {
         var continuation: AsyncStream<CoordinatorEvent>.Continuation!
         self.events = AsyncStream { continuation = $0 }
         self.eventContinuation = continuation
+        self.clock = clock
         self.scheduler = scheduler
         self.detector = detector
         self.locker = locker
@@ -116,11 +92,12 @@ public final class BreakCoordinator {
     /// Pass previously persisted `statistics` so a relaunch during the day keeps today's
     /// counters instead of restarting them from zero.
     public func start(with schedules: [Schedule], preferences: AppPreferences,
-                      statistics: BreakStatistics = BreakStatistics(),
+                      statistics: BreakStatistics? = nil,
                       restoring state: EnforcementState = EnforcementState()) {
         self.activeSchedules = schedules
         self.preferences = preferences
-        self.statistics = statistics
+        self.statistics = statistics ?? BreakStatistics(date: clock.now())
+        consecutiveDismissalCounts = state.consecutiveDismissalCounts
         dailyBreakCounts = state.dailyBreakCounts
         escalationTiers = state.escalationTiers
         cycleIndices = state.cycleIndices
@@ -135,9 +112,25 @@ public final class BreakCoordinator {
         if let id = state.postponedScheduleID {
             if let schedule = schedules.first(where: { $0.id == id && $0.isEnabled }) {
                 postponedSchedule = schedule
-                eventContinuation.yield(.breakDeferred(.postponed, nextAttempt: Date().addingTimeInterval(deferralPollingInterval)))
+                eventContinuation.yield(.breakDeferred(.postponed, nextAttempt: clock.now().addingTimeInterval(deferralPollingInterval)))
             } else {
                 dormantPostponedScheduleID = id
+            }
+        }
+        if let runtime = state.runtime {
+            awayTracker = runtime.awayTracker
+            awayRemainingWork = runtime.remainingWork
+            awayOwnerID = runtime.awayOwnerID
+            currentBreak = runtime.activeBreak
+            currentSchedule = schedules.first { $0.id == runtime.activeScheduleID }
+            if currentSchedule == nil { currentBreak = nil }
+            activeDeadline = runtime.activeDeadline
+            currentExercise = runtime.exercise
+            activeBreakCanPostpone = runtime.canPostpone
+            postponedBreak = runtime.postponedBreak
+            resumedDeferredScheduleID = runtime.deferredScheduleID
+            if let deadline = runtime.pauseDeadline, deadline > clock.now() {
+                restorePause(until: deadline)
             }
         }
         rearm()
@@ -147,20 +140,32 @@ public final class BreakCoordinator {
     public func captureEnforcementState() -> EnforcementState {
         // A restored postponed break skips `scheduleNextBreak`, so restored slots can still be unconsumed.
         var pendingBreakDates = dormantPendingBreaks.merging(restoredPendingBreaks) { current, _ in current }
+        pendingBreakDates.merge(pendingDates) { _, next in next }
         if let id = pendingBreakScheduleID, let date = pendingBreakDate {
             pendingBreakDates[id] = date
         }
-        return EnforcementState(
+        var state = EnforcementState(
             dailyBreakCounts: dailyBreakCounts,
             escalationTiers: escalationTiers,
             cycleIndices: cycleIndices,
             repetitionIndices: repetitionTrackers.mapValues(\.currentBreakIndex),
             pendingBreakDates: pendingBreakDates,
-            postponedScheduleID: postponedSchedule?.id ?? dormantPostponedScheduleID
+            postponedScheduleID: postponedSchedule?.id ?? dormantPostponedScheduleID,
+            consecutiveDismissalCounts: consecutiveDismissalCounts
         )
+        state.runtime = CoordinatorRuntimeState(
+            awayTracker: awayTracker, remainingWork: awayRemainingWork, awayOwnerID: awayOwnerID,
+            activeBreak: currentBreak, activeScheduleID: currentSchedule?.id,
+            activeDeadline: activeDeadline, exercise: currentExercise, canPostpone: activeBreakCanPostpone,
+            postponedBreak: postponedBreak, pauseDeadline: pauseDeadline,
+            deferredScheduleID: isDeferringBreak ? pendingBreakScheduleID : resumedDeferredScheduleID
+        )
+        return state
     }
 
     public func stop() {
+        completionTimer?.cancel()
+        pauseTimer?.cancel()
         breakTimer?.cancel()
         breakTimer = nil
         clearPendingBreak()
@@ -175,25 +180,37 @@ public final class BreakCoordinator {
         breakTimer?.cancel()
         breakTimer = nil
         clearPendingBreak()
+        restorePause(until: clock.now().addingTimeInterval(duration))
+        stateChanged()
+    }
+
+    private func restorePause(until deadline: Date) {
+        pauseTimer?.cancel()
         isPaused = true
-        let until = Date().addingTimeInterval(duration)
-        eventContinuation.yield(.schedulePaused(until: until))
-        breakTimer = Task {
-            try? await Task.sleep(for: .seconds(duration))
+        pauseDeadline = deadline
+        eventContinuation.yield(.schedulePaused(until: deadline))
+        pauseTimer = Task {
+            do { try await self.clock.sleep(max(0, deadline.timeIntervalSince(self.clock.now()))) }
+            catch { return }
             guard !Task.isCancelled else { return }
-            resume()
+            self.resume()
         }
     }
 
     public func resume() {
+        pauseTimer?.cancel()
+        pauseTimer = nil
+        pauseDeadline = nil
         isPaused = false
         eventContinuation.yield(.scheduleResumed)
         rearm()
+        stateChanged()
     }
 
     /// Rolls the daily counters over when the calendar day has changed. Safe to call often --
     /// it is a no-op while the recorded day is still the current one.
-    public func refreshDailyRollover(now: Date = Date()) {
+    public func refreshDailyRollover(now: Date? = nil) {
+        let now = now ?? clock.now()
         guard rolloverIfNeeded(now: now) else { return }
         // Re-arm on every rollover: a schedule that exhausted its daily cap left no timer
         // behind, and a timer armed before midnight was computed from the old day's cycle
@@ -207,7 +224,8 @@ public final class BreakCoordinator {
     }
 
     @discardableResult
-    private func rolloverIfNeeded(now: Date = Date()) -> Bool {
+    private func rolloverIfNeeded(now: Date? = nil) -> Bool {
+        let now = now ?? clock.now()
         guard statistics.resetDailyIfNeeded(currentDate: now) else { return false }
         statistics.resetWeeklyIfNeeded(currentDate: now)
         dailyBreakCounts.removeAll()
@@ -216,6 +234,10 @@ public final class BreakCoordinator {
         // Every day starts the interval cycle from its first entry.
         cycleIndices.removeAll()
         eventContinuation.yield(.statisticsUpdated(statistics))
+        if let schedule = currentSchedule {
+            locker.updateDismissalAvailability(availability(for: schedule))
+        }
+        stateChanged()
         return true
     }
 
@@ -223,55 +245,104 @@ public final class BreakCoordinator {
         rolloverIfNeeded()
         mutate(&statistics)
         eventContinuation.yield(.statisticsUpdated(statistics))
+        stateChanged()
     }
 
-    public func handleSystemSleep() {
-        isSuspended = true
-        cancelAndDismissIfShowing()
-    }
+    public func handleSystemSleep() { setAway(.sleeping, active: true) }
+    public func handleSystemWake() { setAway(.sleeping, active: false) }
+    public func handleScreenLock() { setAway(.locked, active: true) }
+    public func handleScreenUnlock() { setAway(.locked, active: false) }
 
-    public func handleSystemWake() {
-        isSuspended = false
-        if isPaused {
-            resume()
-        } else {
-            rearm()
-        }
-    }
-
-    public func handleScreenLock() {
-        isSuspended = true
-        cancelAndDismissIfShowing()
-    }
-
-    public func handleScreenUnlock() {
-        isSuspended = false
-        if isPaused {
-            resume()
-        } else {
-            rearm()
-        }
-    }
-
-    private func cancelAndDismissIfShowing() {
-        breakTimer?.cancel()
-        breakTimer = nil
-        clearPendingBreak()
-        if locker.isShowing {
-            locker.dismissOverlay()
-            if let event = currentBreak {
-                eventContinuation.yield(.breakSkipped(event))
-                updateStatistics {
-                    $0.breaksSkipped += 1
-                    $0.currentStreak = 0
+    private func setAway(_ reason: AwaySessionTracker.Reason, active: Bool) {
+        guard let transition = awayTracker.set(reason, active: active, at: clock.elapsed()) else { return }
+        switch transition {
+        case .departed:
+            let now = clock.now()
+            awayRemainingWork = pendingDates.mapValues { max(0, $0.timeIntervalSince(now)) }
+            awayOwnerID = currentSchedule?.id ?? postponedSchedule?.id
+            if awayOwnerID == nil, let id = pendingBreakScheduleID,
+               let schedule = activeSchedules.first(where: { $0.id == id }),
+               scheduler.isWithinActiveWindow(schedule, at: now), !isCapReached(schedule) {
+                awayOwnerID = id
+            }
+            resumedDeferredScheduleID = isDeferringBreak ? pendingBreakScheduleID : nil
+            breakTimer?.cancel()
+            breakTimer = nil
+            completionTimer?.cancel()
+            if locker.isShowing { locker.dismissOverlay() }
+            eventContinuation.yield(.systemSuspensionChanged(true))
+        case .returned(let duration):
+            rolloverIfNeeded()
+            eventContinuation.yield(.systemSuspensionChanged(false))
+            let qualifies = duration >= TimeInterval(min(30, max(1, preferences.naturalBreakThresholdMinutes)) * 60)
+            if qualifies {
+                escalationTiers.removeAll()
+                consecutiveDismissalCounts.removeAll()
+                if let event = currentBreak, let schedule = currentSchedule {
+                    finishBreak(event: event, schedule: schedule, playSound: false)
+                } else if let id = awayOwnerID,
+                          let schedule = activeSchedules.first(where: { $0.id == id }) {
+                    if postponedSchedule == nil {
+                        dailyBreakCounts[id, default: 0] += 1
+                        cycleIndices[id, default: 0] += 1
+                    }
+                    let event = postponedBreak.flatMap { $0.scheduleId == id ? $0 : nil }
+                        ?? BreakEvent(scheduledAt: clock.now(),
+                        duration: currentBreakDuration(for: schedule), level: schedule.disciplineLevel, scheduleId: id)
+                    finishBreak(event: event, schedule: schedule, playSound: false)
+                }
+                postponedSchedule = nil
+                postponedBreak = nil
+                dormantPostponedScheduleID = nil
+                restoredPendingBreaks = [:]
+                dormantPendingBreaks = [:]
+                resumedDeferredScheduleID = nil
+                clearPendingBreak()
+            } else {
+                restoredPendingBreaks = awayRemainingWork.mapValues {
+                    clock.now().addingTimeInterval(max(0.001, $0))
                 }
             }
-            currentBreak = nil
-            currentSchedule = nil
+            awayRemainingWork = [:]
+            awayOwnerID = nil
+            rearm()
         }
+        stateChanged()
     }
 
-    public func skipNextBreak() {
+    public var canSkipNextBreak: Bool {
+        guard !isSuspended, !isPaused, currentBreak == nil, let schedule = pendingSkipSchedule else { return false }
+        return availability(for: schedule).normalSkipAllowed
+    }
+
+    private var pendingSkipSchedule: Schedule? {
+        if let postponedSchedule { return postponedSchedule }
+        return activeSchedules.first { $0.id == pendingBreakScheduleID && $0.isEnabled }
+    }
+
+    private func availability(for schedule: Schedule) -> DismissalAvailability {
+        DismissalAvailability(progressiveEnforcement: schedule.progressiveEnforcement,
+            consecutiveSkipLimit: schedule.consecutiveSkipLimit,
+            consecutiveDismissals: consecutiveDismissalCounts[schedule.id, default: 0],
+            dailySkipLimit: schedule.disciplineLevel.dailySkipLimit(preferences: preferences),
+            dailySkips: statistics.breaksSkipped)
+    }
+
+    private func recordDismissal(for schedule: Schedule) {
+        consecutiveDismissalCounts[schedule.id] = min(20, consecutiveDismissalCounts[schedule.id, default: 0] + 1)
+        let maxTier = schedule.disciplineLevel.enforcementPolicy(preferences: preferences).tiers.count - 1
+        escalationTiers[schedule.id] = min(escalationTiers[schedule.id, default: 0] + 1, maxTier)
+    }
+
+    private func stateChanged() {
+        eventContinuation.yield(.enforcementStateChanged)
+    }
+
+    public func skipNextBreak(expectedSlotID: UUID? = nil) {
+        rolloverIfNeeded()
+        guard expectedSlotID == nil || expectedSlotID == pendingSlotID,
+              canSkipNextBreak, let schedule = pendingSkipSchedule else { return }
+        recordDismissal(for: schedule)
         breakTimer?.cancel()
         breakTimer = nil
         if let id = pendingBreakScheduleID {
@@ -280,6 +351,7 @@ public final class BreakCoordinator {
         let anchor = skipAnchor(slot: pendingBreakDate)
         clearPendingBreak()
         postponedSchedule = nil
+        postponedBreak = nil
         updateStatistics {
             $0.breaksSkipped += 1
             $0.currentStreak = 0
@@ -287,12 +359,13 @@ public final class BreakCoordinator {
         scheduleNextBreak(searchFrom: anchor)
     }
 
-    public func skipActiveBreak() {
-        guard let event = currentBreak else { return }
-        if let scheduleID = currentBreak?.scheduleId {
-            let maxTier = (currentSchedule?.disciplineLevel.enforcementPolicy(preferences: preferences).tiers.count ?? 5) - 1
-            escalationTiers[scheduleID, default: 0] = min(escalationTiers[scheduleID, default: 0] + 1, maxTier)
-        }
+    public func skipActiveBreak(expectedBreakID: UUID? = nil) {
+        rolloverIfNeeded()
+        guard let event = currentBreak, let schedule = currentSchedule, !isSuspended,
+              expectedBreakID == nil || expectedBreakID == event.id,
+              availability(for: schedule).normalSkipAllowed else { return }
+        recordDismissal(for: schedule)
+        completionTimer?.cancel()
         locker.dismissOverlay()
         eventContinuation.yield(.breakSkipped(event))
         updateStatistics {
@@ -305,12 +378,13 @@ public final class BreakCoordinator {
         scheduleNextBreak(searchFrom: anchor)
     }
 
-    public func escapeActiveBreak() {
-        guard let event = currentBreak else { return }
-        if let scheduleID = currentBreak?.scheduleId {
-            let maxTier = (currentSchedule?.disciplineLevel.enforcementPolicy(preferences: preferences).tiers.count ?? 5) - 1
-            escalationTiers[scheduleID, default: 0] = min(escalationTiers[scheduleID, default: 0] + 1, maxTier)
-        }
+    public func escapeActiveBreak(expectedBreakID: UUID? = nil) {
+        rolloverIfNeeded()
+        guard let event = currentBreak, let schedule = currentSchedule, !isSuspended,
+              expectedBreakID == nil || expectedBreakID == event.id,
+              availability(for: schedule).emergencyEscapeAllowed else { return }
+        recordDismissal(for: schedule)
+        completionTimer?.cancel()
         locker.dismissOverlay()
         eventContinuation.yield(.breakEscaped(event))
         updateStatistics {
@@ -325,15 +399,19 @@ public final class BreakCoordinator {
     /// Closes the break screen without counting a skip and brings the same break back, at full
     /// length, once camera and microphone have both been free for `postponeReturnDelay`. The
     /// wait ignores the detection preferences: postponing is the user saying they are on a call.
-    public func postponeActiveBreak() {
-        guard currentBreak != nil, let schedule = currentSchedule, activeBreakCanPostpone else { return }
+    public func postponeActiveBreak(expectedBreakID: UUID? = nil) {
+        guard let event = currentBreak, let schedule = currentSchedule, activeBreakCanPostpone, !isSuspended,
+              expectedBreakID == nil || expectedBreakID == event.id else { return }
+        completionTimer?.cancel()
+        postponedBreak = event
+        pendingSlotID = UUID()
         breakTimer?.cancel()
         breakTimer = nil
         locker.dismissOverlay()
         currentBreak = nil
         currentSchedule = nil
         postponedSchedule = schedule
-        eventContinuation.yield(.breakDeferred(.postponed, nextAttempt: Date().addingTimeInterval(deferralPollingInterval)))
+        eventContinuation.yield(.breakDeferred(.postponed, nextAttempt: clock.now().addingTimeInterval(deferralPollingInterval)))
         updateStatistics { $0.breaksDeferred += 1 }
         startPostponeWait(for: schedule)
     }
@@ -346,33 +424,47 @@ public final class BreakCoordinator {
         breakTimer = Task {
             var clearSince: Date?
             while !Task.isCancelled {
-                try? await Task.sleep(for: .seconds(self.deferralPollingInterval))
+                try? await self.clock.sleep(self.deferralPollingInterval)
                 guard !Task.isCancelled else { return }
+                guard !self.isSuspended, !self.isPaused,
+                      let current = self.activeSchedules.first(where: { $0.id == schedule.id && $0.isEnabled }) else { return }
+                guard self.scheduler.isWithinActiveWindow(current, at: self.clock.now()) else {
+                    clearSince = nil
+                    self.eventContinuation.yield(.breakDeferred(.postponed,
+                        nextAttempt: self.clock.now().addingTimeInterval(self.deferralPollingInterval)))
+                    continue
+                }
                 let context = await self.detector.currentContext()
                 guard !Task.isCancelled else { return }
                 if context.cameraActive || context.microphoneActive {
                     clearSince = nil
-                    self.eventContinuation.yield(.breakDeferred(.postponed, nextAttempt: Date().addingTimeInterval(self.deferralPollingInterval)))
+                    self.eventContinuation.yield(.breakDeferred(.postponed, nextAttempt: clock.now().addingTimeInterval(self.deferralPollingInterval)))
                     continue
                 }
-                let since = clearSince ?? Date()
+                let since = clearSince ?? clock.now()
                 if clearSince == nil {
                     // Lets the menu bar count down to the return instead of sitting at 0:00.
                     self.eventContinuation.yield(.nextBreakScheduled(since.addingTimeInterval(self.preferences.postponeReturnDelay)))
                 }
                 clearSince = since
-                if Date().timeIntervalSince(since) >= self.preferences.postponeReturnDelay {
+                if clock.now().timeIntervalSince(since) >= self.preferences.postponeReturnDelay {
+                    guard self.scheduler.isWithinActiveWindow(current, at: self.clock.now()) else {
+                        clearSince = nil
+                        continue
+                    }
                     self.clearPendingBreak()
-                    self.postponedSchedule = nil
-                    self.presentBreak(for: schedule, context: context, canPostpone: false)
-                    return
+                    if self.presentBreak(for: current, context: context, canPostpone: false) {
+                        self.postponedSchedule = nil
+                        return
+                    }
                 }
             }
         }
     }
 
-    public func completeActiveBreak() {
-        guard let event = currentBreak, let schedule = currentSchedule else { return }
+    public func completeActiveBreak(expectedBreakID: UUID? = nil) {
+        guard let event = currentBreak, let schedule = currentSchedule, !isSuspended,
+              expectedBreakID == nil || expectedBreakID == event.id else { return }
         completeBreak(event: event, schedule: schedule)
     }
 
@@ -384,6 +476,27 @@ public final class BreakCoordinator {
 
     public func updatePreferences(_ preferences: AppPreferences) {
         self.preferences = preferences
+        if let schedule = currentSchedule {
+            locker.updateDismissalAvailability(availability(for: schedule))
+        }
+        stateChanged()
+    }
+
+    /// Enforcement edits affect existing controls without restarting the break or its challenges.
+    public func updateEnforcementSettings(for schedule: Schedule) {
+        guard let index = activeSchedules.firstIndex(where: { $0.id == schedule.id }) else { return }
+        activeSchedules[index].progressiveEnforcement = schedule.progressiveEnforcement
+        activeSchedules[index].consecutiveSkipLimit = schedule.consecutiveSkipLimit
+        if currentSchedule?.id == schedule.id {
+            currentSchedule?.progressiveEnforcement = schedule.progressiveEnforcement
+            currentSchedule?.consecutiveSkipLimit = schedule.consecutiveSkipLimit
+            locker.updateDismissalAvailability(availability(for: activeSchedules[index]))
+        }
+        if postponedSchedule?.id == schedule.id {
+            postponedSchedule?.progressiveEnforcement = schedule.progressiveEnforcement
+            postponedSchedule?.consecutiveSkipLimit = schedule.consecutiveSkipLimit
+        }
+        stateChanged()
     }
 
     // MARK: - Escalation
@@ -396,7 +509,7 @@ public final class BreakCoordinator {
         guard let slot, preferences.resetIntervalOnSkip else { return slot }
         guard let schedule = activeSchedules.first(where: { $0.id == pendingBreakScheduleID }),
               let next = scheduler.nextBreakTime(
-                for: schedule, after: Date(), cycleIndex: cycleIndices[schedule.id, default: 0]
+                for: schedule, after: clock.now(), cycleIndex: cycleIndices[schedule.id, default: 0]
               )
         else { return nil }
         return next <= slot ? slot : nil
@@ -411,8 +524,30 @@ public final class BreakCoordinator {
     // MARK: - Private
 
     private func rearm() {
-        if let schedule = postponedSchedule {
+        guard !isSuspended, !isPaused else { return }
+        if let event = currentBreak, let schedule = currentSchedule {
+            if (activeDeadline ?? clock.elapsed()) <= clock.elapsed() {
+                completeBreak(event: event, schedule: schedule)
+                return
+            }
+            guard schedule.isEnabled, scheduler.isWithinActiveWindow(schedule, at: clock.now()) else {
+                currentBreak = nil
+                currentSchedule = nil
+                scheduleNextBreak()
+                return
+            }
+            showCurrentBreak()
+        } else if let schedule = postponedSchedule {
             startPostponeWait(for: schedule)
+        } else if let id = resumedDeferredScheduleID,
+                  let schedule = activeSchedules.first(where: { $0.id == id && $0.isEnabled }),
+                  scheduler.isWithinActiveWindow(schedule, at: clock.now()) {
+            resumedDeferredScheduleID = nil
+            breakTimer = Task {
+                let context = await self.detector.currentContext()
+                guard !Task.isCancelled, !self.isSuspended else { return }
+                await self.triggerBreak(for: schedule, context: context)
+            }
         } else {
             scheduleNextBreak()
         }
@@ -423,6 +558,8 @@ public final class BreakCoordinator {
     private func clearPendingBreak() {
         pendingBreakScheduleID = nil
         pendingBreakDate = nil
+        pendingSlotID = nil
+        pendingDates = [:]
         isDeferringBreak = false
     }
 
@@ -438,13 +575,15 @@ public final class BreakCoordinator {
     /// `searchFrom` is the moment the next interval is measured from. It differs from `now` only
     /// when `resetIntervalOnSkip` is off, where the skipped slot stays the anchor so a skip
     /// neither buys work time nor pulls the next break closer.
-    private func scheduleNextBreak(now: Date = Date(), searchFrom: Date? = nil) {
+    private func scheduleNextBreak(now: Date? = nil, searchFrom: Date? = nil) {
+        let now = now ?? clock.now()
         breakTimer?.cancel()
         breakTimer = nil
         rolloverIfNeeded(now: now)
-        guard !isPaused else { return }
+        guard !isPaused, !isSuspended, currentBreak == nil else { return }
 
         var earliest: (date: Date, schedule: Schedule)?
+        pendingDates = [:]
         // Carried slots compete with the freshly computed ones instead of overriding them, so a
         // schedule whose interval the user just shortened still wins with its earlier date. A
         // slot already in the past is dropped: it belongs to a gap the coordinator sat out --
@@ -456,6 +595,8 @@ public final class BreakCoordinator {
                 dormantPendingBreaks[id] = date
                 continue
             }
+            guard scheduler.isWithinActiveWindow(schedule, at: date) else { continue }
+            pendingDates[id] = date
             if !isCapReached(schedule), earliest == nil || date < earliest!.date {
                 earliest = (date, schedule)
             }
@@ -464,38 +605,46 @@ public final class BreakCoordinator {
             if isCapReached(schedule) { continue }
             if let next = scheduler.nextBreakTime(for: schedule, after: searchFrom ?? now,
                                                   cycleIndex: cycleIndices[schedule.id, default: 0]) {
+                pendingDates[schedule.id] = min(pendingDates[schedule.id] ?? next, next)
                 if earliest == nil || next < earliest!.date {
                     earliest = (next, schedule)
                 }
             }
         }
 
-        guard let target = earliest else { return }
+        guard let target = earliest else {
+            clearPendingBreak()
+            stateChanged()
+            return
+        }
         // An anchored slot can already have gone by; a break must never open right on top of the
         // skip that scheduled it. The unanchored path keeps its exact slot, short ones included.
         let fireDate = searchFrom == nil
             ? target.date
             : max(target.date, now.addingTimeInterval(Self.minimumLeadTime))
+        pendingSlotID = UUID()
         pendingBreakScheduleID = target.schedule.id
         pendingBreakDate = fireDate
+        pendingDates[target.schedule.id] = fireDate
+        stateChanged()
         eventContinuation.yield(.nextBreakScheduled(fireDate))
 
         breakTimer = Task {
-            let untilCue = fireDate.timeIntervalSince(Date()) - self.cueLead
+            let untilCue = fireDate.timeIntervalSince(clock.now()) - self.cueLead
             if untilCue > 0 {
-                try? await Task.sleep(for: .seconds(untilCue))
+                try? await self.clock.sleep(untilCue)
                 guard !Task.isCancelled else { return }
                 await self.playApproachingCue()
                 guard !Task.isCancelled else { return }
             }
-            let delay = fireDate.timeIntervalSince(Date())
+            let delay = fireDate.timeIntervalSince(clock.now())
             let leadTime: TimeInterval = 3
             let earlyDelay = max(0, delay - leadTime)
-            if earlyDelay > 0 { try? await Task.sleep(for: .seconds(earlyDelay)) }
+            if earlyDelay > 0 { try? await self.clock.sleep(earlyDelay) }
             guard !Task.isCancelled else { return }
             let context = await self.detector.currentContext()
-            let remaining = fireDate.timeIntervalSince(Date())
-            if remaining > 0 { try? await Task.sleep(for: .seconds(remaining)) }
+            let remaining = fireDate.timeIntervalSince(clock.now())
+            if remaining > 0 { try? await self.clock.sleep(remaining) }
             guard !Task.isCancelled else { return }
             await self.triggerBreak(for: target.schedule, context: context)
         }
@@ -511,53 +660,33 @@ public final class BreakCoordinator {
     }
 
     private func triggerBreak(for schedule: Schedule, context: DetectionContext) async {
+        guard !isSuspended, !isPaused, currentBreak == nil,
+              let current = activeSchedules.first(where: { $0.id == schedule.id && $0.isEnabled }),
+              scheduler.isWithinActiveWindow(current, at: clock.now()) else { return }
+        let schedule = current
         // The pending break is now active; a menu skip from here on must not advance again.
         clearPendingBreak()
         rolloverIfNeeded()
-        if preferences.idleDetectionEnabled {
-            let breakDuration = currentBreakDuration(for: schedule)
-            // A break under a minute must not be swallowed by a glance away from the keyboard:
-            // idle counts as a break only once it reaches a minute, or the full break when longer.
-            if context.idleDuration >= max(breakDuration, 60) {
-                let idleEvent = BreakEvent(
-                    scheduledAt: Date(), duration: breakDuration,
-                    level: schedule.disciplineLevel, scheduleId: schedule.id
-                )
-                if var tracker = repetitionTrackers[schedule.id] {
-                    tracker.recordBreak()
-                    repetitionTrackers[schedule.id] = tracker
-                }
-                dailyBreakCounts[schedule.id, default: 0] += 1
-                cycleIndices[schedule.id, default: 0] += 1
-                escalationTiers[schedule.id] = 0
-                eventContinuation.yield(.breakCompleted(idleEvent))
-                updateStatistics {
-                    $0.breaksCompleted += 1
-                    $0.currentStreak += 1
-                }
-                scheduleNextBreak()
-                return
-            }
-        }
-
         if let deferral = shouldDefer(context: context) {
             // The deferred slot is still pending, so a menu skip during the poll loop
             // must conclude it for this schedule.
+            pendingSlotID = UUID()
             pendingBreakScheduleID = schedule.id
-            pendingBreakDate = Date()
+            pendingBreakDate = clock.now()
+            pendingDates[schedule.id] = pendingBreakDate
             isDeferringBreak = true
-            eventContinuation.yield(.breakDeferred(deferral, nextAttempt: Date().addingTimeInterval(deferralPollingInterval)))
+            eventContinuation.yield(.breakDeferred(deferral, nextAttempt: clock.now().addingTimeInterval(deferralPollingInterval)))
             updateStatistics { $0.breaksDeferred += 1 }
             breakTimer = Task {
                 while !Task.isCancelled {
-                    try? await Task.sleep(for: .seconds(self.deferralPollingInterval))
+                    try? await self.clock.sleep(self.deferralPollingInterval)
                     guard !Task.isCancelled else { return }
                     let freshContext = await self.detector.currentContext()
                     // Cancellation does not interrupt the await above, so re-check before
                     // mutating: a menu skip during it already concluded this slot.
                     guard !Task.isCancelled else { return }
                     if let newReason = self.shouldDefer(context: freshContext) {
-                        self.eventContinuation.yield(.breakDeferred(newReason, nextAttempt: Date().addingTimeInterval(self.deferralPollingInterval)))
+                        self.eventContinuation.yield(.breakDeferred(newReason, nextAttempt: clock.now().addingTimeInterval(self.deferralPollingInterval)))
                     } else if self.shouldSkipAfterDeferral(reason: deferral) {
                         self.cycleIndices[schedule.id, default: 0] += 1
                         self.clearPendingBreak()
@@ -579,29 +708,62 @@ public final class BreakCoordinator {
 
     /// Shows a break without counting it. A postponed break returns through here, so the daily
     /// count and the cycle advance only once, in `triggerBreak`.
-    private func presentBreak(for schedule: Schedule, context: DetectionContext, canPostpone: Bool) {
+    @discardableResult
+    private func presentBreak(for schedule: Schedule, context: DetectionContext, canPostpone: Bool) -> Bool {
+        guard !isSuspended, !isPaused,
+              let current = activeSchedules.first(where: { $0.id == schedule.id && $0.isEnabled }),
+              scheduler.isWithinActiveWindow(current, at: clock.now()) else { return false }
+        let schedule = current
         var effectiveLevel = schedule.disciplineLevel
         if let reduction = shouldReduce(context: context) {
             effectiveLevel = reduction
         }
 
         let duration = currentBreakDuration(for: schedule)
-        let exercise = exercises.randomElement()
-        let tier = currentTier(for: schedule)
-        let breakEvent = BreakEvent(
-            scheduledAt: Date(), duration: duration,
+        currentExercise = exercises.randomElement()
+        let resumed = postponedBreak.flatMap { $0.scheduleId == schedule.id ? $0 : nil }
+        let breakEvent = resumed ?? BreakEvent(
+            scheduledAt: clock.now(), duration: duration,
             level: effectiveLevel, scheduleId: schedule.id
         )
+        if resumed != nil { postponedBreak = nil }
         currentBreak = breakEvent
+        activeDeadline = clock.elapsed() + duration
         currentSchedule = schedule
         activeBreakCanPostpone = canPostpone
 
-        eventContinuation.yield(.breakStarted(breakEvent))
-        locker.showOverlay(level: effectiveLevel, duration: duration,
-                           exercise: exercise, preferences: preferences,
-                           statistics: statistics, escalationTier: tier,
-                           nextIntervalLabel: nextIntervalLabel(for: schedule),
-                           canPostpone: canPostpone)
+        showCurrentBreak()
+        return true
+    }
+
+    private func showCurrentBreak() {
+        guard let event = currentBreak, let schedule = currentSchedule, let deadline = activeDeadline,
+              !isSuspended, !isPaused else { return }
+        let remaining = min(event.duration, ceil(max(0, deadline - clock.elapsed())))
+        // A permission-driven downgrade must also apply to a break restored during a rebuild.
+        let level: DisciplineLevel
+        switch (event.level, schedule.disciplineLevel) {
+        case (.strict, .firm), (.strict, .gentle), (.firm, .gentle):
+            level = schedule.disciplineLevel
+        default:
+            level = event.level
+        }
+        let displayEvent = BreakEvent(id: event.id, scheduledAt: event.scheduledAt, duration: remaining,
+                                     level: level, scheduleId: event.scheduleId)
+        eventContinuation.yield(.breakStarted(displayEvent))
+        locker.showOverlay(level: level, duration: remaining,
+            exercise: currentExercise, preferences: preferences,
+            statistics: statistics, escalationTier: currentTier(for: schedule),
+            nextIntervalLabel: nextIntervalLabel(for: schedule), canPostpone: activeBreakCanPostpone,
+            breakID: event.id, dismissalAvailability: availability(for: schedule))
+        completionTimer?.cancel()
+        completionTimer = Task {
+            do { try await self.clock.sleep(max(0, deadline - self.clock.elapsed())) }
+            catch { return }
+            guard !Task.isCancelled, !self.isSuspended, self.clock.elapsed() >= deadline else { return }
+            self.completeActiveBreak(expectedBreakID: event.id)
+        }
+        stateChanged()
     }
 
     /// The cycle index was already advanced when this break triggered, so it points at the
@@ -637,20 +799,28 @@ public final class BreakCoordinator {
     }
 
     private func completeBreak(event: BreakEvent, schedule: Schedule) {
+        finishBreak(event: event, schedule: schedule, playSound: true)
+        scheduleNextBreak()
+    }
+
+    private func finishBreak(event: BreakEvent, schedule: Schedule, playSound: Bool) {
+        completionTimer?.cancel()
         escalationTiers[schedule.id] = 0
+        consecutiveDismissalCounts[schedule.id] = 0
         locker.dismissOverlay()
+        currentBreak = nil
+        currentSchedule = nil
+        activeDeadline = nil
         if var tracker = repetitionTrackers[schedule.id] {
             tracker.recordBreak()
             repetitionTrackers[schedule.id] = tracker
         }
         eventContinuation.yield(.breakCompleted(event))
-        if preferences.soundAfterBreak { eventContinuation.yield(.breakCue(.ended)) }
+        if playSound && preferences.soundAfterBreak { eventContinuation.yield(.breakCue(.ended)) }
         updateStatistics {
             $0.breaksCompleted += 1
             $0.currentStreak += 1
         }
-        currentBreak = nil
-        currentSchedule = nil
-        scheduleNextBreak()
+        stateChanged()
     }
 }

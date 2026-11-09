@@ -10,6 +10,7 @@ struct ActionArea: View {
     let statistics: BreakStatistics
     let disciplineLevel: DisciplineLevel
     var escalationTier: Int = 0
+    var availability = DismissalAvailability()
     let onDismiss: () -> Void
     var onEscape: (() -> Void)?
 
@@ -20,7 +21,13 @@ struct ActionArea: View {
 
     var body: some View {
         Group {
-            if tier.skipDelay == 0 {
+            if !availability.emergencyEscapeAllowed {
+                Text("Complete this break to skip again.")
+                    .font(BreakTypography.label(size: 12, weight: .medium))
+                    .foregroundStyle(palette.inkFaint)
+            } else if !availability.normalSkipAllowed {
+                mechanismView
+            } else if tier.skipDelay == 0 {
                 mechanismView
             } else if showAction {
                 mechanismView
@@ -55,7 +62,7 @@ struct ActionArea: View {
 
     @ViewBuilder
     private var mechanismView: some View {
-        if let limit = disciplineLevel.dailySkipLimit(preferences: preferences), statistics.breaksSkipped >= limit {
+        if !availability.normalSkipAllowed {
             VStack(spacing: 8) {
                 Text("Daily skip limit reached")
                     .font(BreakTypography.label(size: 12, weight: .medium))

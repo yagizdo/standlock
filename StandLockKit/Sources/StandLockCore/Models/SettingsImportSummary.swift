@@ -78,7 +78,7 @@ public struct SettingsImportSummary: Equatable, Sendable {
             field("screenSharingDetectionEnabled", .detection, \.screenSharingDetectionEnabled),
             field("screenSharingPostDeferral", .detection, \.screenSharingPostDeferral),
             field("postponeReturnDelay", .detection, \.postponeReturnDelay),
-            field("idleDetectionEnabled", .detection, \.idleDetectionEnabled),
+            field("naturalBreakThresholdMinutes", .detection, \.naturalBreakThresholdMinutes),
         ]
     }
 }

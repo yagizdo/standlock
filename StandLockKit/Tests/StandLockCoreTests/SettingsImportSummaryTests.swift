@@ -56,12 +56,12 @@ struct SettingsImportSummaryTests {
         #expect(Self.pages { $0.preferences.breakScreen.message = "Hi" } == [.breakScreen])
         #expect(Self.pages { $0.preferences.firmEscapePhrase = "out" } == [.discipline])
         #expect(Self.pages { $0.preferences.resetIntervalOnSkip = false } == [.discipline])
-        #expect(Self.pages { $0.preferences.idleDetectionEnabled = false } == [.detection])
+        #expect(Self.pages { $0.preferences.naturalBreakThresholdMinutes = 7 } == [.detection])
     }
 
     @Test func pagesComeInSidebarOrder() {
         let pages = Self.pages { export in
-            export.preferences.idleDetectionEnabled = false
+            export.preferences.naturalBreakThresholdMinutes = 7
             export.preferences.gentleDailySkipLimit = 1
             export.preferences.pauseMediaDuringBreak = false
             export.preferences.showFullWorkTimer = true

@@ -23,7 +23,7 @@ struct OnboardingWelcomeStep: View {
             SettingsSection {
                 SettingsRow("Breaks wait for meetings, calls and screen sharing.", symbol: "video") { EmptyView() }
                 SettingsRowDivider()
-                SettingsRow("Already away from your desk? The break counts as done.", symbol: "figure.walk") { EmptyView() }
+                SettingsRow("Time locked or asleep can count as a break.", symbol: "figure.walk") { EmptyView() }
                 SettingsRowDivider()
                 SettingsRow("No account and no analytics. Everything stays on this Mac.", symbol: "eye.slash") { EmptyView() }
             }

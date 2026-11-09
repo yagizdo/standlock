@@ -24,7 +24,7 @@ public struct AppPreferences: Codable, Sendable, Equatable {
     public var screenSharingPostDeferral: PostDeferralBehavior
     /// Seconds the microphone and camera must both stay free before a postponed break returns.
     public var postponeReturnDelay: TimeInterval
-    public var idleDetectionEnabled: Bool
+    public var naturalBreakThresholdMinutes: Int
 
     public var pauseMediaDuringBreak: Bool
     public var soundBeforeBreak: Bool
@@ -53,7 +53,7 @@ public struct AppPreferences: Codable, Sendable, Equatable {
         screenSharingDetectionEnabled: Bool = true,
         screenSharingPostDeferral: PostDeferralBehavior = .triggerBreak,
         postponeReturnDelay: TimeInterval = 120,
-        idleDetectionEnabled: Bool = true,
+        naturalBreakThresholdMinutes: Int = 5,
         pauseMediaDuringBreak: Bool = true,
         soundBeforeBreak: Bool = false,
         soundAfterBreak: Bool = false,
@@ -77,7 +77,7 @@ public struct AppPreferences: Codable, Sendable, Equatable {
         self.screenSharingDetectionEnabled = screenSharingDetectionEnabled
         self.screenSharingPostDeferral = screenSharingPostDeferral
         self.postponeReturnDelay = postponeReturnDelay
-        self.idleDetectionEnabled = idleDetectionEnabled
+        self.naturalBreakThresholdMinutes = naturalBreakThresholdMinutes
         self.pauseMediaDuringBreak = pauseMediaDuringBreak
         self.soundBeforeBreak = soundBeforeBreak
         self.soundAfterBreak = soundAfterBreak
@@ -96,7 +96,7 @@ public struct AppPreferences: Codable, Sendable, Equatable {
         case calendarDetectionEnabled, calendarLookAheadMinutes, calendarSelectionMode, selectedCalendarIdentifiers
         case screenSharingDetectionEnabled, screenSharingPostDeferral
         case postponeReturnDelay
-        case idleDetectionEnabled
+        case naturalBreakThresholdMinutes
         case pauseMediaDuringBreak, soundBeforeBreak, soundAfterBreak
         case resetIntervalOnSkip
         case showFullWorkTimer, menuBarCountdownMinutes, menuScene
@@ -119,7 +119,7 @@ public struct AppPreferences: Codable, Sendable, Equatable {
         screenSharingDetectionEnabled = try c.decodeIfPresent(Bool.self, forKey: .screenSharingDetectionEnabled) ?? true
         screenSharingPostDeferral = try c.decodeIfPresent(PostDeferralBehavior.self, forKey: .screenSharingPostDeferral) ?? .triggerBreak
         postponeReturnDelay = try c.decodeIfPresent(TimeInterval.self, forKey: .postponeReturnDelay) ?? 120
-        idleDetectionEnabled = try c.decodeIfPresent(Bool.self, forKey: .idleDetectionEnabled) ?? true
+        naturalBreakThresholdMinutes = try c.decodeIfPresent(Int.self, forKey: .naturalBreakThresholdMinutes) ?? 5
         pauseMediaDuringBreak = try c.decodeIfPresent(Bool.self, forKey: .pauseMediaDuringBreak) ?? true
         soundBeforeBreak = try c.decodeIfPresent(Bool.self, forKey: .soundBeforeBreak) ?? false
         soundAfterBreak = try c.decodeIfPresent(Bool.self, forKey: .soundAfterBreak) ?? false

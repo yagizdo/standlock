@@ -1,6 +1,8 @@
 import Foundation
 
 public enum CoordinatorEvent: Sendable {
+    case enforcementStateChanged
+    case systemSuspensionChanged(Bool)
     case nextBreakScheduled(Date)
     case breakStarted(BreakEvent)
     case breakCompleted(BreakEvent)

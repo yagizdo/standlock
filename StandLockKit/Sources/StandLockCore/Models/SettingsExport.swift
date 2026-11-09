@@ -79,7 +79,8 @@ public struct SettingsExport: Codable, Sendable, Equatable {
     /// schedules can sit outside them, such as sub-minute intervals.
     private var isRunnable: Bool {
         let p = preferences
-        guard Set(schedules.map(\.id)).count == schedules.count,
+        guard (1...30).contains(p.naturalBreakThresholdMinutes),
+              Set(schedules.map(\.id)).count == schedules.count,
               [p.firmSkipDelay, p.strictEscapeHoldDuration, p.postponeReturnDelay]
                   .allSatisfy({ $0.isFinite && (0...Self.maxDuration).contains($0) }),
               [p.gentleDailySkipLimit, p.firmDailySkipLimit, p.menuBarCountdownMinutes, p.calendarLookAheadMinutes]
@@ -89,7 +90,8 @@ public struct SettingsExport: Codable, Sendable, Equatable {
             let durations = [schedule.breakInterval, schedule.breakDuration]
                 + (schedule.intervalCycle ?? []).map(\.duration)
                 + [schedule.repetitionRule?.shortBreakDuration, schedule.repetitionRule?.longBreakDuration].compactMap { $0 }
-            return durations.allSatisfy { $0.isFinite && $0 > 0 && $0 <= Self.maxDuration }
+            return schedule.consecutiveSkipLimit.map { (1...20).contains($0) } != false
+                && durations.allSatisfy { $0.isFinite && $0 > 0 && $0 <= Self.maxDuration }
                 && (0...Self.maxCount).contains(schedule.repetitionRule?.shortBreakCount ?? 0)
                 && schedule.windows.allSatisfy { window in
                     (0...23).contains(window.startHour) && (0...23).contains(window.endHour)
