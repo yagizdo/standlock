@@ -25,6 +25,7 @@ struct PomodoroChipView: View {
                 .strokeBorder(palette.accent.opacity(0.6), lineWidth: 1)
         )
         .accessibilityElement(children: .ignore)
+        .accessibilityAddTraits(.isStaticText)
         .accessibilityLabel(spokenLabel)
     }
 
