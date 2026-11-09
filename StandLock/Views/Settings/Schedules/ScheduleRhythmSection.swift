@@ -4,6 +4,12 @@ import StandLockCore
 /// The short duration has one visible editor, including when longer breaks are enabled.
 struct ScheduleRhythmSection: View {
     @Binding var draft: ScheduleDraft
+    @FocusState private var focusedField: Field?
+
+    private enum Field: Hashable {
+        case interval(UUID)
+        case shortBreakCount
+    }
 
     var body: some View {
         SettingsSection("Rhythm") {
@@ -71,7 +77,8 @@ struct ScheduleRhythmSection: View {
         } else {
             HStack(spacing: SettingsTokens.stripItemSpacing) {
                 Text("After every")
-                integer("Work duration", value: $draft.intervalRows[0].minutes, range: ScheduleDraft.intervalRange, step: 5)
+                integer("Work duration", value: $draft.intervalRows[0].minutes, range: ScheduleDraft.intervalRange,
+                        step: 5, focus: .interval(draft.intervalRows[0].id))
                 Text("min of work,")
             }
         }
@@ -88,7 +95,8 @@ struct ScheduleRhythmSection: View {
     private var longCountClause: some View {
         HStack(spacing: SettingsTokens.stripItemSpacing) {
             Text("After")
-            integer("Short breaks before a longer break", value: $draft.shortBreakCount, range: ScheduleDraft.shortBreakCountRange)
+            integer("Short breaks before a longer break", value: $draft.shortBreakCount,
+                    range: ScheduleDraft.shortBreakCountRange, focus: .shortBreakCount)
             Text("short breaks,")
         }
     }
@@ -104,7 +112,9 @@ struct ScheduleRhythmSection: View {
     private func addInterval(_ title: LocalizedStringKey) -> some View {
         Button {
             guard draft.intervalRows.count < 6 else { return }
-            draft.intervalRows.append(IntervalRow(minutes: 40))
+            let row = IntervalRow(minutes: 40)
+            draft.intervalRows.append(row)
+            focusedField = .interval(row.id)
         } label: {
             Label(title, systemImage: "plus")
         }
@@ -115,7 +125,8 @@ struct ScheduleRhythmSection: View {
     private func interval(_ row: Binding<IntervalRow>) -> some View {
         let id = row.wrappedValue.id
         return HStack(spacing: SettingsTokens.blockSpacing) {
-            integer("Work duration", value: row.minutes, range: ScheduleDraft.intervalRange, step: 5)
+            integer("Work duration", value: row.minutes, range: ScheduleDraft.intervalRange,
+                    step: 5, focus: .interval(id))
             Text("min")
                 .foregroundStyle(.secondary)
             TextField("Name (optional)", text: row.label)
@@ -134,11 +145,12 @@ struct ScheduleRhythmSection: View {
     }
 
     private func integer(
-        _ label: LocalizedStringKey, value: Binding<Int>, range: ClosedRange<Int>, step: Int = 1
+        _ label: LocalizedStringKey, value: Binding<Int>, range: ClosedRange<Int>, step: Int = 1, focus: Field
     ) -> some View {
         HStack(spacing: SettingsTokens.stripItemSpacing) {
             TextField("", value: value, format: .number)
                 .textFieldStyle(.roundedBorder)
+                .focused($focusedField, equals: focus)
                 .frame(width: SettingsTokens.numberFieldWidth)
                 .accessibilityLabel(label)
                 .onChange(of: value.wrappedValue) { newValue in
