@@ -8,6 +8,7 @@ public struct SettingsExport: Codable, Sendable, Equatable {
     /// Marks the file as StandLock's, since the open panel offers any JSON.
     public static let formatIdentifier = "com.yagizdokumaci.standlock.settings"
     public static let currentVersion = 1
+    public static let maximumFileSize = 1_048_576
 
     public var format: String
     public var version: Int
@@ -37,6 +38,7 @@ public struct SettingsExport: Codable, Sendable, Equatable {
 
     /// Reads a whole file or throws; a caller applies nothing unless this returns.
     public static func decode(_ data: Data) throws -> SettingsExport {
+        guard data.count <= maximumFileSize else { throw SettingsImportError.tooLarge }
         let decoder = JSONDecoder()
         guard let header = try? decoder.decode(Header.self, from: data) else {
             // `format` sorts first, so a cut-off file of ours still carries the marker.
@@ -48,8 +50,10 @@ public struct SettingsExport: Codable, Sendable, Equatable {
         else { throw SettingsImportError.notSettingsFile }
         guard version <= currentVersion else { throw SettingsImportError.newerVersion }
 
-        guard let export = try? decoder.decode(SettingsExport.self, from: data), export.isRunnable
+        guard let export = try? decoder.decode(SettingsExport.self, from: data)
         else { throw SettingsImportError.unreadable }
+        guard export.isWithinResourceLimits else { throw SettingsImportError.tooLarge }
+        guard export.isRunnable else { throw SettingsImportError.unreadable }
         return export.portable
     }
 
@@ -74,6 +78,23 @@ public struct SettingsExport: Codable, Sendable, Equatable {
     /// minute-to-second arithmetic overflow.
     private static let maxDuration: TimeInterval = 366 * 86_400
     private static let maxCount = 100_000
+
+    /// The file budget bounds decoding; these limits bound confirmation and later rendering.
+    private var isWithinResourceLimits: Bool {
+        let p = preferences
+        guard schedules.count <= 100,
+              p.selectedCalendarIdentifiers.count <= 256,
+              p.selectedCalendarIdentifiers.allSatisfy({ $0.utf8.count <= 1024 }),
+              p.firmEscapePhrase.utf8.count <= 1024,
+              p.breakScreen.message.utf8.count <= 4096,
+              [theme, language, p.breakScreen.backgroundHex, p.breakScreen.textHex]
+                  .compactMap({ $0 }).allSatisfy({ $0.utf8.count <= 128 }) else { return false }
+        return schedules.allSatisfy { schedule in
+            schedule.name.utf8.count <= 256 && schedule.windows.count <= 32
+                && (schedule.intervalCycle?.count ?? 0) <= 100
+                && (schedule.intervalCycle ?? []).allSatisfy { ($0.label?.utf8.count ?? 0) <= 256 }
+        }
+    }
 
     /// Values the app would trap or loop on. Not the form's ranges: older stored
     /// schedules can sit outside them, such as sub-minute intervals.
@@ -105,6 +126,8 @@ public struct SettingsExport: Codable, Sendable, Equatable {
 }
 
 public enum SettingsImportError: Error, Equatable, Sendable {
+    /// The byte, collection or text budget for importing a settings file was exceeded.
+    case tooLarge
     /// Not JSON, or JSON that is not a StandLock settings file.
     case notSettingsFile
     /// Made by a newer StandLock with a format this build cannot read.
