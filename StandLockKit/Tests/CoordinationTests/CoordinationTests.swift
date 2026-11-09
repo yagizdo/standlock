@@ -103,6 +103,83 @@ func waitUntil(_ condition: () -> Bool) async -> Bool {
 @Suite("BreakCoordinator Tests")
 struct BreakCoordinatorTests {
 
+    @Test(arguments: [false, true]) @MainActor
+    func unsafeStoredBreakIsBoundedAtPresentation(repeating: Bool) async {
+        let scheduler = MockScheduler()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.01)
+        let locker = MockLocker()
+        let coordinator = BreakCoordinator(scheduler: scheduler, detector: MockDetector(), locker: locker)
+        defer { coordinator.stop() }
+        let duration: TimeInterval = 366 * 86_400
+        let rule = repeating ? RepetitionRule(
+            shortBreakCount: 1, shortBreakDuration: duration, longBreakDuration: duration
+        ) : nil
+        let schedule = makeSchedule(level: .strict, breakDuration: duration, repetitionRule: rule)
+
+        coordinator.start(with: [schedule], preferences: AppPreferences(idleDetectionEnabled: false))
+
+        #expect(await waitUntil { locker.showOverlayCalled })
+        #expect(locker.lastDuration == 3600)
+        if repeating {
+            locker.showOverlayCalled = false
+            coordinator.completeActiveBreak()
+            #expect(await waitUntil { locker.showOverlayCalled })
+            #expect(locker.lastDuration == 3600)
+        }
+    }
+
+    @Test @MainActor
+    func emergencyEscapeLeavesTimeToRecoverFromTinyIntervals() async {
+        let locker = MockLocker()
+        let coordinator = BreakCoordinator(scheduler: ScheduleEvaluator(), detector: MockDetector(), locker: locker)
+        defer { coordinator.stop() }
+        var schedule = makeSchedule(level: .strict, breakInterval: 1e-300, breakDuration: 3600)
+        schedule.windows = [
+            TimeWindow(startHour: 0, startMinute: 0, endHour: 12, endMinute: 0),
+            TimeWindow(startHour: 12, startMinute: 0, endHour: 0, endMinute: 0),
+        ]
+        // The interval floor keeps the first break a minute away too; a carried slot opens it now.
+        let slot = EnforcementState(pendingBreakDates: [schedule.id: Date().addingTimeInterval(0.01)])
+        coordinator.start(with: [schedule], preferences: AppPreferences(idleDetectionEnabled: false), restoring: slot)
+        #expect(await waitUntil { locker.showOverlayCalled })
+
+        locker.showOverlayCalled = false
+        let escapedAt = Date()
+        coordinator.escapeActiveBreak()
+
+        let next = coordinator.captureEnforcementState().pendingBreakDates[schedule.id]
+        #expect(next.map { $0.timeIntervalSince(escapedAt) >= 59 } == true)
+        try? await Task.sleep(for: .milliseconds(50))
+        #expect(!locker.showOverlayCalled)
+    }
+
+    /// A skip or a finished break must not open the next one on the spot: with an interval
+    /// from an old file or a hand-edited default, that loop has no way out but the skip limit.
+    @Test(arguments: [false, true]) @MainActor
+    func endingABreakLeavesTimeToRecoverFromTinyIntervals(skip: Bool) async {
+        let locker = MockLocker()
+        let coordinator = BreakCoordinator(scheduler: ScheduleEvaluator(), detector: MockDetector(), locker: locker)
+        defer { coordinator.stop() }
+        var schedule = makeSchedule(level: .firm, breakInterval: 1e-300, breakDuration: 3600)
+        schedule.windows = [
+            TimeWindow(startHour: 0, startMinute: 0, endHour: 12, endMinute: 0),
+            TimeWindow(startHour: 12, startMinute: 0, endHour: 0, endMinute: 0),
+        ]
+        // The interval floor keeps the first break a minute away too; a carried slot opens it now.
+        let slot = EnforcementState(pendingBreakDates: [schedule.id: Date().addingTimeInterval(0.01)])
+        coordinator.start(with: [schedule], preferences: AppPreferences(idleDetectionEnabled: false), restoring: slot)
+        #expect(await waitUntil { locker.showOverlayCalled })
+
+        locker.showOverlayCalled = false
+        let endedAt = Date()
+        if skip { coordinator.skipActiveBreak() } else { coordinator.completeActiveBreak() }
+
+        let next = coordinator.captureEnforcementState().pendingBreakDates[schedule.id]
+        #expect(next.map { $0.timeIntervalSince(endedAt) >= 59 } == true)
+        try? await Task.sleep(for: .milliseconds(50))
+        #expect(!locker.showOverlayCalled)
+    }
+
     @Test @MainActor
     func breakTriggersAtScheduledTime() async {
         let scheduler = MockScheduler()
@@ -950,11 +1027,14 @@ struct BreakCoordinatorTests {
 
         coordinator.escapeActiveBreak()
         scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        // Escape holds the next break a minute away; re-arm so it opens now with the new tier.
+        coordinator.resume()
         try? await Task.sleep(for: .milliseconds(300))
         #expect(locker.lastEscalationTier == 1)
 
         coordinator.escapeActiveBreak()
         scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        coordinator.resume()
         try? await Task.sleep(for: .milliseconds(300))
         #expect(locker.lastEscalationTier == 2)
 

@@ -285,6 +285,24 @@ struct ScheduleModelTests {
         #expect(policy.tiers[4].skipDelay == 40)
     }
 
+    /// The phrase has no Settings field: a bad one from a file or an old default would leave a
+    /// Firm break that no typing can skip.
+    @Test(arguments: [
+        "", "   ", "skip\nnow", "skip\u{7}now", "skip\tnow", "skip\u{2028}now",
+        String(repeating: "a", count: 101), "a" + String(repeating: "\u{301}", count: 500),
+    ])
+    func untypeableFirmPhraseFallsBackToDefault(phrase: String) {
+        let policy = DisciplineLevel.firm.enforcementPolicy(preferences: AppPreferences(firmEscapePhrase: phrase))
+        let expected = AppPreferences.defaultFirmEscapePhrase
+        #expect(policy.tiers[0].dismissMechanism == .typePhrase(phrase: expected, requiresConfirmation: false))
+        #expect(policy.tiers[3].dismissMechanism == .typePhrase(phrase: expected, requiresConfirmation: true))
+    }
+
+    @Test func firmPhraseIsTrimmedBeforeUse() {
+        let policy = DisciplineLevel.firm.enforcementPolicy(preferences: AppPreferences(firmEscapePhrase: " let me go "))
+        #expect(policy.tiers[0].dismissMechanism == .typePhrase(phrase: "let me go", requiresConfirmation: false))
+    }
+
     @Test func appPreferencesDefaultPhraseConstant() throws {
         #expect(AppPreferences().firmEscapePhrase == AppPreferences.defaultFirmEscapePhrase)
         let decoded = try JSONDecoder().decode(AppPreferences.self, from: Data("{}".utf8))
@@ -332,6 +350,26 @@ struct ScheduleModelTests {
         else { Issue.record("Expected .keyCombo") }
         if case .keyCombo(let d) = policy.tiers[3].dismissMechanism { #expect(d == 23) }
         else { Issue.record("Expected .keyCombo") }
+    }
+
+    @Test(arguments: [25.0, 366.0 * 86_400, Double.infinity, Double.nan])
+    func strictPolicyAlwaysOffersPracticalEmergencyEscape(hold: Double) {
+        let policy = DisciplineLevel.strict.enforcementPolicy(
+            preferences: AppPreferences(strictEscapeHoldDuration: hold)
+        )
+        for tier in policy.tiers {
+            guard case .keyCombo(let duration) = tier.dismissMechanism else {
+                Issue.record("Expected emergency key combo")
+                continue
+            }
+            #expect(duration.isFinite && (0...30).contains(duration))
+        }
+    }
+
+    @Test(arguments: [366.0 * 86_400, Double.infinity, Double.nan])
+    func firmPolicyKeepsItsRecoveryDelayBounded(delay: Double) {
+        let policy = DisciplineLevel.firm.enforcementPolicy(preferences: AppPreferences(firmSkipDelay: delay))
+        #expect(policy.tiers.allSatisfy { $0.skipDelay.isFinite && (0...60).contains($0.skipDelay) })
     }
 
     @Test func enforcementPolicyTierClampsToRange() {

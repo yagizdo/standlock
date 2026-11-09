@@ -319,7 +319,8 @@ public final class BreakCoordinator {
         }
         currentBreak = nil
         currentSchedule = nil
-        scheduleNextBreak()
+        // An emergency exit must leave time to change a hostile or accidentally tiny interval.
+        scheduleNextBreak(searchFrom: Date())
     }
 
     /// Closes the break screen without counting a skip and brings the same break back, at full
@@ -613,9 +614,9 @@ public final class BreakCoordinator {
 
     private func currentBreakDuration(for schedule: Schedule) -> TimeInterval {
         if let tracker = repetitionTrackers[schedule.id] {
-            return tracker.currentDuration
+            return BreakSafety.breakDuration(tracker.currentDuration)
         }
-        return schedule.breakDuration
+        return BreakSafety.breakDuration(schedule.breakDuration)
     }
 
     private func shouldDefer(context: DetectionContext) -> DeferralReason? {
