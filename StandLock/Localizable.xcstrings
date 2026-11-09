@@ -1,6 +1,10 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "After this many completed short breaks since your last long break." : {
+      "extractionState" : "manual"
+    },
+
     "Skip up to %lld breaks in a row. After that, skipping and Control + Option + Command are disabled until you complete a break." : {
       "extractionState" : "manual"
     },

@@ -118,7 +118,7 @@ struct ScheduleFormView: View {
                 SettingsToggleRow(
                     "Repetition Cycle",
                     symbol: "repeat",
-                    description: draft.useRepetition ? "e.g. 3 short breaks, then 1 long break" : nil,
+                    description: draft.useRepetition ? "After this many completed short breaks since your last long break." : nil,
                     isOn: $draft.useRepetition
                 )
                 if draft.useRepetition {

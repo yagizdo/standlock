@@ -52,12 +52,11 @@ public struct EnforcementState: Codable, Sendable {
         consecutiveDismissalCounts = try c.decodeIfPresent([UUID: Int].self, forKey: .consecutiveDismissalCounts) ?? [:]
     }
 
-    /// Lifetime streaks and observed in-process absences are independent of the calendar day.
+    /// Lifetime streaks, short-break runs and observed absences are independent of the day.
     public mutating func resetDailyCounters() {
         dailyBreakCounts = [:]
         escalationTiers = [:]
         cycleIndices = [:]
-        repetitionIndices = [:]
         pendingBreakDates = [:]
     }
 }

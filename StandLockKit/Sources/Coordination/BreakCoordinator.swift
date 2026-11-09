@@ -25,6 +25,9 @@ public final class BreakCoordinator {
     private var pendingDates: [UUID: Date] = [:]
     private var consecutiveDismissalCounts: [UUID: Int] = [:]
     private var activeDeadline: TimeInterval?
+    private var activeRestStartedAt: TimeInterval?
+    /// Interrupted rest segments do not accumulate across periods with the overlay hidden.
+    private var longestActiveRest: TimeInterval = 0
     private var currentExercise: Exercise?
     private var completionTimer: Task<Void, Never>?
     private var pauseTimer: Task<Void, Never>?
@@ -125,6 +128,8 @@ public final class BreakCoordinator {
             currentSchedule = schedules.first { $0.id == runtime.activeScheduleID }
             if currentSchedule == nil { currentBreak = nil }
             activeDeadline = runtime.activeDeadline
+            activeRestStartedAt = currentBreak == nil ? nil : runtime.activeRestStartedAt
+            longestActiveRest = currentBreak == nil ? 0 : runtime.longestActiveRest
             currentExercise = runtime.exercise
             activeBreakCanPostpone = runtime.canPostpone
             postponedBreak = runtime.postponedBreak
@@ -156,7 +161,9 @@ public final class BreakCoordinator {
         state.runtime = CoordinatorRuntimeState(
             awayTracker: awayTracker, remainingWork: awayRemainingWork, awayOwnerID: awayOwnerID,
             activeBreak: currentBreak, activeScheduleID: currentSchedule?.id,
-            activeDeadline: activeDeadline, exercise: currentExercise, canPostpone: activeBreakCanPostpone,
+            activeDeadline: activeDeadline, activeRestStartedAt: activeRestStartedAt,
+            longestActiveRest: longestActiveRest,
+            exercise: currentExercise, canPostpone: activeBreakCanPostpone,
             postponedBreak: postponedBreak, pauseDeadline: pauseDeadline,
             deferredScheduleID: isDeferringBreak ? pendingBreakScheduleID : resumedDeferredScheduleID
         )
@@ -173,6 +180,8 @@ public final class BreakCoordinator {
         if locker.isShowing { locker.dismissOverlay() }
         currentBreak = nil
         currentSchedule = nil
+        activeRestStartedAt = nil
+        longestActiveRest = 0
         escalationTiers.removeAll()
     }
 
@@ -274,12 +283,14 @@ public final class BreakCoordinator {
         case .returned(let duration):
             rolloverIfNeeded()
             eventContinuation.yield(.systemSuspensionChanged(false))
+            let restDuration = currentBreak == nil ? duration : max(longestActiveRest,
+                activeRestStartedAt.map { max(0, clock.elapsed() - $0) } ?? duration)
             let qualifies = duration >= TimeInterval(min(30, max(1, preferences.naturalBreakThresholdMinutes)) * 60)
             if qualifies {
                 escalationTiers.removeAll()
                 consecutiveDismissalCounts.removeAll()
                 if let event = currentBreak, let schedule = currentSchedule {
-                    finishBreak(event: event, schedule: schedule, playSound: false)
+                    finishBreak(event: event, schedule: schedule, playSound: false, restDuration: restDuration)
                 } else if let id = awayOwnerID,
                           let schedule = activeSchedules.first(where: { $0.id == id }) {
                     if postponedSchedule == nil {
@@ -289,7 +300,7 @@ public final class BreakCoordinator {
                     let event = postponedBreak.flatMap { $0.scheduleId == id ? $0 : nil }
                         ?? BreakEvent(scheduledAt: clock.now(),
                         duration: currentBreakDuration(for: schedule), level: schedule.disciplineLevel, scheduleId: id)
-                    finishBreak(event: event, schedule: schedule, playSound: false)
+                    finishBreak(event: event, schedule: schedule, playSound: false, restDuration: restDuration)
                 }
                 postponedSchedule = nil
                 postponedBreak = nil
@@ -305,6 +316,11 @@ public final class BreakCoordinator {
             }
             awayRemainingWork = [:]
             awayOwnerID = nil
+            recordObservedLongRest(duration: restDuration)
+            if isPaused, currentBreak != nil {
+                longestActiveRest = max(longestActiveRest, restDuration)
+                activeRestStartedAt = nil
+            }
             rearm()
         }
         stateChanged()
@@ -375,6 +391,8 @@ public final class BreakCoordinator {
         let anchor = skipAnchor(slot: event.scheduledAt)
         currentBreak = nil
         currentSchedule = nil
+        activeRestStartedAt = nil
+        longestActiveRest = 0
         scheduleNextBreak(searchFrom: anchor)
     }
 
@@ -393,6 +411,8 @@ public final class BreakCoordinator {
         }
         currentBreak = nil
         currentSchedule = nil
+        activeRestStartedAt = nil
+        longestActiveRest = 0
         scheduleNextBreak()
     }
 
@@ -410,6 +430,8 @@ public final class BreakCoordinator {
         locker.dismissOverlay()
         currentBreak = nil
         currentSchedule = nil
+        activeRestStartedAt = nil
+        longestActiveRest = 0
         postponedSchedule = schedule
         eventContinuation.yield(.breakDeferred(.postponed, nextAttempt: clock.now().addingTimeInterval(deferralPollingInterval)))
         updateStatistics { $0.breaksDeferred += 1 }
@@ -533,6 +555,8 @@ public final class BreakCoordinator {
             guard schedule.isEnabled, scheduler.isWithinActiveWindow(schedule, at: clock.now()) else {
                 currentBreak = nil
                 currentSchedule = nil
+                activeRestStartedAt = nil
+                longestActiveRest = 0
                 scheduleNextBreak()
                 return
             }
@@ -728,6 +752,8 @@ public final class BreakCoordinator {
         )
         if resumed != nil { postponedBreak = nil }
         currentBreak = breakEvent
+        activeRestStartedAt = clock.elapsed()
+        longestActiveRest = 0
         activeDeadline = clock.elapsed() + duration
         currentSchedule = schedule
         activeBreakCanPostpone = canPostpone
@@ -739,6 +765,7 @@ public final class BreakCoordinator {
     private func showCurrentBreak() {
         guard let event = currentBreak, let schedule = currentSchedule, let deadline = activeDeadline,
               !isSuspended, !isPaused else { return }
+        if activeRestStartedAt == nil { activeRestStartedAt = clock.elapsed() }
         let remaining = min(event.duration, ceil(max(0, deadline - clock.elapsed())))
         // A permission-driven downgrade must also apply to a break restored during a rebuild.
         let level: DisciplineLevel
@@ -803,7 +830,10 @@ public final class BreakCoordinator {
         scheduleNextBreak()
     }
 
-    private func finishBreak(event: BreakEvent, schedule: Schedule, playSound: Bool) {
+    private func finishBreak(event: BreakEvent, schedule: Schedule, playSound: Bool,
+                             restDuration: TimeInterval? = nil) {
+        let completedDuration = restDuration ?? max(longestActiveRest,
+            activeRestStartedAt.map { max(0, clock.elapsed() - $0) } ?? 0)
         completionTimer?.cancel()
         escalationTiers[schedule.id] = 0
         consecutiveDismissalCounts[schedule.id] = 0
@@ -811,10 +841,13 @@ public final class BreakCoordinator {
         currentBreak = nil
         currentSchedule = nil
         activeDeadline = nil
+        activeRestStartedAt = nil
+        longestActiveRest = 0
         if var tracker = repetitionTrackers[schedule.id] {
-            tracker.recordBreak()
+            tracker.recordBreak(duration: completedDuration)
             repetitionTrackers[schedule.id] = tracker
         }
+        recordObservedLongRest(duration: completedDuration)
         eventContinuation.yield(.breakCompleted(event))
         if playSound && preferences.soundAfterBreak { eventContinuation.yield(.breakCue(.ended)) }
         updateStatistics {
@@ -822,5 +855,12 @@ public final class BreakCoordinator {
             $0.currentStreak += 1
         }
         stateChanged()
+    }
+
+    private func recordObservedLongRest(duration: TimeInterval) {
+        for (id, var tracker) in repetitionTrackers {
+            tracker.recordTimeAway(duration: duration)
+            repetitionTrackers[id] = tracker
+        }
     }
 }

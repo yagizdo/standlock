@@ -5,8 +5,8 @@ public struct RepetitionTracker: Sendable {
     private let rule: RepetitionRule
     public private(set) var currentBreakIndex: Int = 0
 
-    /// `currentBreakIndex` is carried over when a coordinator is rebuilt mid-day, so a schedule
-    /// edit does not send the user back to the start of the short-break run. A rule whose
+    /// Completed short breaks since the last observed long rest survive coordinator rebuilds
+    /// and calendar-day changes. A rule whose
     /// `shortBreakCount` shrank below the restored index simply makes the next break the long one.
     public init(rule: RepetitionRule, currentBreakIndex: Int = 0) {
         self.rule = rule
@@ -22,11 +22,23 @@ public struct RepetitionTracker: Sendable {
     }
 
     public mutating func recordBreak() {
-        if isLongBreak {
-            currentBreakIndex = 0
-        } else {
+        recordBreak(duration: currentDuration)
+    }
+
+    /// A completed rest is classified by its observed duration, not the scheduled break type.
+    public mutating func recordBreak(duration: TimeInterval) {
+        if duration >= rule.longBreakDuration {
+            reset()
+        } else if currentBreakIndex < rule.shortBreakCount {
             currentBreakIndex += 1
+        } else {
+            currentBreakIndex = max(0, rule.shortBreakCount)
         }
+    }
+
+    /// Other schedules share the same rest, without gaining extra short-break completions.
+    public mutating func recordTimeAway(duration: TimeInterval) {
+        if duration >= rule.longBreakDuration { reset() }
     }
 
     public mutating func reset() {

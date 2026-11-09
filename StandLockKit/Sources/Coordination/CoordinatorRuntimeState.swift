@@ -9,6 +9,8 @@ struct CoordinatorRuntimeState: Sendable {
     var activeBreak: BreakEvent?
     var activeScheduleID: UUID?
     var activeDeadline: TimeInterval?
+    var activeRestStartedAt: TimeInterval?
+    var longestActiveRest: TimeInterval
     var exercise: Exercise?
     var canPostpone: Bool
     var postponedBreak: BreakEvent?
