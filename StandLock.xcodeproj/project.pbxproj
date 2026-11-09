@@ -38,6 +38,7 @@
 		28D05A3781FA4F3C0DE6E18A /* MenuBarSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB686878D805A9466970EFA3 /* MenuBarSettingsView.swift */; };
 		293548DD12593304DAE64D91 /* HourglassScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39E5EFA4AB6411AD0176ED38 /* HourglassScene.swift */; };
 		2CD0D3C3CF795626E50A5EAA /* StandLockApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1524D749BB78A875E5FD51F /* StandLockApp.swift */; };
+		2FED2DBCC817D32B80CBE7AA /* PomodoroRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = E25B9FF366AECB943028EDF2 /* PomodoroRow.swift */; };
 		354BBE2CE0040FB1FE1928BA /* RhythmTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = A485E937F7D80FA3455BA910 /* RhythmTile.swift */; };
 		3EA2689E42A22B02662039B0 /* SettingsTokens.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA2920940F5FB5690FF53B7B /* SettingsTokens.swift */; };
 		3F24521CD8A9CA8C9156A1B9 /* PreferencesSaveOwner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EA489010EA8A9B969CE5227 /* PreferencesSaveOwner.swift */; };
@@ -247,6 +248,7 @@
 		DEAF9C8AFAF33310B45445B2 /* TimerNumerals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerNumerals.swift; sourceTree = "<group>"; };
 		DF887D81035A1FE4735344F3 /* SettingsDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsDetail.swift; sourceTree = "<group>"; };
 		E2436E0F3F20FE12F920ADE7 /* QuickActionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickActionsView.swift; sourceTree = "<group>"; };
+		E25B9FF366AECB943028EDF2 /* PomodoroRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PomodoroRow.swift; sourceTree = "<group>"; };
 		E4C53062EDA5469F4E031D21 /* RobotScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RobotScene.swift; sourceTree = "<group>"; };
 		E5A68046037D0CAAE70C0F88 /* ActionArea.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionArea.swift; sourceTree = "<group>"; };
 		E940304A1CB44B2B8CC0FC8C /* BreakScreenPreviewCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakScreenPreviewCard.swift; sourceTree = "<group>"; };
@@ -455,6 +457,7 @@
 				8FC046224F3CBC19F654A996 /* MenuBarPillStyle.swift */,
 				1D4A9BCE77DF93E823C10D87 /* MenuBarStatusView.swift */,
 				52A2D12AD9D89928096A633C /* MenuBarView.swift */,
+				E25B9FF366AECB943028EDF2 /* PomodoroRow.swift */,
 				E2436E0F3F20FE12F920ADE7 /* QuickActionsView.swift */,
 				BC3E44285744A26438122E49 /* QuitConfirmationView.swift */,
 				F55A26B9BA70F54DCD4A7862 /* Scenes */,
@@ -694,6 +697,7 @@
 				EAC5C8BAB2FC5D5FB1D845C5 /* PermissionsView.swift in Sources */,
 				231BA9A6E5E6E06DD9B6CA91 /* PixelGridView.swift in Sources */,
 				FC583BA99EE50EF0303C3DC6 /* PixelParts.swift in Sources */,
+				2FED2DBCC817D32B80CBE7AA /* PomodoroRow.swift in Sources */,
 				74A65286E3635E9A799AB935 /* PomodoroSettingsView.swift in Sources */,
 				3F24521CD8A9CA8C9156A1B9 /* PreferencesSaveOwner.swift in Sources */,
 				4A537C55B992DF62814F9857 /* QuickActionsView.swift in Sources */,

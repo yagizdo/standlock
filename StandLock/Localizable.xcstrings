@@ -148,6 +148,22 @@
         }
       }
     },
+    "Break left" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kalan mola"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "休息剩余"
+          }
+        }
+      }
+    },
     "Calendar Integration will check all calendars. The file does not carry your calendar choices." : {
       "localizations" : {
         "tr" : {
@@ -416,6 +432,38 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "钓鱼"
+          }
+        }
+      }
+    },
+    "Focus %lld/%lld" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Odak %lld/%lld"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "专注 %lld/%lld"
+          }
+        }
+      }
+    },
+    "Focus left" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kalan odak"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "专注剩余"
           }
         }
       }
@@ -720,6 +768,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "下次休息"
+          }
+        }
+      }
+    },
+    "next Focus %lld/%lld" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "sonraki odak %lld/%lld"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下一轮专注 %lld/%lld"
           }
         }
       }
@@ -1124,6 +1188,22 @@
         }
       }
     },
+    "Skip phase" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aşamayı atla"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "跳过阶段"
+          }
+        }
+      }
+    },
     "StandLock is up to date" : {
       "localizations" : {
         "tr" : {
@@ -1184,6 +1264,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "从菜单栏开始一次会话。更改将在下一次会话时生效。"
+          }
+        }
+      }
+    },
+    "Start Pomodoro" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pomodoro başlat"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "开始番茄钟"
           }
         }
       }
