@@ -998,6 +998,7 @@ struct BreakCoordinatorTests {
 
         coordinator.escapeActiveBreak()
         scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        // Escape holds the next break a minute away; re-arm so it opens now with the new tier.
         coordinator.resume()
         try? await Task.sleep(for: .milliseconds(300))
         #expect(locker.lastEscalationTier == 1)

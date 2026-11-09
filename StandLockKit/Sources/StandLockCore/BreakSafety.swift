@@ -8,7 +8,7 @@ public enum BreakSafety {
 
     public static func escapeHoldDuration(_ duration: TimeInterval) -> TimeInterval {
         guard duration.isFinite, duration >= 0 else { return 10 }
-        return min(max(0, duration), maximumEscapeHoldDuration)
+        return min(duration, maximumEscapeHoldDuration)
     }
 
     public static func skipDelay(_ duration: TimeInterval) -> TimeInterval {
