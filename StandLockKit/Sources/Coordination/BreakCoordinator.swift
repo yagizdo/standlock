@@ -289,7 +289,7 @@ public final class BreakCoordinator {
 
     public func skipActiveBreak() {
         guard let event = currentBreak else { return }
-        if let scheduleID = currentBreak?.scheduleId {
+        if let scheduleID = event.scheduleId {
             let maxTier = (currentSchedule?.disciplineLevel.enforcementPolicy(preferences: preferences).tiers.count ?? 5) - 1
             escalationTiers[scheduleID, default: 0] = min(escalationTiers[scheduleID, default: 0] + 1, maxTier)
         }
@@ -307,7 +307,7 @@ public final class BreakCoordinator {
 
     public func escapeActiveBreak() {
         guard let event = currentBreak else { return }
-        if let scheduleID = currentBreak?.scheduleId {
+        if let scheduleID = event.scheduleId {
             let maxTier = (currentSchedule?.disciplineLevel.enforcementPolicy(preferences: preferences).tiers.count ?? 5) - 1
             escalationTiers[scheduleID, default: 0] = min(escalationTiers[scheduleID, default: 0] + 1, maxTier)
         }
