@@ -22,6 +22,7 @@ final class OverlayWindowController: LockPresenting {
     private var currentEscalationTier: Int = 0
     private var currentNextIntervalLabel: String?
     private var currentCanPostpone = false
+    private var currentPomodoroChip: PomodoroChip?
     private var breakStartDate: Date?
     private var lastScreenChangeHandled: Date = .distantPast
     private var policyBeforeOverlay: NSApplication.ActivationPolicy = .accessory
@@ -40,7 +41,8 @@ final class OverlayWindowController: LockPresenting {
         level: DisciplineLevel, duration: TimeInterval,
         exercise: Exercise?, preferences: AppPreferences,
         statistics: BreakStatistics, escalationTier: Int = 0,
-        nextIntervalLabel: String? = nil, canPostpone: Bool = false
+        nextIntervalLabel: String? = nil, canPostpone: Bool = false,
+        pomodoroChip: PomodoroChip? = nil
     ) {
         let isRecreation = isShowing
         dismissOverlay()
@@ -56,6 +58,7 @@ final class OverlayWindowController: LockPresenting {
         currentEscalationTier = escalationTier
         currentNextIntervalLabel = nextIntervalLabel
         currentCanPostpone = canPostpone
+        currentPomodoroChip = pomodoroChip
 
         // Read once per overlay. That is what makes each break pick up the current
         // appearance without this controller subscribing to the store.
@@ -222,12 +225,14 @@ final class OverlayWindowController: LockPresenting {
         let exercise = currentExercise
         let nextLabel = currentNextIntervalLabel
         let canPostpone = currentCanPostpone
+        let chip = currentPomodoroChip
         dismissOverlay()
         showOverlay(
             level: level, duration: remaining,
             exercise: exercise, preferences: prefs,
             statistics: stats, escalationTier: tier,
-            nextIntervalLabel: nextLabel, canPostpone: canPostpone
+            nextIntervalLabel: nextLabel, canPostpone: canPostpone,
+            pomodoroChip: chip
         )
     }
 }

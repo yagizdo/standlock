@@ -40,13 +40,18 @@ final class MockLocker: LockPresenting, @unchecked Sendable {
     var lastEscalationTier: Int?
     var lastNextIntervalLabel: String?
     var lastCanPostpone: Bool?
+    var lastPomodoroChip: PomodoroChip?
+    var showCount = 0
     var isShowing = false
 
     func showOverlay(level: DisciplineLevel, duration: TimeInterval,
                      exercise: Exercise?, preferences: AppPreferences,
                      statistics: BreakStatistics, escalationTier: Int,
-                     nextIntervalLabel: String?, canPostpone: Bool) {
+                     nextIntervalLabel: String?, canPostpone: Bool,
+                     pomodoroChip: PomodoroChip?) {
         showOverlayCalled = true
+        showCount += 1
+        lastPomodoroChip = pomodoroChip
         lastLevel = level
         lastDuration = duration
         lastPreferences = preferences

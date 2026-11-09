@@ -43,6 +43,31 @@ public struct EnforcementState: Codable, Sendable {
     }
 }
 
+/// A break no schedule owns: a Pomodoro break, later "take a break now". It runs the same idle
+/// check, deferral, counting and overlay as a schedule break, at the base tier of `level`.
+public struct ExternalBreak: Sendable, Equatable {
+    public var duration: TimeInterval
+    public var level: DisciplineLevel
+    public var chip: PomodoroChip?
+
+    public init(duration: TimeInterval, level: DisciplineLevel, chip: PomodoroChip? = nil) {
+        self.duration = duration
+        self.level = level
+        self.chip = chip
+    }
+}
+
+/// Who a break belongs to, so Done, Skip, Escape and Postpone work without a schedule.
+private enum BreakSource {
+    case schedule(Schedule)
+    case external(ExternalBreak)
+
+    var schedule: Schedule? {
+        if case .schedule(let schedule) = self { return schedule }
+        return nil
+    }
+}
+
 @MainActor
 public final class BreakCoordinator {
     private let scheduler: any SchedulingEngine
@@ -58,12 +83,16 @@ public final class BreakCoordinator {
     /// is the user-facing pause; suspension only blocks work being started behind a dark screen.
     private var isSuspended: Bool = false
     private var currentBreak: BreakEvent?
-    private var currentSchedule: Schedule?
+    private var currentSource: BreakSource?
+    private var currentSchedule: Schedule? { currentSource?.schedule }
     /// A break may be postponed once; the one that comes back after the call cannot be again.
     private var activeBreakCanPostpone = false
     /// The break owed after a postpone, until it returns. The wait itself lives in `breakTimer`,
     /// which lock, sleep and pause cancel; this is what lets them start it again.
     private var postponedSchedule: Schedule?
+    /// The external break owed after a postpone. Not carried across a rebuild: a session's
+    /// restore reopens its break from the saved phase.
+    private var postponedExternal: ExternalBreak?
     private var statistics: BreakStatistics = BreakStatistics()
     private var dailyBreakCounts: [UUID: Int] = [:]
     private var escalationTiers: [UUID: Int] = [:]
@@ -165,9 +194,10 @@ public final class BreakCoordinator {
         breakTimer = nil
         clearPendingBreak()
         postponedSchedule = nil
+        postponedExternal = nil
         if locker.isShowing { locker.dismissOverlay() }
         currentBreak = nil
-        currentSchedule = nil
+        currentSource = nil
         escalationTiers.removeAll()
     }
 
@@ -267,7 +297,7 @@ public final class BreakCoordinator {
                 }
             }
             currentBreak = nil
-            currentSchedule = nil
+            currentSource = nil
         }
     }
 
@@ -299,10 +329,11 @@ public final class BreakCoordinator {
             $0.breaksSkipped += 1
             $0.currentStreak = 0
         }
-        let anchor = skipAnchor(slot: event.scheduledAt)
+        let source = currentSource
+        let anchor = source?.schedule == nil ? nil : skipAnchor(slot: event.scheduledAt)
         currentBreak = nil
-        currentSchedule = nil
-        scheduleNextBreak(searchFrom: anchor)
+        currentSource = nil
+        afterBreak(source, searchFrom: anchor)
     }
 
     public func escapeActiveBreak() {
@@ -317,29 +348,33 @@ public final class BreakCoordinator {
             $0.breaksEscaped += 1
             $0.weeklyEscapeCount += 1
         }
+        let source = currentSource
         currentBreak = nil
-        currentSchedule = nil
+        currentSource = nil
         // An emergency exit must leave time to change a hostile or accidentally tiny interval.
-        scheduleNextBreak(searchFrom: Date())
+        afterBreak(source, searchFrom: Date())
     }
 
     /// Closes the break screen without counting a skip and brings the same break back, at full
     /// length, once camera and microphone have both been free for `postponeReturnDelay`. The
     /// wait ignores the detection preferences: postponing is the user saying they are on a call.
     public func postponeActiveBreak() {
-        guard currentBreak != nil, let schedule = currentSchedule, activeBreakCanPostpone else { return }
+        guard currentBreak != nil, let source = currentSource, activeBreakCanPostpone else { return }
         breakTimer?.cancel()
         breakTimer = nil
         locker.dismissOverlay()
         currentBreak = nil
-        currentSchedule = nil
-        postponedSchedule = schedule
+        currentSource = nil
+        switch source {
+        case .schedule(let schedule): postponedSchedule = schedule
+        case .external(let request): postponedExternal = request
+        }
         eventContinuation.yield(.breakDeferred(.postponed, nextAttempt: Date().addingTimeInterval(deferralPollingInterval)))
         updateStatistics { $0.breaksDeferred += 1 }
-        startPostponeWait(for: schedule)
+        startPostponeWait(for: source)
     }
 
-    private func startPostponeWait(for schedule: Schedule) {
+    private func startPostponeWait(for source: BreakSource) {
         breakTimer?.cancel()
         // Keeps `refreshDailyRollover` from re-arming over the wait. The pending slot stays nil:
         // `triggerBreak` already advanced the cycle, and a set ID would let a menu skip advance it again.
@@ -364,8 +399,8 @@ public final class BreakCoordinator {
                 clearSince = since
                 if Date().timeIntervalSince(since) >= self.preferences.postponeReturnDelay {
                     self.clearPendingBreak()
-                    self.postponedSchedule = nil
-                    self.presentBreak(for: schedule, context: context, canPostpone: false)
+                    if source.schedule == nil { self.postponedExternal = nil } else { self.postponedSchedule = nil }
+                    self.presentBreak(for: source, context: context, canPostpone: false)
                     return
                 }
             }
@@ -373,8 +408,8 @@ public final class BreakCoordinator {
     }
 
     public func completeActiveBreak() {
-        guard let event = currentBreak, let schedule = currentSchedule else { return }
-        completeBreak(event: event, schedule: schedule)
+        guard let event = currentBreak, let source = currentSource else { return }
+        completeBreak(event: event, source: source)
     }
 
     public func changeDisciplineLevel(_ level: DisciplineLevel) {
@@ -385,6 +420,19 @@ public final class BreakCoordinator {
 
     public func updatePreferences(_ preferences: AppPreferences) {
         self.preferences = preferences
+    }
+
+    /// Opens a break no schedule owns. A pending schedule slot is dropped; the schedules arm
+    /// afresh once this break ends.
+    public func startExternalBreak(_ request: ExternalBreak) {
+        guard currentBreak == nil, BreakSafety.breakDuration(request.duration) > 0 else { return }
+        breakTimer?.cancel()
+        clearPendingBreak()
+        breakTimer = Task {
+            let context = await self.detector.currentContext()
+            guard !Task.isCancelled else { return }
+            await self.triggerBreak(for: .external(request), context: context)
+        }
     }
 
     // MARK: - Escalation
@@ -412,8 +460,10 @@ public final class BreakCoordinator {
     // MARK: - Private
 
     private func rearm() {
-        if let schedule = postponedSchedule {
-            startPostponeWait(for: schedule)
+        if let request = postponedExternal {
+            startPostponeWait(for: .external(request))
+        } else if let schedule = postponedSchedule {
+            startPostponeWait(for: .schedule(schedule))
         } else {
             scheduleNextBreak()
         }
@@ -498,7 +548,7 @@ public final class BreakCoordinator {
             let remaining = fireDate.timeIntervalSince(Date())
             if remaining > 0 { try? await Task.sleep(for: .seconds(remaining)) }
             guard !Task.isCancelled else { return }
-            await self.triggerBreak(for: target.schedule, context: context)
+            await self.triggerBreak(for: .schedule(target.schedule), context: context)
         }
     }
 
@@ -511,32 +561,32 @@ public final class BreakCoordinator {
         eventContinuation.yield(.breakCue(.approaching))
     }
 
-    private func triggerBreak(for schedule: Schedule, context: DetectionContext) async {
+    private func triggerBreak(for source: BreakSource, context: DetectionContext) async {
         // The pending break is now active; a menu skip from here on must not advance again.
         clearPendingBreak()
         rolloverIfNeeded()
+        let schedule = source.schedule
         if preferences.idleDetectionEnabled {
-            let breakDuration = currentBreakDuration(for: schedule)
+            let breakDuration = breakDuration(for: source)
             // A break under a minute must not be swallowed by a glance away from the keyboard:
             // idle counts as a break only once it reaches a minute, or the full break when longer.
             if context.idleDuration >= max(breakDuration, 60) {
                 let idleEvent = BreakEvent(
                     scheduledAt: Date(), duration: breakDuration,
-                    level: schedule.disciplineLevel, scheduleId: schedule.id
+                    level: level(of: source), scheduleId: schedule?.id
                 )
-                if var tracker = repetitionTrackers[schedule.id] {
-                    tracker.recordBreak()
-                    repetitionTrackers[schedule.id] = tracker
+                if let schedule {
+                    if var tracker = repetitionTrackers[schedule.id] {
+                        tracker.recordBreak()
+                        repetitionTrackers[schedule.id] = tracker
+                    }
+                    dailyBreakCounts[schedule.id, default: 0] += 1
+                    cycleIndices[schedule.id, default: 0] += 1
+                    escalationTiers[schedule.id] = 0
                 }
-                dailyBreakCounts[schedule.id, default: 0] += 1
-                cycleIndices[schedule.id, default: 0] += 1
-                escalationTiers[schedule.id] = 0
                 eventContinuation.yield(.breakCompleted(idleEvent))
-                updateStatistics {
-                    $0.breaksCompleted += 1
-                    $0.currentStreak += 1
-                }
-                scheduleNextBreak()
+                countCompletedBreak()
+                afterBreak(source)
                 return
             }
         }
@@ -544,7 +594,7 @@ public final class BreakCoordinator {
         if let deferral = shouldDefer(context: context) {
             // The deferred slot is still pending, so a menu skip during the poll loop
             // must conclude it for this schedule.
-            pendingBreakScheduleID = schedule.id
+            pendingBreakScheduleID = schedule?.id
             pendingBreakDate = Date()
             isDeferringBreak = true
             eventContinuation.yield(.breakDeferred(deferral, nextAttempt: Date().addingTimeInterval(deferralPollingInterval)))
@@ -560,12 +610,12 @@ public final class BreakCoordinator {
                     if let newReason = self.shouldDefer(context: freshContext) {
                         self.eventContinuation.yield(.breakDeferred(newReason, nextAttempt: Date().addingTimeInterval(self.deferralPollingInterval)))
                     } else if self.shouldSkipAfterDeferral(reason: deferral) {
-                        self.cycleIndices[schedule.id, default: 0] += 1
+                        if let schedule { self.cycleIndices[schedule.id, default: 0] += 1 }
                         self.clearPendingBreak()
-                        self.scheduleNextBreak()
+                        self.afterBreak(source)
                         return
                     } else {
-                        await self.triggerBreak(for: schedule, context: freshContext)
+                        await self.triggerBreak(for: source, context: freshContext)
                         return
                     }
                 }
@@ -573,36 +623,43 @@ public final class BreakCoordinator {
             return
         }
 
-        dailyBreakCounts[schedule.id, default: 0] += 1
-        cycleIndices[schedule.id, default: 0] += 1
-        presentBreak(for: schedule, context: context, canPostpone: true)
+        if let schedule {
+            dailyBreakCounts[schedule.id, default: 0] += 1
+            cycleIndices[schedule.id, default: 0] += 1
+        }
+        presentBreak(for: source, context: context, canPostpone: true)
     }
 
     /// Shows a break without counting it. A postponed break returns through here, so the daily
     /// count and the cycle advance only once, in `triggerBreak`.
-    private func presentBreak(for schedule: Schedule, context: DetectionContext, canPostpone: Bool) {
-        var effectiveLevel = schedule.disciplineLevel
+    private func presentBreak(for source: BreakSource, context: DetectionContext, canPostpone: Bool) {
+        var effectiveLevel = level(of: source)
         if let reduction = shouldReduce(context: context) {
             effectiveLevel = reduction
         }
 
-        let duration = currentBreakDuration(for: schedule)
+        let schedule = source.schedule
+        let duration = breakDuration(for: source)
         let exercise = exercises.randomElement()
-        let tier = currentTier(for: schedule)
+        // External breaks use the level's base tier and never move a schedule's escalation.
+        let tier = schedule.map(currentTier(for:)) ?? 0
         let breakEvent = BreakEvent(
             scheduledAt: Date(), duration: duration,
-            level: effectiveLevel, scheduleId: schedule.id
+            level: effectiveLevel, scheduleId: schedule?.id
         )
         currentBreak = breakEvent
-        currentSchedule = schedule
+        currentSource = source
         activeBreakCanPostpone = canPostpone
+
+        var chip: PomodoroChip?
+        if case .external(let request) = source { chip = request.chip }
 
         eventContinuation.yield(.breakStarted(breakEvent))
         locker.showOverlay(level: effectiveLevel, duration: duration,
                            exercise: exercise, preferences: preferences,
                            statistics: statistics, escalationTier: tier,
-                           nextIntervalLabel: nextIntervalLabel(for: schedule),
-                           canPostpone: canPostpone)
+                           nextIntervalLabel: schedule.flatMap(nextIntervalLabel(for:)),
+                           canPostpone: canPostpone, pomodoroChip: chip)
     }
 
     /// The cycle index was already advanced when this break triggered, so it points at the
@@ -610,6 +667,20 @@ public final class BreakCoordinator {
     private func nextIntervalLabel(for schedule: Schedule) -> String? {
         guard let cycle = schedule.intervalCycle, !cycle.isEmpty else { return nil }
         return cycle[cycleIndices[schedule.id, default: 0] % cycle.count].label
+    }
+
+    private func level(of source: BreakSource) -> DisciplineLevel {
+        switch source {
+        case .schedule(let schedule): schedule.disciplineLevel
+        case .external(let request): request.level
+        }
+    }
+
+    private func breakDuration(for source: BreakSource) -> TimeInterval {
+        switch source {
+        case .schedule(let schedule): currentBreakDuration(for: schedule)
+        case .external(let request): BreakSafety.breakDuration(request.duration)
+        }
     }
 
     private func currentBreakDuration(for schedule: Schedule) -> TimeInterval {
@@ -637,21 +708,33 @@ public final class BreakCoordinator {
         return nil
     }
 
-    private func completeBreak(event: BreakEvent, schedule: Schedule) {
-        escalationTiers[schedule.id] = 0
-        locker.dismissOverlay()
-        if var tracker = repetitionTrackers[schedule.id] {
-            tracker.recordBreak()
-            repetitionTrackers[schedule.id] = tracker
+    private func completeBreak(event: BreakEvent, source: BreakSource) {
+        if let schedule = source.schedule {
+            escalationTiers[schedule.id] = 0
+            if var tracker = repetitionTrackers[schedule.id] {
+                tracker.recordBreak()
+                repetitionTrackers[schedule.id] = tracker
+            }
         }
+        locker.dismissOverlay()
         eventContinuation.yield(.breakCompleted(event))
         if preferences.soundAfterBreak { eventContinuation.yield(.breakCue(.ended)) }
+        countCompletedBreak()
+        currentBreak = nil
+        currentSource = nil
+        afterBreak(source)
+    }
+
+    /// The one place a completed break is counted: Done, idle credit and time away all end here.
+    private func countCompletedBreak() {
         updateStatistics {
             $0.breaksCompleted += 1
             $0.currentStreak += 1
         }
-        currentBreak = nil
-        currentSchedule = nil
-        scheduleNextBreak()
+    }
+
+    /// What follows a break that ended: the schedules arm their next one.
+    private func afterBreak(_ source: BreakSource?, searchFrom: Date? = nil) {
+        scheduleNextBreak(searchFrom: searchFrom)
     }
 }
