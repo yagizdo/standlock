@@ -235,6 +235,38 @@ struct BreakHistoryTests {
         #expect(history.currentStreak(referenceDate: date("2026-06-08")) == 2)
     }
 
+    /// A day with no schedule enabled and a completed (Pomodoro) break extends the streak.
+    @Test func pomodoroOnlyDayExtendsStreak() {
+        var history = BreakHistory()
+        history.upsert(makeRecord("2026-06-01", completed: 1))
+        history.upsert(makeRecord("2026-06-02", completed: 2, active: false))
+        history.upsert(makeRecord("2026-06-03", completed: 1))
+        #expect(history.currentStreak(referenceDate: date("2026-06-03")) == 3)
+        #expect(history.bestStreak == 3)
+    }
+
+    /// Without a completed break such a day is skipped, as before: trying Pomodoro on a day off
+    /// never ends a streak.
+    @Test func pomodoroOnlyDayWithoutCompletedBreakKeepsStreak() {
+        var history = BreakHistory()
+        history.upsert(makeRecord("2026-06-01", completed: 1))
+        history.upsert(makeRecord("2026-06-02", skipped: 2, active: false))
+        #expect(history.currentStreak(referenceDate: date("2026-06-02")) == 1)
+    }
+
+    /// A session stopped in focus 1 writes tallies and no break. That record reads as no record:
+    /// today stays in progress, and a past scheduled weekday still ends the streak.
+    @Test func talliesOnlyRecordReadsAsMissing() {
+        var history = BreakHistory()
+        history.upsert(makeRecord("2026-06-01", completed: 1))
+        history.upsert(makeRecord("2026-06-02", completed: 1))
+        var today = makeRecord("2026-06-03")
+        today.pomodoroTallies = PomodoroTallies(sessionsAbandoned: 1)
+        history.upsert(today)
+        #expect(history.currentStreak(referenceDate: date("2026-06-03")) == 2)
+        #expect(history.currentStreak(referenceDate: date("2026-06-04")) == 0)
+    }
+
     @Test func bestStreakUpdatesOnUpsert() {
         var history = BreakHistory()
         history.upsert(makeRecord("2026-06-01", completed: 1))

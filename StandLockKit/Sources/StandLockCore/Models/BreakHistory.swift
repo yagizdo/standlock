@@ -128,24 +128,26 @@ public struct BreakHistory: Codable, Sendable {
             if key < oldestKey { break }
 
             if let record = records[key] {
-                if !record.hadActiveSchedule {
-                    dayOffset += 1
-                    continue
-                }
+                // On a day with no schedule enabled the completed breaks are Pomodoro breaks.
                 if record.breaksCompleted >= 1 {
                     streak += 1
                     dayOffset += 1
                     continue
                 }
-                break
-            } else {
-                let weekday = Weekday(rawValue: calendar.component(.weekday, from: day))
-                if dayOffset == 0 || weekday.map({ !scheduledWeekdays.contains($0) }) ?? false {
+                // A day with no schedule enabled never ends the streak.
+                if !record.hadActiveSchedule {
                     dayOffset += 1
                     continue
                 }
-                break
+                if record.totalBreaks > 0 { break }
+                // Pomodoro tallies and no break: read as a day with no record.
             }
+            let weekday = Weekday(rawValue: calendar.component(.weekday, from: day))
+            if dayOffset == 0 || weekday.map({ !scheduledWeekdays.contains($0) }) ?? false {
+                dayOffset += 1
+                continue
+            }
+            break
         }
         return streak
     }
