@@ -420,6 +420,22 @@
         }
       }
     },
+    "Finished" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Biten"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "完成"
+          }
+        }
+      }
+    },
     "Fishing" : {
       "localizations" : {
         "tr" : {
@@ -469,6 +485,22 @@
       }
     },
     "Focus length" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Odak süresi"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "专注时长"
+          }
+        }
+      }
+    },
+    "Focus time" : {
       "localizations" : {
         "tr" : {
           "stringUnit" : {
@@ -768,6 +800,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "下次休息"
+          }
+        }
+      }
+    },
+    "Unfinished" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yarım kalan"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未完成"
           }
         }
       }

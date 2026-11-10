@@ -14,6 +14,16 @@ struct PomodoroSessionTests {
         return session
     }
 
+    @Test func focusElapsedIsTheTimeTheFocusRan() {
+        let focus = Self.session(.focus(round: 1), endingAt: Self.start.addingTimeInterval(1500))
+        #expect(focus.focusElapsed(at: Self.start) == TimeInterval(0))
+        #expect(focus.focusElapsed(at: Self.start.addingTimeInterval(600)) == TimeInterval(600))
+        #expect(focus.focusElapsed(at: Self.start.addingTimeInterval(9000)) == TimeInterval(1500))
+        // A clock set back before the start counts nothing, never a negative.
+        #expect(focus.focusElapsed(at: Self.start.addingTimeInterval(-3600)) == TimeInterval(0))
+        #expect(Self.session(.shortBreak(afterRound: 1)).focusElapsed(at: Self.start) == TimeInterval(0))
+    }
+
     // MARK: - Configuration
 
     @Test func standardIsTwentyFiveFiveFifteenFour() {

@@ -311,28 +311,15 @@ final class AppCoordinator: ObservableObject {
     }
 
     private func updateDailyHistory(_ stats: BreakStatistics) {
-        let key = DailyBreakRecord.dateKey(from: Date())
-        let hasActiveSchedule = !schedules.filter(\.isEnabled).isEmpty
-        // Zeroed counters never describe a day worth recording: they mean either a fresh day
-        // just rolled over or a deferral-only update, and a stored record with zero completed
-        // breaks ends the streak in BreakHistory.currentStreak while a missing one reads as a
-        // day still in progress. Writing them would also let a backwards day change (date-line
-        // travel, an NTP correction) blank out a day that already has real numbers.
-        guard stats.totalBreaks > 0 else { return }
-        var record = breakHistory.record(for: key)
-            ?? DailyBreakRecord(dateKey: key, hadActiveSchedule: hasActiveSchedule)
-        record.breaksCompleted = stats.breaksCompleted
-        record.breaksSkipped = stats.breaksSkipped
-        record.breaksEscaped = stats.breaksEscaped
-        record.hadActiveSchedule = hasActiveSchedule
-
         let enabledSchedules = schedules.filter(\.isEnabled)
         let avgDuration = enabledSchedules.isEmpty
             ? 300.0
             : enabledSchedules.map(\.breakDuration).reduce(0, +) / Double(enabledSchedules.count)
-        record.totalBreakDuration = Double(stats.breaksCompleted) * avgDuration
-
-        breakHistory.upsert(record)
+        // Zeroed counters write nothing: a stored record with zero completed breaks ends the
+        // streak in BreakHistory.currentStreak while a missing one reads as a day in progress.
+        guard breakHistory.recordDay(stats, on: DailyBreakRecord.dateKey(from: Date()),
+                                     hasActiveSchedule: !enabledSchedules.isEmpty,
+                                     averageBreakDuration: avgDuration) else { return }
         saveHistory()
     }
 
@@ -464,15 +451,18 @@ final class AppCoordinator: ObservableObject {
         UserDefaults.standard.set(data, forKey: Self.pomodoroSessionKey)
     }
 
-    /// Same day only, as `EnforcementState`; an older session is dropped (its tally as
-    /// abandoned arrives with the statistics step). The level is picked again: permissions
-    /// may have changed while the app was closed.
+    /// Same day only, as `EnforcementState`; an older session is dropped and counted as
+    /// abandoned on the day it started. The level is picked again: permissions may have
+    /// changed while the app was closed.
     private func restoreSavedPomodoroSession() {
         guard let data = UserDefaults.standard.data(forKey: Self.pomodoroSessionKey) else { return }
         UserDefaults.standard.removeObject(forKey: Self.pomodoroSessionKey)
-        guard let session = try? JSONDecoder().decode(PomodoroSession.self, from: data),
-              session.isRestorable(now: Date())
-        else { return }
+        guard let session = try? JSONDecoder().decode(PomodoroSession.self, from: data) else { return }
+        guard session.isRestorable(now: Date()) else {
+            breakHistory = breakHistory.recordingAbandoned(session)
+            saveHistory()
+            return
+        }
         let level = strictestEnabledLevel
         pomodoroRequestedLevel = level
         coordinator?.restorePomodoro(session, level: enforceable(level))

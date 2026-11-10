@@ -91,6 +91,7 @@ extension SettingsPage {
             [
                 "Statistics", "Period", "Break Activity", "Streak", "Best Streak",
                 "Completed", "Skipped", "Break Time", "Completion",
+                "Pomodoro", "Focus time", "Rounds", "Finished", "Unfinished",
             ]
         case .about:
             [

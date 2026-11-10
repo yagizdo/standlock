@@ -865,8 +865,22 @@ public final class BreakCoordinator {
 
     private enum PomodoroTally { case focusEnded, finished, stopped }
 
-    /// Filled by the statistics step; one call site per tally keeps the counting in one place.
-    private func recordPomodoroTally(_ tally: PomodoroTally) {}
+    /// The one place a session's tallies are counted, through `updateStatistics` like every
+    /// break, so the day's record gets them. Called before `pomodoro` moves on.
+    private func recordPomodoroTally(_ tally: PomodoroTally, now: Date = Date()) {
+        let focusRan = pomodoro?.focusElapsed(at: now) ?? 0
+        updateStatistics { stats in
+            var tallies = stats.pomodoroTallies ?? PomodoroTallies()
+            switch tally {
+            case .focusEnded:
+                tallies.focusSeconds += focusRan
+                tallies.rounds += 1
+            case .finished: tallies.sessionsFinished += 1
+            case .stopped: tallies.sessionsAbandoned += 1
+            }
+            stats.pomodoroTallies = tallies
+        }
+    }
 
     private func emitPomodoro() {
         eventContinuation.yield(.pomodoroChanged(pomodoro.map { PomodoroStatus(session: $0, level: pomodoroLevel) }))
@@ -935,7 +949,7 @@ public final class BreakCoordinator {
                 breakTimer = Task { await self.openPomodoroBreak(duration: remaining) }
             }
         case .creditedBreaks(_, let next):
-            if case .focus = session.phase { recordPomodoroTally(.focusEnded) }
+            if case .focus = session.phase { recordPomodoroTally(.focusEnded, now: now) }
             postponedExternal = nil
             pomodoroBreakPostponed = false
             let credited = session.phase.isBreak ? session.phase : (session.next(at: now)?.phase ?? .longBreak)
@@ -951,7 +965,7 @@ public final class BreakCoordinator {
                 endPomodoro(.finished)
             }
         case .openBreak(let remaining, let next):
-            recordPomodoroTally(.focusEnded)
+            recordPomodoroTally(.focusEnded, now: now)
             pomodoro = next
             emitPomodoro()
             breakTimer = Task { await self.openPomodoroBreak(duration: remaining) }
