@@ -8534,22 +8534,6 @@
         }
       }
     },
-    "This settings file exceeds the supported size or complexity limits." : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bu ayar dosyası desteklenen boyut veya karmaşıklık sınırlarını aşıyor."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "此设置文件超出了支持的大小或复杂度限制。"
-          }
-        }
-      }
-    },
     "Work Hours" : {
       "localizations" : {
         "tr" : {

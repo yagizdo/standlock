@@ -12,7 +12,6 @@ struct SettingsFileSection: View {
     @EnvironmentObject private var themeStore: ThemeStore
     @AppStorage(SettingsDescription.showHelpKey) private var showHelp = true
     @State private var prompt: Prompt?
-    @State private var isImporting = false
 
     private enum Prompt {
         case confirm(SettingsExport, message: String)
@@ -48,7 +47,6 @@ struct SettingsFileSection: View {
                 description: "Replace your settings and schedules with the ones in a file"
             ) {
                 Button("Import…", action: chooseImport)
-                    .disabled(isImporting)
             }
         }
         // A SwiftUI alert is an attached sheet on macOS, so the restart gate and the
@@ -107,21 +105,14 @@ struct SettingsFileSection: View {
     }
 
     private func chooseImport() {
-        guard !isImporting, let window = settingsWindow else { return }
-        isImporting = true
+        guard let window = settingsWindow else { return }
         let panel = NSOpenPanel()
         panel.allowedContentTypes = [.json]
         panel.allowsMultipleSelection = false
         panel.canChooseDirectories = false
         panel.beginSheetModal(for: window) { response in
-            guard response == .OK, let url = panel.url else {
-                isImporting = false
-                return
-            }
-            Task {
-                defer { isImporting = false }
-                show(await read(url))
-            }
+            guard response == .OK, let url = panel.url else { return }
+            Task { show(await read(url)) }
         }
     }
 
@@ -136,18 +127,13 @@ struct SettingsFileSection: View {
             let decoded = try await Task.detached(priority: .userInitiated) {
                 try SettingsFileReader.read(from: url)
             }.value
-            let languages = languageStore.available
-            let themes = themeStore.available.map(\.id)
-            while true {
-                let snapshot = current
-                let (imported, summary) = await Task.detached(priority: .userInitiated) {
-                    let imported = decoded.keepingKnownChoices(languages: languages, themes: themes, current: snapshot)
-                    return (imported, SettingsImportSummary(current: snapshot, imported: imported))
-                }.value
-                // Settings remain usable during import. Refresh the preview if they changed.
-                guard snapshot == current else { continue }
-                return .confirm(imported, message: message(for: summary))
-            }
+            let current = current
+            let imported = decoded.keepingKnownChoices(
+                languages: languageStore.available,
+                themes: themeStore.available.map(\.id),
+                current: current
+            )
+            return .confirm(imported, message: message(for: SettingsImportSummary(current: current, imported: imported)))
         } catch let importError as SettingsImportError {
             error = importError
         } catch {
@@ -166,8 +152,6 @@ struct SettingsFileSection: View {
 
     private func message(for error: SettingsImportError) -> String {
         switch error {
-        case .tooLarge:
-            languageStore.string("This settings file exceeds the supported size or complexity limits.")
         case .notSettingsFile:
             languageStore.string("This file is not a StandLock settings file.")
         case .newerVersion:
@@ -181,15 +165,7 @@ struct SettingsFileSection: View {
         guard !summary.isEmpty else { return languageStore.string("This file matches your current settings.") }
         let formatter = ListFormatter()
         formatter.locale = languageStore.locale
-        func list(_ items: [String]) -> String {
-            let visible = items.prefix(20).map { name in
-                let text = String(decoding: name.utf8.prefix(256), as: UTF8.self)
-                return name.utf8.count > 256 ? text + "…" : text
-            }
-            let text = formatter.string(from: visible) ?? visible.joined(separator: ", ")
-            guard items.count > visible.count else { return text }
-            return text + " — " + languageStore.string("and \(items.count - visible.count) more")
-        }
+        func list(_ items: [String]) -> String { formatter.string(from: items) ?? items.joined(separator: ", ") }
 
         var settings = summary.changedPages.map { languageStore.string($0.titleResource) }
         if summary.changesShowHelp { settings.append(languageStore.string("Show help")) }
