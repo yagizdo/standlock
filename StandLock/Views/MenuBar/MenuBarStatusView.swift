@@ -132,9 +132,9 @@ struct MenuBarStatusView: View {
 
     @ViewBuilder
     private func trailing(now: Date) -> some View {
-        // A break phase counts down only on screen: while it waits, its phase end is stale and
-        // the state's date, if any, is a postponed break's return, which the state branch shows.
-        if let pomodoro, !pomodoro.phase.isBreak || state == .breakActive {
+        // A covered phase counts down only on screen: while it waits, its phase end is stale and
+        // the state's date, if any, is a postponed return, which the state branch shows.
+        if let pomodoro, !pomodoro.isCovered || state == .breakActive {
             trailingColumn(label: pomodoro.phase.isBreak ? "Break left" : "Focus left") {
                 Text(formatCountdown(secondsRemaining: breakSecondsRemaining(until: pomodoro.phaseEnd, now: now)))
             }

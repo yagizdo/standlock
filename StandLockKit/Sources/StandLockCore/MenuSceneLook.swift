@@ -25,11 +25,14 @@ public enum MenuSceneLook: Equatable, Sendable {
         }
     }
 
-    /// During a session, a break phase that is not on screen waits: a postponed break counts
-    /// down to its return through `.countingDown`, which would otherwise read as focus.
+    /// During a session, a covered phase that is not on screen waits: a postponed break counts
+    /// down to its return through `.countingDown`, which would otherwise read as focus. In cover
+    /// mode the open break is rest, so it reads as standing.
     public init(state: NextBreakState, pomodoro: PomodoroStatus?, now: Date = Date()) {
-        if pomodoro?.phase.isBreak == true, state != .breakActive {
+        if let pomodoro, pomodoro.isCovered, state != .breakActive {
             self = .breakWaiting
+        } else if let pomodoro, pomodoro.phase.isBreak, !pomodoro.isCovered {
+            self = .timeToStand
         } else {
             self.init(state: state, now: now)
         }
