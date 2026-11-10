@@ -520,6 +520,26 @@ struct PomodoroLifetimeTests {
         #expect(await waitUntil { locker.isShowing })
         #expect(locker.lastDuration == TimeInterval(10))
         #expect(log.completed == 0)
+        // The focus ended while away: one round, its full minute.
+        #expect(await waitUntil { log.stats?.pomodoroTallies?.rounds == 1 })
+        #expect(abs((log.stats?.pomodoroTallies?.focusSeconds ?? 0) - 60) < 1)
+    }
+
+    /// Away long enough to cover the focus and its break: the round still counts once.
+    @Test
+    func focusAndBreakCoveredWhileAwayTallyOneRound() async {
+        let locker = MockLocker()
+        let coordinator = BreakCoordinator(scheduler: MockScheduler(), detector: MockDetector(), locker: locker)
+        defer { coordinator.stop() }
+        let log = EventLog(coordinator)
+        coordinator.start(with: [], preferences: AppPreferences(idleDetectionEnabled: false))
+        let start = Date()
+        coordinator.startPomodoro(oneMinute, level: .gentle, now: start)
+        coordinator.handleScreenLock(now: start.addingTimeInterval(30))
+        coordinator.handleScreenUnlock(now: start.addingTimeInterval(200))
+        #expect(await waitUntil { log.completed == 1 && log.stats?.pomodoroTallies?.rounds == 1 })
+        #expect(abs((log.stats?.pomodoroTallies?.focusSeconds ?? 0) - 60) < 1)
+        #expect(!locker.showOverlayCalled)
     }
 
     @Test
