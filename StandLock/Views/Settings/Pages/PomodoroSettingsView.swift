@@ -7,7 +7,17 @@ struct PomodoroSettingsView: View {
     var body: some View {
         SettingsPageLayout("Pomodoro") {
             SettingsSection(note: "Start a session from the menu bar. Changes apply to the next session.") {
-                minutesRow("Focus length", symbol: "timer", value: \.focus, in: PomodoroConfiguration.focusRange)
+                SettingsRow("Cover the screen", symbol: "rectangle.inset.filled") {
+                    Picker("Cover the screen", selection: cover) {
+                        Text("During breaks").tag(PomodoroCover.breaks)
+                        Text("During focus").tag(PomodoroCover.focus)
+                    }
+                    .labelsHidden()
+                    .fixedSize()
+                }
+                SettingsRowDivider()
+                minutesRow("Focus length", symbol: "timer", value: \.focus,
+                           in: PomodoroConfiguration.focusRange(for: coordinator.preferences.pomodoro.cover))
                 SettingsRowDivider()
                 minutesRow("Short break", symbol: "cup.and.saucer", value: \.shortBreak, in: PomodoroConfiguration.breakRange)
                 SettingsRowDivider()
@@ -20,6 +30,14 @@ struct PomodoroSettingsView: View {
                 }
             }
         }
+    }
+
+    /// Through `setCover`, so a focus longer than the cover allows is pulled in with it.
+    private var cover: Binding<PomodoroCover> {
+        Binding(
+            get: { coordinator.preferences.pomodoro.cover },
+            set: { coordinator.preferences.pomodoro.setCover($0) }
+        )
     }
 
     /// Stored in seconds, edited in whole minutes.

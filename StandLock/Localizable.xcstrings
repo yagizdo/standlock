@@ -292,6 +292,22 @@
         }
       }
     },
+    "Cover the screen" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ekranı kapat"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "遮挡屏幕"
+          }
+        }
+      }
+    },
     "Daily skip limits" : {
       "localizations" : {
         "tr" : {
@@ -368,6 +384,38 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "休息期间"
+          }
+        }
+      }
+    },
+    "During breaks" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Molalarda"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "休息时"
+          }
+        }
+      }
+    },
+    "During focus" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Odakta"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "专注时"
           }
         }
       }
