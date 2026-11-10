@@ -277,4 +277,54 @@ struct BreakHistoryTests {
         let record = makeRecord("2026-06-01", completed: 3, skipped: 2, escaped: 1)
         #expect(record.totalBreaks == 6)
     }
+
+    // MARK: - Pomodoro tallies
+
+    /// `breakHistory` exactly as v0.12.0 writes it: one decode failure would empty the history
+    /// and the next save would overwrite it.
+    @Test func dailyRecordFromV0120DecodesWithNilPomodoro() throws {
+        let json = #"""
+        {"records":{"2026-06-01":{"dateKey":"2026-06-01","breaksCompleted":3,"breaksSkipped":1,\#
+        "breaksEscaped":0,"totalBreakDuration":900,"hadActiveSchedule":true}},"bestStreak":4}
+        """#
+        let history = try JSONDecoder().decode(BreakHistory.self, from: Data(json.utf8))
+        let record = try #require(history.record(for: "2026-06-01"))
+        #expect(record.breaksCompleted == 3)
+        #expect(record.totalBreakDuration == TimeInterval(900))
+        #expect(record.pomodoroTallies == nil)
+        #expect(history.bestStreak == 4)
+    }
+
+    @Test func statisticsFromV0120DecodesWithNilPomodoro() throws {
+        let json = #"""
+        {"date":800000000,"breaksCompleted":2,"breaksSkipped":1,"breaksEscaped":0,"breaksDeferred":1,\#
+        "currentStreak":2,"weeklyEscapeCount":0,"weekStartDate":799900000}
+        """#
+        let stats = try JSONDecoder().decode(BreakStatistics.self, from: Data(json.utf8))
+        #expect(stats.breaksCompleted == 2)
+        #expect(stats.currentStreak == 2)
+        #expect(stats.pomodoroTallies == nil)
+    }
+
+    @Test func pomodoroTalliesRoundTrip() throws {
+        let tallies = PomodoroTallies(focusSeconds: 3000, rounds: 2, sessionsFinished: 1, sessionsAbandoned: 1)
+        var record = makeRecord("2026-06-01", completed: 2)
+        record.pomodoroTallies = tallies
+        var stats = BreakStatistics()
+        stats.pomodoroTallies = tallies
+
+        let decodedRecord = try JSONDecoder().decode(DailyBreakRecord.self, from: JSONEncoder().encode(record))
+        let decodedStats = try JSONDecoder().decode(BreakStatistics.self, from: JSONEncoder().encode(stats))
+        #expect(decodedRecord.pomodoroTallies == tallies)
+        #expect(decodedStats.pomodoroTallies == tallies)
+    }
+
+    @Test func rolloverClearsPomodoroTallies() {
+        let today = date("2026-06-01")
+        var stats = BreakStatistics(date: today)
+        stats.pomodoroTallies = PomodoroTallies(focusSeconds: 1500, rounds: 1)
+        let rolled = stats.resetDailyIfNeeded(currentDate: date("2026-06-02"))
+        #expect(rolled)
+        #expect(stats.pomodoroTallies == nil)
+    }
 }
