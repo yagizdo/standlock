@@ -9,6 +9,9 @@ final class OverlayWindowController: LockPresenting {
     private var eventTapController: EventTapController?
     private var screenObserver: NSObjectProtocol?
     private var focusTimer: Timer?
+    /// Held while a Pomodoro focus cover is up: the user works away from the Mac, and an idle
+    /// display sleep would lock the session, take the cover down and lose its end cue.
+    private var keepAwake: NSObjectProtocol?
     private let mediaController = MediaController()
     private let languageStore: LanguageStore
     private let themeStore: ThemeStore
@@ -107,6 +110,12 @@ final class OverlayWindowController: LockPresenting {
         if preferences.pauseMediaDuringBreak {
             mediaController.pause()
         }
+
+        if pomodoroChip?.isFocus == true {
+            keepAwake = ProcessInfo.processInfo.beginActivity(
+                options: [.idleDisplaySleepDisabled, .idleSystemSleepDisabled], reason: "Pomodoro focus cover"
+            )
+        }
     }
 
     func dismissOverlay() {
@@ -117,6 +126,10 @@ final class OverlayWindowController: LockPresenting {
         }
         focusTimer?.invalidate()
         focusTimer = nil
+        if let keepAwake {
+            ProcessInfo.processInfo.endActivity(keepAwake)
+            self.keepAwake = nil
+        }
         eventTapController?.stop()
         eventTapController = nil
 
