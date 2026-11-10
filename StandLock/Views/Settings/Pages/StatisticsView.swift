@@ -11,6 +11,9 @@ struct StatisticsView: View {
     var body: some View {
         SettingsPageLayout(title: Text("Statistics"), accessory: { periodPicker }) {
             metricsGrid
+            if !cachedStats.pomodoro.isEmpty {
+                PomodoroStatsCard(tallies: cachedStats.pomodoro, formattedTime: formattedTime)
+            }
             Group {
                 switch selectedPeriod {
                 case .today:
@@ -93,6 +96,28 @@ struct StatisticsView: View {
             return "\(hours)h \(minutes)m"
         }
         return "\(minutes)m"
+    }
+}
+
+// MARK: - Pomodoro Card
+
+/// The period's Pomodoro numbers, shown only when a session ran in it.
+private struct PomodoroStatsCard: View {
+    let tallies: PomodoroTallies
+    let formattedTime: (TimeInterval) -> String
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Pomodoro").font(.subheadline).fontWeight(.semibold)
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: 4), spacing: 12) {
+                StatCard(icon: "timer", label: "Focus time", value: formattedTime(tallies.focusSeconds), color: .orange)
+                StatCard(icon: "repeat", label: "Rounds", value: "\(tallies.rounds)", color: .blue)
+                StatCard(icon: "flag.checkered", label: "Finished", value: "\(tallies.sessionsFinished)", color: .green)
+                StatCard(icon: "stop.circle", label: "Unfinished", value: "\(tallies.sessionsAbandoned)", color: .secondary)
+            }
+        }
+        .padding(16)
+        .background(.quaternary.opacity(0.3), in: RoundedRectangle(cornerRadius: 10))
     }
 }
 
@@ -400,7 +425,7 @@ private struct StatCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             HStack(spacing: 4) {
-                Image(systemName: icon).font(.caption2)
+                Image(systemName: icon).font(.caption2).accessibilityHidden(true)
                 Text(label).font(.caption).foregroundStyle(.secondary)
             }
             Text(value)

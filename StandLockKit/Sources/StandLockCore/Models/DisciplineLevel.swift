@@ -3,6 +3,11 @@ public enum DisciplineLevel: String, Codable, Sendable, CaseIterable {
     case firm
     case strict
 
+    /// A Pomodoro session's level: the strictest of the enabled schedules, Gentle with none (S87).
+    public static func strictest(of levels: [DisciplineLevel]) -> DisciplineLevel {
+        levels.max { allCases.firstIndex(of: $0)! < allCases.firstIndex(of: $1)! } ?? .gentle
+    }
+
     public var displayName: String {
         switch self {
         case .gentle: "Gentle"

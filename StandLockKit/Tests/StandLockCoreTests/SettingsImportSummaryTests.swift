@@ -59,15 +59,20 @@ struct SettingsImportSummaryTests {
         #expect(Self.pages { $0.preferences.idleDetectionEnabled = false } == [.detection])
     }
 
+    @Test func importChangingPomodoroListsPomodoroPage() {
+        #expect(Self.pages { $0.preferences.pomodoro.rounds = 6 } == [.pomodoro])
+    }
+
     @Test func pagesComeInSidebarOrder() {
         let pages = Self.pages { export in
             export.preferences.idleDetectionEnabled = false
             export.preferences.gentleDailySkipLimit = 1
             export.preferences.pauseMediaDuringBreak = false
             export.preferences.showFullWorkTimer = true
+            export.preferences.pomodoro.focus = 3000
             export.theme = "dark"
         }
-        #expect(pages == [.general, .menuBar, .breakScreen, .discipline, .detection])
+        #expect(pages == [.general, .menuBar, .breakScreen, .discipline, .detection, .pomodoro])
     }
 
     @Test func schedulesAreMatchedByID() {

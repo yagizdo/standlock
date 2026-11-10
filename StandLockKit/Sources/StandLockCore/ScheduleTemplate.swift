@@ -27,7 +27,14 @@ public enum ScheduleTemplate: CaseIterable, Sendable {
     public func apply(to draft: inout ScheduleDraft) {
         draft.intervalRows = [IntervalRow(minutes: rhythm.intervalMinutes)]
         draft.breakDurationMinutes = rhythm.breakMinutes
-        draft.useRepetition = false
+        draft.useRepetition = self == .pomodoro
+        if self == .pomodoro {
+            // Three short breaks, then a long one. The short length is set too: with
+            // repetition on, short breaks use it instead of the break length.
+            draft.shortBreakCount = 3
+            draft.shortBreakMinutes = rhythm.breakMinutes
+            draft.longBreakMinutes = 15
+        }
         let name = draft.name.trimmingCharacters(in: .whitespaces)
         if name.isEmpty || Self.allCases.contains(where: { $0.title == name }) {
             draft.name = title

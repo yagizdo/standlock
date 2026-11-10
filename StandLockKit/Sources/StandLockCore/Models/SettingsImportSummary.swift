@@ -17,7 +17,7 @@ public struct SettingsImportSummary: Equatable, Sendable {
             && addedSchedules.isEmpty && removedSchedules.isEmpty && changedSchedules.isEmpty
     }
 
-    static let pageOrder: [SettingsPage] = [.general, .menuBar, .breakScreen, .discipline, .detection]
+    static let pageOrder: [SettingsPage] = [.general, .menuBar, .breakScreen, .discipline, .detection, .pomodoro]
 
     /// - Parameter imported: a decoded file, already portable.
     public init(current: SettingsExport, imported: SettingsExport) {
@@ -79,6 +79,7 @@ public struct SettingsImportSummary: Equatable, Sendable {
             field("screenSharingPostDeferral", .detection, \.screenSharingPostDeferral),
             field("postponeReturnDelay", .detection, \.postponeReturnDelay),
             field("idleDetectionEnabled", .detection, \.idleDetectionEnabled),
+            field("pomodoro", .pomodoro, \.pomodoro),
         ]
     }
 }

@@ -8,6 +8,7 @@ struct MenuBarStatusView: View {
     let progress: Double
     let scene: MenuScene
     let schedule: Schedule?
+    let pomodoro: PomodoroStatus?
 
     @EnvironmentObject private var checker: PermissionChecker
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -17,11 +18,12 @@ struct MenuBarStatusView: View {
     /// Started here rather than on appear, so the countdown runs from the first frame.
     @StateObject private var clock: PanelClock
 
-    init(state: NextBreakState, progress: Double, scene: MenuScene, schedule: Schedule?) {
+    init(state: NextBreakState, progress: Double, scene: MenuScene, schedule: Schedule?, pomodoro: PomodoroStatus?) {
         self.state = state
         self.progress = progress
         self.scene = scene
         self.schedule = schedule
+        self.pomodoro = pomodoro
         let reduceMotion = NSWorkspace.shared.accessibilityDisplayShouldReduceMotion
         _clock = StateObject(wrappedValue: PanelClock(every: Self.tickInterval(scene: scene, reduceMotion: reduceMotion, isOpen: true)))
     }
@@ -33,7 +35,7 @@ struct MenuBarStatusView: View {
     }
 
     var body: some View {
-        let look = MenuSceneLook(state: state, now: clock.now)
+        let look = MenuSceneLook(state: state, pomodoro: pomodoro, now: clock.now)
         VStack(alignment: .leading, spacing: 10) {
             if scene != .off {
                 MenuSceneCard(scene: scene, look: look, progress: progress, date: clock.now, isMoving: !reduceMotion)
@@ -85,7 +87,14 @@ struct MenuBarStatusView: View {
     }
 
     private func title(_ look: MenuSceneLook) -> LocalizedStringKey {
-        switch look {
+        if let pomodoro {
+            switch pomodoro.phase {
+            case .focus(let round): return "Focus \(round)/\(pomodoro.rounds)"
+            case .shortBreak: return "Short break"
+            case .longBreak: return "Long break"
+            }
+        }
+        return switch look {
         case .working: "Working"
         case .breakSoon: "Break soon"
         case .timeToStand: "Time to stand"
@@ -99,6 +108,17 @@ struct MenuBarStatusView: View {
     private var subtitle: some View {
         if case .deferred(let reason) = state {
             Text(LocalizedStringKey(reason.displayName))
+        } else if let pomodoro {
+            HStack(spacing: 4) {
+                Text("Pomodoro")
+                Text(verbatim: "·")
+                if case .shortBreak = pomodoro.phase {
+                    Text("next Focus \(pomodoro.round)/\(pomodoro.rounds)")
+                } else {
+                    Text(LocalizedStringKey(pomodoro.level.displayName))
+                }
+            }
+            .lineLimit(1)
         } else if let schedule {
             HStack(spacing: 4) {
                 Text(schedule.name)
@@ -112,6 +132,19 @@ struct MenuBarStatusView: View {
 
     @ViewBuilder
     private func trailing(now: Date) -> some View {
+        // A break phase counts down only on screen: while it waits, its phase end is stale and
+        // the state's date, if any, is a postponed break's return, which the state branch shows.
+        if let pomodoro, !pomodoro.phase.isBreak || state == .breakActive {
+            trailingColumn(label: pomodoro.phase.isBreak ? "Break left" : "Focus left") {
+                Text(formatCountdown(secondsRemaining: breakSecondsRemaining(until: pomodoro.phaseEnd, now: now)))
+            }
+        } else {
+            stateTrailing(now: now)
+        }
+    }
+
+    @ViewBuilder
+    private func stateTrailing(now: Date) -> some View {
         switch state {
         case .countingDown(let nextBreak):
             trailingColumn(label: "Next break") {

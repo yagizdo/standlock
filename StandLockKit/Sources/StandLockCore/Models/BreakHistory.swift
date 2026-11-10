@@ -18,11 +18,12 @@ public struct AggregateStats: Equatable, Sendable {
     public let bestStreak: Int
     public let totalBreakTime: TimeInterval
     public let activeDays: Int
+    public let pomodoro: PomodoroTallies
 
     public static let empty = AggregateStats(
         totalCompleted: 0, totalSkipped: 0, totalEscaped: 0,
         completionRate: 0, currentStreak: 0, bestStreak: 0,
-        totalBreakTime: 0, activeDays: 0
+        totalBreakTime: 0, activeDays: 0, pomodoro: PomodoroTallies()
     )
 }
 
@@ -66,6 +67,46 @@ public struct BreakHistory: Codable, Sendable {
         revision += 1
     }
 
+    /// Copies the live counters into the day's record. Returns `false`, writing nothing, for
+    /// zeroed counters: they mean a fresh day just rolled over or a deferral-only update, and
+    /// writing them would let a backwards day change (date-line travel, an NTP correction)
+    /// blank out a day that already has real numbers. Pomodoro tallies alone are a day worth
+    /// recording: a session stopped in its first focus has no break.
+    @discardableResult
+    public mutating func recordDay(_ stats: BreakStatistics, on dateKey: String,
+                                   hasActiveSchedule: Bool, averageBreakDuration: TimeInterval) -> Bool {
+        guard stats.totalBreaks > 0 || stats.pomodoroTallies.map({ !$0.isEmpty }) == true else { return false }
+        var record = records[dateKey] ?? DailyBreakRecord(dateKey: dateKey, hadActiveSchedule: hasActiveSchedule)
+        // A tallies-only update leaves the break counts alone, for the same backwards day change.
+        if stats.totalBreaks > 0 {
+            record.breaksCompleted = stats.breaksCompleted
+            record.breaksSkipped = stats.breaksSkipped
+            record.breaksEscaped = stats.breaksEscaped
+            // shortcut: an estimate from today's schedules (300 s with none), Pomodoro breaks included;
+            // store real durations if Break Time ever needs to be exact.
+            record.totalBreakDuration = Double(stats.breaksCompleted) * averageBreakDuration
+        }
+        // Sticky: a Pomodoro break after every schedule is turned off must not take back the
+        // credit the day's scheduled breaks earned.
+        record.hadActiveSchedule = record.hadActiveSchedule || hasActiveSchedule
+        record.pomodoroTallies = stats.pomodoroTallies
+        upsert(record)
+        return true
+    }
+
+    /// A session dropped at launch on a later day, counted as abandoned on the day it started.
+    /// Its finished focus phases were tallied live that day, so only the abandon is added.
+    public func recordingAbandoned(_ session: PomodoroSession) -> BreakHistory {
+        let key = DailyBreakRecord.dateKey(from: session.startedAt)
+        var record = records[key] ?? DailyBreakRecord(dateKey: key, hadActiveSchedule: false)
+        var tallies = record.pomodoroTallies ?? PomodoroTallies()
+        tallies.sessionsAbandoned += 1
+        record.pomodoroTallies = tallies
+        var copy = self
+        copy.upsert(record)
+        return copy
+    }
+
     /// Returns `true` when records were actually dropped, so the caller can skip a pointless save.
     @discardableResult
     public mutating func pruneOlderThan(_ dateKey: String) -> Bool {
@@ -90,25 +131,28 @@ public struct BreakHistory: Codable, Sendable {
             let key = DailyBreakRecord.dateKey(from: day)
             if key < oldestKey { break }
 
-            if let record = records[key] {
-                if !record.hadActiveSchedule {
-                    dayOffset += 1
-                    continue
-                }
+            // Pomodoro tallies with no break read as no record, whoever wrote it: a session stopped
+            // in focus 1 live, or one dropped at a later launch, which cannot know the schedules.
+            if let record = records[key], record.totalBreaks > 0 || record.pomodoroTallies == nil {
+                // On a day with no schedule enabled the completed breaks are Pomodoro breaks.
                 if record.breaksCompleted >= 1 {
                     streak += 1
                     dayOffset += 1
                     continue
                 }
-                break
-            } else {
-                let weekday = Weekday(rawValue: calendar.component(.weekday, from: day))
-                if dayOffset == 0 || weekday.map({ !scheduledWeekdays.contains($0) }) ?? false {
+                // A day with no schedule enabled never ends the streak.
+                if !record.hadActiveSchedule {
                     dayOffset += 1
                     continue
                 }
                 break
             }
+            let weekday = Weekday(rawValue: calendar.component(.weekday, from: day))
+            if dayOffset == 0 || weekday.map({ !scheduledWeekdays.contains($0) }) ?? false {
+                dayOffset += 1
+                continue
+            }
+            break
         }
         return streak
     }
@@ -145,6 +189,7 @@ public struct BreakHistory: Codable, Sendable {
         var totalEscaped = 0
         var totalBreakTime: TimeInterval = 0
         var activeDays = 0
+        var pomodoro = PomodoroTallies()
 
         for record in filtered {
             totalCompleted += record.breaksCompleted
@@ -152,6 +197,7 @@ public struct BreakHistory: Codable, Sendable {
             totalEscaped += record.breaksEscaped
             totalBreakTime += record.totalBreakDuration
             if record.totalBreaks > 0 { activeDays += 1 }
+            if let tallies = record.pomodoroTallies { pomodoro = pomodoro + tallies }
         }
 
         let total = totalCompleted + totalSkipped + totalEscaped
@@ -167,7 +213,8 @@ public struct BreakHistory: Codable, Sendable {
             currentStreak: streak,
             bestStreak: bestStreak,
             totalBreakTime: totalBreakTime,
-            activeDays: activeDays
+            activeDays: activeDays,
+            pomodoro: pomodoro
         )
     }
 }

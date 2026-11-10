@@ -14,25 +14,26 @@ struct QuickActionsView: View {
                 Button {
                     coordinator.resumeSchedule()
                 } label: {
-                    pill("Resume", symbol: "play.fill")
+                    MenuBarPillLabel("Resume", symbol: "play.fill")
                 }
                 .buttonStyle(MenuBarPillStyle())
             } else {
                 Button {
                     coordinator.skipNextBreak()
                 } label: {
-                    pill("Skip", symbol: "forward.end")
+                    MenuBarPillLabel("Skip", symbol: "forward.end")
                 }
                 .buttonStyle(MenuBarPillStyle())
-                .disabled(!coordinator.schedules.contains(where: \.isEnabled) || coordinator.isBreakActive)
+                // Kit ignores both while a session runs: Stop ends it.
+                .disabled(!coordinator.schedules.contains(where: \.isEnabled) || coordinator.isBreakActive || inSession)
 
                 Button {
                     showPauseMenu()
                 } label: {
-                    pill("Pause", symbol: "pause.circle")
+                    MenuBarPillLabel("Pause", symbol: "pause.circle")
                 }
                 .buttonStyle(MenuBarPillStyle())
-                .disabled(coordinator.schedules.isEmpty)
+                .disabled(coordinator.schedules.isEmpty || inSession)
             }
 
             iconButton("About StandLock", symbol: "info.circle") {
@@ -56,6 +57,8 @@ struct QuickActionsView: View {
         }
     }
 
+    private var inSession: Bool { coordinator.pomodoroStatus != nil }
+
     private func iconButton(_ title: LocalizedStringKey, symbol: String, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Image(systemName: symbol)
@@ -65,16 +68,6 @@ struct QuickActionsView: View {
         .frame(width: 28)
         .help(title)
         .accessibilityLabel(title)
-    }
-
-    private func pill(_ title: LocalizedStringKey, symbol: String) -> some View {
-        HStack(spacing: 4) {
-            Image(systemName: symbol)
-                .foregroundStyle(.secondary)
-            Text(title)
-                .font(.callout)
-                .lineLimit(1)
-        }
     }
 
     private func showPauseMenu() {

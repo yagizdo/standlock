@@ -44,6 +44,33 @@ struct MenuSceneTests {
         #expect(look(.noActiveSchedules) == .noSchedules)
     }
 
+    private func session(_ phase: PomodoroPhase) -> PomodoroStatus {
+        let session = PomodoroSession(
+            startedAt: now, configuration: .standard, phase: phase, phaseEnd: now.addingTimeInterval(300)
+        )
+        return PomodoroStatus(session: session, level: .gentle)
+    }
+
+    @Test func sessionFocusIsWorkingAndBreakIsTimeToStand() {
+        let focus = session(.focus(round: 2))
+        #expect(MenuSceneLook(state: .countingDown(to: now.addingTimeInterval(600)), pomodoro: focus, now: now) == .working)
+        #expect(MenuSceneLook(state: .countingDown(to: now.addingTimeInterval(30)), pomodoro: focus, now: now) == .breakSoon)
+        #expect(MenuSceneLook(state: .breakActive, pomodoro: session(.shortBreak(afterRound: 2)), now: now) == .timeToStand)
+        #expect(MenuSceneLook(state: .breakActive, pomodoro: session(.longBreak), now: now) == .timeToStand)
+    }
+
+    @Test func aSessionBreakNotOnScreenIsWaitingEvenWhileItsReturnCountsDown() {
+        // A postponed break counts down to its return through `.countingDown`; that is not focus.
+        let onBreak = session(.shortBreak(afterRound: 1))
+        #expect(MenuSceneLook(state: .countingDown(to: now.addingTimeInterval(600)), pomodoro: onBreak, now: now) == .breakWaiting)
+        #expect(MenuSceneLook(state: .deferred(.postponed), pomodoro: onBreak, now: now) == .breakWaiting)
+    }
+
+    @Test func noSessionKeepsTheStateLook() {
+        #expect(MenuSceneLook(state: .countingDown(to: now.addingTimeInterval(600)), pomodoro: nil, now: now) == .working)
+        #expect(MenuSceneLook(state: .paused(until: now), pomodoro: nil, now: now) == .paused)
+    }
+
     @Test func savedPreferencesFromAnOlderVersionGetTheHourglass() throws {
         let decoded = try JSONDecoder().decode(AppPreferences.self, from: Data("{}".utf8))
         #expect(decoded.menuScene == .hourglass)

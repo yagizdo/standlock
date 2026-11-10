@@ -38,6 +38,8 @@ public struct AppPreferences: Codable, Sendable, Equatable {
 
     public var breakScreen: BreakScreenPreferences
 
+    public var pomodoro: PomodoroConfiguration
+
     public init(
         gentleDailySkipLimit: Int = 5,
         firmSkipDelay: TimeInterval = 10,
@@ -61,7 +63,8 @@ public struct AppPreferences: Codable, Sendable, Equatable {
         showFullWorkTimer: Bool = false,
         menuBarCountdownMinutes: Int = 1,
         menuScene: MenuScene = .hourglass,
-        breakScreen: BreakScreenPreferences = BreakScreenPreferences()
+        breakScreen: BreakScreenPreferences = BreakScreenPreferences(),
+        pomodoro: PomodoroConfiguration = .standard
     ) {
         self.gentleDailySkipLimit = gentleDailySkipLimit
         self.firmSkipDelay = firmSkipDelay
@@ -86,6 +89,7 @@ public struct AppPreferences: Codable, Sendable, Equatable {
         self.menuBarCountdownMinutes = menuBarCountdownMinutes
         self.menuScene = menuScene
         self.breakScreen = breakScreen
+        self.pomodoro = pomodoro
     }
 
     private enum CodingKeys: String, CodingKey {
@@ -101,6 +105,7 @@ public struct AppPreferences: Codable, Sendable, Equatable {
         case resetIntervalOnSkip
         case showFullWorkTimer, menuBarCountdownMinutes, menuScene
         case breakScreen
+        case pomodoro
     }
 
     public init(from decoder: Decoder) throws {
@@ -130,6 +135,7 @@ public struct AppPreferences: Codable, Sendable, Equatable {
         // from a newer version would fail here.
         menuScene = try c.decodeIfPresent(String.self, forKey: .menuScene).flatMap(MenuScene.init(rawValue:)) ?? .hourglass
         breakScreen = try c.decodeIfPresent(BreakScreenPreferences.self, forKey: .breakScreen) ?? BreakScreenPreferences()
+        pomodoro = try c.decodeIfPresent(PomodoroConfiguration.self, forKey: .pomodoro) ?? .standard
     }
 }
 

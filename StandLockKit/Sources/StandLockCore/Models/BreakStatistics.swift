@@ -9,6 +9,8 @@ public struct BreakStatistics: Codable, Sendable {
     public var currentStreak: Int
     public var weeklyEscapeCount: Int
     public var weekStartDate: Date
+    /// Optional so statistics saved before Pomodoro still decode; nil means none today.
+    public var pomodoroTallies: PomodoroTallies?
 
     public init(date: Date = Date()) {
         self.date = date
@@ -39,6 +41,7 @@ public struct BreakStatistics: Codable, Sendable {
         breaksSkipped = 0
         breaksEscaped = 0
         breaksDeferred = 0
+        pomodoroTallies = nil
         return true
     }
 
