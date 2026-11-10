@@ -54,6 +54,38 @@ struct PomodoroSessionTests {
         #expect(!config.isWithinBounds)
     }
 
+    @Test func configurationWithoutCoverDecodesToBreaks() throws {
+        let json = #"{"focus":1500,"shortBreak":300,"longBreak":900,"rounds":4}"#
+        let decoded = try JSONDecoder().decode(PomodoroConfiguration.self, from: Data(json.utf8))
+        #expect(decoded.cover == .breaks)
+        #expect(decoded == .standard)
+    }
+
+    @Test func unknownCoverDecodesToBreaks() throws {
+        let json = #"{"focus":1500,"shortBreak":300,"longBreak":900,"rounds":4,"cover":"sideways"}"#
+        let decoded = try JSONDecoder().decode(PomodoroConfiguration.self, from: Data(json.utf8))
+        #expect(decoded.cover == .breaks)
+    }
+
+    @Test func focusCoverRefusesFocusOverAnHour() {
+        #expect(!PomodoroConfiguration(focus: 61 * 60, shortBreak: 300, longBreak: 900, rounds: 4, cover: .focus).isWithinBounds)
+        #expect(PomodoroConfiguration(focus: 60 * 60, shortBreak: 300, longBreak: 900, rounds: 4, cover: .focus).isWithinBounds)
+    }
+
+    @Test func breaksCoverKeepsThreeHourFocus() {
+        #expect(PomodoroConfiguration(focus: 180 * 60, shortBreak: 300, longBreak: 900, rounds: 4, cover: .breaks).isWithinBounds)
+    }
+
+    @Test func settingFocusCoverPullsFocusIntoRange() {
+        var config = PomodoroConfiguration(focus: 180 * 60, shortBreak: 300, longBreak: 900, rounds: 4)
+        config.setCover(.focus)
+        #expect(config.cover == .focus)
+        #expect(config.focus == TimeInterval(60 * 60))
+        config.setCover(.breaks)
+        #expect(config.cover == .breaks)
+        #expect(config.focus == TimeInterval(60 * 60))
+    }
+
     // MARK: - Phases
 
     @Test func startBeginsFocusOneEndingAfterFocusLength() {
