@@ -8,10 +8,17 @@ struct BreakScreenPreviewCard: View {
     /// Already trimmed, as `BreakScreenPreferences.displayMessage` gives it.
     let message: String
     let statistics: BreakStatistics?
+    /// Preview only: a fixed `2/4` chip, as a short break in a four-round session shows it.
+    var showsPomodoroChip = false
 
     var body: some View {
         VStack(spacing: SettingsTokens.previewSpacing) {
-            LevelPill(level: .gentle, palette: look.palette)
+            HStack(spacing: 10) {
+                LevelPill(level: .gentle, palette: look.palette)
+                if showsPomodoroChip {
+                    PomodoroChipView(chip: PomodoroChip(round: 2, rounds: 4, isLong: false), palette: look.palette)
+                }
+            }
 
             Text(verbatim: "05:00")
                 .font(BreakTypography.timerNumerals(size: 44))

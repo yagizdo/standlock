@@ -148,6 +148,22 @@
         }
       }
     },
+    "Break left" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kalan mola"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "休息剩余"
+          }
+        }
+      }
+    },
     "Calendar Integration will check all calendars. The file does not carry your calendar choices." : {
       "localizations" : {
         "tr" : {
@@ -404,6 +420,22 @@
         }
       }
     },
+    "Finished" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Biten"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "完成"
+          }
+        }
+      }
+    },
     "Fishing" : {
       "localizations" : {
         "tr" : {
@@ -416,6 +448,70 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "钓鱼"
+          }
+        }
+      }
+    },
+    "Focus %lld/%lld" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Odak %lld/%lld"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "专注 %lld/%lld"
+          }
+        }
+      }
+    },
+    "Focus left" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kalan odak"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "专注剩余"
+          }
+        }
+      }
+    },
+    "Focus length" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Odak süresi"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "专注时长"
+          }
+        }
+      }
+    },
+    "Focus time" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Odak süresi"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "专注时长"
           }
         }
       }
@@ -708,6 +804,38 @@
         }
       }
     },
+    "Unfinished" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yarım kalan"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未完成"
+          }
+        }
+      }
+    },
+    "next Focus %lld/%lld" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "sonraki odak %lld/%lld"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下一轮专注 %lld/%lld"
+          }
+        }
+      }
+    },
     "No results" : {
       "localizations" : {
         "tr" : {
@@ -816,6 +944,86 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "需要权限"
+          }
+        }
+      }
+    },
+    "Pomodoro" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pomodoro"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "番茄钟"
+          }
+        }
+      }
+    },
+    "Pomodoro, long break" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pomodoro, uzun mola"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "番茄钟，长休息"
+          }
+        }
+      }
+    },
+    "Pomodoro, round %lld of %lld" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pomodoro, %lld. tur, toplam %lld"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "番茄钟，第 %lld 轮，共 %lld 轮"
+          }
+        }
+      }
+    },
+    "Show Pomodoro chip" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pomodoro etiketini göster"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "显示番茄钟标签"
+          }
+        }
+      }
+    },
+    "Only changes this preview" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yalnız bu önizlemeyi değiştirir"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "仅更改此预览"
           }
         }
       }
@@ -980,6 +1188,22 @@
         }
       }
     },
+    "Rounds" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tur"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "轮数"
+          }
+        }
+      }
+    },
     "Save your settings and schedules to a file" : {
       "localizations" : {
         "tr" : {
@@ -1076,6 +1300,22 @@
         }
       }
     },
+    "Skip phase" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aşamayı atla"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "跳过阶段"
+          }
+        }
+      }
+    },
     "StandLock is up to date" : {
       "localizations" : {
         "tr" : {
@@ -1120,6 +1360,38 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "即使一项都不授予，StandLock 也能运行。"
+          }
+        }
+      }
+    },
+    "Start a session from the menu bar. Changes apply to the next session." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oturumu menü çubuğundan başlat. Değişiklikler sonraki oturumda geçerli olur."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "从菜单栏开始一次会话。更改将在下一次会话时生效。"
+          }
+        }
+      }
+    },
+    "Start Pomodoro" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pomodoro başlat"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "开始番茄钟"
           }
         }
       }
@@ -6128,6 +6400,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "停止"
+          }
+        }
+      }
+    },
+    "Stop Pomodoro" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pomodoro'yu durdur"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "停止番茄钟"
           }
         }
       }

@@ -38,6 +38,8 @@ final class AppCoordinator: ObservableObject {
     @Published private(set) var breakProgress: Double = 0
     @Published private(set) var menuBarTimerText: String?
     @Published var breakHistory: BreakHistory = BreakHistory()
+    /// The running Pomodoro session, nil when none runs.
+    @Published private(set) var pomodoroStatus: PomodoroStatus?
 
     let languageStore = LanguageStore()
     let themeStore = ThemeStore()
@@ -92,6 +94,7 @@ final class AppCoordinator: ObservableObject {
         ) { [weak self] _ in
             MainActor.assumeIsolated {
                 self?.saveEnforcementState()
+                self?.savePomodoroSession()
             }
         }
         NotificationCenter.default.addObserver(
@@ -115,9 +118,9 @@ final class AppCoordinator: ObservableObject {
                 self?.handleCalendarAuthorizationChange()
             }
         Task { await permissionChecker.pollContinuously() }
-        if !schedules.isEmpty {
-            startCoordinator(restoring: carriedStateForToday())
-        }
+        // Always built: a Pomodoro session runs with no schedule enabled.
+        startCoordinator(restoring: carriedStateForToday())
+        restoreSavedPomodoroSession()
         if !hasCompletedOnboarding {
             Task { @MainActor in
                 try? await Task.sleep(for: .seconds(0.5))
@@ -269,8 +272,10 @@ final class AppCoordinator: ObservableObject {
         let strictAvailable = permissionChecker.strictModeAvailable
         guard lastStrictModeAvailable != strictAvailable else { return }
         lastStrictModeAvailable = strictAvailable
+        // A Strict session is gated too, even after its Strict schedule was switched off.
         if coordinator != nil,
-           schedules.contains(where: scheduleUsesStrict) {
+           schedules.contains(where: scheduleUsesStrict)
+            || (coordinator?.pomodoroSession != nil && pomodoroRequestedLevel == .strict) {
             restartCoordinator()
         }
     }
@@ -283,13 +288,16 @@ final class AppCoordinator: ObservableObject {
     /// instantly. Firm keeps real friction (delay plus phrase) and needs no permission at all --
     /// only Strict installs the event tap, in `OverlayWindowController.showOverlay`.
     private func enforceableSchedules() -> [Schedule] {
-        let strictAvailable = permissionChecker.strictModeAvailable
-        return schedules.filter(\.isEnabled).map { schedule in
-            guard !strictAvailable, schedule.disciplineLevel == .strict else { return schedule }
-            var downgraded = schedule
-            downgraded.disciplineLevel = .firm
-            return downgraded
+        schedules.filter(\.isEnabled).map { schedule in
+            var gated = schedule
+            gated.disciplineLevel = enforceable(schedule.disciplineLevel)
+            return gated
         }
+    }
+
+    /// Strict needs its permissions now; without them it runs as Firm.
+    private func enforceable(_ level: DisciplineLevel) -> DisciplineLevel {
+        level == .strict && !permissionChecker.strictModeAvailable ? .firm : level
     }
 
     func saveStatistics() {
@@ -303,34 +311,22 @@ final class AppCoordinator: ObservableObject {
     }
 
     private func updateDailyHistory(_ stats: BreakStatistics) {
-        let key = DailyBreakRecord.dateKey(from: Date())
-        let hasActiveSchedule = !schedules.filter(\.isEnabled).isEmpty
-        // Zeroed counters never describe a day worth recording: they mean either a fresh day
-        // just rolled over or a deferral-only update, and a stored record with zero completed
-        // breaks ends the streak in BreakHistory.currentStreak while a missing one reads as a
-        // day still in progress. Writing them would also let a backwards day change (date-line
-        // travel, an NTP correction) blank out a day that already has real numbers.
-        guard stats.totalBreaks > 0 else { return }
-        var record = breakHistory.record(for: key)
-            ?? DailyBreakRecord(dateKey: key, hadActiveSchedule: hasActiveSchedule)
-        record.breaksCompleted = stats.breaksCompleted
-        record.breaksSkipped = stats.breaksSkipped
-        record.breaksEscaped = stats.breaksEscaped
-        record.hadActiveSchedule = hasActiveSchedule
-
         let enabledSchedules = schedules.filter(\.isEnabled)
         let avgDuration = enabledSchedules.isEmpty
             ? 300.0
             : enabledSchedules.map(\.breakDuration).reduce(0, +) / Double(enabledSchedules.count)
-        record.totalBreakDuration = Double(stats.breaksCompleted) * avgDuration
-
-        breakHistory.upsert(record)
+        // Zeroed counters write nothing: a stored record with zero completed breaks ends the
+        // streak in BreakHistory.currentStreak while a missing one reads as a day in progress.
+        guard breakHistory.recordDay(stats, on: DailyBreakRecord.dateKey(from: Date()),
+                                     hasActiveSchedule: !enabledSchedules.isEmpty,
+                                     averageBreakDuration: avgDuration) else { return }
         saveHistory()
     }
 
     // MARK: - Coordinator Lifecycle
 
-    private func startCoordinator(restoring state: EnforcementState = EnforcementState()) {
+    private func startCoordinator(restoring state: EnforcementState = EnforcementState(),
+                                  pomodoro: (session: PomodoroSession, level: DisciplineLevel)? = nil) {
         stopCoordinator()
         let scheduler = ScheduleEvaluator()
         applyCalendarPreferences()
@@ -357,7 +353,8 @@ final class AppCoordinator: ObservableObject {
         breakCoordinator.start(with: enforceableSchedules(),
                                preferences: preferences,
                                statistics: todayStats,
-                               restoring: state)
+                               restoring: state,
+                               pomodoro: pomodoro)
 
         eventListenerTask = Task {
             for await event in breakCoordinator.events {
@@ -377,6 +374,8 @@ final class AppCoordinator: ObservableObject {
         overlayController.onPostpone = nil
         clearActiveBreakState()
         deferralReason = nil
+        // The rebuilt coordinator reports a carried session again.
+        pomodoroStatus = nil
     }
 
     /// Nobody else can clear the published break state once the coordinator is gone: `stop()`
@@ -405,8 +404,8 @@ final class AppCoordinator: ObservableObject {
         return state
     }
 
-    /// Captures from the live coordinator when there is one. Without one -- every schedule off --
-    /// the carry from the last teardown is still the current state and is written as it is.
+    /// Captures from the live coordinator. It runs with every schedule off too, and hands on the
+    /// state of schedules it was not given.
     private func saveEnforcementState() {
         if let coordinator {
             carriedEnforcementState = coordinator.captureEnforcementState()
@@ -415,6 +414,60 @@ final class AppCoordinator: ObservableObject {
         guard let data = try? JSONEncoder().encode(carriedEnforcementState) else { return }
         UserDefaults.standard.set(data, forKey: "enforcementState")
         UserDefaults.standard.set(carriedEnforcementDay, forKey: "enforcementStateDay")
+    }
+
+    // MARK: - Pomodoro
+
+    private static let pomodoroSessionKey = "pomodoroSession"
+
+    /// The level the session asked for (S87), before the Strict gate. Kept here, not read back
+    /// from `pomodoroStatus`: that is filled a turn late and holds the gated level, so a permission
+    /// blip would stick for the rest of the session.
+    private var pomodoroRequestedLevel: DisciplineLevel?
+
+    private var strictestEnabledLevel: DisciplineLevel {
+        DisciplineLevel.strictest(of: schedules.filter(\.isEnabled).map(\.disciplineLevel))
+    }
+
+    func startPomodoro() {
+        let level = strictestEnabledLevel
+        pomodoroRequestedLevel = level
+        coordinator?.startPomodoro(preferences.pomodoro, level: enforceable(level))
+    }
+
+    func stopPomodoro() {
+        coordinator?.stopPomodoro()
+    }
+
+    func skipPomodoroPhase() {
+        coordinator?.skipPomodoroPhase()
+    }
+
+    private func savePomodoroSession() {
+        guard let session = coordinator?.pomodoroSession,
+              let data = try? JSONEncoder().encode(session)
+        else {
+            UserDefaults.standard.removeObject(forKey: Self.pomodoroSessionKey)
+            return
+        }
+        UserDefaults.standard.set(data, forKey: Self.pomodoroSessionKey)
+    }
+
+    /// Same day only, as `EnforcementState`; an older session is dropped and counted as
+    /// abandoned on the day it started. The level is picked again: permissions may have
+    /// changed while the app was closed.
+    private func restoreSavedPomodoroSession() {
+        guard let data = UserDefaults.standard.data(forKey: Self.pomodoroSessionKey) else { return }
+        UserDefaults.standard.removeObject(forKey: Self.pomodoroSessionKey)
+        guard let session = try? JSONDecoder().decode(PomodoroSession.self, from: data) else { return }
+        guard session.isRestorable(now: Date()) else {
+            breakHistory = breakHistory.recordingAbandoned(session)
+            saveHistory()
+            return
+        }
+        let level = strictestEnabledLevel
+        pomodoroRequestedLevel = level
+        coordinator?.restorePomodoro(session, level: enforceable(level))
     }
 
     private func restartCoordinator() {
@@ -428,19 +481,29 @@ final class AppCoordinator: ObservableObject {
         // the next break lands during the hour they meant to keep clear. Re-applying it yields
         // `schedulePaused`, which restores the published flags below through `handleEvent`.
         let pauseRemaining = pausedUntil?.timeIntervalSinceNow
+        // A session keeps its own level across a rebuild (S87 picks it at start), gated again here.
+        let session = coordinator?.pomodoroSession
         stopCoordinator()
         isPaused = false
         pausedUntil = nil
-        if !schedules.filter(\.isEnabled).isEmpty {
-            startCoordinator(restoring: carriedStateForToday())
-            if let pauseRemaining, pauseRemaining > 0 {
-                coordinator?.pause(for: pauseRemaining)
-            }
-        } else {
-            nextBreakTime = nil
-            breakScheduledAt = nil
-            breakProgress = 0
+        // Starting a session ended any pause, so there is none to re-apply with one.
+        startCoordinator(restoring: carriedStateForToday(),
+                         pomodoro: session.map { ($0, enforceable(pomodoroRequestedLevel ?? strictestEnabledLevel)) })
+        if session == nil, let pauseRemaining, pauseRemaining > 0 {
+            coordinator?.pause(for: pauseRemaining)
         }
+        clearNextBreakIfIdle()
+    }
+
+    /// With no enabled schedule and no session nothing is armed; the stale countdown would
+    /// otherwise stay on the menu bar and keep `NextBreakState` counting down.
+    private func clearNextBreakIfIdle() {
+        guard pomodoroStatus == nil, coordinator?.pomodoroSession == nil,
+              schedules.filter(\.isEnabled).isEmpty else { return }
+        nextBreakTime = nil
+        breakScheduledAt = nil
+        breakProgress = 0
+        updateMenuBarTimer()
     }
 
     // MARK: - Event Handling
@@ -493,10 +556,26 @@ final class AppCoordinator: ObservableObject {
         case .breakCue(let cue):
             breakSoundPlayer.play(cue)
 
+        case .pomodoroChanged(let status):
+            pomodoroStatus = status
+            savePomodoroSession()
+            if status == nil {
+                // The countdown pointed at the session; the schedules send their own next break
+                // right after this, if they arm one (a reached daily cap arms none).
+                nextBreakTime = nil
+                breakScheduledAt = nil
+                breakProgress = 0
+                updateMenuBarTimer()
+            }
+
         case .statisticsUpdated(let stats):
             todayStats = stats
             saveStatistics()
             updateDailyHistory(stats)
+
+        case .pomodoroDropped(let session):
+            breakHistory = breakHistory.recordingAbandoned(session)
+            saveHistory()
         }
     }
 

@@ -8,6 +8,8 @@ public struct DailyBreakRecord: Codable, Sendable, Identifiable, Equatable {
     public var breaksEscaped: Int
     public var totalBreakDuration: TimeInterval
     public var hadActiveSchedule: Bool
+    /// Optional so history saved before Pomodoro still decodes; nil means no session that day.
+    public var pomodoroTallies: PomodoroTallies?
 
     public init(
         dateKey: String,
@@ -15,7 +17,8 @@ public struct DailyBreakRecord: Codable, Sendable, Identifiable, Equatable {
         breaksSkipped: Int = 0,
         breaksEscaped: Int = 0,
         totalBreakDuration: TimeInterval = 0,
-        hadActiveSchedule: Bool = true
+        hadActiveSchedule: Bool = true,
+        pomodoroTallies: PomodoroTallies? = nil
     ) {
         self.dateKey = dateKey
         self.breaksCompleted = breaksCompleted
@@ -23,6 +26,7 @@ public struct DailyBreakRecord: Codable, Sendable, Identifiable, Equatable {
         self.breaksEscaped = breaksEscaped
         self.totalBreakDuration = totalBreakDuration
         self.hadActiveSchedule = hadActiveSchedule
+        self.pomodoroTallies = pomodoroTallies
     }
 
     public var totalBreaks: Int { breaksCompleted + breaksSkipped + breaksEscaped }

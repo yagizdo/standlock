@@ -19,3 +19,25 @@ struct MenuBarPillStyle: ButtonStyle {
             .onHover { isHovered = $0 }
     }
 }
+
+/// A pill's glyph and title. The glyph is decoration: the button reads as its title alone.
+struct MenuBarPillLabel: View {
+    let title: LocalizedStringKey
+    let symbol: String
+
+    init(_ title: LocalizedStringKey, symbol: String) {
+        self.title = title
+        self.symbol = symbol
+    }
+
+    var body: some View {
+        HStack(spacing: 4) {
+            Image(systemName: symbol)
+                .foregroundStyle(.secondary)
+                .accessibilityHidden(true)
+            Text(title)
+                .font(.callout)
+                .lineLimit(1)
+        }
+    }
+}

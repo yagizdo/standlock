@@ -43,6 +43,31 @@ public struct EnforcementState: Codable, Sendable {
     }
 }
 
+/// A break no schedule owns: a Pomodoro break, later "take a break now". It runs the same idle
+/// check, deferral, counting and overlay as a schedule break, at the base tier of `level`.
+public struct ExternalBreak: Sendable, Equatable {
+    public var duration: TimeInterval
+    public var level: DisciplineLevel
+    public var chip: PomodoroChip?
+
+    public init(duration: TimeInterval, level: DisciplineLevel, chip: PomodoroChip? = nil) {
+        self.duration = duration
+        self.level = level
+        self.chip = chip
+    }
+}
+
+/// Who a break belongs to, so Done, Skip, Escape and Postpone work without a schedule.
+private enum BreakSource {
+    case schedule(Schedule)
+    case external(ExternalBreak)
+
+    var schedule: Schedule? {
+        if case .schedule(let schedule) = self { return schedule }
+        return nil
+    }
+}
+
 @MainActor
 public final class BreakCoordinator {
     private let scheduler: any SchedulingEngine
@@ -57,13 +82,28 @@ public final class BreakCoordinator {
     /// Set while the screen is locked or the machine is asleep. Distinct from `isPaused`, which
     /// is the user-facing pause; suspension only blocks work being started behind a dark screen.
     private var isSuspended: Bool = false
+    /// When the first of sleep or lock arrived; a session's catch-up measures time away from it.
+    private var suspendedAt: Date?
     private var currentBreak: BreakEvent?
-    private var currentSchedule: Schedule?
+    private var currentSource: BreakSource?
+    private var currentSchedule: Schedule? { currentSource?.schedule }
     /// A break may be postponed once; the one that comes back after the call cannot be again.
     private var activeBreakCanPostpone = false
     /// The break owed after a postpone, until it returns. The wait itself lives in `breakTimer`,
     /// which lock, sleep and pause cancel; this is what lets them start it again.
     private var postponedSchedule: Schedule?
+    /// The external break owed after a postpone. Not carried across a rebuild: a session's
+    /// restore reopens its break from the saved phase.
+    private var postponedExternal: ExternalBreak?
+    /// A running Pomodoro session. While it exists the schedules arm nothing: its phase timer
+    /// holds `breakTimer`, so the two can never both fire.
+    private var pomodoro: PomodoroSession?
+    /// Picked by the app at session start (S87); a session break uses its base tier.
+    private var pomodoroLevel: DisciplineLevel = .gentle
+    /// The session's break has used its one postpone. Kept apart from `activeBreakCanPostpone`
+    /// because a lock takes the break off screen and the return opens it afresh.
+    private var pomodoroBreakPostponed = false
+    public var pomodoroSession: PomodoroSession? { pomodoro }
     private var statistics: BreakStatistics = BreakStatistics()
     private var dailyBreakCounts: [UUID: Int] = [:]
     private var escalationTiers: [UUID: Int] = [:]
@@ -88,6 +128,9 @@ public final class BreakCoordinator {
     /// A carried postponed break whose schedule this coordinator was not given, handed on the
     /// same way as `dormantPendingBreaks`.
     private var dormantPostponedScheduleID: UUID?
+    /// Carried short-break positions of schedules this coordinator was not given, handed on the
+    /// same way: with every schedule off the coordinator still runs, for a Pomodoro session.
+    private var dormantRepetitionIndices: [UUID: Int] = [:]
     public var exercises: [Exercise] = []
 
     /// Floor between a skip and the break it schedules, for the case where the anchored slot
@@ -117,7 +160,8 @@ public final class BreakCoordinator {
     /// counters instead of restarting them from zero.
     public func start(with schedules: [Schedule], preferences: AppPreferences,
                       statistics: BreakStatistics = BreakStatistics(),
-                      restoring state: EnforcementState = EnforcementState()) {
+                      restoring state: EnforcementState = EnforcementState(),
+                      pomodoro carried: (session: PomodoroSession, level: DisciplineLevel)? = nil) {
         self.activeSchedules = schedules
         self.preferences = preferences
         self.statistics = statistics
@@ -131,7 +175,18 @@ public final class BreakCoordinator {
                 )
             }
         }
+        dormantRepetitionIndices = state.repetitionIndices.filter { repetitionTrackers[$0.key] == nil }
         restoredPendingBreaks = state.pendingBreakDates
+        if let carried {
+            // A rebuild during a session: the schedules start fresh after it (S88), so only the
+            // slots of schedules not running now are kept. Arming them first would move the
+            // progress anchor twice.
+            let active = Set(schedules.map(\.id))
+            dormantPendingBreaks.merge(restoredPendingBreaks.filter { !active.contains($0.key) && $0.value > Date() }) { kept, _ in kept }
+            restoredPendingBreaks = [:]
+            restorePomodoro(carried.session, level: carried.level)
+            return
+        }
         if let id = state.postponedScheduleID {
             if let schedule = schedules.first(where: { $0.id == id && $0.isEnabled }) {
                 postponedSchedule = schedule
@@ -154,7 +209,7 @@ public final class BreakCoordinator {
             dailyBreakCounts: dailyBreakCounts,
             escalationTiers: escalationTiers,
             cycleIndices: cycleIndices,
-            repetitionIndices: repetitionTrackers.mapValues(\.currentBreakIndex),
+            repetitionIndices: dormantRepetitionIndices.merging(repetitionTrackers.mapValues(\.currentBreakIndex)) { _, live in live },
             pendingBreakDates: pendingBreakDates,
             postponedScheduleID: postponedSchedule?.id ?? dormantPostponedScheduleID
         )
@@ -165,13 +220,18 @@ public final class BreakCoordinator {
         breakTimer = nil
         clearPendingBreak()
         postponedSchedule = nil
+        postponedExternal = nil
+        pomodoro = nil
         if locker.isShowing { locker.dismissOverlay() }
         currentBreak = nil
-        currentSchedule = nil
+        currentSource = nil
         escalationTiers.removeAll()
     }
 
+    /// Ignored while a Pomodoro session runs: stop the session instead.
     public func pause(for duration: TimeInterval) {
+        // Pause and the phase timer share `breakTimer`; a session is stopped, not paused.
+        guard pomodoro == nil else { return }
         breakTimer?.cancel()
         breakTimer = nil
         clearPendingBreak()
@@ -225,28 +285,43 @@ public final class BreakCoordinator {
         eventContinuation.yield(.statisticsUpdated(statistics))
     }
 
-    public func handleSystemSleep() {
-        isSuspended = true
-        cancelAndDismissIfShowing()
+    public func handleSystemSleep(now: Date = Date()) {
+        beginSuspension(now: now)
     }
 
-    public func handleSystemWake() {
-        isSuspended = false
-        if isPaused {
-            resume()
-        } else {
-            rearm()
+    public func handleSystemWake(now: Date = Date()) {
+        endSuspension(now: now)
+    }
+
+    public func handleScreenLock(now: Date = Date()) {
+        beginSuspension(now: now)
+    }
+
+    public func handleScreenUnlock(now: Date = Date()) {
+        endSuspension(now: now)
+    }
+
+    private func beginSuspension(now: Date) {
+        isSuspended = true
+        // A session break that is waiting (deferred, postponed) has not been rested yet: it is
+        // owed in full from here, so only time away can credit it.
+        if suspendedAt == nil, var session = pomodoro, session.phase.isBreak, !locker.isShowing {
+            session.phaseEnd = now.addingTimeInterval(postponedExternal?.duration ?? session.duration(of: session.phase))
+            pomodoro = session
         }
-    }
-
-    public func handleScreenLock() {
-        isSuspended = true
+        suspendedAt = suspendedAt ?? now
         cancelAndDismissIfShowing()
     }
 
-    public func handleScreenUnlock() {
+    /// Wake and unlock often both arrive; a session catches up on the first only.
+    private func endSuspension(now: Date) {
         isSuspended = false
-        if isPaused {
+        let awayFrom = suspendedAt
+        suspendedAt = nil
+        if pomodoro != nil {
+            guard let awayFrom else { return }
+            catchUpPomodoro(awayFrom: awayFrom, to: now)
+        } else if isPaused {
             resume()
         } else {
             rearm()
@@ -259,19 +334,20 @@ public final class BreakCoordinator {
         clearPendingBreak()
         if locker.isShowing {
             locker.dismissOverlay()
-            if let event = currentBreak {
+            // A session's break waits for the return instead (S84): time away may cover it.
+            let isSessionBreak = currentSource?.schedule == nil && pomodoro != nil
+            if let event = currentBreak, !isSessionBreak {
                 eventContinuation.yield(.breakSkipped(event))
-                updateStatistics {
-                    $0.breaksSkipped += 1
-                    $0.currentStreak = 0
-                }
+                countSkippedBreak()
             }
             currentBreak = nil
-            currentSchedule = nil
+            currentSource = nil
         }
     }
 
+    /// Ignored while a Pomodoro session runs: use `skipPomodoroPhase()`.
     public func skipNextBreak() {
+        guard pomodoro == nil else { return }
         breakTimer?.cancel()
         breakTimer = nil
         if let id = pendingBreakScheduleID {
@@ -280,34 +356,29 @@ public final class BreakCoordinator {
         let anchor = skipAnchor(slot: pendingBreakDate)
         clearPendingBreak()
         postponedSchedule = nil
-        updateStatistics {
-            $0.breaksSkipped += 1
-            $0.currentStreak = 0
-        }
+        countSkippedBreak()
         scheduleNextBreak(searchFrom: anchor)
     }
 
     public func skipActiveBreak() {
         guard let event = currentBreak else { return }
-        if let scheduleID = currentBreak?.scheduleId {
+        if let scheduleID = event.scheduleId {
             let maxTier = (currentSchedule?.disciplineLevel.enforcementPolicy(preferences: preferences).tiers.count ?? 5) - 1
             escalationTiers[scheduleID, default: 0] = min(escalationTiers[scheduleID, default: 0] + 1, maxTier)
         }
         locker.dismissOverlay()
         eventContinuation.yield(.breakSkipped(event))
-        updateStatistics {
-            $0.breaksSkipped += 1
-            $0.currentStreak = 0
-        }
-        let anchor = skipAnchor(slot: event.scheduledAt)
+        countSkippedBreak()
+        let source = currentSource
+        let anchor = source?.schedule == nil ? nil : skipAnchor(slot: event.scheduledAt)
         currentBreak = nil
-        currentSchedule = nil
-        scheduleNextBreak(searchFrom: anchor)
+        currentSource = nil
+        afterBreak(source, searchFrom: anchor)
     }
 
     public func escapeActiveBreak() {
         guard let event = currentBreak else { return }
-        if let scheduleID = currentBreak?.scheduleId {
+        if let scheduleID = event.scheduleId {
             let maxTier = (currentSchedule?.disciplineLevel.enforcementPolicy(preferences: preferences).tiers.count ?? 5) - 1
             escalationTiers[scheduleID, default: 0] = min(escalationTiers[scheduleID, default: 0] + 1, maxTier)
         }
@@ -317,28 +388,35 @@ public final class BreakCoordinator {
             $0.breaksEscaped += 1
             $0.weeklyEscapeCount += 1
         }
+        let source = currentSource
         currentBreak = nil
-        currentSchedule = nil
-        scheduleNextBreak()
+        currentSource = nil
+        // An emergency exit must leave time to change a hostile or accidentally tiny interval.
+        afterBreak(source, searchFrom: Date())
     }
 
     /// Closes the break screen without counting a skip and brings the same break back, at full
     /// length, once camera and microphone have both been free for `postponeReturnDelay`. The
     /// wait ignores the detection preferences: postponing is the user saying they are on a call.
     public func postponeActiveBreak() {
-        guard currentBreak != nil, let schedule = currentSchedule, activeBreakCanPostpone else { return }
+        guard currentBreak != nil, let source = currentSource, activeBreakCanPostpone else { return }
         breakTimer?.cancel()
         breakTimer = nil
         locker.dismissOverlay()
         currentBreak = nil
-        currentSchedule = nil
-        postponedSchedule = schedule
+        currentSource = nil
+        switch source {
+        case .schedule(let schedule): postponedSchedule = schedule
+        case .external(let request):
+            postponedExternal = request
+            if pomodoro != nil { pomodoroBreakPostponed = true }
+        }
         eventContinuation.yield(.breakDeferred(.postponed, nextAttempt: Date().addingTimeInterval(deferralPollingInterval)))
         updateStatistics { $0.breaksDeferred += 1 }
-        startPostponeWait(for: schedule)
+        startPostponeWait(for: source)
     }
 
-    private func startPostponeWait(for schedule: Schedule) {
+    private func startPostponeWait(for source: BreakSource) {
         breakTimer?.cancel()
         // Keeps `refreshDailyRollover` from re-arming over the wait. The pending slot stays nil:
         // `triggerBreak` already advanced the cycle, and a set ID would let a menu skip advance it again.
@@ -363,8 +441,8 @@ public final class BreakCoordinator {
                 clearSince = since
                 if Date().timeIntervalSince(since) >= self.preferences.postponeReturnDelay {
                     self.clearPendingBreak()
-                    self.postponedSchedule = nil
-                    self.presentBreak(for: schedule, context: context, canPostpone: false)
+                    if source.schedule == nil { self.postponedExternal = nil } else { self.postponedSchedule = nil }
+                    self.presentBreak(for: source, context: context, canPostpone: false)
                     return
                 }
             }
@@ -372,8 +450,8 @@ public final class BreakCoordinator {
     }
 
     public func completeActiveBreak() {
-        guard let event = currentBreak, let schedule = currentSchedule else { return }
-        completeBreak(event: event, schedule: schedule)
+        guard let event = currentBreak, let source = currentSource else { return }
+        completeBreak(event: event, source: source)
     }
 
     public func changeDisciplineLevel(_ level: DisciplineLevel) {
@@ -384,6 +462,89 @@ public final class BreakCoordinator {
 
     public func updatePreferences(_ preferences: AppPreferences) {
         self.preferences = preferences
+    }
+
+    /// Opens a break no schedule owns. A pending schedule slot is dropped; the schedules arm
+    /// afresh once this break ends. Ignored while a break is on screen or when the duration
+    /// bounds to zero.
+    public func startExternalBreak(_ request: ExternalBreak) {
+        guard currentBreak == nil, BreakSafety.breakDuration(request.duration) > 0 else { return }
+        breakTimer?.cancel()
+        clearPendingBreak()
+        breakTimer = Task {
+            let context = await self.detector.currentContext()
+            guard !Task.isCancelled else { return }
+            await self.triggerBreak(for: .external(request), context: context)
+        }
+    }
+
+    /// Starts a session. A configuration outside the form's ranges falls back to the standard
+    /// one: a zero-length phase would loop. Ends an active pause, which shares the timer slot.
+    public func startPomodoro(_ configuration: PomodoroConfiguration, level: DisciplineLevel, now: Date = Date()) {
+        guard pomodoro == nil, currentBreak == nil else { return }
+        if isPaused {
+            isPaused = false
+            eventContinuation.yield(.scheduleResumed)
+        }
+        breakTimer?.cancel()
+        breakTimer = nil
+        clearPendingBreak()
+        dropPostponedSchedule()
+        pomodoroLevel = level
+        pomodoro = .start(at: now, configuration: configuration.isWithinBounds ? configuration : .standard)
+        emitPomodoro()
+        armPomodoroFocus()
+    }
+
+    /// Ends the session as abandoned; no skip is counted. Refused while its break is on screen:
+    /// the overlay's own exits apply there.
+    public func stopPomodoro() {
+        guard pomodoro != nil, currentBreak == nil else { return }
+        breakTimer?.cancel()
+        breakTimer = nil
+        clearPendingBreak()
+        postponedExternal = nil
+        endPomodoro(.stopped)
+    }
+
+    /// Picks up a session saved before a relaunch or a coordinator rebuild, caught up as after
+    /// a wake. Time the app was not running is not credited as rest. A session outside the
+    /// form's ranges is dropped.
+    public func restorePomodoro(_ session: PomodoroSession, level: DisciplineLevel, now: Date = Date()) {
+        guard pomodoro == nil, currentBreak == nil, var session = session.bounded(now: now) else { return }
+        // Time the app was not running, or a deferral, was not rest: a break opens in full. The
+        // saved phase end cannot tell an on-screen break from a waiting one, whose end is stale.
+        if session.phase.isBreak {
+            session.phaseEnd = now.addingTimeInterval(session.duration(of: session.phase))
+        }
+        breakTimer?.cancel()
+        breakTimer = nil
+        clearPendingBreak()
+        dropPostponedSchedule()
+        pomodoroLevel = level
+        pomodoro = session
+        emitPomodoro()
+        catchUpPomodoro(awayFrom: now, to: now)
+    }
+
+    /// During focus, opens the break now. During a break that is waiting (deferred or
+    /// postponed), skips it: counted as a skip, the next focus starts.
+    public func skipPomodoroPhase() {
+        guard let session = pomodoro, currentBreak == nil else { return }
+        breakTimer?.cancel()
+        breakTimer = nil
+        clearPendingBreak()
+        if case .focus = session.phase {
+            breakTimer = Task {
+                // A lock or wake in the same turn cancels this before it runs.
+                guard !Task.isCancelled else { return }
+                await self.endPomodoroFocus()
+            }
+            return
+        }
+        postponedExternal = nil
+        countSkippedBreak()
+        advancePomodoro()
     }
 
     // MARK: - Escalation
@@ -411,8 +572,12 @@ public final class BreakCoordinator {
     // MARK: - Private
 
     private func rearm() {
-        if let schedule = postponedSchedule {
-            startPostponeWait(for: schedule)
+        if let request = postponedExternal {
+            startPostponeWait(for: .external(request))
+        } else if pomodoro != nil {
+            scheduleNextBreak()
+        } else if let schedule = postponedSchedule {
+            startPostponeWait(for: .schedule(schedule))
         } else {
             scheduleNextBreak()
         }
@@ -439,6 +604,11 @@ public final class BreakCoordinator {
     /// when `resetIntervalOnSkip` is off, where the skipped slot stays the anchor so a skip
     /// neither buys work time nor pulls the next break closer.
     private func scheduleNextBreak(now: Date = Date(), searchFrom: Date? = nil) {
+        if pomodoro != nil {
+            rolloverIfNeeded(now: now)
+            armPomodoroFocus()
+            return
+        }
         breakTimer?.cancel()
         breakTimer = nil
         rolloverIfNeeded(now: now)
@@ -497,7 +667,7 @@ public final class BreakCoordinator {
             let remaining = fireDate.timeIntervalSince(Date())
             if remaining > 0 { try? await Task.sleep(for: .seconds(remaining)) }
             guard !Task.isCancelled else { return }
-            await self.triggerBreak(for: target.schedule, context: context)
+            await self.triggerBreak(for: .schedule(target.schedule), context: context)
         }
     }
 
@@ -510,32 +680,32 @@ public final class BreakCoordinator {
         eventContinuation.yield(.breakCue(.approaching))
     }
 
-    private func triggerBreak(for schedule: Schedule, context: DetectionContext) async {
+    private func triggerBreak(for source: BreakSource, context: DetectionContext) async {
         // The pending break is now active; a menu skip from here on must not advance again.
         clearPendingBreak()
         rolloverIfNeeded()
+        let schedule = source.schedule
         if preferences.idleDetectionEnabled {
-            let breakDuration = currentBreakDuration(for: schedule)
+            let breakDuration = breakDuration(for: source)
             // A break under a minute must not be swallowed by a glance away from the keyboard:
             // idle counts as a break only once it reaches a minute, or the full break when longer.
             if context.idleDuration >= max(breakDuration, 60) {
                 let idleEvent = BreakEvent(
                     scheduledAt: Date(), duration: breakDuration,
-                    level: schedule.disciplineLevel, scheduleId: schedule.id
+                    level: level(of: source), scheduleId: schedule?.id
                 )
-                if var tracker = repetitionTrackers[schedule.id] {
-                    tracker.recordBreak()
-                    repetitionTrackers[schedule.id] = tracker
+                if let schedule {
+                    if var tracker = repetitionTrackers[schedule.id] {
+                        tracker.recordBreak()
+                        repetitionTrackers[schedule.id] = tracker
+                    }
+                    dailyBreakCounts[schedule.id, default: 0] += 1
+                    cycleIndices[schedule.id, default: 0] += 1
+                    escalationTiers[schedule.id] = 0
                 }
-                dailyBreakCounts[schedule.id, default: 0] += 1
-                cycleIndices[schedule.id, default: 0] += 1
-                escalationTiers[schedule.id] = 0
                 eventContinuation.yield(.breakCompleted(idleEvent))
-                updateStatistics {
-                    $0.breaksCompleted += 1
-                    $0.currentStreak += 1
-                }
-                scheduleNextBreak()
+                countCompletedBreak()
+                afterBreak(source)
                 return
             }
         }
@@ -543,7 +713,7 @@ public final class BreakCoordinator {
         if let deferral = shouldDefer(context: context) {
             // The deferred slot is still pending, so a menu skip during the poll loop
             // must conclude it for this schedule.
-            pendingBreakScheduleID = schedule.id
+            pendingBreakScheduleID = schedule?.id
             pendingBreakDate = Date()
             isDeferringBreak = true
             eventContinuation.yield(.breakDeferred(deferral, nextAttempt: Date().addingTimeInterval(deferralPollingInterval)))
@@ -559,12 +729,12 @@ public final class BreakCoordinator {
                     if let newReason = self.shouldDefer(context: freshContext) {
                         self.eventContinuation.yield(.breakDeferred(newReason, nextAttempt: Date().addingTimeInterval(self.deferralPollingInterval)))
                     } else if self.shouldSkipAfterDeferral(reason: deferral) {
-                        self.cycleIndices[schedule.id, default: 0] += 1
+                        if let schedule { self.cycleIndices[schedule.id, default: 0] += 1 }
                         self.clearPendingBreak()
-                        self.scheduleNextBreak()
+                        self.afterBreak(source)
                         return
                     } else {
-                        await self.triggerBreak(for: schedule, context: freshContext)
+                        await self.triggerBreak(for: source, context: freshContext)
                         return
                     }
                 }
@@ -572,36 +742,53 @@ public final class BreakCoordinator {
             return
         }
 
-        dailyBreakCounts[schedule.id, default: 0] += 1
-        cycleIndices[schedule.id, default: 0] += 1
-        presentBreak(for: schedule, context: context, canPostpone: true)
+        if let schedule {
+            dailyBreakCounts[schedule.id, default: 0] += 1
+            cycleIndices[schedule.id, default: 0] += 1
+        }
+        presentBreak(for: source, context: context, canPostpone: true)
     }
 
     /// Shows a break without counting it. A postponed break returns through here, so the daily
     /// count and the cycle advance only once, in `triggerBreak`.
-    private func presentBreak(for schedule: Schedule, context: DetectionContext, canPostpone: Bool) {
-        var effectiveLevel = schedule.disciplineLevel
+    private func presentBreak(for source: BreakSource, context: DetectionContext, canPostpone: Bool) {
+        var effectiveLevel = level(of: source)
         if let reduction = shouldReduce(context: context) {
             effectiveLevel = reduction
         }
 
-        let duration = currentBreakDuration(for: schedule)
+        let schedule = source.schedule
+        let duration = breakDuration(for: source)
         let exercise = exercises.randomElement()
-        let tier = currentTier(for: schedule)
+        // External breaks use the level's base tier and never move a schedule's escalation.
+        let tier = schedule.map(currentTier(for:)) ?? 0
         let breakEvent = BreakEvent(
             scheduledAt: Date(), duration: duration,
-            level: effectiveLevel, scheduleId: schedule.id
+            level: effectiveLevel, scheduleId: schedule?.id
         )
+        let canPostpone = canPostpone && !(schedule == nil && pomodoroBreakPostponed)
         currentBreak = breakEvent
-        currentSchedule = schedule
+        currentSource = source
         activeBreakCanPostpone = canPostpone
+
+        var chip: PomodoroChip?
+        if case .external(let request) = source {
+            chip = request.chip
+            // The break phase runs from its overlay, not from the focus end: a deferral or a
+            // postpone must not eat into it.
+            if var session = pomodoro, session.phase.isBreak {
+                session.phaseEnd = Date().addingTimeInterval(duration)
+                pomodoro = session
+                emitPomodoro()
+            }
+        }
 
         eventContinuation.yield(.breakStarted(breakEvent))
         locker.showOverlay(level: effectiveLevel, duration: duration,
                            exercise: exercise, preferences: preferences,
                            statistics: statistics, escalationTier: tier,
-                           nextIntervalLabel: nextIntervalLabel(for: schedule),
-                           canPostpone: canPostpone)
+                           nextIntervalLabel: schedule.flatMap(nextIntervalLabel(for:)),
+                           canPostpone: canPostpone, pomodoroChip: chip)
     }
 
     /// The cycle index was already advanced when this break triggered, so it points at the
@@ -611,11 +798,25 @@ public final class BreakCoordinator {
         return cycle[cycleIndices[schedule.id, default: 0] % cycle.count].label
     }
 
+    private func level(of source: BreakSource) -> DisciplineLevel {
+        switch source {
+        case .schedule(let schedule): schedule.disciplineLevel
+        case .external(let request): request.level
+        }
+    }
+
+    private func breakDuration(for source: BreakSource) -> TimeInterval {
+        switch source {
+        case .schedule(let schedule): currentBreakDuration(for: schedule)
+        case .external(let request): BreakSafety.breakDuration(request.duration)
+        }
+    }
+
     private func currentBreakDuration(for schedule: Schedule) -> TimeInterval {
         if let tracker = repetitionTrackers[schedule.id] {
-            return tracker.currentDuration
+            return BreakSafety.breakDuration(tracker.currentDuration)
         }
-        return schedule.breakDuration
+        return BreakSafety.breakDuration(schedule.breakDuration)
     }
 
     private func shouldDefer(context: DetectionContext) -> DeferralReason? {
@@ -636,21 +837,202 @@ public final class BreakCoordinator {
         return nil
     }
 
-    private func completeBreak(event: BreakEvent, schedule: Schedule) {
-        escalationTiers[schedule.id] = 0
-        locker.dismissOverlay()
-        if var tracker = repetitionTrackers[schedule.id] {
-            tracker.recordBreak()
-            repetitionTrackers[schedule.id] = tracker
+    private func completeBreak(event: BreakEvent, source: BreakSource) {
+        if let schedule = source.schedule {
+            escalationTiers[schedule.id] = 0
+            if var tracker = repetitionTrackers[schedule.id] {
+                tracker.recordBreak()
+                repetitionTrackers[schedule.id] = tracker
+            }
         }
+        locker.dismissOverlay()
         eventContinuation.yield(.breakCompleted(event))
         if preferences.soundAfterBreak { eventContinuation.yield(.breakCue(.ended)) }
+        countCompletedBreak()
+        currentBreak = nil
+        currentSource = nil
+        afterBreak(source)
+    }
+
+    private func countSkippedBreak() {
+        updateStatistics {
+            $0.breaksSkipped += 1
+            $0.currentStreak = 0
+        }
+    }
+
+    /// The one place a completed break is counted: Done, idle credit and time away all end here.
+    private func countCompletedBreak() {
         updateStatistics {
             $0.breaksCompleted += 1
             $0.currentStreak += 1
         }
-        currentBreak = nil
-        currentSchedule = nil
-        scheduleNextBreak()
+    }
+
+    /// What follows a break that ended: a session moves to its next focus, otherwise the
+    /// schedules arm their next break.
+    private func afterBreak(_ source: BreakSource?, searchFrom: Date? = nil) {
+        if source?.schedule == nil, pomodoro?.phase.isBreak == true {
+            advancePomodoro()
+        } else {
+            scheduleNextBreak(searchFrom: searchFrom)
+        }
+    }
+
+    // MARK: - Pomodoro
+
+    private enum PomodoroTally { case focusEnded, finished, stopped }
+
+    /// The one place a session's tallies are counted, through `updateStatistics` like every
+    /// break, so the day's record gets them. Called before `pomodoro` moves on.
+    private func recordPomodoroTally(_ tally: PomodoroTally, now: Date = Date()) {
+        let focusRan = pomodoro?.focusElapsed(at: now) ?? 0
+        updateStatistics { stats in
+            var tallies = stats.pomodoroTallies ?? PomodoroTallies()
+            switch tally {
+            case .focusEnded:
+                tallies.focusSeconds += focusRan
+                tallies.rounds += 1
+            case .finished: tallies.sessionsFinished += 1
+            case .stopped: tallies.sessionsAbandoned += 1
+            }
+            stats.pomodoroTallies = tallies
+        }
+    }
+
+    private func emitPomodoro() {
+        eventContinuation.yield(.pomodoroChanged(pomodoro.map { PomodoroStatus(session: $0, level: pomodoroLevel) }))
+    }
+
+    private func pomodoroBreak(duration: TimeInterval) -> ExternalBreak {
+        let chip = pomodoro.flatMap { PomodoroStatus(session: $0, level: pomodoroLevel).chip }
+        return ExternalBreak(duration: duration, level: pomodoroLevel, chip: chip)
+    }
+
+    /// Arms the focus timer. Does nothing in a break phase, which the overlay, a deferral, a
+    /// postpone or a return from sleep drives.
+    private func armPomodoroFocus() {
+        guard let session = pomodoro, case .focus = session.phase else { return }
+        breakTimer?.cancel()
+        clearPendingBreak()
+        let end = session.phaseEnd
+        eventContinuation.yield(.nextBreakScheduled(end))
+        breakTimer = Task {
+            let delay = end.timeIntervalSince(Date())
+            if delay > 0 { try? await Task.sleep(for: .seconds(delay)) }
+            guard !Task.isCancelled else { return }
+            await self.endPomodoroFocus()
+        }
+    }
+
+    private func endPomodoroFocus() async {
+        guard let session = pomodoro, case .focus = session.phase,
+              let onBreak = session.next(at: Date()) else { return }
+        recordPomodoroTally(.focusEnded)
+        pomodoro = onBreak
+        emitPomodoro()
+        await openPomodoroBreak(duration: onBreak.duration(of: onBreak.phase))
+    }
+
+    /// Opens the session's break through the external entry, after a fresh context read.
+    private func openPomodoroBreak(duration: TimeInterval) async {
+        let request = pomodoroBreak(duration: duration)
+        let context = await detector.currentContext()
+        guard !Task.isCancelled, pomodoro?.phase.isBreak == true else { return }
+        await triggerBreak(for: .external(request), context: context)
+    }
+
+    /// Applies time away (S84). A break the time covered counts once, here, with no overlay;
+    /// only a break left partly owed opens, through the external entry.
+    private func catchUpPomodoro(awayFrom: Date, to now: Date) {
+        // A session does not outlive its day (S84): away past midnight ends it as a relaunch does.
+        if let stale = pomodoro, !Calendar.current.isDate(awayFrom, inSameDayAs: now) {
+            dropPomodoro(stale)
+            return
+        }
+        guard let session = pomodoro?.bounded(now: now) else {
+            if pomodoro != nil { endPomodoro(.stopped) }
+            return
+        }
+        pomodoro = session
+        breakTimer?.cancel()
+        breakTimer = nil
+        clearPendingBreak()
+        switch session.catchUp(awayFrom: awayFrom, to: now) {
+        case .unchanged:
+            guard session.phase.isBreak else {
+                emitPomodoro()
+                armPomodoroFocus()
+                return
+            }
+            if let request = postponedExternal {
+                startPostponeWait(for: .external(request))
+            } else {
+                let remaining = session.phaseEnd.timeIntervalSince(now)
+                breakTimer = Task { await self.openPomodoroBreak(duration: remaining) }
+            }
+        case .creditedBreaks(_, let next):
+            if case .focus = session.phase { recordPomodoroTally(.focusEnded, now: now) }
+            postponedExternal = nil
+            pomodoroBreakPostponed = false
+            let credited = session.phase.isBreak ? session.phase : (session.next(at: now)?.phase ?? .longBreak)
+            eventContinuation.yield(.breakCompleted(BreakEvent(
+                scheduledAt: now, duration: session.duration(of: credited), level: pomodoroLevel, scheduleId: nil
+            )))
+            countCompletedBreak()
+            if let next {
+                pomodoro = next
+                emitPomodoro()
+                armPomodoroFocus()
+            } else {
+                endPomodoro(.finished)
+            }
+        case .openBreak(let remaining, let next):
+            recordPomodoroTally(.focusEnded, now: now)
+            pomodoro = next
+            emitPomodoro()
+            breakTimer = Task { await self.openPomodoroBreak(duration: remaining) }
+        }
+    }
+
+    /// After a session break: the next focus, or the end of the session after the long break.
+    private func advancePomodoro() {
+        guard let session = pomodoro else { return }
+        pomodoroBreakPostponed = false
+        if let next = session.next(at: Date()) {
+            pomodoro = next
+            emitPomodoro()
+            armPomodoroFocus()
+        } else {
+            endPomodoro(.finished)
+        }
+    }
+
+    /// Ends a session the app records as abandoned on its own day; nothing is tallied today.
+    private func dropPomodoro(_ session: PomodoroSession) {
+        breakTimer?.cancel()
+        breakTimer = nil
+        clearPendingBreak()
+        postponedExternal = nil
+        pomodoro = nil
+        pomodoroBreakPostponed = false
+        eventContinuation.yield(.pomodoroDropped(session))
+        emitPomodoro()
+        rearm()
+    }
+
+    /// A schedule break postponed before a session is replaced by the session's breaks.
+    private func dropPostponedSchedule() {
+        postponedSchedule = nil
+        dormantPostponedScheduleID = nil
+    }
+
+    /// The schedules start a fresh interval from here, as after a wake (S88).
+    private func endPomodoro(_ tally: PomodoroTally) {
+        recordPomodoroTally(tally)
+        pomodoro = nil
+        pomodoroBreakPostponed = false
+        emitPomodoro()
+        rearm()
     }
 }

@@ -23,6 +23,7 @@ struct SettingsDetail: View {
         case .schedule(let id): ScheduleDetailView(id: id, navigation: navigation).id(id)
         case .newSchedule: ScheduleDetailView(id: nil, navigation: navigation)
         case .detection: DetectionSettingsView()
+        case .pomodoro: PomodoroSettingsView()
         case .permissions: PermissionsView()
         case .statistics: StatisticsView()
         case .about: AboutView(updater: updater)

@@ -38,6 +38,7 @@
 		28D05A3781FA4F3C0DE6E18A /* MenuBarSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB686878D805A9466970EFA3 /* MenuBarSettingsView.swift */; };
 		293548DD12593304DAE64D91 /* HourglassScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39E5EFA4AB6411AD0176ED38 /* HourglassScene.swift */; };
 		2CD0D3C3CF795626E50A5EAA /* StandLockApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1524D749BB78A875E5FD51F /* StandLockApp.swift */; };
+		2FED2DBCC817D32B80CBE7AA /* PomodoroRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = E25B9FF366AECB943028EDF2 /* PomodoroRow.swift */; };
 		354BBE2CE0040FB1FE1928BA /* RhythmTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = A485E937F7D80FA3455BA910 /* RhythmTile.swift */; };
 		3EA2689E42A22B02662039B0 /* SettingsTokens.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA2920940F5FB5690FF53B7B /* SettingsTokens.swift */; };
 		3F24521CD8A9CA8C9156A1B9 /* PreferencesSaveOwner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EA489010EA8A9B969CE5227 /* PreferencesSaveOwner.swift */; };
@@ -60,6 +61,7 @@
 		726D144CA2B3B5AF4D4503AE /* LevelPill.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF6724F4176D1F398DF9A697 /* LevelPill.swift */; };
 		72EF8A3AE6FD2B14FA478D0F /* OpenSettingsCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D5900DFD7FAE70774438F1F /* OpenSettingsCommand.swift */; };
 		73D55EC0B43E3538ED4157C1 /* SettingsRowDivider.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7F941253F684FB262B426B9 /* SettingsRowDivider.swift */; };
+		74A65286E3635E9A799AB935 /* PomodoroSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A582C0BA5B8B79048543AF05 /* PomodoroSettingsView.swift */; };
 		75E31F36751D55F051D6FF34 /* ExerciseBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 434445F0717D4FC94E284CB8 /* ExerciseBlock.swift */; };
 		769FC5C08D86A729FB78CAF4 /* FoxScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AFF45DCD02D27949394DEF3 /* FoxScene.swift */; };
 		7A2143A0695F8455C834C0C3 /* CookingScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = C48598983576EA3F15F8B4F7 /* CookingScene.swift */; };
@@ -113,6 +115,7 @@
 		C79B40CDB801534CB03F8D40 /* PaintingScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4F7EBA4EB133173F8CA622F /* PaintingScene.swift */; };
 		C9317350D818E7C826DA0966 /* CapybaraScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC56256F21155B8E45CAF6D /* CapybaraScene.swift */; };
 		CACA2A694D8386E2C52987E7 /* HomebrewUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41523222886A9E60C4A27DD /* HomebrewUpdater.swift */; };
+		CC482A757960812107868A0E /* PomodoroChipView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB88FC9A43EC36467F5FA0D5 /* PomodoroChipView.swift */; };
 		CE55FB80048215F1C86DC99D /* DeskScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24E37F0725B2E389ACEC601F /* DeskScene.swift */; };
 		D588F2EB46E9B8124422C5EE /* StatsFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43B1BE95A60D5294C770AEDE /* StatsFooter.swift */; };
 		D6409DD8838F0ED91DC848C5 /* NextIntervalLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33012BFC809E077C2D638165 /* NextIntervalLabel.swift */; };
@@ -207,6 +210,7 @@
 		9A485172E288DBE02E326017 /* ScheduleStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleStatusView.swift; sourceTree = "<group>"; };
 		9C3B7E68FDF3C989BA50F367 /* BreakPalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakPalette.swift; sourceTree = "<group>"; };
 		A485E937F7D80FA3455BA910 /* RhythmTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RhythmTile.swift; sourceTree = "<group>"; };
+		A582C0BA5B8B79048543AF05 /* PomodoroSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PomodoroSettingsView.swift; sourceTree = "<group>"; };
 		A7F941253F684FB262B426B9 /* SettingsRowDivider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsRowDivider.swift; sourceTree = "<group>"; };
 		A81F2ED91290AD26CB5B672E /* AppCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
 		AA4E43A1C69B7789F4968823 /* SettingsPageLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPageLayout.swift; sourceTree = "<group>"; };
@@ -245,6 +249,7 @@
 		DEAF9C8AFAF33310B45445B2 /* TimerNumerals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerNumerals.swift; sourceTree = "<group>"; };
 		DF887D81035A1FE4735344F3 /* SettingsDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsDetail.swift; sourceTree = "<group>"; };
 		E2436E0F3F20FE12F920ADE7 /* QuickActionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickActionsView.swift; sourceTree = "<group>"; };
+		E25B9FF366AECB943028EDF2 /* PomodoroRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PomodoroRow.swift; sourceTree = "<group>"; };
 		E4C53062EDA5469F4E031D21 /* RobotScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RobotScene.swift; sourceTree = "<group>"; };
 		E5A68046037D0CAAE70C0F88 /* ActionArea.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionArea.swift; sourceTree = "<group>"; };
 		E940304A1CB44B2B8CC0FC8C /* BreakScreenPreviewCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakScreenPreviewCard.swift; sourceTree = "<group>"; };
@@ -256,6 +261,7 @@
 		F2A85DF7A9AA67198838FE47 /* SceneBubble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneBubble.swift; sourceTree = "<group>"; };
 		F41523222886A9E60C4A27DD /* HomebrewUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomebrewUpdater.swift; sourceTree = "<group>"; };
 		F9AA3E0D667AF2DB2D988625 /* SettingsToggleRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsToggleRow.swift; sourceTree = "<group>"; };
+		FB88FC9A43EC36467F5FA0D5 /* PomodoroChipView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PomodoroChipView.swift; sourceTree = "<group>"; };
 		FDC1758B39501153DCF68061 /* NextBreakClock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NextBreakClock.swift; sourceTree = "<group>"; };
 		FE0E2C708B760F809144B756 /* PermissionChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionChecker.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -326,6 +332,7 @@
 				AF6724F4176D1F398DF9A697 /* LevelPill.swift */,
 				99BB0E055C4BD25865AD3EE1 /* ManuscriptBreakView.swift */,
 				33012BFC809E077C2D638165 /* NextIntervalLabel.swift */,
+				FB88FC9A43EC36467F5FA0D5 /* PomodoroChipView.swift */,
 				43B1BE95A60D5294C770AEDE /* StatsFooter.swift */,
 				DEAF9C8AFAF33310B45445B2 /* TimerNumerals.swift */,
 				85C5398AE9D97E6B58618468 /* WordmarkView.swift */,
@@ -419,6 +426,7 @@
 				C64B592ED400D7D67ABD591A /* MenuScenePicker.swift */,
 				2442916C24424F076D8711A6 /* PermissionCard.swift */,
 				12184C2234D04E8FE035B701 /* PermissionsView.swift */,
+				A582C0BA5B8B79048543AF05 /* PomodoroSettingsView.swift */,
 				7EA489010EA8A9B969CE5227 /* PreferencesSaveOwner.swift */,
 				DF887D81035A1FE4735344F3 /* SettingsDetail.swift */,
 				B434EC205E6881076C098867 /* SettingsFileSection.swift */,
@@ -452,6 +460,7 @@
 				8FC046224F3CBC19F654A996 /* MenuBarPillStyle.swift */,
 				1D4A9BCE77DF93E823C10D87 /* MenuBarStatusView.swift */,
 				52A2D12AD9D89928096A633C /* MenuBarView.swift */,
+				E25B9FF366AECB943028EDF2 /* PomodoroRow.swift */,
 				E2436E0F3F20FE12F920ADE7 /* QuickActionsView.swift */,
 				BC3E44285744A26438122E49 /* QuitConfirmationView.swift */,
 				F55A26B9BA70F54DCD4A7862 /* Scenes */,
@@ -691,6 +700,9 @@
 				EAC5C8BAB2FC5D5FB1D845C5 /* PermissionsView.swift in Sources */,
 				231BA9A6E5E6E06DD9B6CA91 /* PixelGridView.swift in Sources */,
 				FC583BA99EE50EF0303C3DC6 /* PixelParts.swift in Sources */,
+				CC482A757960812107868A0E /* PomodoroChipView.swift in Sources */,
+				2FED2DBCC817D32B80CBE7AA /* PomodoroRow.swift in Sources */,
+				74A65286E3635E9A799AB935 /* PomodoroSettingsView.swift in Sources */,
 				3F24521CD8A9CA8C9156A1B9 /* PreferencesSaveOwner.swift in Sources */,
 				4A537C55B992DF62814F9857 /* QuickActionsView.swift in Sources */,
 				0B393CE81B833D5037CFDB55 /* QuitConfirmationView.swift in Sources */,

@@ -1,4 +1,5 @@
 import Foundation
+import StandLockCore
 
 public struct EscapeDetector: Sendable {
     public let requiredDuration: TimeInterval
@@ -6,7 +7,7 @@ public struct EscapeDetector: Sendable {
     public private(set) var isHolding: Bool = false
 
     public init(requiredDuration: TimeInterval = 10.0) {
-        self.requiredDuration = requiredDuration
+        self.requiredDuration = BreakSafety.escapeHoldDuration(requiredDuration)
     }
 
     public mutating func flagsChanged(

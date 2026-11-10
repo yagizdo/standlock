@@ -33,7 +33,7 @@ struct SettingsExportTests {
                 isEnabled: false,
                 days: .weekends,
                 windows: [TimeWindow(startHour: 18, startMinute: 15, endHour: 21, endMinute: 45)],
-                breakInterval: 6, breakDuration: 3,
+                breakInterval: 60, breakDuration: 3,
                 disciplineLevel: .firm
             ),
         ]
@@ -61,7 +61,8 @@ struct SettingsExportTests {
             showFullWorkTimer: true,
             menuBarCountdownMinutes: 3,
             menuScene: .off,
-            breakScreen: BreakScreenPreferences(backgroundHex: "#112233", textHex: "#EEEEEE", showsStatistics: false, message: "Stretch")
+            breakScreen: BreakScreenPreferences(backgroundHex: "#112233", textHex: "#EEEEEE", showsStatistics: false, message: "Stretch"),
+            pomodoro: PomodoroConfiguration(focus: 50 * 60, shortBreak: 10 * 60, longBreak: 30 * 60, rounds: 3)
         )
     }
 
@@ -253,6 +254,10 @@ struct SettingsExportTests {
         ("firmSkipDelay", { $0.preferences.firmSkipDelay = 1e300 }),
         ("strictEscapeHoldDuration", { $0.preferences.strictEscapeHoldDuration = 1e300 }),
         ("postponeReturnDelay", { $0.preferences.postponeReturnDelay = -1 }),
+        ("pomodoro focus", { $0.preferences.pomodoro.focus = 1e30 }),
+        ("pomodoro short break", { $0.preferences.pomodoro.shortBreak = 0 }),
+        ("pomodoro long break", { $0.preferences.pomodoro.longBreak = -60 }),
+        ("pomodoro rounds", { $0.preferences.pomodoro.rounds = .max }),
     ]
 
     @Test(arguments: hugeValues.indices)
@@ -262,14 +267,92 @@ struct SettingsExportTests {
         #expect(Self.decodeError(try export.encoded()) == .unreadable, "\(Self.hugeValues[index].0)")
     }
 
+    @Test func exportRoundTripsPomodoro() throws {
+        let decoded = try SettingsExport.decode(Self.full().encoded())
+        #expect(decoded.preferences.pomodoro == Self.fullPreferences().pomodoro)
+        #expect(decoded.preferences.pomodoro != .standard)
+    }
+
+    @Test func preferencesWithoutPomodoroDecodeToStandard() throws {
+        // A v0.12.0 file or stored value has no `pomodoro` key.
+        let data = try Self.edited { object in
+            var preferences = object["preferences"] as! [String: Any]
+            preferences["pomodoro"] = nil
+            object["preferences"] = preferences
+        }
+        #expect(try SettingsExport.decode(data).preferences.pomodoro == .standard)
+        let stored = try JSONSerialization.data(withJSONObject: ["gentleDailySkipLimit": 3])
+        #expect(try JSONDecoder().decode(AppPreferences.self, from: stored).pomodoro == .standard)
+    }
+
     @Test func subMinuteValuesStayReadable() throws {
-        // Older stored schedules can sit below the form's ranges; the file must still load.
+        // Break lengths below a minute come from the form itself; the file must still load.
         let data = try Self.editedSchedule { schedule in
-            schedule["breakInterval"] = 6.0
             schedule["breakDuration"] = 3.0
         }
         let decoded = try SettingsExport.decode(data)
-        #expect(decoded.schedules[0].breakInterval == TimeInterval(6))
+        #expect(decoded.schedules[0].breakDuration == TimeInterval(3))
+    }
+
+    @Test(arguments: [3601.0, 366.0 * 86_400])
+    func unsafeBreakDurationsAreUnreadable(duration: Double) throws {
+        let data = try Self.editedSchedule { $0["breakDuration"] = duration }
+        #expect(Self.decodeError(data) == .unreadable)
+    }
+
+    @Test(arguments: ["shortBreakDuration", "longBreakDuration"])
+    func unsafeRepetitionDurationsAreUnreadable(key: String) throws {
+        let data = try Self.editedSchedule { schedule in
+            var rule = schedule["repetitionRule"] as! [String: Any]
+            rule[key] = 3601.0
+            schedule["repetitionRule"] = rule
+        }
+        #expect(Self.decodeError(data) == .unreadable)
+    }
+
+    @Test func unsafeEmergencyHoldIsUnreadable() throws {
+        var export = Self.full()
+        export.preferences.strictEscapeHoldDuration = 31
+        #expect(Self.decodeError(try export.encoded()) == .unreadable)
+    }
+
+    @Test func unsafeFirmDelayIsUnreadable() throws {
+        var export = Self.full()
+        export.preferences.firmSkipDelay = 61
+        #expect(Self.decodeError(try export.encoded()) == .unreadable)
+    }
+
+    @Test(arguments: [1.0, 59.0])
+    func subMinuteIntervalsAreUnreadable(interval: Double) throws {
+        let data = try Self.editedSchedule { $0["breakInterval"] = interval }
+        #expect(Self.decodeError(data) == .unreadable)
+    }
+
+    @Test func subMinuteCycleStepIsUnreadable() throws {
+        let data = try Self.editedSchedule { schedule in
+            var steps = schedule["intervalCycle"] as! [[String: Any]]
+            steps[1]["duration"] = 30.0
+            schedule["intervalCycle"] = steps
+        }
+        #expect(Self.decodeError(data) == .unreadable)
+    }
+
+    @Test(arguments: [
+        "", "   ", "skip\nnow", "skip\u{7}now", "skip\tnow", "skip\u{2028}now",
+        String(repeating: "a", count: 101), "a" + String(repeating: "\u{301}", count: 500),
+    ])
+    func untypeableFirmPhraseIsUnreadable(phrase: String) throws {
+        var export = Self.full()
+        export.preferences.firmEscapePhrase = phrase
+        #expect(Self.decodeError(try export.encoded()) == .unreadable)
+    }
+
+    @Test func safetyBoundaryValuesStayReadable() throws {
+        var export = Self.full()
+        export.preferences.strictEscapeHoldDuration = 30
+        export.schedules[0].breakDuration = 3600
+        export.schedules[0].repetitionRule?.longBreakDuration = 3600
+        #expect(try SettingsExport.decode(export.encoded()) == export)
     }
 
     // MARK: - Calendar selection

@@ -7,6 +7,16 @@ import Testing
 
 @Suite("EscapeDetector Tests")
 struct EscapeDetectorTests {
+    @Test(arguments: [366.0 * 86_400, Double.infinity, Double.nan, -1.0])
+    func unsafeStoredHoldStillAllowsEmergencyEscape(duration: Double) {
+        var detector = EscapeDetector(requiredDuration: duration)
+        let start = Date()
+        detector.flagsChanged(controlDown: true, optionDown: true, commandDown: true, at: start)
+        #expect(detector.requiredDuration.isFinite)
+        #expect((0...30).contains(detector.requiredDuration))
+        #expect(detector.isEscapeTriggered(at: start.addingTimeInterval(30)))
+    }
+
     @Test func allKeysHeld10Seconds() {
         var detector = EscapeDetector(requiredDuration: 10)
         let start = Date()

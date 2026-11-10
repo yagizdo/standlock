@@ -7,6 +7,8 @@ struct BreakScreenSettingsView: View {
     /// `themeStore.current` is not published: this re-evaluates the preview when the Mac's
     /// appearance changes.
     @Environment(\.colorScheme) private var colorScheme
+    /// Preview state only; never saved.
+    @State private var previewsPomodoroChip = false
 
     private var breakScreen: BreakScreenPreferences {
         coordinator.preferences.breakScreen
@@ -18,9 +20,19 @@ struct BreakScreenSettingsView: View {
                 BreakScreenPreviewCard(
                     look: BreakScreenLook.resolve(theme: themeStore.current, level: .gentle, breakScreen: breakScreen),
                     message: breakScreen.displayMessage,
-                    statistics: breakScreen.showsStatistics ? coordinator.todayStats : nil
+                    statistics: breakScreen.showsStatistics ? coordinator.todayStats : nil,
+                    showsPomodoroChip: previewsPomodoroChip
                 )
                 .padding(SettingsTokens.previewInsets)
+
+                Divider()
+
+                SettingsToggleRow(
+                    "Show Pomodoro chip",
+                    symbol: "timer",
+                    description: "Only changes this preview",
+                    isOn: $previewsPomodoroChip
+                )
             }
 
             SettingsSection("Look") {
