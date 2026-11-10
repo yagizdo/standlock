@@ -500,9 +500,9 @@ struct PomodoroLifetimeTests {
         #expect(coordinator.pomodoroSession?.phase == .longBreak)
         coordinator.handleSystemSleep()
         coordinator.handleSystemWake(now: Date().addingTimeInterval(3600))
-        #expect(await waitUntil { log.completed == 1 })
+        // The nil status follows the completion event; the log appends them on separate turns.
+        #expect(await waitUntil { log.completed == 1 && log.statuses.last == .some(nil) })
         #expect(coordinator.pomodoroSession == nil)
-        #expect(log.statuses.last == .some(nil))
     }
 
     @Test
@@ -752,9 +752,9 @@ struct PomodoroBranchReviewTests {
         coordinator.handleSystemSleep(now: start.addingTimeInterval(10))
         let morning = Calendar.current.date(byAdding: .day, value: 1, to: start)!
         coordinator.handleSystemWake(now: morning)
-        #expect(await waitUntil { dropped(log).count == 1 })
+        // The nil status follows the drop event; the log appends them on separate turns.
+        #expect(await waitUntil { dropped(log).count == 1 && log.statuses.last == .some(nil) })
         #expect(coordinator.pomodoroSession == nil)
-        #expect(log.statuses.last == .some(nil))
         #expect(log.completed == 0)
         #expect(log.stats?.pomodoroTallies?.rounds ?? 0 == 0)
         // Recorded by the app on the day the session started, not counted in today's tallies.
