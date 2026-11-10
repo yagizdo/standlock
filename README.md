@@ -58,7 +58,7 @@ Or [download the DMG](https://github.com/yagizdo/StandLock/releases/latest) and 
 - Breaks wait for meetings, screen recordings, screen sharing and calendar events
 - If you were already away from your desk, the break counts as done
 - You can postpone a break once when a call comes up
-- Start a Pomodoro session from the menu bar: 25 min focus, 5 min breaks, a 15 min long break after four rounds, all adjustable in Settings › Pomodoro
+- Start a Pomodoro session from the menu bar: 25 min focus, 5 min breaks, a 15 min long break after four rounds, all adjustable in Settings › Pomodoro. It can cover the screen during focus instead, for work away from the Mac
 
 <p align="center"><img src="assets/schedules.png" width="460" alt="Schedule form with days, hours, alternating intervals and the day's break times"></p>
 
