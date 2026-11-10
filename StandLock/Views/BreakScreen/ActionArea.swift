@@ -1529,7 +1529,7 @@ private struct PhraseDismissView: View {
             }
         }
         .alert(isFocusCover ? Text("End focus?") : Text("Skip this break?"), isPresented: $showSkipConfirmation) {
-            Button("Skip", role: .destructive) { onDismiss() }
+            Button(role: .destructive) { onDismiss() } label: { isFocusCover ? Text("End focus") : Text("Skip") }
             Button("Cancel", role: .cancel) { typedPhrase = "" }
         }
         .onChange(of: showSkipConfirmation) { showing in

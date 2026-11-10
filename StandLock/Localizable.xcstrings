@@ -436,6 +436,22 @@
         }
       }
     },
+    "End focus" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Odağı bitir"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "结束专注"
+          }
+        }
+      }
+    },
     "End focus →" : {
       "localizations" : {
         "tr" : {
