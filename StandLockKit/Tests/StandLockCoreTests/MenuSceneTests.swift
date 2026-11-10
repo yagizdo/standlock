@@ -66,6 +66,26 @@ struct MenuSceneTests {
         #expect(MenuSceneLook(state: .deferred(.postponed), pomodoro: onBreak, now: now) == .breakWaiting)
     }
 
+    private func coverSession(_ phase: PomodoroPhase) -> PomodoroStatus {
+        let config = PomodoroConfiguration(focus: 1500, shortBreak: 300, longBreak: 900, rounds: 4, cover: .focus)
+        let session = PomodoroSession(startedAt: now, configuration: config, phase: phase, phaseEnd: now.addingTimeInterval(300))
+        return PomodoroStatus(session: session, level: .gentle)
+    }
+
+    @Test func coverModeOpenBreakIsTimeToStand() {
+        // The countdown runs to the next cover; the user should be resting, not "working".
+        let state = NextBreakState.countingDown(to: now.addingTimeInterval(600))
+        #expect(MenuSceneLook(state: state, pomodoro: coverSession(.shortBreak(afterRound: 1)), now: now) == .timeToStand)
+        #expect(MenuSceneLook(state: state, pomodoro: coverSession(.longBreak), now: now) == .timeToStand)
+    }
+
+    @Test func coverModeFocusNotOnScreenIsWaiting() {
+        let focus = coverSession(.focus(round: 1))
+        #expect(MenuSceneLook(state: .deferred(.cameraActive), pomodoro: focus, now: now) == .breakWaiting)
+        #expect(MenuSceneLook(state: .countingDown(to: now.addingTimeInterval(600)), pomodoro: focus, now: now) == .breakWaiting)
+        #expect(MenuSceneLook(state: .breakActive, pomodoro: focus, now: now) == .timeToStand)
+    }
+
     @Test func noSessionKeepsTheStateLook() {
         #expect(MenuSceneLook(state: .countingDown(to: now.addingTimeInterval(600)), pomodoro: nil, now: now) == .working)
         #expect(MenuSceneLook(state: .paused(until: now), pomodoro: nil, now: now) == .paused)

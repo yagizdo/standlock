@@ -62,7 +62,7 @@ struct SettingsExportTests {
             menuBarCountdownMinutes: 3,
             menuScene: .off,
             breakScreen: BreakScreenPreferences(backgroundHex: "#112233", textHex: "#EEEEEE", showsStatistics: false, message: "Stretch"),
-            pomodoro: PomodoroConfiguration(focus: 50 * 60, shortBreak: 10 * 60, longBreak: 30 * 60, rounds: 3)
+            pomodoro: PomodoroConfiguration(focus: 50 * 60, shortBreak: 10 * 60, longBreak: 30 * 60, rounds: 3, cover: .focus)
         )
     }
 
@@ -265,6 +265,13 @@ struct SettingsExportTests {
         var export = Self.full()
         Self.hugeValues[index].1(&export)
         #expect(Self.decodeError(try export.encoded()) == .unreadable, "\(Self.hugeValues[index].0)")
+    }
+
+    @Test func importRefusesFocusCoverOverAnHour() throws {
+        var export = Self.full()
+        export.preferences.pomodoro.cover = .focus
+        export.preferences.pomodoro.focus = 61 * 60
+        #expect(Self.decodeError(try export.encoded()) == .unreadable)
     }
 
     @Test func exportRoundTripsPomodoro() throws {

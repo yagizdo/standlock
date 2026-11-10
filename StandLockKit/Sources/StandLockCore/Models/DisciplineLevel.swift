@@ -24,6 +24,13 @@ public enum DisciplineLevel: String, Codable, Sendable, CaseIterable {
         }
     }
 
+    /// Whether the overlay swaps its skip for the emergency exit. A focus cover's skips are not
+    /// counted, so the break skips of the day cannot take its way out.
+    public func dailySkipLimitReached(preferences: AppPreferences, skipsToday: Int, isFocusCover: Bool) -> Bool {
+        guard !isFocusCover, let limit = dailySkipLimit(preferences: preferences) else { return false }
+        return skipsToday >= limit
+    }
+
     public var description: String {
         switch self {
         case .gentle: "Full-screen overlay with immediate skip button"

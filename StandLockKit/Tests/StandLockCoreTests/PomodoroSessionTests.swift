@@ -54,6 +54,38 @@ struct PomodoroSessionTests {
         #expect(!config.isWithinBounds)
     }
 
+    @Test func configurationWithoutCoverDecodesToBreaks() throws {
+        let json = #"{"focus":1500,"shortBreak":300,"longBreak":900,"rounds":4}"#
+        let decoded = try JSONDecoder().decode(PomodoroConfiguration.self, from: Data(json.utf8))
+        #expect(decoded.cover == .breaks)
+        #expect(decoded == .standard)
+    }
+
+    @Test func unknownCoverDecodesToBreaks() throws {
+        let json = #"{"focus":1500,"shortBreak":300,"longBreak":900,"rounds":4,"cover":"sideways"}"#
+        let decoded = try JSONDecoder().decode(PomodoroConfiguration.self, from: Data(json.utf8))
+        #expect(decoded.cover == .breaks)
+    }
+
+    @Test func focusCoverRefusesFocusOverAnHour() {
+        #expect(!PomodoroConfiguration(focus: 61 * 60, shortBreak: 300, longBreak: 900, rounds: 4, cover: .focus).isWithinBounds)
+        #expect(PomodoroConfiguration(focus: 60 * 60, shortBreak: 300, longBreak: 900, rounds: 4, cover: .focus).isWithinBounds)
+    }
+
+    @Test func breaksCoverKeepsThreeHourFocus() {
+        #expect(PomodoroConfiguration(focus: 180 * 60, shortBreak: 300, longBreak: 900, rounds: 4, cover: .breaks).isWithinBounds)
+    }
+
+    @Test func settingFocusCoverPullsFocusIntoRange() {
+        var config = PomodoroConfiguration(focus: 180 * 60, shortBreak: 300, longBreak: 900, rounds: 4)
+        config.setCover(.focus)
+        #expect(config.cover == .focus)
+        #expect(config.focus == TimeInterval(60 * 60))
+        config.setCover(.breaks)
+        #expect(config.cover == .breaks)
+        #expect(config.focus == TimeInterval(60 * 60))
+    }
+
     // MARK: - Phases
 
     @Test func startBeginsFocusOneEndingAfterFocusLength() {
@@ -144,6 +176,80 @@ struct PomodoroSessionTests {
         #expect(longBreak.catchUp(awayFrom: Self.start, to: Self.start.addingTimeInterval(120)) == .creditedBreaks(count: 1, session: nil))
     }
 
+    // MARK: - Focus cover
+
+    static let coverConfig = PomodoroConfiguration(focus: 1500, shortBreak: 300, longBreak: 900, rounds: 4, cover: .focus)
+
+    static func coverSession(_ phase: PomodoroPhase, endingAt end: Date = start) -> PomodoroSession {
+        PomodoroSession(startedAt: start, configuration: coverConfig, phase: phase, phaseEnd: end)
+    }
+
+    @Test func coveredPhaseFollowsTheMode() {
+        #expect(!Self.session(.focus(round: 1)).isCovered)
+        #expect(Self.session(.shortBreak(afterRound: 1)).isCovered)
+        #expect(Self.session(.longBreak).isCovered)
+        #expect(Self.coverSession(.focus(round: 1)).isCovered)
+        #expect(!Self.coverSession(.shortBreak(afterRound: 1)).isCovered)
+        #expect(!Self.coverSession(.longBreak).isCovered)
+    }
+
+    @Test func coveredFocusIsClampedToAnHourAtUse() {
+        // A stored value no import or form would allow: the overlay still ends within the ceiling.
+        var config = Self.coverConfig
+        config.focus = 7200
+        let session = PomodoroSession.start(at: Self.start, configuration: config)
+        #expect(session.duration(of: .focus(round: 1)) == TimeInterval(3600))
+        #expect(session.phaseEnd == Self.start.addingTimeInterval(3600))
+    }
+
+    @Test func breaksModeDurationsUnchanged() {
+        var session = Self.session(.focus(round: 1))
+        session.configuration.focus = 7200
+        #expect(session.duration(of: .focus(round: 1)) == TimeInterval(7200))
+    }
+
+    @Test func focusElapsedUsesTheClampedLength() {
+        var config = Self.coverConfig
+        config.focus = 7200
+        let session = PomodoroSession(startedAt: Self.start, configuration: config, phase: .focus(round: 1), phaseEnd: Self.start.addingTimeInterval(3600))
+        #expect(session.focusElapsed(at: Self.start.addingTimeInterval(3600)) == TimeInterval(3600))
+        #expect(session.focusElapsed(at: Self.start) == TimeInterval(0))
+    }
+
+    @Test func coverModeFocusEndedAwayOpensTheBreakAtTheReturn() {
+        let session = Self.coverSession(.focus(round: 1), endingAt: Self.start.addingTimeInterval(60))
+        let back = Self.start.addingTimeInterval(3600)
+        guard case .creditedBreaks(1, let next?) = session.catchUp(awayFrom: Self.start, to: back) else {
+            Issue.record("expected the covered focus credited")
+            return
+        }
+        #expect(next.phase == .shortBreak(afterRound: 1))
+        #expect(next.phaseEnd == back.addingTimeInterval(300))
+    }
+
+    @Test func coverModeCoveredFocusWithTimeLeftIsUnchanged() {
+        let session = Self.coverSession(.focus(round: 1), endingAt: Self.start.addingTimeInterval(600))
+        #expect(session.catchUp(awayFrom: Self.start, to: Self.start.addingTimeInterval(300)) == .unchanged)
+    }
+
+    @Test(arguments: [TimeInterval(-600), 0, 20])
+    func coverModeOpenBreakNearOrPastItsEndDelaysTheCover(left: TimeInterval) {
+        let back = Self.start.addingTimeInterval(1200)
+        let session = Self.coverSession(.shortBreak(afterRound: 1), endingAt: back.addingTimeInterval(left))
+        guard case .coverDelayed(let delayed) = session.catchUp(awayFrom: Self.start, to: back) else {
+            Issue.record("expected the cover delayed")
+            return
+        }
+        #expect(delayed.phase == .shortBreak(afterRound: 1))
+        #expect(delayed.phaseEnd == back.addingTimeInterval(60))
+    }
+
+    @Test func coverModeOpenBreakWithMinutesLeftIsUnchanged() {
+        let back = Self.start.addingTimeInterval(1200)
+        let session = Self.coverSession(.longBreak, endingAt: back.addingTimeInterval(300))
+        #expect(session.catchUp(awayFrom: Self.start, to: back) == .unchanged)
+    }
+
     /// Earlier builds of this branch saved a running focus total; the key is ignored now.
     @Test func decodesSessionSavedWithFocusSeconds() throws {
         let saved = PomodoroSession.start(at: Self.start, configuration: Self.config)
@@ -175,6 +281,24 @@ struct PomodoroSessionTests {
 
     @Test func focusHasNoChip() {
         #expect(PomodoroStatus(session: Self.session(.focus(round: 1)), level: .gentle).chip == nil)
+    }
+
+    @Test func chipInCoverModeMarksFocusAndBreaksHaveNone() {
+        let focus = PomodoroStatus(session: Self.coverSession(.focus(round: 2)), level: .gentle)
+        #expect(focus.isCovered)
+        #expect(focus.chip == PomodoroChip(round: 2, rounds: 4, isLong: false, isFocus: true))
+        #expect(PomodoroStatus(session: Self.coverSession(.shortBreak(afterRound: 1)), level: .gentle).chip == nil)
+        #expect(PomodoroStatus(session: Self.coverSession(.longBreak), level: .gentle).chip == nil)
+        #expect(PomodoroStatus(session: Self.session(.shortBreak(afterRound: 2)), level: .gentle).chip?.isFocus == false)
+    }
+
+    @Test func skipLimitIgnoredOnAFocusCover() {
+        var preferences = AppPreferences()
+        preferences.gentleDailySkipLimit = 3
+        #expect(!DisciplineLevel.gentle.dailySkipLimitReached(preferences: preferences, skipsToday: 5, isFocusCover: true))
+        #expect(DisciplineLevel.gentle.dailySkipLimitReached(preferences: preferences, skipsToday: 5, isFocusCover: false))
+        #expect(!DisciplineLevel.gentle.dailySkipLimitReached(preferences: preferences, skipsToday: 2, isFocusCover: false))
+        #expect(!DisciplineLevel.strict.dailySkipLimitReached(preferences: preferences, skipsToday: 99, isFocusCover: false))
     }
 }
 

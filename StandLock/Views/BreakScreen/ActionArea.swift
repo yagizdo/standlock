@@ -10,6 +10,7 @@ struct ActionArea: View {
     let statistics: BreakStatistics
     let disciplineLevel: DisciplineLevel
     var escalationTier: Int = 0
+    var isFocusCover = false
     let onDismiss: () -> Void
     var onEscape: (() -> Void)?
 
@@ -55,7 +56,8 @@ struct ActionArea: View {
 
     @ViewBuilder
     private var mechanismView: some View {
-        if let limit = disciplineLevel.dailySkipLimit(preferences: preferences), statistics.breaksSkipped >= limit {
+        if disciplineLevel.dailySkipLimitReached(preferences: preferences, skipsToday: statistics.breaksSkipped,
+                                                 isFocusCover: isFocusCover) {
             VStack(spacing: 8) {
                 Text("Daily skip limit reached")
                     .font(BreakTypography.label(size: 12, weight: .medium))
@@ -72,7 +74,7 @@ struct ActionArea: View {
         switch tier.dismissMechanism {
         case .button:
             DodgingWrapper(isActive: escalationTier >= 1) {
-                ButtonDismissView(palette: palette, onDismiss: onDismiss)
+                ButtonDismissView(palette: palette, isFocusCover: isFocusCover, onDismiss: onDismiss)
             }
         case .typePhrase(let phrase, let requiresConfirmation):
             // A phrase the user chose themselves is shown exactly as stored. Only the
@@ -87,6 +89,7 @@ struct ActionArea: View {
                 palette: palette, phrase: resolved,
                 requiresConfirmation: requiresConfirmation,
                 escalationTier: escalationTier,
+                isFocusCover: isFocusCover,
                 onDismiss: onDismiss
             )
         case .findButton(let count, let attempts):
@@ -94,6 +97,7 @@ struct ActionArea: View {
                 palette: palette,
                 buttonCount: count,
                 maxAttempts: attempts,
+                isFocusCover: isFocusCover,
                 onDismiss: onDismiss
             )
         case .crateOpening(let slotCount, let maxAttempts):
@@ -218,6 +222,7 @@ private struct FindButtonDismissView: View {
     let palette: BreakPalette
     let buttonCount: Int
     let maxAttempts: Int
+    let isFocusCover: Bool
     let onDismiss: () -> Void
 
     @State private var buttonIDs: [UUID]
@@ -230,7 +235,8 @@ private struct FindButtonDismissView: View {
     @State private var round = 0
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
-    init(palette: BreakPalette, buttonCount: Int, maxAttempts: Int, onDismiss: @escaping () -> Void) {
+    init(palette: BreakPalette, buttonCount: Int, maxAttempts: Int, isFocusCover: Bool, onDismiss: @escaping () -> Void) {
+        self.isFocusCover = isFocusCover
         self.palette = palette
         self.buttonCount = buttonCount
         self.maxAttempts = maxAttempts
@@ -305,7 +311,7 @@ private struct FindButtonDismissView: View {
         LazyVGrid(columns: columns, spacing: 8) {
             ForEach(Array(buttonIDs.enumerated()), id: \.element) { index, _ in
                 Button(action: { handleTap(at: index) }) {
-                    Text("Skip this break \u{2192}")
+                    skipLabel(isFocusCover: isFocusCover)
                         .font(BreakTypography.label(size: 12, weight: .medium))
                         .foregroundStyle(wrongIndex == index ? Color.red : (correctFound && index == correctIndex ? Color.green : palette.ink))
                         .frame(maxWidth: .infinity)
@@ -1380,8 +1386,14 @@ private struct RoastChallengeDismissView: View {
 
 // MARK: - Button
 
+/// A focus cover ends the focus, it does not skip a break.
+private func skipLabel(isFocusCover: Bool) -> Text {
+    isFocusCover ? Text("End focus \u{2192}") : Text("Skip this break \u{2192}")
+}
+
 private struct ButtonDismissView: View {
     let palette: BreakPalette
+    let isFocusCover: Bool
     let onDismiss: () -> Void
 
     @State private var isPressed = false
@@ -1389,7 +1401,7 @@ private struct ButtonDismissView: View {
     var body: some View {
         Button(action: onDismiss) {
             VStack(spacing: 4) {
-                Text("Skip this break \u{2192}")
+                skipLabel(isFocusCover: isFocusCover)
                     .font(BreakTypography.label(size: 14, weight: .medium))
                     .foregroundStyle(palette.ink.opacity(isPressed ? 0.7 : 1))
                 Rectangle()
@@ -1413,6 +1425,7 @@ private struct PhraseDismissView: View {
     let phrase: String
     let requiresConfirmation: Bool
     let escalationTier: Int
+    let isFocusCover: Bool
     let onDismiss: () -> Void
 
     @State private var typedPhrase = ""
@@ -1515,8 +1528,8 @@ private struct PhraseDismissView: View {
                 }
             }
         }
-        .alert("Skip this break?", isPresented: $showSkipConfirmation) {
-            Button("Skip", role: .destructive) { onDismiss() }
+        .alert(isFocusCover ? Text("End focus?") : Text("Skip this break?"), isPresented: $showSkipConfirmation) {
+            Button(role: .destructive) { onDismiss() } label: { isFocusCover ? Text("End focus") : Text("Skip") }
             Button("Cancel", role: .cancel) { typedPhrase = "" }
         }
         .onChange(of: showSkipConfirmation) { showing in

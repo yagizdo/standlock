@@ -84,7 +84,7 @@ extension SettingsPage {
                 "Screen Sharing", "After sharing ends", "Idle", "Idle as Break",
             ]
         case .pomodoro:
-            ["Pomodoro", "Focus length", "Short break", "Long break", "Rounds"]
+            ["Pomodoro", "Cover the screen", "Focus length", "Short break", "Long break", "Rounds"]
         case .permissions:
             ["Permissions", "Accessibility", "Input Monitoring", "Calendar Access"]
         case .statistics:

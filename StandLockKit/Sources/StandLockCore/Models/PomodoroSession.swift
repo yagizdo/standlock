@@ -36,20 +36,26 @@ public struct PomodoroSession: Codable, Sendable, Equatable {
     }
 
     public static func start(at now: Date, configuration: PomodoroConfiguration) -> PomodoroSession {
-        PomodoroSession(
-            startedAt: now,
-            configuration: configuration,
-            phase: .focus(round: 1),
-            phaseEnd: now.addingTimeInterval(configuration.focus)
-        )
+        var session = PomodoroSession(startedAt: now, configuration: configuration, phase: .focus(round: 1), phaseEnd: now)
+        session.phaseEnd = now.addingTimeInterval(session.duration(of: session.phase))
+        return session
+    }
+
+    /// The phase the overlay covers right now: the break in the classic mode, the focus in `.focus`.
+    public var isCovered: Bool { covers(phase) }
+
+    private func covers(_ phase: PomodoroPhase) -> Bool {
+        configuration.cover == .focus ? !phase.isBreak : phase.isBreak
     }
 
     public func duration(of phase: PomodoroPhase) -> TimeInterval {
-        switch phase {
+        let length: TimeInterval = switch phase {
         case .focus: configuration.focus
         case .shortBreak: configuration.shortBreak
         case .longBreak: configuration.longBreak
         }
+        // A covered phase is an overlay: bounded at use as every break is.
+        return covers(phase) ? BreakSafety.breakDuration(length) : length
     }
 
     /// Focus time that ran by `now`: none outside a focus, all of it once the focus is over,
@@ -57,7 +63,7 @@ public struct PomodoroSession: Codable, Sendable, Equatable {
     public func focusElapsed(at now: Date) -> TimeInterval {
         guard case .focus = phase else { return 0 }
         let left = max(0, phaseEnd.timeIntervalSince(now))
-        return max(0, configuration.focus - left)
+        return max(0, duration(of: phase) - left)
     }
 
     /// The phase after this one, starting at `now`, or nil when the long break ends the session.
@@ -78,8 +84,16 @@ public struct PomodoroSession: Codable, Sendable, Equatable {
     /// Applies a stretch away (sleep, lock, quit) from `awayFrom` to `to`. Time away counts as
     /// rest: a break it covers is credited and the next focus starts at `to`.
     public func catchUp(awayFrom: Date, to: Date) -> PomodoroCatchUp {
+        if configuration.cover == .focus, !isCovered {
+            // An open break that ran out away, or nearly: the next cover waits a minute after the return.
+            let earliest = to.addingTimeInterval(BreakSafety.minimumBreakInterval)
+            guard phaseEnd < earliest else { return .unchanged }
+            var delayed = self
+            delayed.phaseEnd = earliest
+            return .coverDelayed(session: delayed)
+        }
         guard to >= phaseEnd else { return .unchanged }
-        if phase.isBreak {
+        if isCovered {
             return .creditedBreaks(count: 1, session: next(at: to))
         }
         // Focus ended while away; the break that follows is due now.
@@ -133,4 +147,6 @@ public enum PomodoroCatchUp: Sendable, Equatable {
     case creditedBreaks(count: Int, session: PomodoroSession?)
     /// A break the time away covered only in part, ending `remaining` seconds after the return.
     case openBreak(remaining: TimeInterval, session: PomodoroSession)
+    /// Cover mode: the open break ends no sooner than a minute after the return.
+    case coverDelayed(session: PomodoroSession)
 }

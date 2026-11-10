@@ -292,6 +292,22 @@
         }
       }
     },
+    "Cover the screen" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ekranı kapat"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "遮挡屏幕"
+          }
+        }
+      }
+    },
     "Daily skip limits" : {
       "localizations" : {
         "tr" : {
@@ -372,6 +388,38 @@
         }
       }
     },
+    "During breaks" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Molalarda"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "休息时"
+          }
+        }
+      }
+    },
+    "During focus" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Odakta"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "专注时"
+          }
+        }
+      }
+    },
     "Enabled" : {
       "localizations" : {
         "tr" : {
@@ -384,6 +432,54 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "已开启"
+          }
+        }
+      }
+    },
+    "End focus" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Odağı bitir"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "结束专注"
+          }
+        }
+      }
+    },
+    "End focus →" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Odağı bitir →"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "结束专注 →"
+          }
+        }
+      }
+    },
+    "End focus?" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Odak bitsin mi?"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "结束专注？"
           }
         }
       }
@@ -464,6 +560,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "专注 %lld/%lld"
+          }
+        }
+      }
+    },
+    "Focus comes back after your call" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Odak, görüşmen bitince geri gelir"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通话结束后专注将继续"
           }
         }
       }
@@ -800,6 +912,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "下次休息"
+          }
+        }
+      }
+    },
+    "Pomodoro, focus %lld of %lld" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pomodoro, odak %lld, toplam %lld"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "番茄钟，专注 %lld，共 %lld"
           }
         }
       }

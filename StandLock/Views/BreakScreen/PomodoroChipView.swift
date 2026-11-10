@@ -30,12 +30,19 @@ struct PomodoroChipView: View {
     }
 
     private var text: String {
-        let detail = chip.isLong ? languageStore.string("Long break") : "\(chip.round)/\(chip.rounds)"
+        let detail = if chip.isFocus {
+            languageStore.string("Focus \(chip.round)/\(chip.rounds)")
+        } else if chip.isLong {
+            languageStore.string("Long break")
+        } else {
+            "\(chip.round)/\(chip.rounds)"
+        }
         return languageStore.string("Pomodoro") + " · " + detail
     }
 
     private var spokenLabel: String {
-        chip.isLong
+        if chip.isFocus { return languageStore.string("Pomodoro, focus \(chip.round) of \(chip.rounds)") }
+        return chip.isLong
             ? languageStore.string("Pomodoro, long break")
             : languageStore.string("Pomodoro, round \(chip.round) of \(chip.rounds)")
     }
