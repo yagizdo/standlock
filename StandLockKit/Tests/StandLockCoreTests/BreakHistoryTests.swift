@@ -154,6 +154,27 @@ struct BreakHistoryTests {
         #expect(stats.activeDays == 365)
     }
 
+    /// The card's numbers use the same window as the cards above it; days without a session add nothing.
+    @Test func aggregateSumsPomodoroTalliesForThePeriod() {
+        var history = BreakHistory()
+        let ref = date("2026-06-04") // Thursday
+        var monday = makeRecord("2026-06-01", completed: 1)
+        monday.pomodoroTallies = PomodoroTallies(focusSeconds: 3000, rounds: 2, sessionsAbandoned: 1)
+        var thursday = makeRecord("2026-06-04", completed: 4, active: false)
+        thursday.pomodoroTallies = PomodoroTallies(focusSeconds: 6000, rounds: 4, sessionsFinished: 1)
+        var lastWeek = makeRecord("2026-05-31", completed: 1)
+        lastWeek.pomodoroTallies = PomodoroTallies(focusSeconds: 1500, rounds: 1)
+        history.upsert(monday)
+        history.upsert(makeRecord("2026-06-02", completed: 3))
+        history.upsert(thursday)
+        history.upsert(lastWeek)
+
+        #expect(history.aggregateStats(for: .week, referenceDate: ref).pomodoro
+                == PomodoroTallies(focusSeconds: 9000, rounds: 6, sessionsFinished: 1, sessionsAbandoned: 1))
+        #expect(history.aggregateStats(for: .today, referenceDate: date("2026-06-02")).pomodoro.isEmpty)
+        #expect(AggregateStats.empty.pomodoro.isEmpty)
+    }
+
     @Test func completionRateCalculation() {
         var history = BreakHistory()
         let ref = date("2026-06-01")

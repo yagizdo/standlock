@@ -18,11 +18,12 @@ public struct AggregateStats: Equatable, Sendable {
     public let bestStreak: Int
     public let totalBreakTime: TimeInterval
     public let activeDays: Int
+    public let pomodoro: PomodoroTallies
 
     public static let empty = AggregateStats(
         totalCompleted: 0, totalSkipped: 0, totalEscaped: 0,
         completionRate: 0, currentStreak: 0, bestStreak: 0,
-        totalBreakTime: 0, activeDays: 0
+        totalBreakTime: 0, activeDays: 0, pomodoro: PomodoroTallies()
     )
 }
 
@@ -184,6 +185,7 @@ public struct BreakHistory: Codable, Sendable {
         var totalEscaped = 0
         var totalBreakTime: TimeInterval = 0
         var activeDays = 0
+        var pomodoro = PomodoroTallies()
 
         for record in filtered {
             totalCompleted += record.breaksCompleted
@@ -191,6 +193,7 @@ public struct BreakHistory: Codable, Sendable {
             totalEscaped += record.breaksEscaped
             totalBreakTime += record.totalBreakDuration
             if record.totalBreaks > 0 { activeDays += 1 }
+            if let tallies = record.pomodoroTallies { pomodoro = pomodoro + tallies }
         }
 
         let total = totalCompleted + totalSkipped + totalEscaped
@@ -206,7 +209,8 @@ public struct BreakHistory: Codable, Sendable {
             currentStreak: streak,
             bestStreak: bestStreak,
             totalBreakTime: totalBreakTime,
-            activeDays: activeDays
+            activeDays: activeDays,
+            pomodoro: pomodoro
         )
     }
 }
