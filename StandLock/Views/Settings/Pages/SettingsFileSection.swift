@@ -112,7 +112,7 @@ struct SettingsFileSection: View {
         panel.canChooseDirectories = false
         panel.beginSheetModal(for: window) { response in
             guard response == .OK, let url = panel.url else { return }
-            show(read(url))
+            Task { show(await read(url)) }
         }
     }
 
@@ -121,11 +121,14 @@ struct SettingsFileSection: View {
         DispatchQueue.main.async { prompt = next }
     }
 
-    private func read(_ url: URL) -> Prompt {
+    private func read(_ url: URL) async -> Prompt {
         let error: SettingsImportError
         do {
+            let decoded = try await Task.detached(priority: .userInitiated) {
+                try SettingsFileReader.read(from: url)
+            }.value
             let current = current
-            let imported = try SettingsExport.decode(Data(contentsOf: url)).keepingKnownChoices(
+            let imported = decoded.keepingKnownChoices(
                 languages: languageStore.available,
                 themes: themeStore.available.map(\.id),
                 current: current
