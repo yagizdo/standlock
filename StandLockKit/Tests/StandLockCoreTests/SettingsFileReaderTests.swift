@@ -27,7 +27,7 @@ struct SettingsFileReaderTests {
 
     @Test func oversizedFileIsRejected() throws {
         var data = try SettingsExportTests.full().encoded()
-        data.append(Data(repeating: 0x20, count: 1_048_577 - data.count))
+        data.append(Data(repeating: 0x20, count: SettingsFileReader.maxFileSize + 1 - data.count))
         try withFile(data) { file in
             #expect(throws: SettingsImportError.unreadable) { try SettingsFileReader.read(from: file) }
         }
@@ -36,7 +36,7 @@ struct SettingsFileReaderTests {
     @Test func fileAtTheByteBudgetRemainsReadable() throws {
         let export = SettingsExportTests.full()
         var data = try export.encoded()
-        data.append(Data(repeating: 0x20, count: 1_048_576 - data.count))
+        data.append(Data(repeating: 0x20, count: SettingsFileReader.maxFileSize - data.count))
         try withFile(data) { file in
             let decoded = try SettingsFileReader.read(from: file)
             #expect(decoded == export)
