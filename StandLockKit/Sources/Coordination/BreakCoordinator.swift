@@ -103,7 +103,15 @@ public final class BreakCoordinator {
     /// The session's break has used its one postpone. Kept apart from `activeBreakCanPostpone`
     /// because a lock takes the break off screen and the return opens it afresh.
     private var pomodoroBreakPostponed = false
-    public var pomodoroSession: PomodoroSession? { pomodoro }
+    /// What a rebuild or a quit carries on. A focus cover that is waiting (deferred, postponed)
+    /// has not run: it is handed on owed in full from now, as `beginSuspension` does, because
+    /// restore keeps a cover's end and a stale one would shorten or credit it.
+    public var pomodoroSession: PomodoroSession? {
+        guard var session = pomodoro, session.configuration.cover == .focus, session.isCovered,
+              currentBreak == nil, !locker.isShowing else { return pomodoro }
+        session.phaseEnd = Date().addingTimeInterval(postponedExternal?.duration ?? session.duration(of: session.phase))
+        return session
+    }
     private var statistics: BreakStatistics = BreakStatistics()
     private var dailyBreakCounts: [UUID: Int] = [:]
     private var escalationTiers: [UUID: Int] = [:]

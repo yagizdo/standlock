@@ -1113,6 +1113,100 @@ struct PomodoroFocusCoverTests {
     }
 
     @Test
+    func aWaitingCoverHandedToARebuildIsOwedInFull() async {
+        // A cover deferred by a call has not run: a rebuild or relaunch after its first end
+        // must still show it in full, not credit a focus that never happened.
+        let (coordinator, detector, _, log) = make(preferences: AppPreferences(cameraDetection: .deferBreak, postponeReturnDelay: 0.1,
+                                                                             idleDetectionEnabled: false))
+        detector.contextToReturn = DetectionContext(cameraActive: true)
+        coordinator.startPomodoro(oneMinuteFocusCover, level: .gentle, now: Date().addingTimeInterval(0.05 - 60))
+        #expect(await waitUntil { log.events.contains { if case .breakDeferred = $0 { true } else { false } } })
+        try? await Task.sleep(for: .milliseconds(100))
+        let handed = coordinator.pomodoroSession
+        coordinator.stop()
+
+        let (rebuilt, _, locker, newLog) = make()
+        defer { rebuilt.stop() }
+        rebuilt.start(with: [], preferences: AppPreferences(postponeReturnDelay: 0.1, idleDetectionEnabled: false),
+                      pomodoro: handed.map { ($0, .gentle) })
+        #expect(await waitUntil { locker.isShowing })
+        #expect(abs((locker.lastDuration ?? 0) - 60) < 1)
+        #expect(newLog.stats?.pomodoroTallies == nil)
+    }
+
+    @Test
+    func coverThatRanOutAwayTalliesFocusAndCountsNoBreak() async {
+        let (coordinator, _, locker, log) = await onCover()
+        defer { coordinator.stop() }
+        coordinator.handleScreenLock()
+        let back = Date().addingTimeInterval(120)
+        coordinator.handleScreenUnlock(now: back)
+        #expect(await waitUntil { log.stats?.pomodoroTallies?.rounds == 1 })
+        #expect(coordinator.pomodoroSession?.phase == .shortBreak(afterRound: 1))
+        #expect(log.completed == 0)
+        #expect(log.stats?.currentStreak == 3)
+        try? await Task.sleep(for: .milliseconds(150))
+        #expect(!locker.isShowing)
+    }
+
+    @Test
+    func restoredStrictCoverRunsAsFirm() async {
+        let (coordinator, _, locker, _) = make()
+        defer { coordinator.stop() }
+        let now = Date()
+        coordinator.restorePomodoro(PomodoroSession(startedAt: now, configuration: oneMinuteFocusCover,
+                                                    phase: .focus(round: 1), phaseEnd: now.addingTimeInterval(30)),
+                                    level: .strict, now: now)
+        #expect(await waitUntil { locker.isShowing })
+        #expect(locker.lastLevel == .firm)
+    }
+
+    @Test
+    func coverCuePlaysOnTimeUpOnlyNotOnSkip() async {
+        let preferences = AppPreferences(postponeReturnDelay: 0.1, idleDetectionEnabled: false, soundAfterBreak: true)
+        let isEndCue: (CoordinatorEvent) -> Bool = { if case .breakCue(.ended) = $0 { true } else { false } }
+        let (coordinator, _, locker, log) = make(preferences: preferences)
+        defer { coordinator.stop() }
+        coordinator.startPomodoro(oneMinuteFocusCover, level: .gentle)
+        #expect(await waitUntil { locker.isShowing })
+        coordinator.skipActiveBreak()
+        try? await Task.sleep(for: .milliseconds(100))
+        #expect(!log.events.contains(where: isEndCue))
+        coordinator.skipPomodoroPhase()
+        #expect(await waitUntil { locker.showCount == 2 })
+        coordinator.completeActiveBreak()
+        #expect(await waitUntil { log.events.contains(where: isEndCue) })
+    }
+
+    @Test
+    func lockDuringAWaitingCoverOwesItInFull() async {
+        let (coordinator, detector, _, log) = make(preferences: AppPreferences(cameraDetection: .deferBreak, postponeReturnDelay: 0.1,
+                                                                             idleDetectionEnabled: false))
+        defer { coordinator.stop() }
+        detector.contextToReturn = DetectionContext(cameraActive: true)
+        coordinator.startPomodoro(oneMinuteFocusCover, level: .gentle)
+        #expect(await waitUntil { log.events.contains { if case .breakDeferred = $0 { true } else { false } } })
+        let lockedAt = Date().addingTimeInterval(90)
+        coordinator.handleScreenLock(now: lockedAt)
+        coordinator.handleScreenUnlock(now: lockedAt.addingTimeInterval(5))
+        #expect(coordinator.pomodoroSession?.phase == .focus(round: 1))
+        try? await Task.sleep(for: .milliseconds(100))
+        #expect(log.stats?.pomodoroTallies == nil)
+    }
+
+    @Test
+    func postponedCoverReturnsAsAFullFocusCover() async {
+        let (coordinator, _, locker, _) = await onCover()
+        defer { coordinator.stop() }
+        coordinator.postponeActiveBreak()
+        #expect(!locker.isShowing)
+        #expect(await waitUntil { locker.showCount == 2 })
+        #expect(locker.lastPomodoroChip?.isFocus == true)
+        #expect(abs((locker.lastDuration ?? 0) - 60) < 1)
+        #expect(locker.lastCanPostpone == false)
+    }
+
+    @Test
     func lastBreakEndsTheSessionInCoverMode() async {
         let single = PomodoroConfiguration(focus: 60, shortBreak: 60, longBreak: 60, rounds: 1, cover: .focus)
         let (coordinator, _, _, _) = await onCover(single)
