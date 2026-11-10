@@ -282,6 +282,24 @@ struct PomodoroSessionTests {
     @Test func focusHasNoChip() {
         #expect(PomodoroStatus(session: Self.session(.focus(round: 1)), level: .gentle).chip == nil)
     }
+
+    @Test func chipInCoverModeMarksFocusAndBreaksHaveNone() {
+        let focus = PomodoroStatus(session: Self.coverSession(.focus(round: 2)), level: .gentle)
+        #expect(focus.isCovered)
+        #expect(focus.chip == PomodoroChip(round: 2, rounds: 4, isLong: false, isFocus: true))
+        #expect(PomodoroStatus(session: Self.coverSession(.shortBreak(afterRound: 1)), level: .gentle).chip == nil)
+        #expect(PomodoroStatus(session: Self.coverSession(.longBreak), level: .gentle).chip == nil)
+        #expect(PomodoroStatus(session: Self.session(.shortBreak(afterRound: 2)), level: .gentle).chip?.isFocus == false)
+    }
+
+    @Test func skipLimitIgnoredOnAFocusCover() {
+        var preferences = AppPreferences()
+        preferences.gentleDailySkipLimit = 3
+        #expect(!DisciplineLevel.gentle.dailySkipLimitReached(preferences: preferences, skipsToday: 5, isFocusCover: true))
+        #expect(DisciplineLevel.gentle.dailySkipLimitReached(preferences: preferences, skipsToday: 5, isFocusCover: false))
+        #expect(!DisciplineLevel.gentle.dailySkipLimitReached(preferences: preferences, skipsToday: 2, isFocusCover: false))
+        #expect(!DisciplineLevel.strict.dailySkipLimitReached(preferences: preferences, skipsToday: 99, isFocusCover: false))
+    }
 }
 
 @Suite("Pomodoro restore bounds")
