@@ -55,8 +55,11 @@ struct ManuscriptBreakView: View {
 
     private var palette: BreakPalette { look.palette }
 
+    /// A focus cover is work time away from the Mac: no break message, and its exits say so.
+    private var isFocusCover: Bool { pomodoroChip?.isFocus == true }
+
     private var message: String {
-        preferences.breakScreen.displayMessage
+        isFocusCover ? "" : preferences.breakScreen.displayMessage
     }
 
     var body: some View {
@@ -106,11 +109,12 @@ struct ManuscriptBreakView: View {
                             preferences: preferences, statistics: statistics,
                             disciplineLevel: level,
                             escalationTier: escalationTierIndex,
+                            isFocusCover: isFocusCover,
                             onDismiss: onSkip,
                             onEscape: onEscape
                         )
                         if canPostpone {
-                            PostponeButton(palette: palette, onPostpone: onPostpone)
+                            PostponeButton(palette: palette, isFocusCover: isFocusCover, onPostpone: onPostpone)
                         }
                     }
                     .padding(.horizontal, 40)
@@ -233,6 +237,7 @@ struct ManuscriptBreakView: View {
 
 private struct PostponeButton: View {
     let palette: BreakPalette
+    let isFocusCover: Bool
     let onPostpone: () -> Void
 
     @State private var isPressed = false
@@ -250,7 +255,7 @@ private struct PostponeButton: View {
             .fixedSize()
         }
         .buttonStyle(.plain)
-        .accessibilityHint(Text("The break comes back after your call"))
+        .accessibilityHint(isFocusCover ? Text("Focus comes back after your call") : Text("The break comes back after your call"))
         .onLongPressGesture(minimumDuration: .infinity, pressing: { pressing in
             isPressed = pressing
         }, perform: {})
