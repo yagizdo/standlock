@@ -1,5 +1,12 @@
 # Changelog
 
+## StandLock v0.14.0
+
+**Features**
+- Pomodoro can now cover the screen during focus instead of during breaks, for work away from the Mac. Choose it in Settings › Pomodoro under Cover the screen; a covered focus lasts up to 60 minutes (c4cbe69)
+
+**Full Changelog:** https://github.com/yagizdo/StandLock/compare/v0.13.0...v0.14.0
+
 ## StandLock v0.13.0
 
 **Features**
