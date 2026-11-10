@@ -6404,6 +6404,22 @@
         }
       }
     },
+    "Stop Pomodoro" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pomodoro'yu durdur"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "停止番茄钟"
+          }
+        }
+      }
+    },
     "Stop each reel on Skip to win" : {
       "comment" : "Break challenge copy",
       "extractionState" : "manual",

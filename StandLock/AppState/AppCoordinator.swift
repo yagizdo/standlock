@@ -325,7 +325,8 @@ final class AppCoordinator: ObservableObject {
 
     // MARK: - Coordinator Lifecycle
 
-    private func startCoordinator(restoring state: EnforcementState = EnforcementState()) {
+    private func startCoordinator(restoring state: EnforcementState = EnforcementState(),
+                                  pomodoro: (session: PomodoroSession, level: DisciplineLevel)? = nil) {
         stopCoordinator()
         let scheduler = ScheduleEvaluator()
         applyCalendarPreferences()
@@ -352,7 +353,8 @@ final class AppCoordinator: ObservableObject {
         breakCoordinator.start(with: enforceableSchedules(),
                                preferences: preferences,
                                statistics: todayStats,
-                               restoring: state)
+                               restoring: state,
+                               pomodoro: pomodoro)
 
         eventListenerTask = Task {
             for await event in breakCoordinator.events {
@@ -484,11 +486,10 @@ final class AppCoordinator: ObservableObject {
         stopCoordinator()
         isPaused = false
         pausedUntil = nil
-        startCoordinator(restoring: carriedStateForToday())
-        if let session {
-            // Starting a session ended any pause, so there is none to re-apply.
-            coordinator?.restorePomodoro(session, level: enforceable(pomodoroRequestedLevel ?? strictestEnabledLevel))
-        } else if let pauseRemaining, pauseRemaining > 0 {
+        // Starting a session ended any pause, so there is none to re-apply with one.
+        startCoordinator(restoring: carriedStateForToday(),
+                         pomodoro: session.map { ($0, enforceable(pomodoroRequestedLevel ?? strictestEnabledLevel)) })
+        if session == nil, let pauseRemaining, pauseRemaining > 0 {
             coordinator?.pause(for: pauseRemaining)
         }
         clearNextBreakIfIdle()
@@ -571,6 +572,10 @@ final class AppCoordinator: ObservableObject {
             todayStats = stats
             saveStatistics()
             updateDailyHistory(stats)
+
+        case .pomodoroDropped(let session):
+            breakHistory = breakHistory.recordingAbandoned(session)
+            saveHistory()
         }
     }
 

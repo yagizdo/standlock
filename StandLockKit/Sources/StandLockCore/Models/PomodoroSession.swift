@@ -20,22 +20,19 @@ public struct PomodoroSession: Codable, Sendable, Equatable {
     public var configuration: PomodoroConfiguration
     public var phase: PomodoroPhase
     public var phaseEnd: Date
-    public var focusSecondsDone: TimeInterval
 
     public init(
         id: UUID = UUID(),
         startedAt: Date,
         configuration: PomodoroConfiguration,
         phase: PomodoroPhase,
-        phaseEnd: Date,
-        focusSecondsDone: TimeInterval = 0
+        phaseEnd: Date
     ) {
         self.id = id
         self.startedAt = startedAt
         self.configuration = configuration
         self.phase = phase
         self.phaseEnd = phaseEnd
-        self.focusSecondsDone = focusSecondsDone
     }
 
     public static func start(at now: Date, configuration: PomodoroConfiguration) -> PomodoroSession {
@@ -68,7 +65,6 @@ public struct PomodoroSession: Codable, Sendable, Equatable {
         var next = self
         switch phase {
         case .focus(let round):
-            next.focusSecondsDone += configuration.focus
             next.phase = round >= configuration.rounds ? .longBreak : .shortBreak(afterRound: round)
         case .shortBreak(let round):
             next.phase = .focus(round: round + 1)
@@ -118,7 +114,7 @@ public struct PomodoroSession: Codable, Sendable, Equatable {
     }
 
     private enum CodingKeys: String, CodingKey {
-        case id, startedAt, configuration, phase, phaseEnd, focusSecondsDone
+        case id, startedAt, configuration, phase, phaseEnd
     }
 
     public init(from decoder: Decoder) throws {
@@ -128,7 +124,6 @@ public struct PomodoroSession: Codable, Sendable, Equatable {
         configuration = try c.decodeIfPresent(PomodoroConfiguration.self, forKey: .configuration) ?? .standard
         phase = try c.decode(PomodoroPhase.self, forKey: .phase)
         phaseEnd = try c.decode(Date.self, forKey: .phaseEnd)
-        focusSecondsDone = try c.decodeIfPresent(TimeInterval.self, forKey: .focusSecondsDone) ?? 0
     }
 }
 

@@ -603,10 +603,11 @@ struct PomodoroLifetimeTests {
         #expect(breakDone.pomodoroSession?.phase == .shortBreak(afterRound: 2))
         breakDone.stop()
 
-        // Break still running when the app went away: what is left of it opens.
+        // Break still running when the app went away: it opens in full too. The saved session
+        // cannot tell an on-screen break from a deferred one, whose phase end is stale.
         let (midBreak, midLocker, _) = await restored(.shortBreak(afterRound: 2), end: now.addingTimeInterval(25))
         #expect(await waitUntil { midLocker.isShowing })
-        #expect(abs((midLocker.lastDuration ?? 0) - 25) < 1)
+        #expect(midLocker.lastDuration == TimeInterval(60))
         midBreak.stop()
     }
 
@@ -730,5 +731,136 @@ struct PomodoroWaitingBreakTests {
         #expect(coordinator.pomodoroSession == nil)
         try? await Task.sleep(for: .milliseconds(300))
         #expect(locker.showCount == 2)
+    }
+}
+
+@Suite("BreakCoordinator Pomodoro branch review")
+@MainActor
+struct PomodoroBranchReviewTests {
+
+    private var dropped: (EventLog) -> [PomodoroSession] {
+        { log in log.events.compactMap { if case .pomodoroDropped(let s) = $0 { s } else { nil } } }
+    }
+
+    /// A lid closed in the evening must not bring the session back as the next morning's focus.
+    @Test
+    func awayPastMidnightDropsTheSession() async {
+        let (coordinator, _, locker, log) = makeCoordinator()
+        defer { coordinator.stop() }
+        let start = Date()
+        coordinator.startPomodoro(oneMinute, level: .gentle, now: start)
+        coordinator.handleSystemSleep(now: start.addingTimeInterval(10))
+        let morning = Calendar.current.date(byAdding: .day, value: 1, to: start)!
+        coordinator.handleSystemWake(now: morning)
+        #expect(await waitUntil { dropped(log).count == 1 })
+        #expect(coordinator.pomodoroSession == nil)
+        #expect(log.statuses.last == .some(nil))
+        #expect(log.completed == 0)
+        #expect(log.stats?.pomodoroTallies?.rounds ?? 0 == 0)
+        // Recorded by the app on the day the session started, not counted in today's tallies.
+        #expect(log.stats?.pomodoroTallies?.sessionsAbandoned ?? 0 == 0)
+        #expect(!locker.showOverlayCalled)
+    }
+
+    @Test
+    func shortLockKeepsTheSession() async {
+        let (coordinator, _, _, log) = makeCoordinator()
+        defer { coordinator.stop() }
+        let start = Date()
+        coordinator.startPomodoro(oneMinute, level: .gentle, now: start)
+        coordinator.handleScreenLock(now: start.addingTimeInterval(5))
+        coordinator.handleScreenUnlock(now: start.addingTimeInterval(10))
+        try? await Task.sleep(for: .milliseconds(50))
+        #expect(dropped(log).isEmpty)
+        #expect(coordinator.pomodoroSession?.phase == .focus(round: 1))
+    }
+
+    /// A rebuild hands the session to `start`: the schedules must not arm for one turn first,
+    /// or the progress anchor moves twice.
+    @Test
+    func startWithASessionArmsOnlyTheFocus() async {
+        let scheduler = MockScheduler()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(600)
+        let coordinator = BreakCoordinator(scheduler: scheduler, detector: MockDetector(), locker: MockLocker())
+        defer { coordinator.stop() }
+        let log = EventLog(coordinator)
+        let now = Date()
+        var session = PomodoroSession.start(at: now.addingTimeInterval(-30), configuration: oneMinute)
+        session.phaseEnd = now.addingTimeInterval(30)
+        coordinator.start(with: [makeSchedule()], preferences: AppPreferences(idleDetectionEnabled: false),
+                          pomodoro: (session, .gentle))
+        #expect(await waitUntil { !log.nextBreaks.isEmpty })
+        try? await Task.sleep(for: .milliseconds(50))
+        #expect(log.nextBreaks == [session.phaseEnd])
+        #expect(coordinator.pomodoroSession?.phase == .focus(round: 1))
+    }
+
+    /// A schedule break postponed before the session is replaced by the session's breaks.
+    @Test
+    func sessionDropsAPostponedScheduleBreak() async {
+        let scheduler = MockScheduler()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.05)
+        let (coordinator, _, locker, _) = makeCoordinator(schedules: [makeSchedule()], scheduler: scheduler)
+        defer { coordinator.stop() }
+        #expect(await waitUntil { locker.isShowing })
+        coordinator.postponeActiveBreak()
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(3600)
+        coordinator.startPomodoro(oneMinute, level: .gentle, now: Date())
+        #expect(coordinator.captureEnforcementState().postponedScheduleID == nil)
+        coordinator.stopPomodoro()
+        try? await Task.sleep(for: .milliseconds(400))
+        #expect(locker.showCount == 1)
+    }
+
+    /// Skip phase queues the focus end; a lock in the same turn cancels it, and the
+    /// cancelled task must not move the session into a break nothing opens.
+    @Test
+    func cancelledSkipPhaseLeavesTheFocusRunning() async {
+        let (coordinator, _, locker, _) = makeCoordinator()
+        defer { coordinator.stop() }
+        let start = Date()
+        coordinator.startPomodoro(oneMinute, level: .gentle, now: start)
+        coordinator.skipPomodoroPhase()
+        coordinator.handleScreenLock(now: start)
+        coordinator.handleScreenUnlock(now: start.addingTimeInterval(1))
+        try? await Task.sleep(for: .milliseconds(100))
+        #expect(coordinator.pomodoroSession?.phase == .focus(round: 1))
+        #expect(!locker.showOverlayCalled)
+    }
+
+    @Test
+    func idleAtFocusEndCreditsTheBreakOnceAndStartsNextFocus() async {
+        let (coordinator, detector, locker, log) = makeCoordinator(
+            preferences: AppPreferences(postponeReturnDelay: 0.1, idleDetectionEnabled: true))
+        defer { coordinator.stop() }
+        detector.contextToReturn = DetectionContext(idleDuration: 600)
+        coordinator.startPomodoro(oneMinute, level: .gentle, now: Date())
+        coordinator.skipPomodoroPhase()
+        #expect(await waitUntil { coordinator.pomodoroSession?.phase == .focus(round: 2) })
+        coordinator.completeActiveBreak()
+        try? await Task.sleep(for: .milliseconds(50))
+        #expect(log.completed == 1)
+        #expect(!locker.showOverlayCalled)
+    }
+
+    @Test
+    func stopDuringAPostponeLeavesNoBreakBehind() async {
+        let detector = MockDetector()
+        let locker = MockLocker()
+        let coordinator = BreakCoordinator(scheduler: MockScheduler(), detector: detector, locker: locker,
+                                           deferralPollingInterval: 0.05)
+        defer { coordinator.stop() }
+        coordinator.start(with: [], preferences: AppPreferences(cameraDetection: .deferBreak, postponeReturnDelay: 0.1,
+                                                                idleDetectionEnabled: false))
+        coordinator.startPomodoro(oneMinute, level: .gentle, now: Date())
+        coordinator.skipPomodoroPhase()
+        #expect(await waitUntil { locker.isShowing })
+        detector.contextToReturn = DetectionContext(cameraActive: true)
+        coordinator.postponeActiveBreak()
+        coordinator.stopPomodoro()
+        detector.contextToReturn = .clear
+        try? await Task.sleep(for: .milliseconds(300))
+        #expect(coordinator.pomodoroSession == nil)
+        #expect(locker.showCount == 1)
     }
 }

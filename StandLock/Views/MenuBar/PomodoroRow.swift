@@ -22,6 +22,8 @@ struct PomodoroRow: View {
                     MenuBarPillLabel("Stop", symbol: "stop.fill")
                 }
                 .buttonStyle(MenuBarPillStyle())
+                // The panel's Pause also stops breaks; the spoken name says which.
+                .accessibilityLabel(Text("Stop Pomodoro"))
 
                 Button {
                     coordinator.skipPomodoroPhase()

@@ -425,7 +425,7 @@ private struct StatCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             HStack(spacing: 4) {
-                Image(systemName: icon).font(.caption2)
+                Image(systemName: icon).font(.caption2).accessibilityHidden(true)
                 Text(label).font(.caption).foregroundStyle(.secondary)
             }
             Text(value)

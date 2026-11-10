@@ -61,7 +61,6 @@ struct PomodoroSessionTests {
         #expect(session.phase == .focus(round: 1))
         #expect(session.phaseEnd == Self.start.addingTimeInterval(1500))
         #expect(session.startedAt == Self.start)
-        #expect(session.focusSecondsDone == TimeInterval(0))
     }
 
     @Test func focusNGoesToShortBreak() throws {
@@ -93,13 +92,6 @@ struct PomodoroSessionTests {
         #expect(try #require(session.next(at: Self.start)).phase == .longBreak)
     }
 
-    @Test func focusSecondsDoneAddsOnlyCompletedFocus() throws {
-        let afterFocus = try #require(Self.session(.focus(round: 1)).next(at: Self.start))
-        #expect(afterFocus.focusSecondsDone == TimeInterval(1500))
-        let afterBreak = try #require(afterFocus.next(at: Self.start))
-        #expect(afterBreak.focusSecondsDone == TimeInterval(1500))
-    }
-
     // MARK: - Catch up
 
     @Test func catchUpStillInFocusChangesNothing() {
@@ -119,7 +111,6 @@ struct PomodoroSessionTests {
         #expect(count == 1)
         #expect(next.phase == .focus(round: 2))
         #expect(next.phaseEnd == back.addingTimeInterval(1500))
-        #expect(next.focusSecondsDone == TimeInterval(1500))
     }
 
     @Test func catchUpBreakPartlyCoveredOpensWithRemaining() {
@@ -153,10 +144,11 @@ struct PomodoroSessionTests {
         #expect(longBreak.catchUp(awayFrom: Self.start, to: Self.start.addingTimeInterval(120)) == .creditedBreaks(count: 1, session: nil))
     }
 
-    @Test func decodesSessionSavedWithoutFocusSeconds() throws {
+    /// Earlier builds of this branch saved a running focus total; the key is ignored now.
+    @Test func decodesSessionSavedWithFocusSeconds() throws {
         let saved = PomodoroSession.start(at: Self.start, configuration: Self.config)
         var object = try #require(JSONSerialization.jsonObject(with: JSONEncoder().encode(saved)) as? [String: Any])
-        object["focusSecondsDone"] = nil
+        object["focusSecondsDone"] = 1500
         let decoded = try JSONDecoder().decode(PomodoroSession.self, from: JSONSerialization.data(withJSONObject: object))
         #expect(decoded == saved)
     }
