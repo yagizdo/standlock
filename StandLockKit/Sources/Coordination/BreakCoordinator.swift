@@ -992,6 +992,10 @@ public final class BreakCoordinator {
             pomodoro = next
             emitPomodoro()
             breakTimer = Task { await self.openPomodoroBreak(duration: remaining) }
+        case .coverDelayed(let delayed):
+            pomodoro = delayed
+            emitPomodoro()
+            armPomodoroFocus()
         }
     }
 

@@ -176,6 +176,80 @@ struct PomodoroSessionTests {
         #expect(longBreak.catchUp(awayFrom: Self.start, to: Self.start.addingTimeInterval(120)) == .creditedBreaks(count: 1, session: nil))
     }
 
+    // MARK: - Focus cover
+
+    static let coverConfig = PomodoroConfiguration(focus: 1500, shortBreak: 300, longBreak: 900, rounds: 4, cover: .focus)
+
+    static func coverSession(_ phase: PomodoroPhase, endingAt end: Date = start) -> PomodoroSession {
+        PomodoroSession(startedAt: start, configuration: coverConfig, phase: phase, phaseEnd: end)
+    }
+
+    @Test func coveredPhaseFollowsTheMode() {
+        #expect(!Self.session(.focus(round: 1)).isCovered)
+        #expect(Self.session(.shortBreak(afterRound: 1)).isCovered)
+        #expect(Self.session(.longBreak).isCovered)
+        #expect(Self.coverSession(.focus(round: 1)).isCovered)
+        #expect(!Self.coverSession(.shortBreak(afterRound: 1)).isCovered)
+        #expect(!Self.coverSession(.longBreak).isCovered)
+    }
+
+    @Test func coveredFocusIsClampedToAnHourAtUse() {
+        // A stored value no import or form would allow: the overlay still ends within the ceiling.
+        var config = Self.coverConfig
+        config.focus = 7200
+        let session = PomodoroSession.start(at: Self.start, configuration: config)
+        #expect(session.duration(of: .focus(round: 1)) == TimeInterval(3600))
+        #expect(session.phaseEnd == Self.start.addingTimeInterval(3600))
+    }
+
+    @Test func breaksModeDurationsUnchanged() {
+        var session = Self.session(.focus(round: 1))
+        session.configuration.focus = 7200
+        #expect(session.duration(of: .focus(round: 1)) == TimeInterval(7200))
+    }
+
+    @Test func focusElapsedUsesTheClampedLength() {
+        var config = Self.coverConfig
+        config.focus = 7200
+        let session = PomodoroSession(startedAt: Self.start, configuration: config, phase: .focus(round: 1), phaseEnd: Self.start.addingTimeInterval(3600))
+        #expect(session.focusElapsed(at: Self.start.addingTimeInterval(3600)) == TimeInterval(3600))
+        #expect(session.focusElapsed(at: Self.start) == TimeInterval(0))
+    }
+
+    @Test func coverModeFocusEndedAwayOpensTheBreakAtTheReturn() {
+        let session = Self.coverSession(.focus(round: 1), endingAt: Self.start.addingTimeInterval(60))
+        let back = Self.start.addingTimeInterval(3600)
+        guard case .creditedBreaks(1, let next?) = session.catchUp(awayFrom: Self.start, to: back) else {
+            Issue.record("expected the covered focus credited")
+            return
+        }
+        #expect(next.phase == .shortBreak(afterRound: 1))
+        #expect(next.phaseEnd == back.addingTimeInterval(300))
+    }
+
+    @Test func coverModeCoveredFocusWithTimeLeftIsUnchanged() {
+        let session = Self.coverSession(.focus(round: 1), endingAt: Self.start.addingTimeInterval(600))
+        #expect(session.catchUp(awayFrom: Self.start, to: Self.start.addingTimeInterval(300)) == .unchanged)
+    }
+
+    @Test(arguments: [TimeInterval(-600), 0, 20])
+    func coverModeOpenBreakNearOrPastItsEndDelaysTheCover(left: TimeInterval) {
+        let back = Self.start.addingTimeInterval(1200)
+        let session = Self.coverSession(.shortBreak(afterRound: 1), endingAt: back.addingTimeInterval(left))
+        guard case .coverDelayed(let delayed) = session.catchUp(awayFrom: Self.start, to: back) else {
+            Issue.record("expected the cover delayed")
+            return
+        }
+        #expect(delayed.phase == .shortBreak(afterRound: 1))
+        #expect(delayed.phaseEnd == back.addingTimeInterval(60))
+    }
+
+    @Test func coverModeOpenBreakWithMinutesLeftIsUnchanged() {
+        let back = Self.start.addingTimeInterval(1200)
+        let session = Self.coverSession(.longBreak, endingAt: back.addingTimeInterval(300))
+        #expect(session.catchUp(awayFrom: Self.start, to: back) == .unchanged)
+    }
+
     /// Earlier builds of this branch saved a running focus total; the key is ignored now.
     @Test func decodesSessionSavedWithFocusSeconds() throws {
         let saved = PomodoroSession.start(at: Self.start, configuration: Self.config)
