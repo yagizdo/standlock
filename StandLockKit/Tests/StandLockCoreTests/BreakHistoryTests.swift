@@ -319,6 +319,77 @@ struct BreakHistoryTests {
         #expect(decodedStats.pomodoroTallies == tallies)
     }
 
+    // MARK: - Recording a day
+
+    private func stats(completed: Int = 0, skipped: Int = 0, tallies: PomodoroTallies? = nil) -> BreakStatistics {
+        var stats = BreakStatistics()
+        stats.breaksCompleted = completed
+        stats.breaksSkipped = skipped
+        stats.pomodoroTallies = tallies
+        return stats
+    }
+
+    @Test func recordDayCopiesCountersAndTallies() {
+        var history = BreakHistory()
+        let tallies = PomodoroTallies(focusSeconds: 1500, rounds: 1)
+        let wrote = history.recordDay(stats(completed: 2, skipped: 1, tallies: tallies), on: "2026-06-01",
+                                      hasActiveSchedule: true, averageBreakDuration: 300)
+        #expect(wrote)
+        let record = history.record(for: "2026-06-01")
+        #expect(record?.breaksCompleted == 2)
+        #expect(record?.breaksSkipped == 1)
+        #expect(record?.totalBreakDuration == TimeInterval(600))
+        #expect(record?.pomodoroTallies == tallies)
+    }
+
+    @Test func recordDaySkipsZeroedCounters() {
+        var history = BreakHistory()
+        let zeroed = history.recordDay(stats(), on: "2026-06-01", hasActiveSchedule: true, averageBreakDuration: 300)
+        let emptyTallies = history.recordDay(stats(tallies: PomodoroTallies()), on: "2026-06-01",
+                                             hasActiveSchedule: true, averageBreakDuration: 300)
+        #expect(!zeroed)
+        #expect(!emptyTallies)
+        #expect(history.records.isEmpty)
+    }
+
+    /// A session stopped in focus 1 has no break but still reaches the day's record.
+    @Test func recordDayAcceptsTalliesWithoutBreaks() {
+        var history = BreakHistory()
+        let tallies = PomodoroTallies(sessionsAbandoned: 1)
+        let wrote = history.recordDay(stats(tallies: tallies), on: "2026-06-01",
+                                      hasActiveSchedule: false, averageBreakDuration: 300)
+        #expect(wrote)
+        #expect(history.record(for: "2026-06-01")?.pomodoroTallies == tallies)
+    }
+
+    /// Schedule breaks in the morning, then a Pomodoro break with every schedule off: the day
+    /// keeps its scheduled credit (the step 4 run saw the streak drop 19 to 18).
+    @Test func recordDayKeepsEarlierScheduledFlag() {
+        var history = BreakHistory()
+        history.recordDay(stats(completed: 1), on: "2026-06-01", hasActiveSchedule: true, averageBreakDuration: 300)
+        history.recordDay(stats(completed: 2), on: "2026-06-01", hasActiveSchedule: false, averageBreakDuration: 300)
+        #expect(history.record(for: "2026-06-01")?.hadActiveSchedule == true)
+    }
+
+    /// Its focus phases were tallied live that day; only the abandon is new.
+    @Test func staleSessionIsRecordedOnItsOwnDay() {
+        var history = BreakHistory()
+        history.upsert(DailyBreakRecord(dateKey: "2026-06-01", breaksCompleted: 1,
+                                        pomodoroTallies: PomodoroTallies(focusSeconds: 1500, rounds: 1)))
+        var session = PomodoroSession.start(at: date("2026-06-01").addingTimeInterval(9 * 3600), configuration: .standard)
+        session = session.next(at: session.phaseEnd)!
+
+        let recorded = history.recordingAbandoned(session)
+        #expect(recorded.record(for: "2026-06-01")?.pomodoroTallies
+                == PomodoroTallies(focusSeconds: 1500, rounds: 1, sessionsAbandoned: 1))
+        #expect(recorded.record(for: "2026-06-01")?.breaksCompleted == 1)
+        #expect(recorded.records.count == 1)
+
+        let fresh = BreakHistory().recordingAbandoned(session)
+        #expect(fresh.record(for: "2026-06-01")?.pomodoroTallies == PomodoroTallies(sessionsAbandoned: 1))
+        #expect(fresh.record(for: "2026-06-01")?.hadActiveSchedule == false)
+    }
+
     @Test func rolloverClearsPomodoroTallies() {
         let today = date("2026-06-01")
         var stats = BreakStatistics(date: today)

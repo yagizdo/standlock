@@ -55,6 +55,14 @@ public struct PomodoroSession: Codable, Sendable, Equatable {
         }
     }
 
+    /// Focus time that ran by `now`: none outside a focus, all of it once the focus is over,
+    /// the part before an early end (Skip phase).
+    public func focusElapsed(at now: Date) -> TimeInterval {
+        guard case .focus = phase else { return 0 }
+        let left = max(0, phaseEnd.timeIntervalSince(now))
+        return max(0, configuration.focus - left)
+    }
+
     /// The phase after this one, starting at `now`, or nil when the long break ends the session.
     public func next(at now: Date) -> PomodoroSession? {
         var next = self

@@ -261,6 +261,52 @@ struct PomodoroSessionCoordinationTests {
     }
 
     @Test
+    func finishedSessionTalliesFourRoundsAndOneFinished() async {
+        let (coordinator, _, locker, log) = makeCoordinator()
+        defer { coordinator.stop() }
+        startEndingFocus(coordinator)
+        for round in 1...4 {
+            if round > 1 { coordinator.skipPomodoroPhase() }
+            #expect(await waitUntil { locker.showCount == round })
+            coordinator.completeActiveBreak()
+        }
+        #expect(coordinator.pomodoroSession == nil)
+        #expect(await waitUntil { log.stats?.pomodoroTallies?.sessionsFinished == 1 })
+        let tallies = log.stats?.pomodoroTallies
+        #expect(tallies?.rounds == 4)
+        #expect(tallies?.sessionsFinished == 1)
+        #expect(tallies?.sessionsAbandoned == 0)
+        #expect(log.completed == 4)
+    }
+
+    @Test
+    func stopTalliesAbandonedNotSkipped() async {
+        let (coordinator, _, _, log) = makeCoordinator()
+        defer { coordinator.stop() }
+        coordinator.startPomodoro(oneMinute, level: .gentle, now: Date())
+        coordinator.stopPomodoro()
+        #expect(await waitUntil { log.stats?.pomodoroTallies?.sessionsAbandoned == 1 })
+        #expect(log.stats?.pomodoroTallies?.rounds == 0)
+        #expect(log.stats?.pomodoroTallies?.sessionsFinished == 0)
+        #expect(log.skipped == 0)
+        #expect(log.stats?.totalBreaks == 0)
+    }
+
+    /// A focus counts the time it ran: all of it at its end, only the part before Skip phase.
+    @Test
+    func focusTalliesTheTimeItRan() async {
+        let (coordinator, _, locker, log) = makeCoordinator()
+        defer { coordinator.stop() }
+        startEndingFocus(coordinator)
+        #expect(await waitUntil { locker.isShowing && log.stats?.pomodoroTallies?.rounds == 1 })
+        #expect(abs((log.stats?.pomodoroTallies?.focusSeconds ?? 0) - 60) < 1)
+        coordinator.completeActiveBreak()
+        coordinator.skipPomodoroPhase()
+        #expect(await waitUntil { locker.showCount == 2 && log.stats?.pomodoroTallies?.rounds == 2 })
+        #expect(abs((log.stats?.pomodoroTallies?.focusSeconds ?? 0) - 60) < 1)
+    }
+
+    @Test
     func skipPhaseDuringFocusOpensBreakNow() async {
         let (coordinator, _, locker, _) = makeCoordinator()
         defer { coordinator.stop() }

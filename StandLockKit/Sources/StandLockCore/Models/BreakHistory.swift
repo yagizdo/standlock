@@ -66,6 +66,43 @@ public struct BreakHistory: Codable, Sendable {
         revision += 1
     }
 
+    /// Copies the live counters into the day's record. Returns `false`, writing nothing, for
+    /// zeroed counters: they mean a fresh day just rolled over or a deferral-only update, and
+    /// writing them would let a backwards day change (date-line travel, an NTP correction)
+    /// blank out a day that already has real numbers. Pomodoro tallies alone are a day worth
+    /// recording: a session stopped in its first focus has no break.
+    @discardableResult
+    public mutating func recordDay(_ stats: BreakStatistics, on dateKey: String,
+                                   hasActiveSchedule: Bool, averageBreakDuration: TimeInterval) -> Bool {
+        guard stats.totalBreaks > 0 || stats.pomodoroTallies.map({ !$0.isEmpty }) == true else { return false }
+        var record = records[dateKey] ?? DailyBreakRecord(dateKey: dateKey, hadActiveSchedule: hasActiveSchedule)
+        record.breaksCompleted = stats.breaksCompleted
+        record.breaksSkipped = stats.breaksSkipped
+        record.breaksEscaped = stats.breaksEscaped
+        // Sticky: a Pomodoro break after every schedule is turned off must not take back the
+        // credit the day's scheduled breaks earned.
+        record.hadActiveSchedule = record.hadActiveSchedule || hasActiveSchedule
+        record.pomodoroTallies = stats.pomodoroTallies
+        // shortcut: an estimate from today's schedules (300 s with none), Pomodoro breaks included;
+        // store real durations if Break Time ever needs to be exact.
+        record.totalBreakDuration = Double(stats.breaksCompleted) * averageBreakDuration
+        upsert(record)
+        return true
+    }
+
+    /// A session dropped at launch on a later day, counted as abandoned on the day it started.
+    /// Its finished focus phases were tallied live that day, so only the abandon is added.
+    public func recordingAbandoned(_ session: PomodoroSession) -> BreakHistory {
+        let key = DailyBreakRecord.dateKey(from: session.startedAt)
+        var record = records[key] ?? DailyBreakRecord(dateKey: key, hadActiveSchedule: false)
+        var tallies = record.pomodoroTallies ?? PomodoroTallies()
+        tallies.sessionsAbandoned += 1
+        record.pomodoroTallies = tallies
+        var copy = self
+        copy.upsert(record)
+        return copy
+    }
+
     /// Returns `true` when records were actually dropped, so the caller can skip a pointless save.
     @discardableResult
     public mutating func pruneOlderThan(_ dateKey: String) -> Bool {
