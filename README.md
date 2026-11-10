@@ -58,6 +58,7 @@ Or [download the DMG](https://github.com/yagizdo/StandLock/releases/latest) and 
 - Breaks wait for meetings, screen recordings, screen sharing and calendar events
 - If you were already away from your desk, the break counts as done
 - You can postpone a break once when a call comes up
+- Start a Pomodoro session from the menu bar: 25 min focus, 5 min breaks, a 15 min long break after four rounds, all adjustable in Settings › Pomodoro
 
 <p align="center"><img src="assets/schedules.png" width="460" alt="Schedule form with days, hours, alternating intervals and the day's break times"></p>
 
@@ -65,7 +66,7 @@ Or [download the DMG](https://github.com/yagizdo/StandLock/releases/latest) and 
 
 - Pick one of 19 scenes, from an hourglass or a calico cat to a capybara in a hot spring, or turn it off
 - The scene changes with your break: alert in the last minute, resting when you pause
-- Countdown, today's stats, Skip and Pause in one panel
+- Countdown, today's stats, Pomodoro, Skip and Pause in one panel
 
 <p align="center"><img src="assets/scenes.webp" width="640" alt="The hourglass, penguin, calico cat and desk scenes, animated"></p>
 
@@ -73,7 +74,7 @@ Or [download the DMG](https://github.com/yagizdo/StandLock/releases/latest) and 
 
 ### Streaks, colours and the rest
 
-- Completions, skips, streaks and a year heatmap
+- Completions, skips, Pomodoro rounds, streaks and a year heatmap
 - Your own break screen colours and message
 - Pauses your media during a break, with optional sounds before and after
 - System, Light or Dark, in English, Turkish or Simplified Chinese

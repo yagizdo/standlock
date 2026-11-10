@@ -1,5 +1,22 @@
 # Changelog
 
+## StandLock v0.13.0
+
+**Features**
+- Pomodoro sessions. Start one from the menu bar panel and stop it or skip its phase from the same row; the status row shows the phase, the round and the time left. A session runs with or without a schedule, and your schedules wait until it ends. Its breaks use the strictest level among your enabled schedules, Gentle if none is enabled. Skip and Pause in the panel are off during a session. The session keeps running through sleep, screen lock and a relaunch on the same day, and time you were away counts as rest (202b1c5, 2d77a46)
+- Settings › Pomodoro sets the focus length, the short and long breaks and the number of rounds, 25/5/15 minutes with four rounds by default. Export and import carry these settings (1fce972)
+- The break screen shows a Pomodoro chip during a session break, with the round (POMODORO · 2/4) or LONG BREAK (f0e34bc)
+- Statistics has a Pomodoro card with focus time, rounds, and finished and abandoned sessions. A day with no schedule where you finish at least one break now extends your streak; a day like that with no finished break still does not end it (58514a4)
+
+**Improvements**
+- The Pomodoro schedule template now has a long break: three 5 minute breaks, then one of 15 minutes (1fce972)
+
+**Bug Fixes**
+- An imported settings file can no longer set a break longer than 60 minutes, a Strict emergency hold longer than 30 seconds or a Firm skip delay longer than 60 seconds. Import refuses such a file, and values already saved are capped when a break uses them (5b13ddf). Thanks @kanihal!
+- An interval under one minute, from an imported file or a hand-edited preference, no longer opens the next break right after a skip or a finished break. A Firm escape phrase that cannot be typed (empty, multi-line, very long or with control characters) falls back to the default, and import refuses both (7c94424)
+
+**Full Changelog:** https://github.com/yagizdo/StandLock/compare/v0.12.0...v0.13.0
+
 ## StandLock v0.12.0
 
 **Features**
