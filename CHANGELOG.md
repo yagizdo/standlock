@@ -1,5 +1,20 @@
 # Changelog
 
+## StandLock v0.15.0
+
+**Features**
+- Reset StandLock, at the bottom of Settings › General, deletes your settings, schedules and statistics and reopens the app as if newly installed. Permissions you granted in System Settings stay (9bc88cb)
+
+**Improvements**
+- The menu bar countdown shows hours for long waits: 16h58m instead of 1018m (a41b883)
+- Settings descriptions now say in plain words what each option does, with examples. In Turkish, the levels are now called Esinti, Rüzgâr and Fırtına (a41b883)
+- Importing a settings file no longer stalls the Settings window, and a file over 1 MiB is refused (cd3eabd). Thanks @kanihal!
+
+**Bug Fixes**
+- With two schedules on whose days and hours overlap, the one with the longer interval never gave a break. Now only one of them can be on: turning one on turns the other off, and the schedule page tells you first. If you already have such a pair, the later one in the list is turned off after the update (a41b883)
+
+**Full Changelog:** https://github.com/yagizdo/StandLock/compare/v0.14.0...v0.15.0
+
 ## StandLock v0.14.0
 
 **Features**
