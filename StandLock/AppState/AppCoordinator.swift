@@ -143,7 +143,9 @@ final class AppCoordinator: ObservableObject {
 
         if let data = UserDefaults.standard.data(forKey: "schedules"),
            let decoded = try? JSONDecoder().decode([Schedule].self, from: data) {
-            schedules = decoded
+            // An older build let two schedules run together; the one stored first stays on.
+            schedules = decoded.turningOffOverlaps()
+            if schedules != decoded { saveSchedules() }
         }
 
         if let data = UserDefaults.standard.data(forKey: "preferences"),
@@ -581,8 +583,11 @@ final class AppCoordinator: ObservableObject {
 
     // MARK: - Schedule Management
 
+    /// A schedule turned on or saved wins: the enabled ones whose hours it shares turn off,
+    /// because two running together starve the longer interval (`turningOffOverlaps`).
     func addSchedule(_ schedule: Schedule) {
         schedules.append(schedule)
+        schedules = schedules.turningOffOverlaps(keeping: schedule.id)
         saveSchedules()
         restartCoordinator()
     }
@@ -590,6 +595,7 @@ final class AppCoordinator: ObservableObject {
     func updateSchedule(_ schedule: Schedule) {
         if let index = schedules.firstIndex(where: { $0.id == schedule.id }) {
             schedules[index] = schedule
+            schedules = schedules.turningOffOverlaps(keeping: schedule.id)
             saveSchedules()
             restartCoordinator()
         }
@@ -607,7 +613,7 @@ final class AppCoordinator: ObservableObject {
         self.preferences = preferences
         savePreferences()
         syncPreferencesWithPermissions()
-        self.schedules = schedules
+        self.schedules = schedules.turningOffOverlaps()
         saveSchedules()
         restartCoordinator()
     }
@@ -708,7 +714,8 @@ final class AppCoordinator: ObservableObject {
             isBreakActive: isBreakActive,
             isPaused: isPaused,
             hasScheduledBreak: nextBreakTime != nil,
-            minuteSuffix: languageStore.string("m")
+            minuteSuffix: languageStore.string("m"),
+            hourSuffix: languageStore.string("h")
         )
     }
 

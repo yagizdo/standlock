@@ -116,6 +116,22 @@
         }
       }
     },
+    "Adding this turns off %@: their hours overlap." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eklersen %@ kapanır: saatleri çakışıyor."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "添加后将关闭 %@：时间重叠。"
+          }
+        }
+      }
+    },
     "Adds schedules: %@" : {
       "localizations" : {
         "tr" : {
@@ -1076,6 +1092,22 @@
         }
       }
     },
+    "Saving turns off %@: their hours overlap." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kaydedersen %@ kapanır: saatleri çakışıyor."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存后将关闭 %@：时间重叠。"
+          }
+        }
+      }
+    },
     "StandLock Cannot Reset Now" : {
       "localizations" : {
         "tr" : {
@@ -1124,6 +1156,38 @@
         }
       }
     },
+    "Turning this on turns off %@: their hours overlap." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Açarsan %@ kapanır: saatleri çakışıyor."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "开启后将关闭 %@：时间重叠。"
+          }
+        }
+      }
+    },
+    "Turns off schedules whose hours overlap another: %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saatleri başka bir programla çakıştığı için kapanacak programlar: %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "将关闭与其他日程时间重叠的日程：%@"
+          }
+        }
+      }
+    },
     "Type StandLock to confirm." : {
       "localizations" : {
         "tr" : {
@@ -1152,6 +1216,39 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "未完成"
+          }
+        }
+      }
+    },
+    "When on, skipping a break does not move the next one. For example, with a break every 55 minutes, if you skip the 10:00 break, the next one still comes at 10:55. When off, the 55 minutes start again from when you skip: skip at 10:04 and the next break comes at 10:59." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Açıkken bir molayı atlamak sonrakini kaydırmaz. Örneğin 55 dakikada bir mola varsa ve 10:00 molasını atlarsan, sonraki yine 10:55'te gelir. Kapalıyken 55 dakika atladığın andan yeniden başlar: 10:04'te atlarsan sonraki mola 10:59'da gelir."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "开启时，跳过一次休息不会推迟下一次。例如每 55 分钟休息一次，跳过 10:00 的休息后，下一次仍在 10:55。关闭时，55 分钟从你跳过的那一刻重新计时：10:04 跳过，下一次就在 10:59。"
+          }
+        }
+      }
+    },
+    "h" : {
+      "comment" : "Menu bar timer hour suffix",
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "sa"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "小时"
           }
         }
       }

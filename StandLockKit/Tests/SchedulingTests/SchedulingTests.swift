@@ -254,3 +254,23 @@ struct RepetitionTrackerTests {
         #expect(tracker.currentBreakIndex == 0)
     }
 }
+
+// MARK: - Overlap agrees with the engine
+
+@Test func midnightWindowOverlapMatchesTheEngine() {
+    let night = Schedule(
+        name: "night", days: .custom([.monday]),
+        windows: [TimeWindow(startHour: 22, startMinute: 0, endHour: 2, endMinute: 0)],
+        breakInterval: 1200, breakDuration: 20
+    )
+    let tuesday = Schedule(
+        name: "tuesday", days: .custom([.tuesday]),
+        windows: [TimeWindow(startHour: 0, startMinute: 0, endHour: 1, endMinute: 0)],
+        breakInterval: 1200, breakDuration: 20
+    )
+    let tuesdayOneAM = makeDate(day: 12, hour: 1)
+    #expect(Calendar.current.component(.weekday, from: tuesdayOneAM) == Weekday.tuesday.rawValue)
+    // The engine runs neither break loop for Monday's window on Tuesday, so the two never compete.
+    #expect(!ScheduleEvaluator().isWithinActiveWindow(night, at: tuesdayOneAM))
+    #expect(!night.overlaps(tuesday))
+}

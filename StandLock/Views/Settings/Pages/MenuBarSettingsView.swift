@@ -14,7 +14,8 @@ struct MenuBarSettingsView: View {
             isBreakActive: false,
             isPaused: false,
             hasScheduledBreak: true,
-            minuteSuffix: languageStore.string("m")
+            minuteSuffix: languageStore.string("m"),
+            hourSuffix: languageStore.string("h")
         )
     }
 

@@ -30,6 +30,7 @@ struct DisciplineSettingsView: View {
                 SettingsToggleRow(
                     "Skipping a break does not buy extra work time",
                     symbol: "forward.end",
+                    description: "When on, skipping a break does not move the next one. For example, with a break every 55 minutes, if you skip the 10:00 break, the next one still comes at 10:55. When off, the 55 minutes start again from when you skip: skip at 10:04 and the next break comes at 10:59.",
                     isOn: skipKeepsTheSlot
                 )
             }
