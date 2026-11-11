@@ -30,7 +30,7 @@ struct BreakScreenSettingsView: View {
                 SettingsToggleRow(
                     "Show Pomodoro chip",
                     symbol: "timer",
-                    description: "Only changes this preview",
+                    description: "Shows the Pomodoro label in the preview above. On a real break it appears only during a Pomodoro session.",
                     isOn: $previewsPomodoroChip
                 )
             }
@@ -81,7 +81,7 @@ struct BreakScreenSettingsView: View {
                 SettingsToggleRow(
                     "Pause Media",
                     symbol: "pause.circle",
-                    description: "Pause audio playback when a break starts",
+                    description: "Pauses music and videos when a break starts.",
                     isOn: $coordinator.preferences.pauseMediaDuringBreak
                 )
 

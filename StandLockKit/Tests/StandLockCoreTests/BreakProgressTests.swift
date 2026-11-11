@@ -203,6 +203,40 @@ struct BreakProgressTests {
         ) == "0:20")
     }
 
+    private func fullTimer(_ seconds: TimeInterval) -> String? {
+        formatMenuBarTimer(
+            secondsRemaining: seconds, showFullTimer: true, countdownMinutes: 1,
+            isBreakActive: false, isPaused: false, hasScheduledBreak: true,
+            minuteSuffix: "m", hourSuffix: "h"
+        )
+    }
+
+    @Test func hoursAppearFromSixtyMinutes() {
+        #expect(fullTimer(59) == "0:59")
+        #expect(fullTimer(60) == "1m")
+        #expect(fullTimer(59 * 60) == "59m")
+        // 59:59 rounds up to 60 minutes, which reads as the hour it is.
+        #expect(fullTimer(3599) == "1h")
+        #expect(fullTimer(3600) == "1h")
+        #expect(fullTimer(61 * 60) == "1h1m")
+        #expect(fullTimer(16 * 3600 + 57 * 60 + 30) == "16h58m")
+        #expect(fullTimer(25 * 3600 + 5 * 60) == "25h5m")
+    }
+
+    @Test func hourSuffixIsCallerSupplied() {
+        #expect(formatMenuBarTimer(
+            secondsRemaining: 16 * 3600 + 58 * 60, showFullTimer: true, countdownMinutes: 1,
+            isBreakActive: false, isPaused: false, hasScheduledBreak: true,
+            minuteSuffix: "dk", hourSuffix: "sa"
+        ) == "16sa58dk")
+    }
+
+    @Test func nonFiniteRemainingDoesNotTrap() {
+        #expect(fullTimer(.infinity) == nil)
+        #expect(fullTimer(.nan) == nil)
+        #expect(fullTimer(1e300) != nil)
+    }
+
     @Test func zeroSecondsFormatsCorrectly() {
         #expect(formatMenuBarTimer(
             secondsRemaining: 0, showFullTimer: true, countdownMinutes: 1,

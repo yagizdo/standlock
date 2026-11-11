@@ -7,7 +7,7 @@ struct DisciplineSettingsView: View {
         SettingsPageLayout("Discipline") {
             SettingsSection(
                 "Daily skip limits",
-                note: "Strict has no skip limit; only the emergency escape combo ends a break early."
+                note: "Strict has no Skip button. To end a break early, hold Control, Option and Command together; the break screen shows for how long."
             ) {
                 skipLimitRow(
                     "Gentle",
@@ -30,6 +30,7 @@ struct DisciplineSettingsView: View {
                 SettingsToggleRow(
                     "Skipping a break does not buy extra work time",
                     symbol: "forward.end",
+                    description: "When on, skipping a break does not move the next one. For example, with a break every 55 minutes, if you skip the 10:00 break, the next one still comes at 10:55. When off, the 55 minutes start again from when you skip: skip at 10:04 and the next break comes at 10:59.",
                     isOn: skipKeepsTheSlot
                 )
             }
@@ -51,7 +52,7 @@ struct DisciplineSettingsView: View {
         stepperLabel: LocalizedStringKey,
         value: Binding<Int>
     ) -> some View {
-        SettingsRow(title, symbol: symbol, description: "\(value.wrappedValue) skips per day before breaks stop being dismissible") {
+        SettingsRow(title, symbol: symbol, description: "You can skip \(value.wrappedValue) breaks a day. After that the Skip button is gone until tomorrow, and only the emergency exit is left: hold Control, Option and Command for 30 seconds.") {
             HStack(spacing: SettingsTokens.rowSpacing) {
                 Text(verbatim: "\(value.wrappedValue)")
                     .monospacedDigit()

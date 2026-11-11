@@ -84,6 +84,38 @@
         }
       }
     },
+    "A break also waits when an event starts within this many minutes, so it does not land just before a meeting." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir etkinlik bu kadar dakika içinde başlayacaksa mola yine bekler, böylece toplantıdan hemen önceye denk gelmez."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "如果活动在这么多分钟内开始，休息也会等待，以免正好落在会议开始前。"
+          }
+        }
+      }
+    },
+    "A break that waited for a call comes this many minutes after both the microphone and the camera are off." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Görüşme yüzünden bekleyen mola, mikrofon ve kamera ikisi de kapandıktan bu kadar dakika sonra gelir."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "因通话而推迟的休息，会在麦克风和摄像头都关闭后这么多分钟到来。"
+          }
+        }
+      }
+    },
     "Add Interval" : {
       "localizations" : {
         "tr" : {
@@ -112,6 +144,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "添加时间区间"
+          }
+        }
+      }
+    },
+    "Adding this turns off %@: their hours overlap." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eklersen %@ kapanır: saatleri çakışıyor."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "添加后将关闭 %@：时间重叠。"
           }
         }
       }
@@ -468,6 +516,22 @@
         }
       }
     },
+    "Each skipped break makes the next one harder to skip: you wait longer for the Skip button or solve a small task first. Taking a break to the end resets it." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Atladığın her mola bir sonrakini atlamayı zorlaştırır: Atla düğmesini daha uzun beklersin ya da önce küçük bir görev çözersin. Bir molayı sonuna kadar yapınca sıfırlanır."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "每跳过一次休息，下一次就更难跳过：要等更久才出现跳过按钮，或先完成一个小任务。完整休息一次即可重置。"
+          }
+        }
+      }
+    },
     "Enabled" : {
       "localizations" : {
         "tr" : {
@@ -724,6 +788,22 @@
         }
       }
     },
+    "How many minutes before a break the time left starts showing next to the icon." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Molaya kaç dakika kala kalan sürenin simgenin yanında görünmeye başlayacağı."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "休息前几分钟开始在图标旁显示剩余时间。"
+          }
+        }
+      }
+    },
     "Idle" : {
       "localizations" : {
         "tr" : {
@@ -736,6 +816,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "无操作"
+          }
+        }
+      }
+    },
+    "If you have been away from the keyboard and mouse for at least as long as the break (and at least a minute) when it is due, the break counts as taken and the break screen does not open." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mola zamanı geldiğinde en az mola süresi kadar (en az bir dakika) klavye ve fareden uzaktaysan mola yapılmış sayılır ve mola ekranı açılmaz."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "到休息时间时，如果你离开键盘和鼠标的时间至少与休息一样长（且至少一分钟），这次休息就算已完成，休息画面不会打开。"
           }
         }
       }
@@ -980,6 +1076,54 @@
         }
       }
     },
+    "No break during an event in your calendar; it waits until the event ends. All-day events do not count." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Takvimindeki bir etkinlik sürerken mola gelmez, etkinlik bitince gelir. Tüm gün süren etkinlikler sayılmaz."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "日历中的活动进行期间不会休息，活动结束后才会到来。全天活动不算在内。"
+          }
+        }
+      }
+    },
+    "No break while you share or record your screen, so the break screen does not open in front of others." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ekranını paylaşırken ya da kaydederken mola gelmez, böylece mola ekranı başkalarının önünde açılmaz."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "共享或录制屏幕时不会休息，这样休息画面不会在别人面前打开。"
+          }
+        }
+      }
+    },
+    "Pauses music and videos when a break starts." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mola başlayınca müzik ve videoları duraklatır."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "休息开始时暂停音乐和视频。"
+          }
+        }
+      }
+    },
     "Permissions you granted in System Settings (Accessibility, Input Monitoring, Calendars) stay. Remove them there if you want." : {
       "localizations" : {
         "tr" : {
@@ -1076,6 +1220,54 @@
         }
       }
     },
+    "Saving turns off %@: their hours overlap." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kaydedersen %@ kapanır: saatleri çakışıyor."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存后将关闭 %@：时间重叠。"
+          }
+        }
+      }
+    },
+    "Shows the Pomodoro label in the preview above. On a real break it appears only during a Pomodoro session." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pomodoro etiketini yukarıdaki önizlemede gösterir. Gerçek molada yalnız Pomodoro oturumu sırasında görünür."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在上方预览中显示番茄钟标签。实际休息时，它只在番茄钟时段中出现。"
+          }
+        }
+      }
+    },
+    "Shows the time left until the next break next to the menu bar icon all the time. When off, it shows only in the last minutes." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sonraki molaya kalan süre menü çubuğundaki simgenin yanında hep görünür. Kapalıyken yalnız son dakikalarda görünür."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "菜单栏图标旁始终显示距下次休息的剩余时间。关闭时只在最后几分钟显示。"
+          }
+        }
+      }
+    },
     "StandLock Cannot Reset Now" : {
       "localizations" : {
         "tr" : {
@@ -1088,6 +1280,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "StandLock 现在无法重置"
+          }
+        }
+      }
+    },
+    "Strict has no Skip button. To end a break early, hold Control, Option and Command together; the break screen shows for how long." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fırtına'da Atla düğmesi yok. Molayı erken bitirmek için Control, Option ve Command tuşlarını birlikte basılı tut; ne kadar tutacağını mola ekranı gösterir."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "强制模式没有跳过按钮。要提前结束休息，请同时按住 Control、Option 和 Command；需要按住多久，休息画面上会显示。"
           }
         }
       }
@@ -1124,6 +1332,38 @@
         }
       }
     },
+    "Turning this on turns off %@: their hours overlap." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Açarsan %@ kapanır: saatleri çakışıyor."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "开启后将关闭 %@：时间重叠。"
+          }
+        }
+      }
+    },
+    "Turns off schedules whose hours overlap another: %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saatleri başka bir programla çakıştığı için kapanacak programlar: %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "将关闭与其他日程时间重叠的日程：%@"
+          }
+        }
+      }
+    },
     "Type StandLock to confirm." : {
       "localizations" : {
         "tr" : {
@@ -1152,6 +1392,105 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "未完成"
+          }
+        }
+      }
+    },
+    "What happens when a break is due while your camera is on, as in a video call: wait until the camera is off, show a Gentle break you can skip right away, or take the break as usual." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kameran açıkken (örneğin görüntülü görüşmede) mola gelirse ne olacağı: kamera kapanana kadar beklesin, hemen atlanabilen bir Esinti molası gelsin ya da mola her zamanki gibi gelsin."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "摄像头开着时（例如视频通话中）到了休息时间该怎么做：等摄像头关闭，显示一个可以立即跳过的宽松休息，或照常休息。"
+          }
+        }
+      }
+    },
+    "What happens when a break is due while your microphone is on, as in a call: wait until the microphone is off, show a Gentle break you can skip right away, or take the break as usual." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mikrofonun açıkken (örneğin bir görüşmede) mola gelirse ne olacağı: mikrofon kapanana kadar beklesin, hemen atlanabilen bir Esinti molası gelsin ya da mola her zamanki gibi gelsin."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "麦克风开着时（例如通话中）到了休息时间该怎么做：等麦克风关闭，显示一个可以立即跳过的宽松休息，或照常休息。"
+          }
+        }
+      }
+    },
+    "When on, skipping a break does not move the next one. For example, with a break every 55 minutes, if you skip the 10:00 break, the next one still comes at 10:55. When off, the 55 minutes start again from when you skip: skip at 10:04 and the next break comes at 10:59." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Açıkken bir molayı atlamak sonrakini kaydırmaz. Örneğin 55 dakikada bir mola varsa ve 10:00 molasını atlarsan, sonraki yine 10:55'te gelir. Kapalıyken 55 dakika atladığın andan yeniden başlar: 10:04'te atlarsan sonraki mola 10:59'da gelir."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "开启时，跳过一次休息不会推迟下一次。例如每 55 分钟休息一次，跳过 10:00 的休息后，下一次仍在 10:55。关闭时，55 分钟从你跳过的那一刻重新计时：10:04 跳过，下一次就在 10:59。"
+          }
+        }
+      }
+    },
+    "You can skip %lld breaks a day. After that the Skip button is gone until tomorrow, and only the emergency exit is left: hold Control, Option and Command for 30 seconds." : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "You can skip %lld break a day. After that the Skip button is gone until tomorrow, and only the emergency exit is left: hold Control, Option and Command for 30 seconds."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "You can skip %lld breaks a day. After that the Skip button is gone until tomorrow, and only the emergency exit is left: hold Control, Option and Command for 30 seconds."
+                }
+              }
+            }
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Günde %lld mola atlayabilirsin. Sonrasında Atla düğmesi ertesi güne kadar kaybolur, geriye yalnız acil çıkış kalır: Control, Option ve Command'ı 30 saniye basılı tut."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "每天可以跳过 %lld 次休息。之后跳过按钮会消失到第二天，只剩紧急退出：同时按住 Control、Option 和 Command 30 秒。"
+          }
+        }
+      }
+    },
+    "h" : {
+      "comment" : "Menu bar timer hour suffix",
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "sa"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "小时"
           }
         }
       }
@@ -1344,22 +1683,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "显示番茄钟标签"
-          }
-        }
-      }
-    },
-    "Only changes this preview" : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Yalnız bu önizlemeyi değiştirir"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "仅更改此预览"
           }
         }
       }
@@ -2084,22 +2407,6 @@
         }
       }
     },
-    "%lld skips per day before breaks stop being dismissible" : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Günde %lld atlamadan sonra molalar kapatılamaz olur"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "每天跳过 %lld 次后，休息将无法关闭"
-          }
-        }
-      }
-    },
     "%llds" : {
       "localizations" : {
         "tr" : {
@@ -2311,22 +2618,6 @@
         }
       }
     },
-    "A postponed break comes back this long after the microphone and camera are free" : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ertelenen mola, mikrofon ve kamera boşaldıktan bu kadar sonra geri gelir"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "麦克风和摄像头空闲后，推迟的休息会在这段时间后再次出现"
-          }
-        }
-      }
-    },
     "About" : {
       "localizations" : {
         "tr" : {
@@ -2451,22 +2742,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "全天"
-          }
-        }
-      }
-    },
-    "Always display remaining time next to the icon" : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kalan süreyi simgenin yanında hep göster"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "始终在图标旁显示剩余时间"
           }
         }
       }
@@ -3237,22 +3512,6 @@
         }
       }
     },
-    "Count inactivity as a break taken" : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hareketsizliği alınmış mola say"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "将无操作计为已完成的休息"
-          }
-        }
-      }
-    },
     "Countdown Start" : {
       "localizations" : {
         "tr" : {
@@ -3367,70 +3626,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "推迟休息"
-          }
-        }
-      }
-    },
-    "Defer breaks during calendar events" : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Takvim etkinliklerinde molaları ertele"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "在日历事件期间推迟休息"
-          }
-        }
-      }
-    },
-    "Defer breaks during screen sharing or recording" : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ekran paylaşımı veya kaydı sırasında molaları ertele"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "在屏幕共享或录制期间推迟休息"
-          }
-        }
-      }
-    },
-    "Defer breaks when camera is active (video calls)" : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kamera etkinken molaları ertele (görüntülü görüşmeler)"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "摄像头使用中时推迟休息（视频通话）"
-          }
-        }
-      }
-    },
-    "Defer breaks when microphone is active (audio calls)" : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mikrofon etkinken molaları ertele (sesli görüşmeler)"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "麦克风使用中时推迟休息（语音通话）"
           }
         }
       }
@@ -3936,7 +4131,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sıkı"
+            "value" : "Rüzgâr"
           }
         },
         "zh-Hans" : {
@@ -3952,7 +4147,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sıkı Günlük Atlama Sınırı"
+            "value" : "Rüzgâr Günlük Atlama Sınırı"
           }
         },
         "zh-Hans" : {
@@ -4070,7 +4265,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esnek"
+            "value" : "Esinti"
           }
         },
         "zh-Hans" : {
@@ -4086,7 +4281,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esnek Günlük Atlama Sınırı"
+            "value" : "Esinti Günlük Atlama Sınırı"
           }
         },
         "zh-Hans" : {
@@ -4898,22 +5093,6 @@
         }
       }
     },
-    "Makes each skipped break harder to dismiss" : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Atlanan her molayı kapatması daha zor hale getirir"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "每跳过一次休息，下一次就更难关闭"
-          }
-        }
-      }
-    },
     "Maybe standing up is easier than this" : {
       "comment" : "Break challenge copy",
       "extractionState" : "manual",
@@ -5496,22 +5675,6 @@
         }
       }
     },
-    "Pause audio playback when a break starts" : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mola başlayınca ses çalmayı duraklat"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "休息开始时暂停音频播放"
-          }
-        }
-      }
-    },
     "Pause Media" : {
       "localizations" : {
         "tr" : {
@@ -5803,7 +5966,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esnek'e düşür"
+            "value" : "Esinti'ye düşür"
           }
         },
         "zh-Hans" : {
@@ -6160,22 +6323,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "显示统计"
-          }
-        }
-      }
-    },
-    "Show timer in the last minutes before break" : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Molaya son dakikalarda sayacı göster"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "仅在休息前的最后几分钟显示计时"
           }
         }
       }
@@ -6831,7 +6978,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Katı"
+            "value" : "Fırtına"
           }
         },
         "zh-Hans" : {
@@ -6842,28 +6989,12 @@
         }
       }
     },
-    "Strict has no skip limit; only the emergency escape combo ends a break early." : {
-      "localizations" : {
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Katı'da atlama sınırı yoktur; molayı yalnızca acil çıkış tuş birleşimi erken bitirir."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "强制模式没有跳过上限；只有紧急退出组合键才能提前结束休息。"
-          }
-        }
-      }
-    },
     "Strict inactive, running as Firm" : {
       "localizations" : {
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Katı devre dışı, Sıkı olarak çalışıyor"
+            "value" : "Fırtına devre dışı, Rüzgâr olarak çalışıyor"
           }
         },
         "zh-Hans" : {
@@ -6881,7 +7012,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Katı mod, Erişilebilirlik ve Girdi İzleme izinlerini gerektirir."
+            "value" : "Fırtına, Erişilebilirlik ve Girdi İzleme izinlerini gerektirir."
           }
         },
         "zh-Hans" : {
@@ -6899,7 +7030,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Katı mod, molalarda girdiyi engellemek için Erişilebilirlik izni gerektirir."
+            "value" : "Fırtına, molalarda girdiyi engellemek için Erişilebilirlik izni gerektirir."
           }
         },
         "zh-Hans" : {
@@ -6917,7 +7048,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Katı mod, çıkış tuş birleşimi için Girdi İzleme izni gerektirir."
+            "value" : "Fırtına, çıkış tuş birleşimi için Girdi İzleme izni gerektirir."
           }
         },
         "zh-Hans" : {
@@ -7863,7 +7994,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Katı molalar klavyeyi ve fareyi engeller. macOS buna yalnız bu izinle olanak tanır."
+            "value" : "Fırtına molaları klavyeyi ve fareyi engeller. macOS buna yalnız bu izinle olanak tanır."
           }
         },
         "zh-Hans" : {
@@ -7879,7 +8010,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "İzin olmadan: Katı, Sıkı olarak çalışır."
+            "value" : "İzin olmadan: Fırtına, Rüzgâr olarak çalışır."
           }
         },
         "zh-Hans" : {
@@ -7895,7 +8026,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Yalnız Katı mola sırasında kullanılır."
+            "value" : "Yalnız Fırtına molası sırasında kullanılır."
           }
         },
         "zh-Hans" : {
@@ -7911,7 +8042,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Katı molayı erken bitirmek için Control, Option ve Command tuşlarını basılı tuttuğunuzu StandLock'un anlamasını sağlar."
+            "value" : "Fırtına molasını erken bitirmek için Control, Option ve Command tuşlarını basılı tuttuğunuzu StandLock'un anlamasını sağlar."
           }
         },
         "zh-Hans" : {

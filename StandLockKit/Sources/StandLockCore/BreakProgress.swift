@@ -42,10 +42,12 @@ public func formatMenuBarTimer(
     isPaused: Bool,
     hasScheduledBreak: Bool,
     /// Localised by the caller: the Kit ships no string catalog, so the app resolves it.
-    minuteSuffix: String = "m"
+    minuteSuffix: String = "m",
+    hourSuffix: String = "h"
 ) -> String? {
-    if isBreakActive || isPaused || !hasScheduledBreak { return nil }
-    let remaining = max(0, secondsRemaining)
+    // `Int(_:)` below traps on NaN, infinity and anything past `Int.max`.
+    if isBreakActive || isPaused || !hasScheduledBreak || !secondsRemaining.isFinite { return nil }
+    let remaining = min(max(0, secondsRemaining), TimeInterval(Int32.max))
 
     if !showFullTimer {
         let threshold = TimeInterval(countdownMinutes * 60)
@@ -57,8 +59,11 @@ public func formatMenuBarTimer(
         let seconds = Int(wholeSeconds) % 60
         return String(format: "0:%02d", seconds)
     } else {
+        // Rounded up before the split, so 59:59 reads as `1h`, never `60m`.
         let minutes = Int(ceil(wholeSeconds / 60))
-        return "\(minutes)\(minuteSuffix)"
+        if minutes < 60 { return "\(minutes)\(minuteSuffix)" }
+        let hours = "\(minutes / 60)\(hourSuffix)"
+        return minutes % 60 == 0 ? hours : "\(hours)\(minutes % 60)\(minuteSuffix)"
     }
 }
 

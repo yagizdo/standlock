@@ -9,6 +9,8 @@ public struct SettingsImportSummary: Equatable, Sendable {
     public var addedSchedules: [String]
     public var removedSchedules: [String]
     public var changedSchedules: [String]
+    /// On in the file, off after the import: their hours overlap one kept before them.
+    public var turnedOffSchedules: [String]
     /// The current setting picks specific calendars; the file always carries all calendars.
     public var dropsCalendarSelection: Bool
 
@@ -32,13 +34,17 @@ public struct SettingsImportSummary: Equatable, Sendable {
         }
         changesShowHelp = current.showHelp != imported.showHelp
 
+        // Compared as `applyImport` stores them: an old backup's overlap turned off again is no change.
+        let applied = imported.schedules.turningOffOverlaps()
         let currentByID = Dictionary(current.schedules.map { ($0.id, $0) }) { first, _ in first }
-        let importedIDs = Set(imported.schedules.map(\.id))
-        addedSchedules = imported.schedules.filter { currentByID[$0.id] == nil }.map(\.name)
+        let importedIDs = Set(applied.map(\.id))
+        addedSchedules = applied.filter { currentByID[$0.id] == nil }.map(\.name)
         removedSchedules = current.schedules.filter { !importedIDs.contains($0.id) }.map(\.name)
-        changedSchedules = imported.schedules.filter { schedule in
+        changedSchedules = applied.filter { schedule in
             currentByID[schedule.id].map { $0 != schedule } ?? false
         }.map(\.name)
+        turnedOffSchedules = zip(imported.schedules, applied)
+            .filter { $0.isEnabled && !$1.isEnabled }.map(\.0.name)
 
         changedPages = Self.pageOrder.filter(pages.contains)
     }

@@ -175,6 +175,9 @@ struct SettingsFileSection: View {
         if !summary.addedSchedules.isEmpty { lines.append(languageStore.string("Adds schedules: \(list(summary.addedSchedules))")) }
         if !summary.removedSchedules.isEmpty { lines.append(languageStore.string("Removes schedules: \(list(summary.removedSchedules))")) }
         if !summary.changedSchedules.isEmpty { lines.append(languageStore.string("Changes schedules: \(list(summary.changedSchedules))")) }
+        if !summary.turnedOffSchedules.isEmpty {
+            lines.append(languageStore.string("Turns off schedules whose hours overlap another: \(list(summary.turnedOffSchedules))"))
+        }
         if summary.dropsCalendarSelection {
             lines.append(languageStore.string("Calendar Integration will check all calendars. The file does not carry your calendar choices."))
         }

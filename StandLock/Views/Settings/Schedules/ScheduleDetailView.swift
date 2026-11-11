@@ -48,6 +48,15 @@ private struct SchedulePage: View {
                 } else if coordinator.schedules.isEmpty {
                     emptyNote
                 }
+                if let overlapMessage {
+                    HStack(alignment: .firstTextBaseline, spacing: 4) {
+                        Image(systemName: "info.circle")
+                            .accessibilityHidden(true)
+                        Text(overlapMessage)
+                    }
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                }
                 ScheduleFormView(draft: $draft, schedule: schedule)
                     .environment(\.settingsRowTone, .strict)
                     // Not `.keyboardShortcut`: in a pane that reaches the whole window, sidebar
@@ -122,6 +131,24 @@ private struct SchedulePage: View {
             .toggleStyle(.switch)
             .tint(.green)
             .controlSize(.small)
+        }
+    }
+
+    /// Read from the stored list each time, so after the switch the schedule turned off shows
+    /// the same note for the other one.
+    private var overlapMessage: String? {
+        guard let note = ScheduleOverlapNote(
+            schedules: coordinator.schedules, stored: schedule,
+            draft: draft.build(existing: schedule), isDirty: isDirty
+        ) else { return nil }
+        let formatter = ListFormatter()
+        formatter.locale = languageStore.locale
+        let named = note.turnedOff.map(\.name)
+        let names = formatter.string(from: named) ?? named.joined(separator: ", ")
+        return switch note {
+        case .adding: languageStore.string("Adding this turns off \(names): their hours overlap.")
+        case .turningOn: languageStore.string("Turning this on turns off \(names): their hours overlap.")
+        case .saving: languageStore.string("Saving turns off \(names): their hours overlap.")
         }
     }
 

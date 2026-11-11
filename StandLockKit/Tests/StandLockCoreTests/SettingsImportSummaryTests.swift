@@ -9,10 +9,10 @@ struct SettingsImportSummaryTests {
     static let readingID = UUID(uuidString: "22222222-2222-2222-2222-222222222222")!
     static let eveningID = UUID(uuidString: "33333333-3333-3333-3333-333333333333")!
 
-    static func schedule(_ id: UUID, _ name: String, interval: TimeInterval = 1500) -> Schedule {
+    static func schedule(_ id: UUID, _ name: String, interval: TimeInterval = 1500, from start: Int = 9, to end: Int = 17) -> Schedule {
         Schedule(
             id: id, name: name, days: .weekdays,
-            windows: [TimeWindow(startHour: 9, startMinute: 0, endHour: 17, endMinute: 0)],
+            windows: [TimeWindow(startHour: start, startMinute: 0, endHour: end, endMinute: 0)],
             breakInterval: interval, breakDuration: 300
         )
     }
@@ -20,7 +20,7 @@ struct SettingsImportSummaryTests {
     static func base(_ change: (inout SettingsExport) -> Void = { _ in }) -> SettingsExport {
         var export = SettingsExport(
             preferences: AppPreferences(),
-            schedules: [schedule(workID, "Work"), schedule(readingID, "Reading")],
+            schedules: [schedule(workID, "Work"), schedule(readingID, "Reading", from: 18, to: 22)],
             theme: "light", language: "en", showHelp: true
         )
         change(&export)
@@ -88,6 +88,27 @@ struct SettingsImportSummaryTests {
         #expect(summary.changedSchedules == ["Work"])
         #expect(summary.changedPages.isEmpty)
         #expect(!summary.isEmpty)
+    }
+
+    /// A backup from an older build, where Reading overlapped Work and both were on.
+    static func overlapping(_ export: inout SettingsExport) {
+        export.schedules[1].windows = [TimeWindow(startHour: 10, startMinute: 0, endHour: 12, endMinute: 0)]
+    }
+
+    @Test func overlappingImportedSchedulesAreNamed() {
+        // The first stays on, as the import will apply it.
+        let summary = SettingsImportSummary(current: Self.base(), imported: Self.base(Self.overlapping))
+        #expect(summary.turnedOffSchedules == ["Reading"])
+        #expect(summary.changedSchedules == ["Reading"])
+    }
+
+    @Test func reimportedOverlapThatStaysOffIsNoChange() {
+        // An older build's backup: both base schedules on. Here the second is already off,
+        // and the import turns it off again, so nothing about it changes.
+        let current = Self.base { Self.overlapping(&$0); $0.schedules[1].isEnabled = false }
+        let summary = SettingsImportSummary(current: current, imported: Self.base(Self.overlapping))
+        #expect(summary.changedSchedules.isEmpty)
+        #expect(summary.isEmpty)
     }
 
     @Test func renamedScheduleIsChanged() {

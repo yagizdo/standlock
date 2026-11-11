@@ -12,7 +12,7 @@ struct DetectionSettingsView: View {
                 behaviorRow(
                     "Camera Detection",
                     symbol: "video",
-                    description: "Defer breaks when camera is active (video calls)",
+                    description: "What happens when a break is due while your camera is on, as in a video call: wait until the camera is off, show a Gentle break you can skip right away, or take the break as usual.",
                     behavior: $coordinator.preferences.cameraDetection
                 )
 
@@ -21,7 +21,7 @@ struct DetectionSettingsView: View {
                 behaviorRow(
                     "Microphone Detection",
                     symbol: "mic",
-                    description: "Defer breaks when microphone is active (audio calls)",
+                    description: "What happens when a break is due while your microphone is on, as in a call: wait until the microphone is off, show a Gentle break you can skip right away, or take the break as usual.",
                     behavior: $coordinator.preferences.microphoneDetection
                 )
 
@@ -29,7 +29,7 @@ struct DetectionSettingsView: View {
 
                 minutesRow(
                     "Return after call",
-                    description: "A postponed break comes back this long after the microphone and camera are free",
+                    description: "A break that waited for a call comes this many minutes after both the microphone and the camera are off.",
                     value: postponeReturnMinutes,
                     in: 1...10
                 )
@@ -39,7 +39,7 @@ struct DetectionSettingsView: View {
                 SettingsToggleRow(
                     "Calendar Integration",
                     symbol: "calendar",
-                    description: "Defer breaks during calendar events",
+                    description: "No break during an event in your calendar; it waits until the event ends. All-day events do not count.",
                     isOn: permissionChecker.gatedToggle(
                         for: $coordinator.preferences.calendarDetectionEnabled,
                         available: permissionChecker.calendarIntegrationAvailable,
@@ -53,6 +53,7 @@ struct DetectionSettingsView: View {
 
                     minutesRow(
                         "Look-ahead",
+                        description: "A break also waits when an event starts within this many minutes, so it does not land just before a meeting.",
                         value: $coordinator.preferences.calendarLookAheadMinutes,
                         in: 1...15
                     )
@@ -79,7 +80,7 @@ struct DetectionSettingsView: View {
                 SettingsToggleRow(
                     "Screen Sharing",
                     symbol: "rectangle.on.rectangle",
-                    description: "Defer breaks during screen sharing or recording",
+                    description: "No break while you share or record your screen, so the break screen does not open in front of others.",
                     isOn: $coordinator.preferences.screenSharingDetectionEnabled
                 )
 
@@ -101,7 +102,7 @@ struct DetectionSettingsView: View {
                 SettingsToggleRow(
                     "Idle as Break",
                     symbol: "moon.zzz",
-                    description: "Count inactivity as a break taken",
+                    description: "If you have been away from the keyboard and mouse for at least as long as the break (and at least a minute) when it is due, the break counts as taken and the break screen does not open.",
                     isOn: $coordinator.preferences.idleDetectionEnabled
                 )
             }
