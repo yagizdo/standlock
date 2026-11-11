@@ -79,7 +79,7 @@ Or [download the DMG](https://github.com/yagizdo/StandLock/releases/latest) and 
 - Pauses your media during a break, with optional sounds before and after
 - System, Light or Dark, in English, Turkish or Simplified Chinese
 - Launch at login, and updates through Sparkle (automatic checks off by default) or Homebrew (daily check, one click)
-- Export your settings and schedules to a file and import them on another Mac
+- Export your settings and schedules to a file and import them on another Mac, or reset StandLock to start over
 
 <p align="center">
   <img src="assets/statistics.png" height="330" alt="Statistics page with six metric cards and a year heatmap">
