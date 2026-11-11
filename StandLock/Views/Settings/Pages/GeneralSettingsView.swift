@@ -65,6 +65,8 @@ struct GeneralSettingsView: View {
             }
 
             SettingsFileSection()
+
+            ResetSection()
         }
     }
 

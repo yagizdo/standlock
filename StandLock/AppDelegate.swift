@@ -28,21 +28,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             prefix: prefix,
             observer: updateObserver,
             automaticChecks: { updater.automaticallyChecksForUpdates },
-            canRestart: { [unowned self] in canRestartNow }
+            canRestart: { PermissionChecker.canRelaunchNow }
         )
         updateObserver.homebrew = homebrew
         homebrew.start()
-    }
-
-    /// What `applicationShouldTerminate` would refuse, asked without its side effects:
-    /// `shouldQuit` queues a quit of its own. `isRelaunching` skips those checks, and a quit
-    /// refused under a sheet would leave that flag set for every later quit.
-    private var canRestartNow: Bool {
-        !NSApp.windows.contains { window in
-            if window is BreakOverlayWindow { return window.isVisible }
-            guard let delegate = window.delegate as? SettingsWindowDelegate else { return false }
-            return window.attachedSheet != nil || delegate.navigation.unsavedEdits?() == true
-        }
     }
 
     func applicationDidFinishLaunching(_ notification: Notification) {

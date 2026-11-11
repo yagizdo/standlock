@@ -58,7 +58,7 @@ extension SettingsPage {
         case .general:
             [
                 "General", "Startup", "Launch at Startup", "Language and appearance", "Language", "Appearance",
-                "Settings File", "Export Settings", "Import Settings",
+                "Settings File", "Export Settings", "Import Settings", "Reset", "Reset StandLock",
             ]
         case .menuBar:
             ["Menu Bar", "Scene", "Timer", "Show Full Work Timer", "Countdown Start", "Preview"]

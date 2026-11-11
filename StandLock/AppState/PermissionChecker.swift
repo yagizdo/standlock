@@ -186,17 +186,27 @@ final class PermissionChecker: ObservableObject {
 
     private(set) static var isRelaunching = false
 
-    /// Skips both quit vetoes, so a caller checks them first. The new process opens only once
-    /// this one is gone: it has to read the `enforcementState` written on `willTerminate`.
-    static func relaunch() throws {
+    /// What `applicationShouldTerminate` would refuse, asked without its side effects:
+    /// `shouldQuit` queues a quit of its own. `isRelaunching` skips those checks, and a quit
+    /// refused under a sheet would leave that flag set for every later quit.
+    static var canRelaunchNow: Bool {
+        !NSApp.windows.contains { window in
+            if window is BreakOverlayWindow { return window.isVisible }
+            guard let delegate = window.delegate as? SettingsWindowDelegate else { return false }
+            return window.attachedSheet != nil || delegate.navigation.unsavedEdits?() == true
+        }
+    }
+
+    /// Skips both quit vetoes, so a caller checks `canRelaunchNow` first. The new process opens
+    /// only once this one is gone; a domain to wipe is deleted in that gap (`RelaunchScript`).
+    static func relaunch(wipingDefaultsDomain domain: String? = nil) throws {
         let task = Process()
         task.executableURL = URL(fileURLWithPath: "/bin/sh")
-        task.arguments = [
-            "-c",
-            #"while /bin/kill -0 "$1" 2>/dev/null; do /bin/sleep 0.2; done; /usr/bin/open -n "$0""#,
-            Bundle.main.bundlePath,
-            String(ProcessInfo.processInfo.processIdentifier),
-        ]
+        task.arguments = RelaunchScript.arguments(
+            bundlePath: Bundle.main.bundlePath,
+            pid: ProcessInfo.processInfo.processIdentifier,
+            wipingDefaultsDomain: domain
+        )
         try task.run()
         isRelaunching = true
         NSApp.terminate(nil)
