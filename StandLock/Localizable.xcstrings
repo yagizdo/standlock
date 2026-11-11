@@ -1284,6 +1284,22 @@
         }
       }
     },
+    "StandLock closed while a break was on screen, for example after a crash or after the Mac was turned off with the power button. The next break comes in %lld minutes and has a Skip button, so you have time to check your settings. Settings are under the StandLock icon in the menu bar. If a break ever cannot be closed, holding the power button turns the Mac off, and StandLock gives you this time again." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "StandLock ekranda bir mola varken kapandı; örneğin bir çökmeden ya da Mac güç tuşuyla kapatıldıktan sonra. Ayarlarına bakabilmen için sonraki mola %lld dakika sonra gelir ve Atla düğmesi olur. Ayarlar, menü çubuğundaki StandLock simgesinde. Bir mola hiç kapanmazsa güç tuşunu basılı tutmak Mac'i kapatır; StandLock bu süreyi yine verir."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "StandLock 在休息画面显示时关闭了，例如程序崩溃，或用电源键关机之后。下一次休息会在 %lld 分钟后开始，并且可以跳过，让你有时间检查设置。设置在菜单栏的 StandLock 图标里。如果休息画面一直无法关闭，长按电源键可以关机，StandLock 会再次给你这段时间。"
+          }
+        }
+      }
+    },
     "Strict has no Skip button. To end a break early, hold Control, Option and Command together; the break screen shows for how long." : {
       "localizations" : {
         "tr" : {
@@ -1296,6 +1312,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "强制模式没有跳过按钮。要提前结束休息，请同时按住 Control、Option 和 Command；需要按住多久，休息画面上会显示。"
+          }
+        }
+      }
+    },
+    "The last break did not finish" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Son mola bitmeden kapandı"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上次休息没有正常结束"
           }
         }
       }

@@ -84,7 +84,20 @@ public final class BreakCoordinator {
     private var isSuspended: Bool = false
     /// When the first of sleep or lock arrived; a session's catch-up measures time away from it.
     private var suspendedAt: Date?
-    private var currentBreak: BreakEvent?
+    /// Every break that comes on screen is set here (`presentBreak`) and every end clears it, so
+    /// the marker below sees all of them, whatever the source.
+    private var currentBreak: BreakEvent? {
+        didSet {
+            guard (oldValue == nil) != (currentBreak == nil) else { return }
+            onBreakOnScreenChanged?(currentBreak?.scheduledAt)
+        }
+    }
+    /// Told when a break comes on screen (its start) and when it leaves (nil). The app keeps the
+    /// date on disk, so a launch can tell the last run died with a break up (`UncleanExit`).
+    public var onBreakOnScreenChanged: ((Date?) -> Void)?
+    /// The first break after an unclean exit waits for `notBefore` and opens at `level`. Nil once
+    /// that break has opened; a rebuild reads it back and hands it on.
+    public private(set) var launchGuard: LaunchGuard?
     private var currentSource: BreakSource?
     private var currentSchedule: Schedule? { currentSource?.schedule }
     /// A break may be postponed once; the one that comes back after the call cannot be again.
@@ -169,7 +182,10 @@ public final class BreakCoordinator {
     public func start(with schedules: [Schedule], preferences: AppPreferences,
                       statistics: BreakStatistics = BreakStatistics(),
                       restoring state: EnforcementState = EnforcementState(),
-                      pomodoro carried: (session: PomodoroSession, level: DisciplineLevel)? = nil) {
+                      pomodoro carried: (session: PomodoroSession, level: DisciplineLevel)? = nil,
+                      launchGuard: LaunchGuard? = nil) {
+        // First: the carried session below reopens its covered phase through the guard.
+        self.launchGuard = launchGuard
         self.activeSchedules = schedules
         self.preferences = preferences
         self.statistics = statistics
@@ -455,7 +471,10 @@ public final class BreakCoordinator {
                     self.eventContinuation.yield(.nextBreakScheduled(since.addingTimeInterval(self.preferences.postponeReturnDelay)))
                 }
                 clearSince = since
-                if Date().timeIntervalSince(since) >= self.preferences.postponeReturnDelay {
+                // A postponed break carried in from before an unclean exit returns here, not
+                // through `scheduleNextBreak`.
+                if Date().timeIntervalSince(since) >= self.preferences.postponeReturnDelay,
+                   self.launchGuard.map({ $0.notBefore <= Date() }) ?? true {
                     self.clearPendingBreak()
                     if source.schedule == nil { self.postponedExternal = nil } else { self.postponedSchedule = nil }
                     self.presentBreak(for: source, context: context, canPostpone: false)
@@ -668,9 +687,10 @@ public final class BreakCoordinator {
         guard let target = earliest else { return }
         // An anchored slot can already have gone by; a break must never open right on top of the
         // skip that scheduled it. The unanchored path keeps its exact slot, short ones included.
-        let fireDate = searchFrom == nil
+        var fireDate = searchFrom == nil
             ? target.date
             : max(target.date, now.addingTimeInterval(Self.minimumLeadTime))
+        if let launchGuard { fireDate = max(fireDate, launchGuard.notBefore) }
         pendingBreakScheduleID = target.schedule.id
         pendingBreakDate = fireDate
         eventContinuation.yield(.nextBreakScheduled(fireDate))
@@ -789,7 +809,12 @@ public final class BreakCoordinator {
         // A focus cover is work time away from the Mac, not a stretch.
         let exercise = isFocusCover(source) ? nil : exercises.randomElement()
         // External breaks use the level's base tier and never move a schedule's escalation.
-        let tier = schedule.map(currentTier(for:)) ?? 0
+        var tier = schedule.map(currentTier(for:)) ?? 0
+        if let launchGuard {
+            effectiveLevel = launchGuard.level
+            tier = 0
+            self.launchGuard = nil
+        }
         let breakEvent = BreakEvent(
             scheduledAt: Date(), duration: duration,
             level: effectiveLevel, scheduleId: schedule?.id
@@ -1013,7 +1038,14 @@ public final class BreakCoordinator {
     }
 
     /// Opens the session's covered phase through the external entry, after a fresh context read.
+    /// After an unclean exit it first waits out the launch guard, inside the `breakTimer` that
+    /// called it, so lock, sleep, Stop and Skip phase cancel the wait as they cancel the phase.
     private func openPomodoroBreak(duration: TimeInterval) async {
+        if let notBefore = launchGuard?.notBefore, notBefore > Date() {
+            eventContinuation.yield(.nextBreakScheduled(notBefore))
+            try? await Task.sleep(for: .seconds(notBefore.timeIntervalSinceNow))
+            guard !Task.isCancelled else { return }
+        }
         let request = pomodoroBreak(duration: duration)
         let context = await detector.currentContext()
         guard !Task.isCancelled, pomodoro?.isCovered == true else { return }
