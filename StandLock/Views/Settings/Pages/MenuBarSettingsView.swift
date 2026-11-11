@@ -46,13 +46,13 @@ struct MenuBarSettingsView: View {
                 SettingsToggleRow(
                     "Show Full Work Timer",
                     symbol: "timer",
-                    description: "Always display remaining time next to the icon",
+                    description: "Shows the time left until the next break next to the menu bar icon all the time. When off, it shows only in the last minutes.",
                     isOn: $coordinator.preferences.showFullWorkTimer
                 )
 
                 if !coordinator.preferences.showFullWorkTimer {
                     SettingsRowDivider()
-                    SettingsRow("Countdown Start", symbol: "arrow.turn.down.right", description: "Show timer in the last minutes before break") {
+                    SettingsRow("Countdown Start", symbol: "arrow.turn.down.right", description: "How many minutes before a break the time left starts showing next to the icon.") {
                         Picker("Countdown Start", selection: $coordinator.preferences.menuBarCountdownMinutes) {
                             Text("1 min").tag(1)
                             Text("2 min").tag(2)

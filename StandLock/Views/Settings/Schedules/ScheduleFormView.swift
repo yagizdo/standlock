@@ -232,7 +232,7 @@ struct ScheduleFormView: View {
             SettingsToggleRow(
                 "Progressive Enforcement",
                 symbol: "chart.line.uptrend.xyaxis",
-                description: "Makes each skipped break harder to dismiss",
+                description: "Each skipped break makes the next one harder to skip: you wait longer for the Skip button or solve a small task first. Taking a break to the end resets it.",
                 isOn: $draft.progressiveEnforcement
             )
         }
