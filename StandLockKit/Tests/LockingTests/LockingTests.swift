@@ -1,3 +1,4 @@
+import CoreGraphics
 import Foundation
 import Testing
 @testable import Locking
@@ -62,5 +63,36 @@ struct EscapeDetectorTests {
         detector.reset()
         #expect(!detector.isHolding)
         #expect(detector.holdStartTime == nil)
+    }
+}
+
+// MARK: - Hold timer under a modal
+
+private final class Fired: @unchecked Sendable {
+    var count = 0
+}
+
+@Suite("EventTapController hold timer")
+struct EventTapHoldTimerTests {
+    /// An app-modal alert runs the main run loop in the modal panel mode. The tap source is in
+    /// the common modes and keeps blocking there, so a hold timer that only fires in the default
+    /// mode leaves a steady Strict hold unable to end the break.
+    @Test @MainActor
+    func holdTimerFiresUnderAModal() throws {
+        let modal = RunLoop.Mode("NSModalPanelRunLoopMode")
+        // AppKit puts the modal mode in the common modes at launch; a test process has no AppKit.
+        CFRunLoopAddCommonMode(CFRunLoopGetMain(), CFRunLoopMode(modal.rawValue as CFString))
+        let fired = Fired()
+        let controller = EventTapController(escapeHoldDuration: 0.05) { fired.count += 1 }
+        let event = try #require(CGEvent(source: nil))
+        event.type = .flagsChanged
+        event.flags = [.maskControl, .maskAlternate, .maskCommand]
+        _ = controller.handleEvent(proxy: OpaquePointer(bitPattern: 1)!, type: .flagsChanged, event: event)
+
+        let deadline = Date().addingTimeInterval(1)
+        while fired.count == 0, Date() < deadline {
+            _ = RunLoop.main.run(mode: modal, before: Date().addingTimeInterval(0.02))
+        }
+        #expect(fired.count == 1)
     }
 }

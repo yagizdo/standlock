@@ -117,9 +117,11 @@ public final class EventTapController: @unchecked Sendable {
         return isBlocking ? nil : Unmanaged.passUnretained(event)
     }
 
+    /// Common modes, like the tap source: under an app-modal alert the run loop is in the modal
+    /// mode, where a default-mode timer never fires and a steady hold would never end the break.
     private func startHoldTimer() {
-        holdTimer = Timer.scheduledTimer(
-            withTimeInterval: escapeDetector.requiredDuration + 0.01,
+        let timer = Timer(
+            timeInterval: escapeDetector.requiredDuration + 0.01,
             repeats: false
         ) { [weak self] _ in
             guard let self else { return }
@@ -128,6 +130,8 @@ public final class EventTapController: @unchecked Sendable {
             }
             self.holdTimer = nil
         }
+        RunLoop.main.add(timer, forMode: .common)
+        holdTimer = timer
     }
 
     private func cancelHoldTimer() {

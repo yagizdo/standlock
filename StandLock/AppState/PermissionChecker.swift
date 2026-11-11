@@ -159,6 +159,7 @@ final class PermissionChecker: ObservableObject {
             let transitions = refreshStatusAndDetectTransitions()
             updateInputMonitoringProbe()
             handleTransitions(transitions)
+            showPendingRestartAlert()
         }
     }
 
@@ -183,6 +184,9 @@ final class PermissionChecker: ObservableObject {
     }
 
     @MainActor private static var shownRestartAlerts: Set<String> = []
+    /// Restart alerts held back while a break, a Settings sheet or unsaved edits stood in the
+    /// way; the poll shows one once nothing does.
+    @MainActor private static var pendingRestartAlerts: Set<String> = []
 
     private(set) static var isRelaunching = false
 
@@ -190,11 +194,14 @@ final class PermissionChecker: ObservableObject {
     /// `shouldQuit` queues a quit of its own. `isRelaunching` skips those checks, and a quit
     /// refused under a sheet would leave that flag set for every later quit.
     static var canRelaunchNow: Bool {
-        !NSApp.windows.contains { window in
-            if window is BreakOverlayWindow { return window.isVisible }
+        !isBreakOnScreen && !NSApp.windows.contains { window in
             guard let delegate = window.delegate as? SettingsWindowDelegate else { return false }
             return window.attachedSheet != nil || delegate.navigation.unsavedEdits?() == true
         }
+    }
+
+    static var isBreakOnScreen: Bool {
+        NSApp.windows.contains { $0 is BreakOverlayWindow && $0.isVisible }
     }
 
     /// Skips both quit vetoes, so a caller checks `canRelaunchNow` first. The new process opens
@@ -217,7 +224,10 @@ final class PermissionChecker: ObservableObject {
         throw CocoaError(.userCancelled)
     }
 
+    /// Does nothing while `canRelaunchNow` is false: a relaunch skips the quit vetoes, so during
+    /// a break it would end the break as a clean quit.
     func relaunchApp() {
+        guard Self.canRelaunchNow else { return }
         do {
             try Self.relaunch()
         } catch {
@@ -234,7 +244,21 @@ final class PermissionChecker: ObservableObject {
     private func showRestartAlertIfNeeded(for permissionName: String) {
         guard !Self.shownRestartAlerts.contains(permissionName) else { return }
         Self.shownRestartAlerts.insert(permissionName)
+        // A modal under the overlay takes its clicks; the alert waits for the break to end.
+        guard !Self.isBreakOnScreen else {
+            Self.pendingRestartAlerts.insert(permissionName)
+            return
+        }
+        presentRestartAlert(for: permissionName)
+    }
 
+    private func showPendingRestartAlert() {
+        guard let permissionName = Self.pendingRestartAlerts.first, Self.canRelaunchNow else { return }
+        Self.pendingRestartAlerts.remove(permissionName)
+        presentRestartAlert(for: permissionName)
+    }
+
+    private func presentRestartAlert(for permissionName: String) {
         // `permissionName` stays English: it is the key both for the catalog lookup and for
         // the shown-already set above, which must not change when the user switches language.
         let localizedName = languageStore.string(key: permissionName)
@@ -247,8 +271,14 @@ final class PermissionChecker: ObservableObject {
         alert.addButton(withTitle: languageStore.string("Later"))
         alert.alertStyle = .informational
 
-        if alert.runModal() == .alertFirstButtonReturn {
+        switch alert.runModal() {
+        case .alertFirstButtonReturn where Self.canRelaunchNow:
             relaunchApp()
+        // Closed by a break that opened over it, or Restart Now refused: ask again later.
+        case .alertFirstButtonReturn, .abort:
+            Self.pendingRestartAlerts.insert(permissionName)
+        default:
+            break
         }
     }
 
