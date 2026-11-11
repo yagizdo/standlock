@@ -292,6 +292,22 @@
         }
       }
     },
+    "Could Not Reset StandLock" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "StandLock sıfırlanamadı"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法重置 StandLock"
+          }
+        }
+      }
+    },
     "Cover the screen" : {
       "localizations" : {
         "tr" : {
@@ -320,6 +336,38 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "每日跳过上限"
+          }
+        }
+      }
+    },
+    "Delete all data and start again from the beginning" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tüm verileri sil ve baştan başla"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "删除所有数据并从头开始"
+          }
+        }
+      }
+    },
+    "Delete Everything" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Her Şeyi Sil"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "全部删除"
           }
         }
       }
@@ -480,6 +528,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "结束专注？"
+          }
+        }
+      }
+    },
+    "Everything will be deleted" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Her şey silinecek"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "所有内容都将被删除"
           }
         }
       }
@@ -916,6 +980,22 @@
         }
       }
     },
+    "Permissions you granted in System Settings (Accessibility, Input Monitoring, Calendars) stay. Remove them there if you want." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sistem Ayarları'nda verdiğin izinler (Erişilebilirlik, Girdi İzleme, Takvimler) kalır. İstersen oradan kaldırabilirsin."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你在系统设置中授予的权限（辅助功能、输入监控、日历）会保留。如有需要，可在那里移除。"
+          }
+        }
+      }
+    },
     "Pomodoro, focus %lld of %lld" : {
       "localizations" : {
         "tr" : {
@@ -928,6 +1008,134 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "番茄钟，专注 %lld，共 %lld"
+          }
+        }
+      }
+    },
+    "Reset" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sıfırla"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重置"
+          }
+        }
+      }
+    },
+    "Reset StandLock" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "StandLock'u Sıfırla"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重置 StandLock"
+          }
+        }
+      }
+    },
+    "Reset StandLock?" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "StandLock sıfırlansın mı?"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "要重置 StandLock 吗？"
+          }
+        }
+      }
+    },
+    "Reset…" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sıfırla…"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重置…"
+          }
+        }
+      }
+    },
+    "StandLock Cannot Reset Now" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "StandLock şu an sıfırlanamıyor"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "StandLock 现在无法重置"
+          }
+        }
+      }
+    },
+    "This cannot be undone." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu işlem geri alınamaz."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此操作无法撤销。"
+          }
+        }
+      }
+    },
+    "Try again after the break ends." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mola bittikten sonra tekrar dene."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请在休息结束后重试。"
+          }
+        }
+      }
+    },
+    "Type StandLock to confirm." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Onaylamak için StandLock yaz."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "输入 StandLock 以确认。"
           }
         }
       }
@@ -1728,6 +1936,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "对此日程的更改尚未存储。"
+          }
+        }
+      }
+    },
+    "Your settings, schedules, statistics and break history are deleted, StandLock is removed from your login items, and the app reopens as if newly installed." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ayarların, programların, istatistiklerin ve mola geçmişin silinir, StandLock giriş öğelerinden kaldırılır ve uygulama yeni yüklenmiş gibi yeniden açılır."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你的设置、日程、统计和休息记录将被删除，StandLock 将从登录项中移除，然后应用会像新安装一样重新打开。"
           }
         }
       }
