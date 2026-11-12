@@ -1,5 +1,15 @@
 # Changelog
 
+## StandLock v0.17.0
+
+**Features**
+- A new menu bar scene: a psychologist taking notes in an armchair, with a calico cat on the rug. At a break the psychologist gets up to pet the cat (d9cab49)
+
+**Improvements**
+- Homebrew copies now check for updates every hour instead of once a day (1525b38)
+
+**Full Changelog:** https://github.com/yagizdo/StandLock/compare/v0.16.0...v0.17.0
+
 ## StandLock v0.16.0
 
 **Features**
