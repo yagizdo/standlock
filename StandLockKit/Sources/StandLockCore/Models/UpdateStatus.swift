@@ -13,6 +13,12 @@ public enum HomebrewUpgradeState: Equatable, Sendable {
     public var isBusy: Bool {
         self == .running || self == .waitingToRestart
     }
+
+    /// A check resets the state to `idle`, so the hourly tick skips `failed`: the manual
+    /// command it shows stays until the user retries or checks by hand.
+    public var allowsAutomaticCheck: Bool {
+        !isBusy && self != .failed
+    }
 }
 
 /// What the About page may say about updates. A date alone proves a check was attempted, not

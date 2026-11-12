@@ -34,7 +34,7 @@ final class HomebrewUpdater {
         Task {
             try? await Task.sleep(for: .seconds(60))
             while !Task.isCancelled {
-                if automaticChecks() { check() }
+                if automaticChecks(), observer.homebrewUpgrade.allowsAutomaticCheck { check() }
                 try? await Task.sleep(for: .seconds(60 * 60))
             }
         }

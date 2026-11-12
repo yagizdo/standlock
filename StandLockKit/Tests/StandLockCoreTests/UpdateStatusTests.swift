@@ -96,4 +96,12 @@ struct UpdateStatusTests {
         #expect(!HomebrewUpgradeState.blocked.isBusy)
         #expect(!HomebrewUpgradeState.failed.isBusy)
     }
+
+    @Test func anAutomaticCheckLeavesAFailedUpgradeOnScreen() {
+        #expect(!HomebrewUpgradeState.failed.allowsAutomaticCheck)
+        #expect(!HomebrewUpgradeState.running.allowsAutomaticCheck)
+        #expect(!HomebrewUpgradeState.waitingToRestart.allowsAutomaticCheck)
+        #expect(HomebrewUpgradeState.idle.allowsAutomaticCheck)
+        #expect(HomebrewUpgradeState.blocked.allowsAutomaticCheck)
+    }
 }
