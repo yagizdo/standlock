@@ -28,6 +28,8 @@ swift test --package-path StandLockKit
 
 When you change behaviour in `StandLockKit`, update the tests that cover it. New logic needs new tests in the matching test target. For a bug fix, add a regression test that fails before the fix and passes after. That test is often more useful to me than the fix itself. Changes that only touch the app target (the UI) have no unit tests, so describe in the PR how you checked them. Put new logic in `StandLockKit` where you can, so it stays testable.
 
+Before you add a test, name the bug it would catch. If another test already fails for that bug, extend it or turn it into a parameterized `@Test(arguments:)` instead of adding a near copy. See every new test fail once, before the fix or by breaking the line it covers for a moment. Do not test what the compiler or Foundation already guarantees: a synthesized `Codable` round trip, `Equatable`, `allCases.count`, or a constant compared with its own literal.
+
 One thing that will confuse you at some point: after you add or remove a stored property on a model, the suite may die with `signal code 11` and no failing test name. That is SPM linking a test target against a stale build. Run `swift package clean --package-path StandLockKit` and try again.
 
 ## Code
