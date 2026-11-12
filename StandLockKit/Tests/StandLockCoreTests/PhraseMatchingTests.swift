@@ -55,6 +55,10 @@ struct PhraseMatchingTests {
 @Suite("Phrase Input Acceptance")
 struct PhraseInputAcceptanceTests {
 
+    @Test func oneNewCharacterIsAccepted() {
+        #expect(acceptsPhraseInput(previous: "I choose", new: "I choose "))
+    }
+
     @Test func deletingIsAccepted() {
         #expect(acceptsPhraseInput(previous: "I choose to skip", new: "I choose"))
         #expect(acceptsPhraseInput(previous: "你好吗", new: ""))
@@ -72,6 +76,10 @@ struct PhraseInputAcceptanceTests {
 
     @Test func pastedChinesePhraseIsRejected() {
         #expect(!acceptsPhraseInput(previous: "", new: "反正我更喜欢坐着"))
+    }
+
+    @Test func pastedEnglishPhraseIsRejected() {
+        #expect(!acceptsPhraseInput(previous: "", new: "I choose to skip this break"))
     }
 
     /// The boundary is load-bearing in both directions: a normal input method commit

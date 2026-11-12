@@ -623,6 +623,22 @@ struct PomodoroWaitingBreakTests {
     }
 
     @Test
+    func shortLockDuringADeferralOpensTheFullBreak() async {
+        let (coordinator, detector, locker, _) = deferredSession()
+        defer { coordinator.stop() }
+        detector.contextToReturn = DetectionContext(cameraActive: true)
+        coordinator.startPomodoro(oneMinute, level: .gentle, now: Date())
+        coordinator.skipPomodoroPhase()
+        #expect(await waitUntil { coordinator.pomodoroSession?.phase.isBreak == true })
+        let soon = Date().addingTimeInterval(20)
+        coordinator.handleScreenLock(now: soon)
+        detector.contextToReturn = .clear
+        coordinator.handleScreenUnlock(now: soon.addingTimeInterval(1))
+        #expect(await waitUntil { locker.isShowing })
+        #expect(locker.lastDuration == TimeInterval(59))
+    }
+
+    @Test
     func shortLockDuringAPostponeCreditsNothingAndKeepsTheWait() async {
         let (coordinator, detector, locker, log) = deferredSession()
         defer { coordinator.stop() }

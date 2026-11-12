@@ -51,11 +51,10 @@ struct ScheduleTemplateTests {
         #expect(built.repetitionRule == RepetitionRule(shortBreakCount: 3, shortBreakDuration: 5 * 60, longBreakDuration: 15 * 60))
     }
 
-    @Test(arguments: [ScheduleTemplate.twentyTwentyTwenty])
-    func templatesOtherThanPomodoroLeaveRepetitionOff(template: ScheduleTemplate) {
+    @Test func twentyTwentyTwentyLeavesRepetitionOff() {
         var draft = ScheduleDraft(schedule: nil)
         draft.useRepetition = true
-        #expect(applied(template, to: draft).build(existing: nil).repetitionRule == nil)
+        #expect(applied(.twentyTwentyTwenty, to: draft).build(existing: nil).repetitionRule == nil)
     }
 
     @Test func leavesDaysWindowsAndDisciplineAlone() {

@@ -140,6 +140,19 @@ struct DayPreviewTests {
         )
         #expect(preview.items.count == 1)
     }
+
+    /// 60 s plus 66 s steps inside a window closing at 23:59:00.
+    @Test func densestScheduleStops() {
+        let preview = DayPreview.make(
+            for: schedule(
+                days: .everyDay,
+                windows: [TimeWindow(startHour: 0, startMinute: 0, endHour: 23, endMinute: 59)],
+                interval: 60, duration: 6
+            ),
+            from: monday
+        )
+        #expect(preview.items.count == 1308)
+    }
 }
 
 /// One real time, then always an hour behind the caller. Gives up after a while, so a walk that
