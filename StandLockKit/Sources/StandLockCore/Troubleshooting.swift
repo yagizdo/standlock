@@ -18,11 +18,13 @@ public struct UncleanExitStatus: Equatable, Sendable {
     }
 
     /// A date in the future means the clock moved back after that launch; it is still shown.
-    public static func make(reopenedAt: Date?, now: Date) -> UncleanExitStatus? {
+    /// `launchedAt` is this run's start: only the run that wrote the record holds the guard, so a
+    /// relaunch within the grace has no pending first break.
+    public static func make(reopenedAt: Date?, launchedAt: Date, now: Date) -> UncleanExitStatus? {
         guard let reopenedAt, now.timeIntervalSince(reopenedAt) < shownFor else { return nil }
         let notBefore = reopenedAt.addingTimeInterval(UncleanExit.grace)
         return UncleanExitStatus(reopenedAt: reopenedAt, firstBreakNotBefore: notBefore,
-                                 isFirstBreakPending: now < notBefore)
+                                 isFirstBreakPending: reopenedAt >= launchedAt && now < notBefore)
     }
 }
 

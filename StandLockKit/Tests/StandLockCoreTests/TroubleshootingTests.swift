@@ -5,16 +5,17 @@ import Testing
 @Suite("Troubleshooting")
 struct TroubleshootingTests {
     private let now = Date(timeIntervalSinceReferenceDate: 800_000_000)
+    private var launch: Date { now.addingTimeInterval(-60) }
 
     // MARK: Unclean exit status
 
     @Test func noRecordShowsNothing() {
-        #expect(UncleanExitStatus.make(reopenedAt: nil, now: now) == nil)
+        #expect(UncleanExitStatus.make(reopenedAt: nil, launchedAt: launch, now: now) == nil)
     }
 
     @Test func firstBreakStillAheadIsPending() {
         let reopened = now.addingTimeInterval(-6 * 60)
-        let status = UncleanExitStatus.make(reopenedAt: reopened, now: now)
+        let status = UncleanExitStatus.make(reopenedAt: reopened, launchedAt: reopened, now: now)
         #expect(status == UncleanExitStatus(
             reopenedAt: reopened, firstBreakNotBefore: reopened.addingTimeInterval(UncleanExit.grace),
             isFirstBreakPending: true
@@ -22,17 +23,24 @@ struct TroubleshootingTests {
     }
 
     @Test func daysOldRecordIsShownAsPast() {
-        let status = UncleanExitStatus.make(reopenedAt: now.addingTimeInterval(-3 * 86_400), now: now)
+        let status = UncleanExitStatus.make(reopenedAt: now.addingTimeInterval(-3 * 86_400), launchedAt: launch, now: now)
+        #expect(status?.isFirstBreakPending == false)
+    }
+
+    /// StandLock was quit and opened again within the grace: this run has no guard.
+    @Test func recordFromAnEarlierLaunchIsNotPending() {
+        let reopened = now.addingTimeInterval(-6 * 60)
+        let status = UncleanExitStatus.make(reopenedAt: reopened, launchedAt: now.addingTimeInterval(-60), now: now)
         #expect(status?.isFirstBreakPending == false)
     }
 
     @Test func recordAWeekOldIsDropped() {
-        #expect(UncleanExitStatus.make(reopenedAt: now.addingTimeInterval(-UncleanExitStatus.shownFor), now: now) == nil)
+        #expect(UncleanExitStatus.make(reopenedAt: now.addingTimeInterval(-UncleanExitStatus.shownFor), launchedAt: launch, now: now) == nil)
     }
 
     /// The clock moved back after the launch: the record is still this week's.
     @Test func recordInTheFutureIsShown() {
-        #expect(UncleanExitStatus.make(reopenedAt: now.addingTimeInterval(3_600), now: now) != nil)
+        #expect(UncleanExitStatus.make(reopenedAt: now.addingTimeInterval(3_600), launchedAt: launch, now: now) != nil)
     }
 
     // MARK: Fix for the current state
