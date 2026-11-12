@@ -4,7 +4,7 @@ import StandLockCore
 extension SettingsPage {
     static let sidebarTopPages: [SettingsPage] = [.general, .menuBar]
     static let sidebarBreakPages: [SettingsPage] = [.breakScreen, .discipline, .detection, .pomodoro]
-    static let sidebarBottomPages: [SettingsPage] = [.permissions, .statistics, .about]
+    static let sidebarBottomPages: [SettingsPage] = [.permissions, .statistics, .troubleshooting, .about]
 
     var title: LocalizedStringKey { LocalizedStringKey(titleResource.key) }
 
@@ -21,6 +21,7 @@ extension SettingsPage {
         case .pomodoro: "Pomodoro"
         case .permissions: "Permissions"
         case .statistics: "Statistics"
+        case .troubleshooting: "Troubleshooting"
         case .about: "About"
         }
     }
@@ -37,6 +38,7 @@ extension SettingsPage {
         case .pomodoro: "timer"
         case .permissions: "lock.shield"
         case .statistics: "chart.bar.xaxis"
+        case .troubleshooting: "lifepreserver"
         case .about: "info.circle"
         }
     }
@@ -44,7 +46,7 @@ extension SettingsPage {
     /// The palette hue of the sidebar chip. Nil is neutral grey.
     var tone: DisciplineLevel? {
         switch self {
-        case .general, .schedule, .newSchedule, .permissions, .about: nil
+        case .general, .schedule, .newSchedule, .permissions, .troubleshooting, .about: nil
         case .detection: .strict
         case .menuBar, .breakScreen, .statistics: .gentle
         case .discipline, .pomodoro: .firm
@@ -92,6 +94,12 @@ extension SettingsPage {
                 "Statistics", "Period", "Break Activity", "Streak", "Best Streak",
                 "Completed", "Skipped", "Break Time", "Completion",
                 "Pomodoro", "Focus time", "Rounds", "Finished", "Unfinished",
+            ]
+        case .troubleshooting:
+            [
+                "Troubleshooting", "Last launch", "The last break did not finish", "Right now",
+                "If a break won't close", "Daily skip limit reached", "If nothing else works", "Turn Off Strict",
+                "Reset", "Reset StandLock",
             ]
         case .about:
             [

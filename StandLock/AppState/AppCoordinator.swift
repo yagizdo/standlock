@@ -80,6 +80,9 @@ final class AppCoordinator: ObservableObject {
     /// When the break now on screen came up. Written synchronously by UserDefaults, so it
     /// survives a crash or `kill -9`; a forced power-off seconds after the write may lose it.
     private static let breakOnScreenKey = "breakOnScreenSince"
+    /// When the last launch that found that marker happened. Read by the Troubleshooting page,
+    /// which outlives the one alert shown at that launch.
+    static let lastUncleanExitKey = "lastUncleanExitAt"
 
     init() {
         permissionChecker = PermissionChecker(languageStore: languageStore)
@@ -134,6 +137,7 @@ final class AppCoordinator: ObservableObject {
         startCoordinator(restoring: carriedStateForToday())
         restoreSavedPomodoroSession()
         if launchGuard != nil {
+            UserDefaults.standard.set(Date(), forKey: Self.lastUncleanExitKey)
             // A run loop block, not a Task: `runModal` inside a main-actor job holds the main
             // queue, so the grace would stop while the alert is up and the break open on OK.
             RunLoop.main.perform { [languageStore] in
@@ -628,6 +632,14 @@ final class AppCoordinator: ObservableObject {
             saveSchedules()
             restartCoordinator()
         }
+    }
+
+    /// Every Strict schedule, on or off, saved as Firm. Not `changeDisciplineLevel`, which only
+    /// touches the running coordinator and is lost on the next rebuild.
+    func lowerStrictToFirm() {
+        schedules = schedules.strictLoweredToFirm()
+        saveSchedules()
+        restartCoordinator()
     }
 
     func deleteSchedule(_ schedule: Schedule) {

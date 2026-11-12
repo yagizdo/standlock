@@ -6,7 +6,7 @@ public enum LeaveDecision: Sendable {
 }
 
 public enum SettingsPage: Hashable, Sendable {
-    case general, menuBar, breakScreen, discipline, detection, pomodoro, permissions, statistics, about
+    case general, menuBar, breakScreen, discipline, detection, pomodoro, permissions, statistics, troubleshooting, about
     case schedule(UUID), newSchedule
 
     /// This page, or where to go instead when it names a schedule that no longer exists.
