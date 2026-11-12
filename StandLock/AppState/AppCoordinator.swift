@@ -134,8 +134,10 @@ final class AppCoordinator: ObservableObject {
         startCoordinator(restoring: carriedStateForToday())
         restoreSavedPomodoroSession()
         if launchGuard != nil {
-            Task { @MainActor in
-                UncleanExitNotice.show(languageStore: self.languageStore)
+            // A run loop block, not a Task: `runModal` inside a main-actor job holds the main
+            // queue, so the grace would stop while the alert is up and the break open on OK.
+            RunLoop.main.perform { [languageStore] in
+                MainActor.assumeIsolated { UncleanExitNotice.show(languageStore: languageStore) }
             }
         }
         if !hasCompletedOnboarding {

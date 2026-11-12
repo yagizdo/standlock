@@ -244,8 +244,9 @@ final class PermissionChecker: ObservableObject {
     private func showRestartAlertIfNeeded(for permissionName: String) {
         guard !Self.shownRestartAlerts.contains(permissionName) else { return }
         Self.shownRestartAlerts.insert(permissionName)
-        // A modal under the overlay takes its clicks; the alert waits for the break to end.
-        guard !Self.isBreakOnScreen else {
+        // A modal under the overlay takes its clicks; the alert waits for the break to end. Not
+        // on top of another modal either: a break's `abortModal` closes only the top one.
+        guard !Self.isBreakOnScreen, NSApp.modalWindow == nil else {
             Self.pendingRestartAlerts.insert(permissionName)
             return
         }
@@ -253,7 +254,8 @@ final class PermissionChecker: ObservableObject {
     }
 
     private func showPendingRestartAlert() {
-        guard let permissionName = Self.pendingRestartAlerts.first, Self.canRelaunchNow else { return }
+        guard let permissionName = Self.pendingRestartAlerts.first, Self.canRelaunchNow,
+              NSApp.modalWindow == nil else { return }
         Self.pendingRestartAlerts.remove(permissionName)
         presentRestartAlert(for: permissionName)
     }

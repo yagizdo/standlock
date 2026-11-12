@@ -149,9 +149,9 @@ struct LaunchGuardCoordinationTests {
         let state = EnforcementState(escalationTiers: [schedule.id: 2],
                                      pendingBreakDates: [schedule.id: Date().addingTimeInterval(0.01)])
         let (coordinator, locker, _) = makeGuarded(schedules: [schedule], scheduler: dueNow(),
-                                                   state: state, launchGuard: guardIn(0.4))
+                                                   state: state, launchGuard: guardIn(1))
         defer { coordinator.stop() }
-        try? await Task.sleep(for: .milliseconds(250))
+        try? await Task.sleep(for: .milliseconds(300))
         #expect(!locker.showOverlayCalled)
         #expect(coordinator.launchGuard != nil)
         #expect(await waitUntil { locker.isShowing })
@@ -178,20 +178,19 @@ struct LaunchGuardCoordinationTests {
     func noGuardKeepsTheSlotAndLevel() async {
         let (coordinator, locker, _) = makeGuarded(schedules: [makeSchedule(level: .strict)], scheduler: dueNow())
         defer { coordinator.stop() }
-        try? await Task.sleep(for: .milliseconds(150))
-        #expect(locker.isShowing)
+        #expect(await waitUntil { locker.isShowing })
         #expect(locker.lastLevel == .strict)
     }
 
     @Test
     func launchGuardSurvivesALockBeforeTheBreak() async {
-        let launchGuard = guardIn(0.4)
+        let launchGuard = guardIn(1)
         let (coordinator, locker, _) = makeGuarded(schedules: [makeSchedule(level: .strict)], scheduler: dueNow(),
                                                    launchGuard: launchGuard)
         defer { coordinator.stop() }
         coordinator.handleScreenLock()
         coordinator.handleScreenUnlock()
-        try? await Task.sleep(for: .milliseconds(250))
+        try? await Task.sleep(for: .milliseconds(300))
         #expect(!locker.showOverlayCalled)
         #expect(await waitUntil { locker.isShowing })
         #expect((locker.lastShownAt ?? .distantPast) >= launchGuard.notBefore)
@@ -202,11 +201,15 @@ struct LaunchGuardCoordinationTests {
     @Test
     func launchGuardDelaysARestoredPostponedBreak() async {
         let schedule = makeSchedule(level: .strict)
+        let launchGuard = guardIn(1)
         let (coordinator, locker, _) = makeGuarded(schedules: [schedule], state: EnforcementState(postponedScheduleID: schedule.id),
-                                                   launchGuard: guardIn(0.4))
+                                                   launchGuard: launchGuard)
         defer { coordinator.stop() }
-        try? await Task.sleep(for: .milliseconds(250))
+        let log = EventLog(coordinator)
+        try? await Task.sleep(for: .milliseconds(300))
         #expect(!locker.showOverlayCalled)
+        // The menu bar counts down to the guarded return, not to the postpone delay.
+        #expect((log.nextBreaks.last ?? .distantPast) >= launchGuard.notBefore)
         #expect(await waitUntil { locker.isShowing })
         #expect(locker.lastLevel == .gentle)
     }
@@ -215,7 +218,7 @@ struct LaunchGuardCoordinationTests {
     /// in cover mode a cover with time left. Before the guard it opened at launch.
     @Test(arguments: [PomodoroCover.breaks, .focus])
     func restoredCoveredPhaseWaitsForTheGrace(cover: PomodoroCover) async {
-        let launchGuard = guardIn(0.4)
+        let launchGuard = guardIn(1)
         let (coordinator, locker, _) = makeGuarded(launchGuard: launchGuard)
         defer { coordinator.stop() }
         let now = Date()
@@ -225,7 +228,7 @@ struct LaunchGuardCoordinationTests {
             : PomodoroSession(startedAt: now, configuration: oneMinuteCover, phase: .focus(round: 1),
                               phaseEnd: now.addingTimeInterval(30))
         coordinator.restorePomodoro(session, level: .firm, now: now)
-        try? await Task.sleep(for: .milliseconds(250))
+        try? await Task.sleep(for: .milliseconds(300))
         #expect(!locker.showOverlayCalled)
         #expect(coordinator.pomodoroSession != nil)
         #expect(await waitUntil { locker.isShowing })

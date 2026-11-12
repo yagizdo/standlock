@@ -10,7 +10,7 @@ enum UncleanExitNotice {
         let alert = NSAlert()
         alert.messageText = languageStore.string("The last break did not finish")
         alert.informativeText = languageStore.string(
-            "StandLock closed while a break was on screen, for example after a crash or after the Mac was turned off with the power button. The next break comes in \(minutes) minutes and has a Skip button, so you have time to check your settings. Settings are under the StandLock icon in the menu bar. If a break ever cannot be closed, holding the power button turns the Mac off, and StandLock gives you this time again."
+            "This can happen after a crash or after holding the power button. Your next break comes in \(minutes) minutes, and you can skip it.\n\nSettings are in the StandLock menu bar icon. If a break ever won't close, hold the power button to turn off the Mac."
         )
         alert.addButton(withTitle: languageStore.string("OK"))
         // A menu bar app is inactive at launch; the alert would open behind other windows.
