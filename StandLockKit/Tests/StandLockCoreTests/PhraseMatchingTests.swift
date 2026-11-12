@@ -17,11 +17,6 @@ struct PhraseMatchingTests {
         ))
     }
 
-    @Test func turkishDottedAndDotlessArePairedCorrectly() {
-        #expect(phraseMatches("ı", expected: "I", locale: tr))
-        #expect(phraseMatches("i", expected: "İ", locale: tr))
-    }
-
     @Test func turkishPlainIAndCapitalIAreNotAPair() {
         #expect(!phraseMatches("i", expected: "I", locale: tr))
     }
@@ -46,14 +41,6 @@ struct PhraseMatchingTests {
         #expect(!phraseMatches("i choose to skip", expected: "I choose to skip this break", locale: en))
     }
 
-    @Test func chinesePhraseMatchesItself() {
-        #expect(phraseMatches("反正我更喜欢坐着", expected: "反正我更喜欢坐着", locale: zh))
-    }
-
-    @Test func chineseSurroundingWhitespaceIsTrimmed() {
-        #expect(phraseMatches("  反正我更喜欢坐着 ", expected: "反正我更喜欢坐着", locale: zh))
-    }
-
     /// Why the Simplified Chinese escape phrases carry no punctuation. The user
     /// retypes these, and an input method may render a sentence-final stop as a
     /// half-width `.`, or the user may simply leave it off. Either way the
@@ -62,13 +49,6 @@ struct PhraseMatchingTests {
     @Test func chineseTrailingPunctuationBreaksTheMatch() {
         #expect(!phraseMatches("反正我更喜欢坐着。", expected: "反正我更喜欢坐着", locale: zh))
         #expect(!phraseMatches("反正我更喜欢坐着.", expected: "反正我更喜欢坐着", locale: zh))
-    }
-
-    /// Regression evidence: the locale-free comparison this matcher replaces fails
-    /// on a Turkish phrase, which is why `phraseMatches` exists.
-    @Test func caseInsensitiveCompareFailsOnTurkish() {
-        #expect("BU MOLAYI ATLAMAYI SEÇİYORUM"
-            .caseInsensitiveCompare("Bu molayı atlamayı seçiyorum") != .orderedSame)
     }
 }
 

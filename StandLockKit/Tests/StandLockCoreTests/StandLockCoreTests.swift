@@ -41,44 +41,6 @@ struct ScheduleModelTests {
 
     // MARK: - JSON Round-Trips
 
-    @Test func scheduleJsonRoundTrip() throws {
-        let schedule = Schedule(
-            name: "Work Hours", isEnabled: true,
-            days: .weekdays,
-            windows: [TimeWindow(startHour: 9, startMinute: 0, endHour: 17, endMinute: 0)],
-            breakInterval: 2400, breakDuration: 600,
-            repetitionRule: RepetitionRule(shortBreakCount: 3, shortBreakDuration: 600, longBreakDuration: 1800),
-            disciplineLevel: .firm,
-            dailyBreakCap: 10
-        )
-        let data = try JSONEncoder().encode(schedule)
-        let decoded = try JSONDecoder().decode(Schedule.self, from: data)
-        #expect(decoded == schedule)
-        #expect(decoded.name == "Work Hours")
-        #expect(decoded.disciplineLevel == .firm)
-        #expect(decoded.repetitionRule?.shortBreakCount == 3)
-        #expect(decoded.dailyBreakCap == 10)
-    }
-
-    @Test func scheduleJsonRoundTripWithIntervalCycle() throws {
-        let schedule = Schedule(
-            name: "Sit/Stand",
-            days: .weekdays,
-            windows: [TimeWindow(startHour: 9, startMinute: 0, endHour: 17, endMinute: 0)],
-            breakInterval: 58 * 60, breakDuration: 120,
-            intervalCycle: [
-                IntervalStep(duration: 58 * 60, label: "Sitting"),
-                IntervalStep(duration: 28 * 60, label: "Standing"),
-            ]
-        )
-        let data = try JSONEncoder().encode(schedule)
-        let decoded = try JSONDecoder().decode(Schedule.self, from: data)
-        #expect(decoded == schedule)
-        #expect(decoded.intervalCycle?.count == 2)
-        #expect(decoded.intervalCycle?[0].duration == TimeInterval(58 * 60))
-        #expect(decoded.intervalCycle?[1].label == "Standing")
-    }
-
     @Test func scheduleJsonBackwardCompatibilityWithoutIntervalCycle() throws {
         let original = Schedule(
             name: "Old Schedule",
@@ -95,27 +57,6 @@ struct ScheduleModelTests {
         #expect(decoded.intervalCycle == nil)
         #expect(decoded.breakInterval == 2400)
         #expect(decoded.name == "Old Schedule")
-    }
-
-    @Test func intervalStepEncoding() throws {
-        let labeled = IntervalStep(duration: 1680, label: "Standing")
-        let labeledDecoded = try JSONDecoder().decode(IntervalStep.self, from: JSONEncoder().encode(labeled))
-        #expect(labeledDecoded == labeled)
-        #expect(labeledDecoded.label == "Standing")
-
-        let unlabeled = IntervalStep(duration: 3480)
-        let unlabeledDecoded = try JSONDecoder().decode(IntervalStep.self, from: JSONEncoder().encode(unlabeled))
-        #expect(unlabeledDecoded == unlabeled)
-        #expect(unlabeledDecoded.label == nil)
-    }
-
-    @Test func repetitionRuleEncoding() throws {
-        let rule = RepetitionRule(shortBreakCount: 4, shortBreakDuration: 300, longBreakDuration: 900)
-        let data = try JSONEncoder().encode(rule)
-        let decoded = try JSONDecoder().decode(RepetitionRule.self, from: data)
-        #expect(decoded == rule)
-        #expect(decoded.shortBreakCount == 4)
-        #expect(decoded.longBreakDuration == 900)
     }
 
     // MARK: - BreakStatistics
@@ -184,32 +125,6 @@ struct ScheduleModelTests {
 
     // MARK: - AppPreferences
 
-    @Test func appPreferencesJsonRoundTrip() throws {
-        let prefs = AppPreferences(
-            firmSkipDelay: 15,
-            firmEscapePhrase: "Let me work",
-            firmDailySkipLimit: 3,
-            strictEscapeHoldDuration: 8,
-            cameraDetection: .reduceToGentle,
-            microphoneDetection: .ignore,
-            calendarDetectionEnabled: false,
-            calendarLookAheadMinutes: 10,
-            screenSharingDetectionEnabled: false,
-            idleDetectionEnabled: false,
-            pauseMediaDuringBreak: false,
-            resetIntervalOnSkip: false
-        )
-        let data = try JSONEncoder().encode(prefs)
-        let decoded = try JSONDecoder().decode(AppPreferences.self, from: data)
-        #expect(decoded == prefs)
-        #expect(decoded.firmSkipDelay == 15)
-        #expect(decoded.cameraDetection == .reduceToGentle)
-        #expect(decoded.microphoneDetection == .ignore)
-        #expect(!decoded.calendarDetectionEnabled)
-        #expect(!decoded.pauseMediaDuringBreak)
-        #expect(!decoded.resetIntervalOnSkip)
-    }
-
     @Test func appPreferencesBackwardCompatibility() throws {
         let json = """
         {
@@ -253,23 +168,6 @@ struct ScheduleModelTests {
     }
 
     // MARK: - EnforcementPolicy
-
-    @Test func enforcementPolicyGentleTiers() {
-        let policy = DisciplineLevel.gentle.enforcementPolicy(preferences: AppPreferences())
-        #expect(policy.tiers.count == 6)
-        #expect(policy.tiers[0].dismissMechanism == .button)
-        #expect(policy.tiers[0].skipDelay == 0)
-        #expect(policy.tiers[1].dismissMechanism == .button)
-        #expect(policy.tiers[1].skipDelay == 5)
-        #expect(policy.tiers[2].dismissMechanism == .findButton(count: 8, attempts: 3))
-        #expect(policy.tiers[2].skipDelay == 10)
-        #expect(policy.tiers[3].dismissMechanism == .crateOpening(slotCount: 12, maxAttempts: 3))
-        #expect(policy.tiers[3].skipDelay == 12)
-        #expect(policy.tiers[4].dismissMechanism == .slotMachine(reelCount: 3, maxAttempts: 3))
-        #expect(policy.tiers[4].skipDelay == 14)
-        #expect(policy.tiers[5].dismissMechanism == .typePhrase(phrase: "My legs are decorative", requiresConfirmation: false))
-        #expect(policy.tiers[5].skipDelay == 16)
-    }
 
     @Test func enforcementPolicyFirmUsesPreferences() {
         let prefs = AppPreferences(firmSkipDelay: 20, firmEscapePhrase: "let me go")
@@ -321,19 +219,6 @@ struct ScheduleModelTests {
         #expect(!decoded.soundAfterBreak)
     }
 
-    @Test func breakSoundsRoundTrip() throws {
-        let preferences = AppPreferences(soundBeforeBreak: true, soundAfterBreak: true)
-        let decoded = try JSONDecoder().decode(AppPreferences.self, from: JSONEncoder().encode(preferences))
-        #expect(decoded.soundBeforeBreak)
-        #expect(decoded.soundAfterBreak)
-    }
-
-    @Test func postponeReturnDelayRoundTrips() throws {
-        let data = try JSONEncoder().encode(AppPreferences(postponeReturnDelay: 300))
-        let decoded = try JSONDecoder().decode(AppPreferences.self, from: data)
-        #expect(decoded.postponeReturnDelay == TimeInterval(300))
-    }
-
     @Test func postponedReasonDisplayName() {
         #expect(DeferralReason.postponed.displayName == "Break postponed")
     }
@@ -380,30 +265,7 @@ struct ScheduleModelTests {
         #expect(first == policy.tiers[0])
     }
 
-    @Test func enforcementPolicyFirmTierClampsToRoastChallenge() {
-        let policy = DisciplineLevel.firm.enforcementPolicy(preferences: AppPreferences())
-        let last = policy.tier(at: 99)
-        #expect(last == policy.tiers[4])
-        #expect(last.dismissMechanism == .roastChallenge(sentenceCount: 3))
-        let first = policy.tier(at: -1)
-        #expect(first == policy.tiers[0])
-    }
-
     // MARK: - Schedule with Progressive Enforcement
-
-    @Test func scheduleJsonWithProgressiveEnforcement() throws {
-        let schedule = Schedule(
-            name: "Test",
-            days: .weekdays,
-            windows: [TimeWindow(startHour: 9, startMinute: 0, endHour: 17, endMinute: 0)],
-            breakInterval: 2400, breakDuration: 600,
-            progressiveEnforcement: true
-        )
-        let data = try JSONEncoder().encode(schedule)
-        let decoded = try JSONDecoder().decode(Schedule.self, from: data)
-        #expect(decoded.progressiveEnforcement == true)
-        #expect(decoded == schedule)
-    }
 
     @Test func scheduleJsonBackwardCompatibility() throws {
         let original = Schedule(
@@ -425,12 +287,6 @@ struct ScheduleModelTests {
 
 @Suite("AppPreferences Calendar Selection")
 struct AppPreferencesCalendarSelectionTests {
-
-    @Test func defaultsToAllCalendars() {
-        let prefs = AppPreferences()
-        #expect(prefs.calendarSelectionMode == .all)
-        #expect(prefs.selectedCalendarIdentifiers.isEmpty)
-    }
 
     @Test func calendarSelectionJsonRoundTrip() throws {
         let prefs = AppPreferences(

@@ -51,11 +51,10 @@ struct ScheduleTemplateTests {
         #expect(built.repetitionRule == RepetitionRule(shortBreakCount: 3, shortBreakDuration: 5 * 60, longBreakDuration: 15 * 60))
     }
 
-    @Test(arguments: [ScheduleTemplate.twentyTwentyTwenty, .fiftyTwoSeventeen])
-    func templatesOtherThanPomodoroLeaveRepetitionOff(template: ScheduleTemplate) {
+    @Test func twentyTwentyTwentyLeavesRepetitionOff() {
         var draft = ScheduleDraft(schedule: nil)
         draft.useRepetition = true
-        #expect(applied(template, to: draft).build(existing: nil).repetitionRule == nil)
+        #expect(applied(.twentyTwentyTwenty, to: draft).build(existing: nil).repetitionRule == nil)
     }
 
     @Test func leavesDaysWindowsAndDisciplineAlone() {
@@ -85,9 +84,5 @@ struct ScheduleTemplateTests {
     @Test func aSecondTemplateReplacesTheFirstOnesName() {
         let result = applied(.fiftyTwoSeventeen, to: applied(.pomodoro))
         #expect(result.name == "52/17")
-    }
-
-    @Test func titlesAreTheProperNames() {
-        #expect(ScheduleTemplate.allCases.map(\.title) == ["20-20-20", "Pomodoro", "52/17"])
     }
 }

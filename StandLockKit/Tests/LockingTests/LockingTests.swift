@@ -29,10 +29,15 @@ struct EscapeDetectorTests {
         #expect(detector.isEscapeTriggered(at: after10))
     }
 
-    @Test func partialHoldDoesNotTrigger() {
+    @Test(arguments: [
+        (control: false, option: true, command: true),
+        (control: true, option: false, command: true),
+        (control: true, option: true, command: false),
+    ])
+    func partialHoldDoesNotTrigger(keys: (control: Bool, option: Bool, command: Bool)) {
         var detector = EscapeDetector(requiredDuration: 10)
         let start = Date()
-        detector.flagsChanged(controlDown: true, optionDown: true, commandDown: false, at: start)
+        detector.flagsChanged(controlDown: keys.control, optionDown: keys.option, commandDown: keys.command, at: start)
         #expect(!detector.isHolding)
         #expect(!detector.isEscapeTriggered(at: start.addingTimeInterval(15)))
     }

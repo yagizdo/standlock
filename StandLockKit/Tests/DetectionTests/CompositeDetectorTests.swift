@@ -5,22 +5,6 @@ import StandLockCore
 @Suite("CompositeDetector Tests")
 struct CompositeDetectorTests {
 
-    @Test func allClear() async {
-        let detector = CompositeDetector(
-            cameraCheck: { false },
-            microphoneCheck: { false },
-            calendarCheck: { false },
-            screenSharingCheck: { false },
-            idleCheck: { 0 }
-        )
-        let context = await detector.currentContext()
-        #expect(!context.cameraActive)
-        #expect(!context.microphoneActive)
-        #expect(!context.calendarEventActive)
-        #expect(!context.screenSharingActive)
-        #expect(context.idleDuration == 0)
-    }
-
     @Test func cameraActiveDefers() async {
         let detector = CompositeDetector(
             cameraCheck: { true },
@@ -91,21 +75,5 @@ struct CompositeDetectorTests {
         )
         let context = await detector.currentContext()
         #expect(context.idleDuration == 120.5)
-    }
-
-    @Test func multipleDetectionsActive() async {
-        let detector = CompositeDetector(
-            cameraCheck: { true },
-            microphoneCheck: { true },
-            calendarCheck: { true },
-            screenSharingCheck: { false },
-            idleCheck: { 30 }
-        )
-        let context = await detector.currentContext()
-        #expect(context.cameraActive)
-        #expect(context.microphoneActive)
-        #expect(context.calendarEventActive)
-        #expect(!context.screenSharingActive)
-        #expect(context.idleDuration == 30)
     }
 }

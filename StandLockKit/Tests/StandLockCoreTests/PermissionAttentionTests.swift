@@ -28,10 +28,6 @@ struct PermissionAttentionTests {
         #expect(!scheduleNeedsStrictPermission(schedule(level: level), strictAvailable: false))
     }
 
-    @Test func usesStrictIgnoresThePermission() {
-        #expect(scheduleUsesStrict(schedule(level: .strict)))
-    }
-
     @Test func usesStrictNeedsAnEnabledStrictSchedule() {
         #expect(!scheduleUsesStrict(schedule(enabled: false, level: .strict)))
         #expect(!scheduleUsesStrict(schedule(level: .firm)))

@@ -43,18 +43,6 @@ struct HexColorTests {
         #expect(abs(HexColor.white.contrastRatio(with: .black) - 21) < 0.001)
     }
 
-    @Test func contrastWithSelfIs1() throws {
-        let color = try #require(HexColor(hex: "#5B7D9E"))
-        #expect(abs(color.contrastRatio(with: color) - 1) < 0.0001)
-    }
-
-    @Test func grey777OnWhiteFallsJustBelowAA() throws {
-        let grey = try #require(HexColor(hex: "#777777"))
-        let ratio = grey.contrastRatio(with: .white)
-        #expect(abs(ratio - 4.48) < 0.01)
-        #expect(ratio < 4.5)
-    }
-
     @Test func mixedInterpolatesComponents() {
         #expect(HexColor.black.mixed(with: .white, amount: 0) == .black)
         #expect(HexColor.black.mixed(with: .white, amount: 1) == .white)

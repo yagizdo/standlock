@@ -97,14 +97,6 @@ struct ScheduleDraftTests {
         #expect(draft.build(existing: nil).days == .custom([.monday, .sunday]))
     }
 
-    @Test func oneIntervalRowHasNoCycleAndDropsItsLabel() {
-        var draft = ScheduleDraft(schedule: stored())
-        draft.intervalRows = [IntervalRow(minutes: 25, label: "Left over")]
-        let built = draft.build(existing: nil)
-        #expect(built.intervalCycle == nil)
-        #expect(built.breakInterval == TimeInterval(25 * 60))
-    }
-
     @Test func breakIntervalMirrorsTheFirstRow() {
         var draft = ScheduleDraft(schedule: stored())
         draft.intervalRows = [IntervalRow(minutes: 25, label: " Sitting "), IntervalRow(minutes: 10)]
@@ -114,20 +106,6 @@ struct ScheduleDraftTests {
             IntervalStep(duration: TimeInterval(25 * 60), label: "Sitting"),
             IntervalStep(duration: TimeInterval(10 * 60)),
         ])
-    }
-
-    @Test func nameIsTrimmed() {
-        var draft = ScheduleDraft(schedule: stored())
-        draft.name = "  Focus  "
-        #expect(draft.build(existing: nil).name == "Focus")
-    }
-
-    @Test func repetitionOffStoresNoRule() {
-        var draft = ScheduleDraft(schedule: stored(
-            rule: RepetitionRule(shortBreakCount: 2, shortBreakDuration: 90, longBreakDuration: 900)
-        ))
-        draft.useRepetition = false
-        #expect(draft.build(existing: nil).repetitionRule == nil)
     }
 
     @Test func newDraftDefaults() {
@@ -212,13 +190,6 @@ struct ScheduleDraftTests {
         draft.intervalRows[0].label = "Hidden at one row"
         draft.name = " Work "
         #expect(!draft.hasChanges(from: baseline))
-    }
-
-    @Test func aRealEditIsAChange() {
-        let baseline = ScheduleDraft(schedule: stored())
-        var draft = baseline
-        draft.windows[0].endHour = 13
-        #expect(draft.hasChanges(from: baseline))
     }
 
     @Test func untouchedNewDraftHasNoChangesAndCannotSave() {

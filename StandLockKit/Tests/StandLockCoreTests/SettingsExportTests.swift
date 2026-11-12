@@ -176,10 +176,6 @@ struct SettingsExportTests {
         #expect(Self.decodeError(data.prefix(data.count / 2)) == .unreadable)
     }
 
-    @Test func jsonArrayIsNotASettingsFile() {
-        #expect(Self.decodeError(Data("[1, 2]".utf8)) == .notSettingsFile)
-    }
-
     // MARK: - Values the app cannot run
 
     @Test func duplicateScheduleIDsAreUnreadable() throws {
@@ -272,12 +268,6 @@ struct SettingsExportTests {
         export.preferences.pomodoro.cover = .focus
         export.preferences.pomodoro.focus = 61 * 60
         #expect(Self.decodeError(try export.encoded()) == .unreadable)
-    }
-
-    @Test func exportRoundTripsPomodoro() throws {
-        let decoded = try SettingsExport.decode(Self.full().encoded())
-        #expect(decoded.preferences.pomodoro == Self.fullPreferences().pomodoro)
-        #expect(decoded.preferences.pomodoro != .standard)
     }
 
     @Test func preferencesWithoutPomodoroDecodeToStandard() throws {

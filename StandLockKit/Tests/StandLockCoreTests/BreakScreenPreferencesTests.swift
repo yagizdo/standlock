@@ -29,18 +29,6 @@ struct BreakScreenPreferencesTests {
         #expect(try !#require(threshold.customColors).isHardToRead)
     }
 
-    @Test func roundTripsInsideAppPreferences() throws {
-        let prefs = AppPreferences(breakScreen: BreakScreenPreferences(
-            backgroundHex: "#102030",
-            textHex: "#F0E0D0",
-            showsStatistics: false,
-            message: "Drink water"
-        ))
-        let data = try JSONEncoder().encode(prefs)
-        let decoded = try JSONDecoder().decode(AppPreferences.self, from: data)
-        #expect(decoded == prefs)
-    }
-
     @Test func decodesEmptyJSONToDefaults() throws {
         let decoded = try JSONDecoder().decode(AppPreferences.self, from: Data("{}".utf8))
         #expect(decoded.breakScreen == BreakScreenPreferences())

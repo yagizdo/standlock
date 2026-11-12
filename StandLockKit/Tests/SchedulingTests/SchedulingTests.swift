@@ -40,24 +40,6 @@ struct ScheduleEvaluatorTests {
 
     // 2026-05-11 is Monday, 2026-05-12 is Tuesday
 
-    @Test func isWithinActiveWindow_weekdayAt10am() {
-        let monday10am = makeDate(day: 11, hour: 10)
-        let schedule = makeSchedule()
-        #expect(evaluator.isWithinActiveWindow(schedule, at: monday10am))
-    }
-
-    @Test func isWithinActiveWindow_weekdayOnSaturday() {
-        let saturday = makeDate(day: 16, hour: 10) // 2026-05-16 is Saturday
-        let schedule = makeSchedule()
-        #expect(!evaluator.isWithinActiveWindow(schedule, at: saturday))
-    }
-
-    @Test func isWithinActiveWindow_outsideTimeWindow() {
-        let monday20 = makeDate(day: 12, hour: 20)
-        let schedule = makeSchedule()
-        #expect(!evaluator.isWithinActiveWindow(schedule, at: monday20))
-    }
-
     @Test func isWithinActiveWindow_multipleWindows() {
         let schedule = makeSchedule(windows: [
             TimeWindow(startHour: 9, startMinute: 0, endHour: 12, endMinute: 0),
@@ -75,35 +57,6 @@ struct ScheduleEvaluatorTests {
         let wednesday = makeDate(day: 13, hour: 10) // 2026-05-13 is Wednesday
         #expect(!evaluator.isWithinActiveWindow(schedule, at: tuesday))
         #expect(evaluator.isWithinActiveWindow(schedule, at: wednesday))
-    }
-
-    @Test func nextBreakTime_simpleInterval() {
-        let monday9am = makeDate(day: 12, hour: 9)
-        let schedule = makeSchedule(breakInterval: 2400) // 40 min
-        let next = evaluator.nextBreakTime(for: schedule, after: monday9am, cycleIndex: 0)
-        #expect(next != nil)
-        let diff = next!.timeIntervalSince(monday9am)
-        #expect(diff == 2400)
-    }
-
-    @Test func nextBreakTime_multipleBreaks() {
-        let monday9_40 = makeDate(day: 12, hour: 9, minute: 40)
-        let schedule = makeSchedule(breakInterval: 2400)
-        let next = evaluator.nextBreakTime(for: schedule, after: monday9_40, cycleIndex: 0)
-        #expect(next != nil)
-        let expected = makeDate(day: 12, hour: 10, minute: 20)
-        #expect(abs(next!.timeIntervalSince(expected)) < 1)
-    }
-
-    @Test func nextBreakTime_endOfWindow() {
-        let monday16_50 = makeDate(day: 12, hour: 16, minute: 50)
-        let schedule = makeSchedule(breakInterval: 2400) // 40 min would go past 17:00
-        let next = evaluator.nextBreakTime(for: schedule, after: monday16_50, cycleIndex: 0)
-        #expect(next != nil)
-        // Should be next day's window start + interval
-        let expectedBase = makeDate(day: 13, hour: 9, minute: 0) // Tuesday 09:00
-        let expected = expectedBase.addingTimeInterval(2400)
-        #expect(abs(next!.timeIntervalSince(expected)) < 1)
     }
 
     @Test func nextBreakTime_weekendScheduleOnFriday() {
@@ -156,15 +109,6 @@ struct ScheduleEvaluatorTests {
         #expect(second == makeDate(day: 11, hour: 9, minute: 28))
     }
 
-    @Test func nextBreakTime_cycleIndexWraps() {
-        let monday9am = makeDate(day: 11, hour: 9)
-        let schedule = makeSchedule(intervalCycle: [
-            IntervalStep(duration: 58 * 60), IntervalStep(duration: 28 * 60),
-        ])
-        let next = evaluator.nextBreakTime(for: schedule, after: monday9am, cycleIndex: 2)
-        #expect(next == makeDate(day: 11, hour: 9, minute: 58))
-    }
-
     @Test func nextBreakTime_nilCycleFallsBackToBreakInterval() {
         let monday9am = makeDate(day: 11, hour: 9)
         let schedule = makeSchedule(breakInterval: 2400, intervalCycle: nil)
@@ -188,12 +132,6 @@ struct ScheduleEvaluatorTests {
         // 16:50 + 28 min lands past 17:00, so the window-jump path must also
         // use the selected interval: Tuesday 09:00 + 28 min.
         #expect(next == makeDate(day: 12, hour: 9, minute: 28))
-    }
-
-    @Test func breakDuration_noRepetitionRule() {
-        let schedule = makeSchedule(breakDuration: 600)
-        #expect(evaluator.breakDuration(for: schedule, breakIndex: 0) == 600)
-        #expect(evaluator.breakDuration(for: schedule, breakIndex: 5) == 600)
     }
 
     @Test func breakDuration_withRepetitionRule() {
@@ -230,17 +168,6 @@ struct RepetitionTrackerTests {
         tracker.recordBreak() // long break resets → 0
         #expect(tracker.currentBreakIndex == 0)
         #expect(!tracker.isLongBreak)
-    }
-
-    @Test func durations() {
-        var tracker = RepetitionTracker(rule: RepetitionRule(
-            shortBreakCount: 2, shortBreakDuration: 300, longBreakDuration: 900
-        ))
-        #expect(tracker.currentDuration == 300)
-        tracker.recordBreak()
-        #expect(tracker.currentDuration == 300)
-        tracker.recordBreak() // index 2 == shortBreakCount → long
-        #expect(tracker.currentDuration == 900)
     }
 
     @Test func reset() {

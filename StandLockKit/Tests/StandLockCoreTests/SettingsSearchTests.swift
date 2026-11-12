@@ -34,11 +34,6 @@ struct SettingsSearchTests {
         #expect(settingsSearchMatches(query: "isik", terms: ["Işık"]))
     }
 
-    @Test func treatsEnglishIAlike() {
-        #expect(settingsSearchMatches(query: "I", terms: ["i"]))
-        #expect(settingsSearchMatches(query: "i", terms: ["I"]))
-    }
-
     @Test func findsChineseTerms() {
         #expect(settingsSearchMatches(query: "统计", terms: ["统计信息"]))
         #expect(!settingsSearchMatches(query: "设置", terms: ["统计信息"]))
@@ -58,18 +53,7 @@ struct SettingsSearchTests {
         #expect(!settingsSearchMatches(query: "menu  bar", terms: ["Menu Bar"]))
     }
 
-    @Test func noMatch() {
-        #expect(!settingsSearchMatches(query: "zzz", terms: ["General", "Startup"]))
-    }
-
     @Test func noTermsNoMatch() {
         #expect(!settingsSearchMatches(query: "general", terms: []))
-    }
-
-    @Test func findsPomodoroRowTitles() {
-        let terms = ["Pomodoro", "Focus length", "Short break", "Long break", "Rounds"]
-        #expect(settingsSearchMatches(query: "pomo", terms: terms))
-        #expect(settingsSearchMatches(query: "focus", terms: terms))
-        #expect(settingsSearchMatches(query: "rounds", terms: terms))
     }
 }

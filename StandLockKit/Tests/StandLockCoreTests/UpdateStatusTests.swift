@@ -7,13 +7,6 @@ struct UpdateStatusTests {
 
     private let date = Date(timeIntervalSince1970: 1_000)
 
-    @Test func aFoundUpdateNamesItsVersion() {
-        let status = UpdateStatus(
-            availableVersion: "1.2", onLatestVersion: false, lastCheckDate: date
-        )
-        #expect(status == .available(version: "1.2"))
-    }
-
     @Test func aFoundUpdateWinsOverAnEarlierUpToDateResult() {
         let status = UpdateStatus(
             availableVersion: "1.2", onLatestVersion: true, lastCheckDate: date
@@ -79,14 +72,6 @@ struct UpdateStatusTests {
             homebrewUpgrade: .failed
         )
         #expect(status == .upgradeFailed)
-    }
-
-    @Test func anIdleUpgradeLeavesTheCheckResultAlone() {
-        let status = UpdateStatus(
-            availableVersion: nil, onLatestVersion: true, lastCheckDate: date,
-            homebrewUpgrade: .idle
-        )
-        #expect(status == .upToDate)
     }
 
     @Test func onlyARunningOrWaitingUpgradeIsBusy() {

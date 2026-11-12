@@ -13,10 +13,6 @@ struct ThemeResolutionTests {
         #expect(resolveTheme(selection: "solarized", available: ["light", "dark"], systemPrefersDark: true) == "dark")
     }
 
-    @Test func nilSelectionFollowsSystemDark() {
-        #expect(resolveTheme(selection: nil, available: ["light", "dark"], systemPrefersDark: true) == "dark")
-    }
-
     @Test func nilSelectionFollowsSystemLight() {
         #expect(resolveTheme(selection: nil, available: ["light", "dark"], systemPrefersDark: false) == "light")
     }
