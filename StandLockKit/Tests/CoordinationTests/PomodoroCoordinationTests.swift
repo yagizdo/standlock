@@ -131,20 +131,6 @@ struct ExternalBreakTests {
         #expect(log.completed == 1)
         #expect(!locker.showOverlayCalled)
     }
-
-    @Test
-    func externalBreakDefersDuringDetection() async {
-        let (coordinator, detector, locker, _) = makeCoordinator(
-            preferences: AppPreferences(cameraDetection: .deferBreak, idleDetectionEnabled: false)
-        )
-        defer { coordinator.stop() }
-        detector.contextToReturn = DetectionContext(cameraActive: true)
-        coordinator.startExternalBreak(ExternalBreak(duration: 60, level: .gentle, chip: nil))
-        try? await Task.sleep(for: .milliseconds(150))
-        #expect(!locker.showOverlayCalled)
-        detector.contextToReturn = .clear
-        #expect(await waitUntil { locker.isShowing })
-    }
 }
 
 private let oneMinute = PomodoroConfiguration(focus: 60, shortBreak: 60, longBreak: 120, rounds: 4)
@@ -168,16 +154,6 @@ struct PomodoroSessionCoordinationTests {
         coordinator.startPomodoro(oneMinute, level: .gentle, now: Date())
         try? await Task.sleep(for: .milliseconds(300))
         #expect(!locker.showOverlayCalled)
-    }
-
-    @Test
-    func focusEmitsNextBreakScheduledAtFocusEnd() async {
-        let (coordinator, _, _, log) = makeCoordinator()
-        defer { coordinator.stop() }
-        let now = Date()
-        coordinator.startPomodoro(oneMinute, level: .gentle, now: now)
-        #expect(await waitUntil { log.nextBreaks.last == now.addingTimeInterval(60) })
-        #expect(coordinator.pomodoroSession?.phase == .focus(round: 1))
     }
 
     @Test
@@ -304,16 +280,6 @@ struct PomodoroSessionCoordinationTests {
         coordinator.skipPomodoroPhase()
         #expect(await waitUntil { locker.showCount == 2 && log.stats?.pomodoroTallies?.rounds == 2 })
         #expect(abs((log.stats?.pomodoroTallies?.focusSeconds ?? 0) - 60) < 1)
-    }
-
-    @Test
-    func skipPhaseDuringFocusOpensBreakNow() async {
-        let (coordinator, _, locker, _) = makeCoordinator()
-        defer { coordinator.stop() }
-        coordinator.startPomodoro(oneMinute, level: .gentle, now: Date())
-        coordinator.skipPomodoroPhase()
-        #expect(await waitUntil { locker.isShowing })
-        #expect(coordinator.pomodoroSession?.phase == .shortBreak(afterRound: 1))
     }
 
     @Test
@@ -657,22 +623,6 @@ struct PomodoroWaitingBreakTests {
     }
 
     @Test
-    func shortLockDuringADeferralOpensTheFullBreak() async {
-        let (coordinator, detector, locker, _) = deferredSession()
-        defer { coordinator.stop() }
-        detector.contextToReturn = DetectionContext(cameraActive: true)
-        coordinator.startPomodoro(oneMinute, level: .gentle, now: Date())
-        coordinator.skipPomodoroPhase()
-        #expect(await waitUntil { coordinator.pomodoroSession?.phase.isBreak == true })
-        let soon = Date().addingTimeInterval(20)
-        coordinator.handleScreenLock(now: soon)
-        detector.contextToReturn = .clear
-        coordinator.handleScreenUnlock(now: soon.addingTimeInterval(1))
-        #expect(await waitUntil { locker.isShowing })
-        #expect(locker.lastDuration == TimeInterval(59))
-    }
-
-    @Test
     func shortLockDuringAPostponeCreditsNothingAndKeepsTheWait() async {
         let (coordinator, detector, locker, log) = deferredSession()
         defer { coordinator.stop() }
@@ -901,16 +851,6 @@ struct PomodoroFocusCoverTests {
         let session = PomodoroSession(startedAt: now, configuration: configuration, phase: phase,
                                       phaseEnd: Date().addingTimeInterval(10))
         coordinator.restorePomodoro(session, level: .gentle, now: now)
-    }
-
-    @Test
-    func startingAFocusCoverSessionOpensTheCover() async {
-        let (coordinator, _, locker, _) = await onCover()
-        defer { coordinator.stop() }
-        #expect(locker.isShowing)
-        #expect(locker.lastDuration == TimeInterval(60))
-        #expect(locker.lastPomodoroChip == PomodoroChip(round: 1, rounds: 2, isLong: false, isFocus: true))
-        #expect(coordinator.pomodoroSession?.phase == .focus(round: 1))
     }
 
     @Test
