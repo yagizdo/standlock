@@ -638,6 +638,8 @@ final class AppCoordinator: ObservableObject {
     /// touches the running coordinator and is lost on the next rebuild.
     func lowerStrictToFirm() {
         schedules = schedules.strictLoweredToFirm()
+        // A running session keeps the level it started with across the rebuild.
+        pomodoroRequestedLevel = pomodoroRequestedLevel?.loweredFromStrict
         saveSchedules()
         restartCoordinator()
     }

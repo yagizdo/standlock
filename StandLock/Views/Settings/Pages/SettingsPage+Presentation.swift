@@ -98,8 +98,8 @@ extension SettingsPage {
         case .troubleshooting:
             [
                 "Troubleshooting", "Last launch", "The last break did not finish", "Right now",
-                "If a break won't close", "Daily skip limit reached", "If nothing else works", "Turn Off Strict",
-                "Reset", "Reset StandLock",
+                "Strict is running as Firm", "If a break won't close", "Gentle", "Firm", "Strict",
+                "Daily skip limit reached", "If nothing else works", "Turn Off Strict", "Reset", "Reset StandLock",
             ]
         case .about:
             [

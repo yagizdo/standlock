@@ -7,12 +7,15 @@ struct TroubleshootingView: View {
     @EnvironmentObject private var coordinator: AppCoordinator
     @State private var isConfirmingStrictOff = false
 
-    /// Read once: the record changes only at launch.
-    private let uncleanExit = UncleanExitStatus.make(
-        reopenedAt: UserDefaults.standard.object(forKey: AppCoordinator.lastUncleanExitKey) as? Date,
-        // Unknown launch date: claim no pending break rather than a guard this run may not hold.
-        launchedAt: NSRunningApplication.current.launchDate ?? .distantFuture, now: Date()
-    )
+    /// Asked on every body: pending turns to past while the page stays open, and the coordinator
+    /// publishes at least every 10 s.
+    private var uncleanExit: UncleanExitStatus? {
+        UncleanExitStatus.make(
+            reopenedAt: UserDefaults.standard.object(forKey: AppCoordinator.lastUncleanExitKey) as? Date,
+            // Unknown launch date: claim no pending break rather than a guard this run may not hold.
+            launchedAt: NSRunningApplication.current.launchDate ?? .distantFuture, now: Date()
+        )
+    }
 
     var body: some View {
         SettingsPageLayout("Troubleshooting") {
@@ -32,11 +35,11 @@ struct TroubleshootingView: View {
 
             SettingsSection("If a break won't close", note: "You can't open Settings while a break is on screen.") {
                 TroubleshootingRow("Gentle", symbol: "forward", text: Text(
-                    "Click Skip this break. With Progressive Enforcement on, you may need to wait or finish a short game first."
+                    "Click Skip this break. With Progressive Enforcement on, later breaks may first ask you to wait, play a short game or type a sentence."
                 ))
                 SettingsRowDivider()
                 TroubleshootingRow("Firm", symbol: "keyboard", text: Text(
-                    "Wait for the countdown, then type the sentence shown on the break screen."
+                    "Wait for the countdown, then type the sentence shown on the break screen. With Progressive Enforcement on, some breaks ask for a short game instead."
                 ))
                 SettingsRowDivider()
                 TroubleshootingRow("Strict", symbol: "command", text: Text(

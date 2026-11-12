@@ -42,12 +42,17 @@ public enum TroubleshootingFix: Equatable, Sendable {
     }
 }
 
+extension DisciplineLevel {
+    /// What Turn Off Strict leaves: Firm in place of Strict, which needs no permission.
+    public var loweredFromStrict: DisciplineLevel { self == .strict ? .firm : self }
+}
+
 extension Array where Element == Schedule {
-    /// Every Strict schedule, on or off, moved to Firm, which needs no permission.
+    /// Every Strict schedule, on or off, moved to Firm.
     public func strictLoweredToFirm() -> [Schedule] {
         map { schedule in
             var lowered = schedule
-            if lowered.disciplineLevel == .strict { lowered.disciplineLevel = .firm }
+            lowered.disciplineLevel = lowered.disciplineLevel.loweredFromStrict
             return lowered
         }
     }
