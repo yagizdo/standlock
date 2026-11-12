@@ -1,5 +1,16 @@
 # Changelog
 
+## StandLock v0.16.0
+
+**Features**
+- If StandLock quits with a break on screen, from a crash, a force quit or the Mac being turned off, the first break after the next launch waits 15 minutes and opens at Gentle with Skip available. A one-time alert says why (3ef6892)
+- Settings › Troubleshooting tells you why breaks are or are not coming, with one button for the usual fix, and how to leave a break at each level. It can also turn every Strict schedule into Firm, or reset StandLock (60735c0)
+
+**Bug Fixes**
+- A break that opened while an app alert was up could not be ended with the Strict emergency hold, and the alert took the clicks meant for the break. The break now closes the alert, and the hold works (3ef6892)
+
+**Full Changelog:** https://github.com/yagizdo/StandLock/compare/v0.15.0...v0.16.0
+
 ## StandLock v0.15.0
 
 **Features**
