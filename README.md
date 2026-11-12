@@ -64,7 +64,7 @@ Or [download the DMG](https://github.com/yagizdo/StandLock/releases/latest) and 
 
 ### A scene in your menu bar
 
-- Pick one of 19 scenes, from an hourglass or a calico cat to a capybara in a hot spring, or turn it off
+- Pick one of 20 scenes, from an hourglass or a calico cat to a capybara in a hot spring, or turn it off
 - The scene changes with your break: alert in the last minute, resting when you pause
 - Countdown, today's stats, Pomodoro, Skip and Pause in one panel
 
@@ -78,7 +78,7 @@ Or [download the DMG](https://github.com/yagizdo/StandLock/releases/latest) and 
 - Your own break screen colours and message
 - Pauses your media during a break, with optional sounds before and after
 - System, Light or Dark, in English, Turkish or Simplified Chinese
-- Launch at login, and updates through Sparkle (automatic checks off by default) or Homebrew (daily check, one click)
+- Launch at login, and updates through Sparkle (automatic checks off by default) or Homebrew (hourly check, one click)
 - Export your settings and schedules to a file and import them on another Mac, or reset StandLock to start over
 - A Troubleshooting page in Settings for when breaks stop coming or a break will not close
 
