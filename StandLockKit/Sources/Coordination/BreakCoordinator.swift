@@ -812,9 +812,12 @@ public final class BreakCoordinator {
         let exercise = isFocusCover(source) ? nil : exercises.randomElement()
         // External breaks use the level's base tier and never move a schedule's escalation.
         var tier = schedule.map(currentTier(for:)) ?? 0
+        var overlayPreferences = preferences
         if let launchGuard {
             effectiveLevel = launchGuard.level
             tier = 0
+            // The day's skips may be gone; this break keeps its Skip whatever the count.
+            overlayPreferences.gentleDailySkipLimit = .max
             self.launchGuard = nil
         }
         let breakEvent = BreakEvent(
@@ -840,7 +843,7 @@ public final class BreakCoordinator {
 
         eventContinuation.yield(.breakStarted(breakEvent))
         locker.showOverlay(level: effectiveLevel, duration: duration,
-                           exercise: exercise, preferences: preferences,
+                           exercise: exercise, preferences: overlayPreferences,
                            statistics: statistics, escalationTier: tier,
                            nextIntervalLabel: schedule.flatMap(nextIntervalLabel(for:)),
                            canPostpone: canPostpone, pomodoroChip: chip)
