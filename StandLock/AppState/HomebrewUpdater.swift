@@ -28,13 +28,14 @@ final class HomebrewUpdater {
     }
 
     /// Checks at every launch on purpose: a found version lives in memory only. The wait keeps
-    /// the first fetch off a network that is still coming up at login.
+    /// the first fetch off a network that is still coming up at login. Hourly, not Sparkle's 4 h:
+    /// a find here only shows the panel banner, so a short interval interrupts nobody.
     func start() {
         Task {
             try? await Task.sleep(for: .seconds(60))
             while !Task.isCancelled {
                 if automaticChecks() { check() }
-                try? await Task.sleep(for: .seconds(24 * 60 * 60))
+                try? await Task.sleep(for: .seconds(60 * 60))
             }
         }
     }
