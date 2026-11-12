@@ -212,6 +212,38 @@
         }
       }
     },
+    "Breaks are on" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Molalar açık"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "休息已开启"
+          }
+        }
+      }
+    },
+    "Breaks are paused until %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Molalar %@ kadar duraklatıldı"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "休息已暂停至 %@"
+          }
+        }
+      }
+    },
     "Calendar Integration will check all calendars. The file does not carry your calendar choices." : {
       "localizations" : {
         "tr" : {
@@ -272,6 +304,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "将更改设置：%@"
+          }
+        }
+      }
+    },
+    "Click Skip this break. With Progressive Enforcement on, later breaks may first ask you to wait, play a short game or type a sentence." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu molayı atla düğmesine tıklayın. Kademeli Zorlama açıksa sonraki molalar önce beklemenizi, kısa bir oyun oynamanızı veya bir cümle yazmanızı isteyebilir."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "点击“跳过这次休息”。开启“逐级加强”后，之后的休息可能会先要求你等待、玩个小游戏或输入一句话。"
           }
         }
       }
@@ -596,6 +644,22 @@
         }
       }
     },
+    "Every schedule that uses Strict switches to Firm." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fırtına kullanan her program Rüzgâr'a geçer."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "所有使用强制的日程改为严格。"
+          }
+        }
+      }
+    },
     "Everything will be deleted" : {
       "localizations" : {
         "tr" : {
@@ -788,6 +852,38 @@
         }
       }
     },
+    "Hold Control, Option and Command until the countdown ends. The break screen shows how long." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Control, Option ve Command tuşlarını geri sayım bitene kadar basılı tutun. Süre mola ekranında yazar."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "按住 Control、Option 和 Command，直到倒计时结束。时长显示在休息屏幕上。"
+          }
+        }
+      }
+    },
+    "Hold the power button until the Mac turns off. When StandLock opens again, the first break comes after 15 minutes, and you can skip it." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mac kapanana kadar güç düğmesini basılı tutun. StandLock yeniden açılınca ilk mola 15 dakika sonra gelir ve atlanabilir."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "按住电源键直到 Mac 关机。StandLock 再次打开后，第一次休息在 15 分钟后开始，可以跳过。"
+          }
+        }
+      }
+    },
     "How many minutes before a break the time left starts showing next to the icon." : {
       "localizations" : {
         "tr" : {
@@ -816,6 +912,38 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "无操作"
+          }
+        }
+      }
+    },
+    "If a break won't close" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mola kapanmıyorsa"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "休息无法关闭时"
+          }
+        }
+      }
+    },
+    "If nothing else works" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Başka hiçbir şey işe yaramazsa"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "其他方法都无效时"
           }
         }
       }
@@ -900,6 +1028,22 @@
         }
       }
     },
+    "In Gentle and Firm, hold Control, Option and Command for 30 seconds." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esinti ve Rüzgâr'da Control, Option ve Command tuşlarını 30 saniye basılı tutun."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "宽松和严格模式下，按住 Control、Option 和 Command 30 秒。"
+          }
+        }
+      }
+    },
     "Language and appearance" : {
       "localizations" : {
         "tr" : {
@@ -928,6 +1072,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "上次检查"
+          }
+        }
+      }
+    },
+    "Last launch" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Son açılış"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上次启动"
           }
         }
       }
@@ -1076,6 +1236,22 @@
         }
       }
     },
+    "Next break at %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sonraki mola: %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下一次休息：%@"
+          }
+        }
+      }
+    },
     "No break during an event in your calendar; it waits until the event ends. All-day events do not count." : {
       "localizations" : {
         "tr" : {
@@ -1104,6 +1280,54 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "共享或录制屏幕时不会休息，这样休息画面不会在别人面前打开。"
+          }
+        }
+      }
+    },
+    "Open Detection" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Algılamayı Aç"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打开检测"
+          }
+        }
+      }
+    },
+    "Open Permissions" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İzinleri Aç"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打开权限"
+          }
+        }
+      }
+    },
+    "Open Schedules" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Programları Aç"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打开日程"
           }
         }
       }
@@ -1220,6 +1444,22 @@
         }
       }
     },
+    "Right now" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Şu an"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "当前状态"
+          }
+        }
+      }
+    },
     "Saving turns off %@: their hours overlap." : {
       "localizations" : {
         "tr" : {
@@ -1284,6 +1524,38 @@
         }
       }
     },
+    "StandLock reopened at %@ after closing during a break. Your next break comes at %@ or later, and you can skip it." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "StandLock bir molanın ortasında kapandı ve yeniden açıldı (%1$@). Sonraki mola %2$@ öncesinde gelmez ve atlayabilirsiniz."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "StandLock 在休息中关闭，%1$@ 重新打开。下一次休息最早 %2$@ 开始，可以跳过。"
+          }
+        }
+      }
+    },
+    "StandLock reopened on %@, %@ after closing during a break. The first break after that could be skipped." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "StandLock bir molanın ortasında kapandı ve yeniden açıldı (%1$@, %2$@). Ondan sonraki ilk mola atlanabiliyordu."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "StandLock 在休息中关闭，%1$@ %2$@ 重新打开。之后的第一次休息可以跳过。"
+          }
+        }
+      }
+    },
     "Strict has no Skip button. To end a break early, hold Control, Option and Command together; the break screen shows for how long." : {
       "localizations" : {
         "tr" : {
@@ -1296,6 +1568,38 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "强制模式没有跳过按钮。要提前结束休息，请同时按住 Control、Option 和 Command；需要按住多久，休息画面上会显示。"
+          }
+        }
+      }
+    },
+    "Strict is running as Firm" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fırtına, Rüzgâr olarak çalışıyor"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "强制正按严格运行"
+          }
+        }
+      }
+    },
+    "Strict needs Accessibility and Input Monitoring. Until both are on, Strict breaks work like Firm." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fırtına için Erişilebilirlik ve Giriş İzleme gerekir. İkisi de açılana kadar Fırtına molaları Rüzgâr gibi çalışır."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "强制需要“无障碍”和“输入监控”。两项都开启前，强制休息按严格方式进行。"
           }
         }
       }
@@ -1348,6 +1652,22 @@
         }
       }
     },
+    "Troubleshooting" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sorun Giderme"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "故障排除"
+          }
+        }
+      }
+    },
     "Try again after the break ends." : {
       "localizations" : {
         "tr" : {
@@ -1360,6 +1680,38 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "请在休息结束后重试。"
+          }
+        }
+      }
+    },
+    "Turn Off Strict" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fırtına'yı Kapat"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "关闭强制"
+          }
+        }
+      }
+    },
+    "Turn Off Strict?" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fırtına kapatılsın mı?"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "关闭强制？"
           }
         }
       }
@@ -1424,6 +1776,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "未完成"
+          }
+        }
+      }
+    },
+    "Wait for the countdown, then type the sentence shown on the break screen. With Progressive Enforcement on, some breaks ask for a short game instead." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Geri sayımı bekleyin, sonra mola ekranındaki cümleyi yazın. Kademeli Zorlama açıksa bazı molalar bunun yerine kısa bir oyun ister."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "等倒计时结束，然后输入休息屏幕上的句子。开启“逐级加强”后，有些休息会改为要求玩个小游戏。"
           }
         }
       }
@@ -2259,6 +2627,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "时间"
+          }
+        }
+      }
+    },
+    "You can't open Settings while a break is on screen." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mola ekrandayken Ayarlar açılamaz."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "休息显示时无法打开设置。"
           }
         }
       }

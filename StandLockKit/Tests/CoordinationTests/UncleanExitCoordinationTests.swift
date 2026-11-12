@@ -160,6 +160,26 @@ struct LaunchGuardCoordinationTests {
         #expect(coordinator.launchGuard == nil)
     }
 
+    /// The day's skips may be used up when the app died: the guarded break still has its Skip,
+    /// and the break after it has the limit back.
+    @Test
+    func guardedBreakIgnoresTheDailySkipLimit() async {
+        let scheduler = dueNow()
+        let preferences = AppPreferences(gentleDailySkipLimit: 0, postponeReturnDelay: 0, idleDetectionEnabled: false)
+        let (coordinator, locker, _) = makeGuarded(schedules: [makeSchedule(level: .gentle)], preferences: preferences,
+                                                   scheduler: scheduler, launchGuard: guardIn(0.05))
+        defer { coordinator.stop() }
+        #expect(await waitUntil { locker.isShowing })
+        let guarded = try? #require(locker.lastPreferences)
+        #expect(guarded.map { DisciplineLevel.gentle.dailySkipLimitReached(preferences: $0, skipsToday: 1_000, isFocusCover: false) } == false)
+
+        locker.showOverlayCalled = false
+        scheduler.nextBreakTimeToReturn = Date().addingTimeInterval(0.01)
+        coordinator.completeActiveBreak()
+        #expect(await waitUntil { locker.showOverlayCalled })
+        #expect(locker.lastPreferences?.gentleDailySkipLimit == 0)
+    }
+
     @Test
     func launchGuardIsUsedOnce() async {
         let scheduler = dueNow()

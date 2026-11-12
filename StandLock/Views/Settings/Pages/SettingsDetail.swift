@@ -26,6 +26,7 @@ struct SettingsDetail: View {
         case .pomodoro: PomodoroSettingsView()
         case .permissions: PermissionsView()
         case .statistics: StatisticsView()
+        case .troubleshooting: TroubleshootingView()
         case .about: AboutView(updater: updater)
         }
     }
