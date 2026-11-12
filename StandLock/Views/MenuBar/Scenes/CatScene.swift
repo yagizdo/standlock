@@ -140,7 +140,7 @@ struct CatScene: View {
 }
 
 /// An oval with soft tufts, deeper at the sides and bottom, like long fur.
-private struct CatFluff: Shape {
+struct CatFluff: Shape {
     let bumps: Int
     let depth: CGFloat
 

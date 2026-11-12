@@ -19,5 +19,6 @@ public enum MenuScene: String, Codable, Sendable, CaseIterable {
     case cooking
     case rainyDay
     case hammock
+    case psychologist
     case off
 }

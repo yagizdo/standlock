@@ -7,6 +7,8 @@ struct SceneHead: View {
         case bun, short, long
         /// Short and close, with the hairline high and the ears showing.
         case crop
+        /// Long and wavy past the shoulders, parted in the middle, framing the face.
+        case wavy
         case beret(UInt)
         case bucketHat(UInt)
     }
@@ -35,6 +37,9 @@ struct SceneHead: View {
             if hair == .long {
                 RoundedRectangle(cornerRadius: 18).fill(Color(hex: hairColor)).frame(width: 52, height: 54).offset(y: 10)
             }
+            if hair == .wavy {
+                WavyHair().fill(Color(hex: hairColor)).frame(width: 60, height: 64).offset(y: 14)
+            }
             if hair == .bun {
                 Circle().fill(Color(hex: hairColor)).frame(width: 18, height: 18).offset(y: -22)
             }
@@ -43,7 +48,11 @@ struct SceneHead: View {
             } else {
                 Circle().fill(Color(hex: hairColor)).frame(width: 48, height: 48)
                 Ellipse().fill(Color(hex: skin)).frame(width: 40, height: 34).offset(y: 7)
-                Ellipse().fill(Color(hex: hairColor)).frame(width: 44, height: 18).offset(y: -9)
+                if hair == .wavy {
+                    partedHair
+                } else {
+                    Ellipse().fill(Color(hex: hairColor)).frame(width: 44, height: 18).offset(y: -9)
+                }
             }
             Capsule().fill(Color.white.opacity(0.22)).frame(width: 12, height: 4).rotationEffect(.degrees(-28)).offset(x: -10, y: -15)
             ForEach([-1.0, 1], id: \.self) { side in
@@ -85,6 +94,18 @@ struct SceneHead: View {
         Ellipse().fill(Color(hex: skin)).frame(width: 44, height: 50).offset(y: 3)
         Ellipse().fill(Color(hex: hairColor)).frame(width: 44, height: 28).offset(y: -12)
         Ellipse().fill(Color(hex: skin)).frame(width: 34, height: 20).offset(y: -3)
+    }
+
+    /// Two sweeps from a centre parting, locks down both cheeks and a small silver hoop.
+    @ViewBuilder private var partedHair: some View {
+        ForEach([-1.0, 1], id: \.self) { side in
+            Ellipse().fill(Color(hex: hairColor)).frame(width: 28, height: 18)
+                .rotationEffect(.degrees(side * 24)).offset(x: side * 11, y: -9)
+            Ellipse().fill(Color(hex: hairColor)).frame(width: 10, height: 32).offset(x: side * 22, y: 12)
+        }
+        if earring {
+            Circle().stroke(Color(hex: 0xC8CDD4), lineWidth: 1.6).frame(width: 6, height: 6).offset(x: 21, y: 22)
+        }
     }
 
     /// Stubble below the cheeks, a wide moustache, a darker chin and the mouth between them.
@@ -147,7 +168,7 @@ struct SceneHead: View {
                 Ellipse().fill(Color(hex: color)).frame(width: 56, height: hatOverEyes ? 14 : 10).offset(y: -11 + drop)
                 Capsule().fill(Color.black.opacity(0.18)).frame(width: 36, height: 3).offset(y: -13 + drop)
             }
-        case .bun, .short, .long, .crop:
+        case .bun, .short, .long, .crop, .wavy:
             EmptyView()
         }
         if chefHat {
@@ -159,6 +180,28 @@ struct SceneHead: View {
                 Rectangle().fill(Color(hex: 0xE4DED2)).frame(width: 34, height: 2).offset(y: -16)
             }
         }
+    }
+}
+
+/// Long hair seen from the front: a round crown, soft sides and a wavy hem.
+private struct WavyHair: Shape {
+    func path(in rect: CGRect) -> Path {
+        let crown = rect.minY + rect.width / 2
+        let hem = rect.maxY - 5
+        let waves = 4
+        let step = (rect.width - 4) / CGFloat(waves)
+        var path = Path()
+        path.move(to: CGPoint(x: rect.minX, y: crown))
+        path.addArc(center: CGPoint(x: rect.midX, y: crown), radius: rect.width / 2,
+                    startAngle: .degrees(180), endAngle: .degrees(0), clockwise: false)
+        path.addQuadCurve(to: CGPoint(x: rect.maxX - 2, y: hem), control: CGPoint(x: rect.maxX + 4, y: (crown + hem) / 2))
+        for wave in 0..<waves {
+            let start = rect.maxX - 2 - CGFloat(wave) * step
+            path.addQuadCurve(to: CGPoint(x: start - step, y: hem), control: CGPoint(x: start - step / 2, y: rect.maxY + 3))
+        }
+        path.addQuadCurve(to: CGPoint(x: rect.minX, y: crown), control: CGPoint(x: rect.minX - 4, y: (crown + hem) / 2))
+        path.closeSubpath()
+        return path
     }
 }
 

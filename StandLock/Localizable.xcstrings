@@ -1380,6 +1380,22 @@
         }
       }
     },
+    "Psychologist" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Psikolog"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "心理咨询师"
+          }
+        }
+      }
+    },
     "Reset" : {
       "localizations" : {
         "tr" : {
