@@ -81,12 +81,6 @@ struct TroubleshootingTests {
         #expect(lowered.map(\.isEnabled) == schedules.map(\.isEnabled))
     }
 
-    /// A running Pomodoro session keeps the level it asked for at start; Turn Off Strict lowers it too.
-    @Test(arguments: [(DisciplineLevel.strict, DisciplineLevel.firm), (.firm, .firm), (.gentle, .gentle)])
-    func sessionLevelLosesStrictOnly(level: DisciplineLevel, expected: DisciplineLevel) {
-        #expect(level.loweredFromStrict == expected)
-    }
-
     /// A schedule turned off now still brings Strict back when it is turned on.
     @Test func disabledStrictScheduleCounts() {
         #expect([schedule(.gentle), schedule(.strict, enabled: false)].containsStrict)

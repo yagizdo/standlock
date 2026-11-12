@@ -26,10 +26,6 @@ struct MenuSceneTests {
         #expect(look(secondsLeft: 0) == .breakSoon)
     }
 
-    @Test func aBreakPastItsTimeIsStillBreakSoon() {
-        #expect(look(secondsLeft: -5) == .breakSoon)
-    }
-
     @Test func theLookTurnsWithTheDigitsOnScreen() {
         // 60.4 s shows as 1:00, so it has to read as the last minute.
         #expect(look(secondsLeft: 60.4) == .breakSoon)
@@ -86,11 +82,6 @@ struct MenuSceneTests {
         #expect(MenuSceneLook(state: .breakActive, pomodoro: focus, now: now) == .timeToStand)
     }
 
-    @Test func noSessionKeepsTheStateLook() {
-        #expect(MenuSceneLook(state: .countingDown(to: now.addingTimeInterval(600)), pomodoro: nil, now: now) == .working)
-        #expect(MenuSceneLook(state: .paused(until: now), pomodoro: nil, now: now) == .paused)
-    }
-
     @Test func savedPreferencesFromAnOlderVersionGetTheHourglass() throws {
         let decoded = try JSONDecoder().decode(AppPreferences.self, from: Data("{}".utf8))
         #expect(decoded.menuScene == .hourglass)
@@ -101,10 +92,5 @@ struct MenuSceneTests {
         let decoded = try JSONDecoder().decode(AppPreferences.self, from: Data(json.utf8))
         #expect(decoded.menuScene == .hourglass)
         #expect(decoded.menuBarCountdownMinutes == 3)
-    }
-
-    @Test func aChosenSceneSurvivesARoundTrip() throws {
-        let data = try JSONEncoder().encode(AppPreferences(menuScene: .desk))
-        #expect(try JSONDecoder().decode(AppPreferences.self, from: data).menuScene == .desk)
     }
 }

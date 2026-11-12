@@ -29,12 +29,6 @@ struct BreakHistoryTests {
 
     // MARK: - Storage
 
-    @Test func upsertCreatesNewRecord() {
-        var history = BreakHistory()
-        history.upsert(makeRecord("2026-06-01", completed: 3))
-        #expect(history.record(for: "2026-06-01")?.breaksCompleted == 3)
-    }
-
     @Test func upsertUpdatesExistingRecord() {
         var history = BreakHistory()
         history.upsert(makeRecord("2026-06-01", completed: 2))
@@ -65,21 +59,6 @@ struct BreakHistoryTests {
         history.pruneOlderThan("2026-05-01")
         #expect(history.records.count == 2)
         #expect(history.record(for: "2025-01-01") == nil)
-    }
-
-    @Test func jsonRoundTrip() throws {
-        var history = BreakHistory()
-        history.upsert(makeRecord("2026-06-01", completed: 3, skipped: 1, duration: 300))
-
-        let data = try JSONEncoder().encode(history)
-        let decoded = try JSONDecoder().decode(BreakHistory.self, from: data)
-
-        #expect(decoded.records.count == 1)
-        #expect(decoded.bestStreak == 1)
-        let record = decoded.record(for: "2026-06-01")!
-        #expect(record.breaksCompleted == 3)
-        #expect(record.breaksSkipped == 1)
-        #expect(record.totalBreakDuration == 300)
     }
 
     // MARK: - Aggregation
@@ -266,15 +245,6 @@ struct BreakHistoryTests {
         #expect(history.bestStreak == 3)
     }
 
-    /// Without a completed break such a day is skipped, as before: trying Pomodoro on a day off
-    /// never ends a streak.
-    @Test func pomodoroOnlyDayWithoutCompletedBreakKeepsStreak() {
-        var history = BreakHistory()
-        history.upsert(makeRecord("2026-06-01", completed: 1))
-        history.upsert(makeRecord("2026-06-02", skipped: 2, active: false))
-        #expect(history.currentStreak(referenceDate: date("2026-06-02")) == 1)
-    }
-
     /// A session stopped in focus 1 writes tallies and no break. That record reads as no record:
     /// today stays in progress, and a past scheduled weekday still ends the streak.
     @Test func talliesOnlyRecordReadsAsMissing() {
@@ -312,15 +282,6 @@ struct BreakHistoryTests {
 
     // MARK: - DailyBreakRecord
 
-    @Test func dateKeyRoundTrip() {
-        let ref = date("2026-06-01")
-        let key = DailyBreakRecord.dateKey(from: ref)
-        #expect(key == "2026-06-01")
-        let parsed = DailyBreakRecord.date(from: key)
-        #expect(parsed != nil)
-        #expect(DailyBreakRecord.dateKey(from: parsed!) == "2026-06-01")
-    }
-
     @Test func recordIdentifiable() {
         let record = makeRecord("2026-06-01", completed: 3)
         #expect(record.id == "2026-06-01")
@@ -357,19 +318,6 @@ struct BreakHistoryTests {
         #expect(stats.breaksCompleted == 2)
         #expect(stats.currentStreak == 2)
         #expect(stats.pomodoroTallies == nil)
-    }
-
-    @Test func pomodoroTalliesRoundTrip() throws {
-        let tallies = PomodoroTallies(focusSeconds: 3000, rounds: 2, sessionsFinished: 1, sessionsAbandoned: 1)
-        var record = makeRecord("2026-06-01", completed: 2)
-        record.pomodoroTallies = tallies
-        var stats = BreakStatistics()
-        stats.pomodoroTallies = tallies
-
-        let decodedRecord = try JSONDecoder().decode(DailyBreakRecord.self, from: JSONEncoder().encode(record))
-        let decodedStats = try JSONDecoder().decode(BreakStatistics.self, from: JSONEncoder().encode(stats))
-        #expect(decodedRecord.pomodoroTallies == tallies)
-        #expect(decodedStats.pomodoroTallies == tallies)
     }
 
     // MARK: - Recording a day

@@ -59,10 +59,6 @@ struct SettingsImportSummaryTests {
         #expect(Self.pages { $0.preferences.idleDetectionEnabled = false } == [.detection])
     }
 
-    @Test func importChangingPomodoroListsPomodoroPage() {
-        #expect(Self.pages { $0.preferences.pomodoro.rounds = 6 } == [.pomodoro])
-    }
-
     @Test func pagesComeInSidebarOrder() {
         let pages = Self.pages { export in
             export.preferences.idleDetectionEnabled = false

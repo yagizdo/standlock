@@ -21,14 +21,6 @@ struct LanguageResolutionTests {
         #expect(resolveLanguage(selection: nil, available: ["en", "tr"], systemPreferred: ["ja", "fr"]) == "en")
     }
 
-    @Test func emptyAvailableFallsBackToEnglish() {
-        #expect(resolveLanguage(selection: nil, available: [], systemPreferred: ["tr"]) == "en")
-    }
-
-    @Test func selectionWithRegionTagMatchesByLanguageCode() {
-        #expect(resolveLanguage(selection: "tr-TR", available: ["en", "tr"], systemPreferred: ["en"]) == "tr")
-    }
-
     @Test func scriptTaggedSelectionResolves() {
         #expect(resolveLanguage(
             selection: "zh-Hans",

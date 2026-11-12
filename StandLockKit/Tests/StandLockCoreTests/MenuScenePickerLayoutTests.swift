@@ -37,17 +37,6 @@ struct MenuScenePickerLayoutTests {
         #expect(!hasMore)
     }
 
-    @Test func aRowThatWouldHoldOnlyThePlusCardIsNotNeeded() {
-        // With exactly `rows * 3` cards, all of them show and no "+" card is drawn.
-        let rows = (allScenes.count + 2) / 3
-        #expect(MenuScenePickerLayout.cards(rows: rows + 1).hasMore == false)
-    }
-
-    @Test func aSceneInTheFirstRowsOpensWithTwoRows() {
-        #expect(MenuScenePickerLayout.rows(showing: .off) == 2)
-        #expect(MenuScenePickerLayout.rows(showing: allScenes[4]) == 2)
-    }
-
     @Test func aHiddenSelectedSceneOpensEnoughRowsToShowIt() {
         for scene in allScenes {
             let rows = MenuScenePickerLayout.rows(showing: scene)

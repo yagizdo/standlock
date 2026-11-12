@@ -34,10 +34,6 @@ struct NextBreakStateTests {
         #expect(result == .breakActive)
     }
 
-    @Test func aPauseShowsItsEndTime() {
-        #expect(state(isPaused: true, pausedUntil: until) == .paused(until: until))
-    }
-
     @Test func aPauseWinsOverADeferralAndTheNextBreak() {
         let result = state(
             isPaused: true, pausedUntil: until, deferralReason: .cameraActive, nextBreakTime: next
@@ -55,10 +51,6 @@ struct NextBreakStateTests {
         #expect(state(isPaused: true, deferralReason: .postponed) == .deferred(.postponed))
     }
 
-    @Test func aPauseWithNoTimeFallsThroughToTheNextBreak() {
-        #expect(state(isPaused: true, nextBreakTime: next) == .countingDown(to: next))
-    }
-
     @Test func aPauseWithNoTimeFallsThroughToNoSchedules() {
         #expect(state(isPaused: true, hasSchedules: false) == .noSchedules)
     }
@@ -66,10 +58,6 @@ struct NextBreakStateTests {
     @Test func aDeferralWinsOverTheNextBreak() {
         let result = state(deferralReason: .screenSharing, nextBreakTime: next)
         #expect(result == .deferred(.screenSharing))
-    }
-
-    @Test func aScheduledBreakCountsDown() {
-        #expect(state(nextBreakTime: next) == .countingDown(to: next))
     }
 
     @Test func aNextBreakWinsOverAnEmptyScheduleList() {

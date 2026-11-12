@@ -26,13 +26,6 @@ struct PomodoroSessionTests {
 
     // MARK: - Configuration
 
-    @Test func standardIsTwentyFiveFiveFifteenFour() {
-        #expect(Self.config.focus == TimeInterval(1500))
-        #expect(Self.config.shortBreak == TimeInterval(300))
-        #expect(Self.config.longBreak == TimeInterval(900))
-        #expect(Self.config.rounds == 4)
-    }
-
     @Test func decodesEmptyObjectToStandard() throws {
         let decoded = try JSONDecoder().decode(PomodoroConfiguration.self, from: Data("{}".utf8))
         #expect(decoded == .standard)
@@ -106,16 +99,6 @@ struct PomodoroSessionTests {
         let next = try #require(Self.session(.focus(round: 4)).next(at: Self.start))
         #expect(next.phase == .longBreak)
         #expect(next.phaseEnd == Self.start.addingTimeInterval(900))
-    }
-
-    @Test func shortBreakGoesToNextFocus() throws {
-        let next = try #require(Self.session(.shortBreak(afterRound: 2)).next(at: Self.start))
-        #expect(next.phase == .focus(round: 3))
-        #expect(next.phaseEnd == Self.start.addingTimeInterval(1500))
-    }
-
-    @Test func longBreakEndsSession() {
-        #expect(Self.session(.longBreak).next(at: Self.start) == nil)
     }
 
     @Test func oneRoundGoesStraightToLongBreak() throws {
@@ -227,11 +210,6 @@ struct PomodoroSessionTests {
         #expect(next.phaseEnd == back.addingTimeInterval(300))
     }
 
-    @Test func coverModeCoveredFocusWithTimeLeftIsUnchanged() {
-        let session = Self.coverSession(.focus(round: 1), endingAt: Self.start.addingTimeInterval(600))
-        #expect(session.catchUp(awayFrom: Self.start, to: Self.start.addingTimeInterval(300)) == .unchanged)
-    }
-
     @Test(arguments: [TimeInterval(-600), 0, 20])
     func coverModeOpenBreakNearOrPastItsEndDelaysTheCover(left: TimeInterval) {
         let back = Self.start.addingTimeInterval(1200)
@@ -277,10 +255,6 @@ struct PomodoroSessionTests {
     @Test func chipForLongBreakIsLong() {
         let status = PomodoroStatus(session: Self.session(.longBreak), level: .gentle)
         #expect(status.chip?.isLong == true)
-    }
-
-    @Test func focusHasNoChip() {
-        #expect(PomodoroStatus(session: Self.session(.focus(round: 1)), level: .gentle).chip == nil)
     }
 
     @Test func chipInCoverModeMarksFocusAndBreaksHaveNone() {

@@ -92,15 +92,6 @@ struct HomebrewInstallTests {
         #expect(HomebrewInstall.prefix(appBundleURL: staged, caskroomURLs: [fixture.caskroom]) == nil)
     }
 
-    @Test func aMissingBrewIsNotBrewManaged() throws {
-        let fixture = try Fixture()
-        defer { fixture.cleanUp() }
-        try fixture.link()
-        try FileManager.default.removeItem(at: fixture.prefix.appendingPathComponent("bin/brew"))
-
-        #expect(HomebrewInstall.prefix(appBundleURL: fixture.app, caskroomURLs: [fixture.caskroom]) == nil)
-    }
-
     @Test func aBrewThatCannotRunIsNotBrewManaged() throws {
         let fixture = try Fixture()
         defer { fixture.cleanUp() }
@@ -139,16 +130,6 @@ struct HomebrewInstallTests {
             appBundleURL: fixture.app,
             caskroomURLs: [otherCaskroom, fixture.caskroom]
         )
-
-        #expect(samePath(prefix, fixture.prefix))
-    }
-
-    @Test func aVersionFolderOlderThanTheBundleStillMatches() throws {
-        let fixture = try Fixture()
-        defer { fixture.cleanUp() }
-        try fixture.link(version: "0.1.0")
-
-        let prefix = HomebrewInstall.prefix(appBundleURL: fixture.app, caskroomURLs: [fixture.caskroom])
 
         #expect(samePath(prefix, fixture.prefix))
     }

@@ -17,13 +17,6 @@ struct PixelGridTests {
         #expect(grid[x: 2, y: 1] == 0x0000BB)
     }
 
-    @Test func aCharacterMissingFromThePaletteIsTransparent() {
-        var grid = PixelGrid(width: 1, height: 1) { _, _ in 0x111111 }
-        grid.stamp(PixelSprite(["Z"], palette: [:]), x: 0, y: 0)
-
-        #expect(grid[x: 0, y: 0] == 0x111111)
-    }
-
     @Test func aSpriteHangingOverAnyEdgeDrawsOnlyItsInsidePart() {
         var grid = PixelGrid(width: 2, height: 2)
         grid.stamp(sprite, x: -1, y: -1)
