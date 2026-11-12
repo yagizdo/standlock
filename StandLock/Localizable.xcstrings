@@ -1300,6 +1300,38 @@
         }
       }
     },
+    "The last break did not finish" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Son mola bitmeden kapandı"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上次休息没有正常结束"
+          }
+        }
+      }
+    },
+    "This can happen after a crash or after holding the power button. Your next break comes in %lld minutes, and you can skip it.\n\nSettings are in the StandLock menu bar icon. If a break ever won't close, hold the power button to turn off the Mac." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu bir çökmeden ya da güç tuşuna basılı tuttuktan sonra olabilir. Sonraki mola %lld dakika sonra gelir ve atlayabilirsin.\n\nAyarlar, menü çubuğundaki StandLock simgesinde. Bir mola kapanmazsa Mac'i kapatmak için güç tuşunu basılı tut."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "这可能是程序崩溃，或长按电源键关机导致的。下一次休息会在 %lld 分钟后开始，你可以跳过。\n\n设置在菜单栏的 StandLock 图标里。如果休息画面无法关闭，长按电源键关机即可。"
+          }
+        }
+      }
+    },
     "This cannot be undone." : {
       "localizations" : {
         "tr" : {

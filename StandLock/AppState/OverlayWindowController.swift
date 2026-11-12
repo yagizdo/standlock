@@ -47,6 +47,9 @@ final class OverlayWindowController: LockPresenting {
         nextIntervalLabel: String? = nil, canPostpone: Bool = false,
         pomodoroChip: PomodoroChip? = nil
     ) {
+        // An app-modal alert (a permission restart, Sparkle) sits below the overlay and takes
+        // every click from it, Skip included, until the break ends. Closing it returns `.abort`.
+        if NSApp.modalWindow != nil { NSApp.abortModal() }
         let isRecreation = isShowing
         dismissOverlay()
         if !isRecreation {

@@ -74,6 +74,12 @@ final class AppCoordinator: ObservableObject {
     private var calendarStatusCancellable: AnyCancellable?
     /// Tracks the calendar grant so the store is reset exactly on the false -> true transition.
     private var lastCalendarAuthorized = false
+    /// Set when the last run died with a break on screen; handed to every coordinator build
+    /// until the first break opens.
+    private var launchGuard: LaunchGuard?
+    /// When the break now on screen came up. Written synchronously by UserDefaults, so it
+    /// survives a crash or `kill -9`; a forced power-off seconds after the write may lose it.
+    private static let breakOnScreenKey = "breakOnScreenSince"
 
     init() {
         permissionChecker = PermissionChecker(languageStore: languageStore)
@@ -118,9 +124,22 @@ final class AppCoordinator: ObservableObject {
                 self?.handleCalendarAuthorizationChange()
             }
         Task { await permissionChecker.pollContinuously() }
+        // Read and removed here: the guard lives in memory from now on, and the next break
+        // writes a fresh marker of its own.
+        launchGuard = UncleanExit.launchGuard(
+            breakOnScreenSince: UserDefaults.standard.object(forKey: Self.breakOnScreenKey) as? Date, now: Date()
+        )
+        UserDefaults.standard.removeObject(forKey: Self.breakOnScreenKey)
         // Always built: a Pomodoro session runs with no schedule enabled.
         startCoordinator(restoring: carriedStateForToday())
         restoreSavedPomodoroSession()
+        if launchGuard != nil {
+            // A run loop block, not a Task: `runModal` inside a main-actor job holds the main
+            // queue, so the grace would stop while the alert is up and the break open on OK.
+            RunLoop.main.perform { [languageStore] in
+                MainActor.assumeIsolated { UncleanExitNotice.show(languageStore: languageStore) }
+            }
+        }
         if !hasCompletedOnboarding {
             Task { @MainActor in
                 try? await Task.sleep(for: .seconds(0.5))
@@ -352,11 +371,19 @@ final class AppCoordinator: ObservableObject {
             breakCoordinator?.postponeActiveBreak()
         }
 
+        breakCoordinator.onBreakOnScreenChanged = { since in
+            if let since {
+                UserDefaults.standard.set(since, forKey: Self.breakOnScreenKey)
+            } else {
+                UserDefaults.standard.removeObject(forKey: Self.breakOnScreenKey)
+            }
+        }
         breakCoordinator.start(with: enforceableSchedules(),
                                preferences: preferences,
                                statistics: todayStats,
                                restoring: state,
-                               pomodoro: pomodoro)
+                               pomodoro: pomodoro,
+                               launchGuard: launchGuard)
 
         eventListenerTask = Task {
             for await event in breakCoordinator.events {
@@ -485,6 +512,8 @@ final class AppCoordinator: ObservableObject {
         let pauseRemaining = pausedUntil?.timeIntervalSinceNow
         // A session keeps its own level across a rebuild (S87 picks it at start), gated again here.
         let session = coordinator?.pomodoroSession
+        // Nil once the guarded break opened; read back in the same turn, as the state above.
+        launchGuard = coordinator?.launchGuard
         stopCoordinator()
         isPaused = false
         pausedUntil = nil
