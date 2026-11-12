@@ -130,6 +130,7 @@
 		E390B98931E7EE42E14FF2BD /* ActionArea.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5A68046037D0CAAE70C0F88 /* ActionArea.swift */; };
 		E53542CFD208972C8A8BD5C7 /* PanelClock.swift in Sources */ = {isa = PBXBuildFile; fileRef = C74EB53DDDC340414AD64BE2 /* PanelClock.swift */; };
 		E6C55A4F70CDBF7DB5403B1F /* DeleteConfirmationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF82AC0C965E52DC46B97A8C /* DeleteConfirmationView.swift */; };
+		E8ACC9DC54A8D3F9C73DFB21 /* PsychologistScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 858ADD99FAEBD60A63F17BEF /* PsychologistScene.swift */; };
 		E9A645EF57C9276206BF0394 /* SceneBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2A85DF7A9AA67198838FE47 /* SceneBubble.swift */; };
 		EAC5C8BAB2FC5D5FB1D845C5 /* PermissionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12184C2234D04E8FE035B701 /* PermissionsView.swift */; };
 		ED1A168BD55576065212E8ED /* OverlayWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4462E8D161113596647BD19E /* OverlayWindowController.swift */; };
@@ -206,6 +207,7 @@
 		7F162EB6AEFC34DC88D7D57E /* LaunchAtLogin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAtLogin.swift; sourceTree = "<group>"; };
 		8180C020203FB970C798C84E /* ThemeStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeStore.swift; sourceTree = "<group>"; };
 		8402CB83954DB4BBDBE81036 /* TroubleshootingRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TroubleshootingRow.swift; sourceTree = "<group>"; };
+		858ADD99FAEBD60A63F17BEF /* PsychologistScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PsychologistScene.swift; sourceTree = "<group>"; };
 		85C5398AE9D97E6B58618468 /* WordmarkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordmarkView.swift; sourceTree = "<group>"; };
 		88D72443C7D064247ADFE6D0 /* GeneralSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralSettingsView.swift; sourceTree = "<group>"; };
 		89C0F66299A75A8744DE5CF6 /* SettingsDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsDescription.swift; sourceTree = "<group>"; };
@@ -531,6 +533,7 @@
 				C851627E22E0B6855CD31121 /* PenguinScene.swift */,
 				0FCC1989904A9C3332CDE801 /* PixelGridView.swift */,
 				6162024620A7B5B6DDFC8C3A /* PixelParts.swift */,
+				858ADD99FAEBD60A63F17BEF /* PsychologistScene.swift */,
 				13C49519A31A083C9E53FCCF /* RainyDayScene.swift */,
 				6F0CB1A8BFD3077844E794D4 /* ReadingScene.swift */,
 				E4C53062EDA5469F4E031D21 /* RobotScene.swift */,
@@ -725,6 +728,7 @@
 				2FED2DBCC817D32B80CBE7AA /* PomodoroRow.swift in Sources */,
 				74A65286E3635E9A799AB935 /* PomodoroSettingsView.swift in Sources */,
 				3F24521CD8A9CA8C9156A1B9 /* PreferencesSaveOwner.swift in Sources */,
+				E8ACC9DC54A8D3F9C73DFB21 /* PsychologistScene.swift in Sources */,
 				4A537C55B992DF62814F9857 /* QuickActionsView.swift in Sources */,
 				0B393CE81B833D5037CFDB55 /* QuitConfirmationView.swift in Sources */,
 				034D0ADC1966552BA8A77C1F /* RainyDayScene.swift in Sources */,
