@@ -73,6 +73,7 @@ public final class BreakCoordinator {
     private let scheduler: any SchedulingEngine
     private let detector: any ContextDetecting
     private let locker: any LockPresenting
+    private let inputIdleDuration: () -> TimeInterval
 
     private var activeSchedules: [Schedule] = []
     private var preferences: AppPreferences = AppPreferences()
@@ -95,6 +96,7 @@ public final class BreakCoordinator {
     /// Told when a break comes on screen (its start) and when it leaves (nil). The app keeps the
     /// date on disk, so a launch can tell the last run died with a break up (`UncleanExit`).
     public var onBreakOnScreenChanged: ((Date?) -> Void)?
+    private var breakStartedAtUptime: TimeInterval = 0
     /// The first break after an unclean exit waits for `notBefore` and opens at `level`. Nil once
     /// that break has opened; a rebuild reads it back and hands it on.
     public private(set) var launchGuard: LaunchGuard?
@@ -166,7 +168,8 @@ public final class BreakCoordinator {
 
     public init(scheduler: any SchedulingEngine, detector: any ContextDetecting,
                 locker: any LockPresenting, deferralPollingInterval: TimeInterval = 10,
-                cueLead: TimeInterval = 60) {
+                cueLead: TimeInterval = 60,
+                inputIdleDuration: @escaping () -> TimeInterval = { IdleDetector().inputIdleDuration() }) {
         var continuation: AsyncStream<CoordinatorEvent>.Continuation!
         self.events = AsyncStream { continuation = $0 }
         self.eventContinuation = continuation
@@ -175,6 +178,7 @@ public final class BreakCoordinator {
         self.locker = locker
         self.deferralPollingInterval = deferralPollingInterval
         self.cueLead = cueLead
+        self.inputIdleDuration = inputIdleDuration
     }
 
     /// Pass previously persisted `statistics` so a relaunch during the day keeps today's
@@ -842,6 +846,7 @@ public final class BreakCoordinator {
         }
 
         eventContinuation.yield(.breakStarted(breakEvent))
+        breakStartedAtUptime = ProcessInfo.processInfo.systemUptime
         locker.showOverlay(level: effectiveLevel, duration: duration,
                            exercise: exercise, preferences: overlayPreferences,
                            statistics: statistics, escalationTier: tier,
@@ -907,7 +912,11 @@ public final class BreakCoordinator {
                 repetitionTrackers[schedule.id] = tracker
             }
         }
-        locker.dismissOverlay()
+        // Compare against the whole time the overlay was up, even if its windows
+        // were recreated or the countdown's completion arrived a little late.
+        let elapsed = ProcessInfo.processInfo.systemUptime - breakStartedAtUptime
+        let shouldLock = preferences.lockScreenAfterUnattendedBreak && inputIdleDuration() >= elapsed
+        locker.completeOverlay(lockScreen: shouldLock)
         eventContinuation.yield(.breakCompleted(event))
         if preferences.soundAfterBreak { eventContinuation.yield(.breakCue(.ended)) }
         countCompletedBreak()

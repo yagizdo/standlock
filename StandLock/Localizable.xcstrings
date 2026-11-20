@@ -8373,6 +8373,38 @@
         }
       }
     },
+    "Lock screen after an unattended break" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mola boyunca etkileşim olmazsa ekranı kilitle"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无人操作时在休息结束后锁屏"
+          }
+        }
+      }
+    },
+    "Shows the macOS Lock Screen when a break ends without any keyboard or mouse activity." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mola boyunca klavye veya fare kullanılmazsa mola sonunda macOS kilit ekranını gösterir."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "如果休息期间没有键盘或鼠标操作，休息结束时会显示 macOS 锁定屏幕。"
+          }
+        }
+      }
+    },
     "Sound when a break ends" : {
       "localizations" : {
         "tr" : {

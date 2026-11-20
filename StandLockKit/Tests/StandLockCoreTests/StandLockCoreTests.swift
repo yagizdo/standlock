@@ -145,6 +145,7 @@ struct ScheduleModelTests {
         let decoded = try JSONDecoder().decode(AppPreferences.self, from: json)
         #expect(decoded.firmSkipDelay == 20)
         #expect(decoded.pauseMediaDuringBreak == true)
+        #expect(!decoded.lockScreenAfterUnattendedBreak)
     }
 
     @Test func appPreferencesDecodesWithoutEscalationLevel() throws {

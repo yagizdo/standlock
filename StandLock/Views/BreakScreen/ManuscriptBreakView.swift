@@ -229,6 +229,7 @@ struct ManuscriptBreakView: View {
         } else {
             isVisible = false
         }
+        guard !Task.isCancelled else { return }
         onComplete()
     }
 }

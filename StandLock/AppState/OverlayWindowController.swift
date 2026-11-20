@@ -9,6 +9,7 @@ final class OverlayWindowController: LockPresenting {
     private var eventTapController: EventTapController?
     private var screenObserver: NSObjectProtocol?
     private var focusTimer: Timer?
+    private var screenLockTimeout: Task<Void, Never>?
     /// Held while a Pomodoro focus cover is up: the user works away from the Mac, and an idle
     /// display sleep would lock the session, take the cover down and lose its end cue.
     private var keepAwake: NSObjectProtocol?
@@ -123,6 +124,8 @@ final class OverlayWindowController: LockPresenting {
 
     func dismissOverlay() {
         guard isShowing else { return }
+        screenLockTimeout?.cancel()
+        screenLockTimeout = nil
         if let observer = screenObserver {
             NotificationCenter.default.removeObserver(observer)
             screenObserver = nil
@@ -151,6 +154,23 @@ final class OverlayWindowController: LockPresenting {
         NSApp.setActivationPolicy(policyBeforeOverlay)
     }
 
+    func completeOverlay(lockScreen: Bool) {
+        guard lockScreen, SystemScreenLock.request() else {
+            dismissOverlay()
+            return
+        }
+
+        // The coordinator's screen-lock observer dismisses the overlay once macOS locks.
+        // Keep covering the desktop during the transition, with a fallback if lock is disabled.
+        focusTimer?.invalidate()
+        eventTapController?.stop()
+        screenLockTimeout = Task { [weak self] in
+            try? await Task.sleep(for: .seconds(2))
+            guard !Task.isCancelled else { return }
+            self?.dismissOverlay()
+        }
+    }
+
     private func startEventTap(preferences: AppPreferences) {
         let level = currentLevel ?? .strict
         let policy = level.enforcementPolicy(preferences: preferences)
@@ -171,24 +191,27 @@ final class OverlayWindowController: LockPresenting {
     }
 
     private func handleSkip() {
+        guard screenLockTimeout == nil else { return }
         breakStartDate = nil
         dismissOverlay()
         onSkip?()
     }
 
     private func handlePostpone() {
+        guard screenLockTimeout == nil else { return }
         breakStartDate = nil
         dismissOverlay()
         onPostpone?()
     }
 
     private func handleComplete() {
+        guard isShowing, screenLockTimeout == nil else { return }
         breakStartDate = nil
-        dismissOverlay()
         onComplete?()
     }
 
     private func handleEscape() {
+        guard screenLockTimeout == nil else { return }
         breakStartDate = nil
         dismissOverlay()
         onEscape?()
@@ -227,6 +250,7 @@ final class OverlayWindowController: LockPresenting {
         lastScreenChangeHandled = now
 
         guard isShowing,
+              screenLockTimeout == nil,
               let level = currentLevel,
               let prefs = currentPreferences,
               let stats = currentStatistics else { return }

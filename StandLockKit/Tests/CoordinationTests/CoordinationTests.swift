@@ -34,6 +34,7 @@ final class MockDetector: ContextDetecting, @unchecked Sendable {
 final class MockLocker: LockPresenting, @unchecked Sendable {
     var showOverlayCalled = false
     var dismissOverlayCalled = false
+    var screenLockRequests = 0
     var lastLevel: DisciplineLevel?
     var lastDuration: TimeInterval?
     var lastPreferences: AppPreferences?
@@ -66,6 +67,11 @@ final class MockLocker: LockPresenting, @unchecked Sendable {
     func dismissOverlay() {
         dismissOverlayCalled = true
         isShowing = false
+    }
+
+    func completeOverlay(lockScreen: Bool) {
+        if lockScreen { screenLockRequests += 1 }
+        dismissOverlay()
     }
 }
 
@@ -109,6 +115,42 @@ func waitUntil(_ condition: () -> Bool) async -> Bool {
 
 @Suite("BreakCoordinator Tests")
 struct BreakCoordinatorTests {
+
+    @Test(arguments: [false, true], [false, true]) @MainActor
+    func timedBreakLocksOnlyWhenEnabledAndUnattended(enabled: Bool, unattended: Bool) async {
+        let locker = MockLocker()
+        let coordinator = BreakCoordinator(
+            scheduler: MockScheduler(), detector: MockDetector(), locker: locker,
+            inputIdleDuration: { unattended ? 3600 : 0 }
+        )
+        defer { coordinator.stop() }
+        coordinator.start(with: [], preferences: AppPreferences(lockScreenAfterUnattendedBreak: enabled))
+        coordinator.startExternalBreak(ExternalBreak(duration: 10, level: .gentle))
+        #expect(await waitUntil { locker.isShowing })
+
+        coordinator.completeActiveBreak()
+        coordinator.completeActiveBreak()
+
+        #expect(locker.screenLockRequests == (enabled && unattended ? 1 : 0))
+        #expect(!locker.isShowing)
+    }
+
+    @Test @MainActor
+    func skippingAnUnattendedBreakDoesNotLock() async {
+        let locker = MockLocker()
+        let coordinator = BreakCoordinator(
+            scheduler: MockScheduler(), detector: MockDetector(), locker: locker,
+            inputIdleDuration: { 3600 }
+        )
+        defer { coordinator.stop() }
+        coordinator.start(with: [], preferences: AppPreferences(lockScreenAfterUnattendedBreak: true))
+        coordinator.startExternalBreak(ExternalBreak(duration: 10, level: .gentle))
+        #expect(await waitUntil { locker.isShowing })
+
+        coordinator.skipActiveBreak()
+        #expect(locker.screenLockRequests == 0)
+        #expect(!locker.isShowing)
+    }
 
     @Test(arguments: [false, true]) @MainActor
     func unsafeStoredBreakIsBoundedAtPresentation(repeating: Bool) async {

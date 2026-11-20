@@ -68,6 +68,7 @@ public struct SettingsImportSummary: Equatable, Sendable {
             field("pauseMediaDuringBreak", .breakScreen, \.pauseMediaDuringBreak),
             field("soundBeforeBreak", .breakScreen, \.soundBeforeBreak),
             field("soundAfterBreak", .breakScreen, \.soundAfterBreak),
+            field("lockScreenAfterUnattendedBreak", .breakScreen, \.lockScreenAfterUnattendedBreak),
             field("breakScreen", .breakScreen, \.breakScreen),
             field("gentleDailySkipLimit", .discipline, \.gentleDailySkipLimit),
             field("firmSkipDelay", .discipline, \.firmSkipDelay),
