@@ -962,7 +962,7 @@ struct PomodoroFocusCoverTests {
         coordinator.completeActiveBreak()
         coordinator.skipPomodoroPhase()
         #expect(await waitUntil { locker.showCount == 2 })
-        #expect(log.skipped == 1)
+        #expect(await waitUntil { log.skipped == 1 })
         #expect(locker.lastPomodoroChip == PomodoroChip(round: 2, rounds: 2, isLong: false, isFocus: true))
     }
 
