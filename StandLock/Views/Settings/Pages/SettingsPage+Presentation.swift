@@ -69,6 +69,7 @@ extension SettingsPage {
                 "Break Screen", "Look", "Custom Break Colors", "Background", "Text", "Preview", "Content",
                 "Show Statistics", "Show Pomodoro chip", "Break Message", "During a break", "Pause Media",
                 "Sound when a break ends", "Sound before a break",
+                "Lock screen after an unattended break",
             ]
         case .discipline:
             [

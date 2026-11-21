@@ -35,6 +35,7 @@ final class MockDetector: ContextDetecting, @unchecked Sendable {
 final class MockLocker: LockPresenting, @unchecked Sendable {
     var showOverlayCalled = false
     var dismissOverlayCalled = false
+    var screenLockRequests = 0
     var lastLevel: DisciplineLevel?
     var lastDuration: TimeInterval?
     var lastPreferences: AppPreferences?
@@ -67,6 +68,11 @@ final class MockLocker: LockPresenting, @unchecked Sendable {
     func dismissOverlay() {
         dismissOverlayCalled = true
         isShowing = false
+    }
+
+    func completeOverlay(lockScreen: Bool) {
+        if lockScreen { screenLockRequests += 1 }
+        dismissOverlay()
     }
 }
 
@@ -110,6 +116,36 @@ func waitUntil(_ condition: () -> Bool) async -> Bool {
 
 @Suite("BreakCoordinator Tests")
 struct BreakCoordinatorTests {
+
+    @Test(arguments: [
+        (false, 60.0, 60.0, false),
+        (true, 60.0, 30.0, true),
+        (true, 60.0, 29.0, false),
+        (true, 10.0, 10.0, true),
+        (true, 10.0, 9.0, false),
+    ]) @MainActor
+    func timedBreakLockUsesTheFinalIdleWindow(
+        enabled: Bool, duration: TimeInterval, idle: TimeInterval, shouldLock: Bool
+    ) async {
+        let locker = MockLocker()
+        var uptime: TimeInterval = 1000
+        let coordinator = BreakCoordinator(
+            scheduler: MockScheduler(), detector: MockDetector(), locker: locker,
+            inputIdleDuration: { idle },
+            uptime: { uptime }
+        )
+        defer { coordinator.stop() }
+        coordinator.start(with: [], preferences: AppPreferences(lockScreenAfterUnattendedBreak: enabled))
+        coordinator.startExternalBreak(ExternalBreak(duration: duration, level: .gentle))
+        #expect(await waitUntil { locker.isShowing })
+
+        uptime += duration
+        coordinator.completeActiveBreak()
+        coordinator.completeActiveBreak()
+
+        #expect(locker.screenLockRequests == (shouldLock ? 1 : 0))
+        #expect(!locker.isShowing)
+    }
 
     @Test(arguments: [false, true]) @MainActor
     func unsafeStoredBreakIsBoundedAtPresentation(repeating: Bool) async {

@@ -12,5 +12,7 @@ public protocol LockPresenting: Sendable {
                                 nextIntervalLabel: String?, canPostpone: Bool,
                                 pomodoroChip: PomodoroChip?)
     @MainActor func dismissOverlay()
+    /// A timed completion can leave the overlay up until the native lock screen takes over.
+    @MainActor func completeOverlay(lockScreen: Bool)
     @MainActor var isShowing: Bool { get }
 }
