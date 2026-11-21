@@ -105,9 +105,9 @@ struct BreakScreenSettingsView: View {
                 SettingsRowDivider()
 
                 SettingsToggleRow(
-                    "Lock screen after an unattended break",
+                    "Lock your Mac if you walk away during a break",
                     symbol: "lock",
-                    description: "Shows the macOS Lock Screen if there is no keyboard or mouse activity in the final 30 seconds, or throughout a shorter break.",
+                    description: "If nobody touches the keyboard or mouse in the last 30 seconds of a break, your Mac locks when the break ends. Skipping or postponing a break does not lock it.",
                     isOn: $coordinator.preferences.lockScreenAfterUnattendedBreak
                 )
             }
