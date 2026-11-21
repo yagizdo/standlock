@@ -1,5 +1,16 @@
 # Changelog
 
+## StandLock v0.18.0
+
+**Features**
+- StandLock can lock your Mac when a break ends if you walked away during it. Turn it on in Settings › Break Screen (fixes #131, 5bc1139). Thanks @madneal!
+
+**Bug Fixes**
+- If you paused shortly before a break and then resumed, the timer started over with a full interval. Resume now picks up with the time that was left (51a1912)
+- The menu bar scene could flash the wrong look for a moment when you started or stopped a Pomodoro, skipped a phase, or paused and resumed. That's fixed, and scenes now fade into each other instead of going blank first (2551f14)
+
+**Full Changelog:** https://github.com/yagizdo/StandLock/compare/v0.17.0...v0.18.0
+
 ## StandLock v0.17.0
 
 **Features**
