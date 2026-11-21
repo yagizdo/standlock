@@ -208,6 +208,7 @@ final class OverlayWindowController: LockPresenting {
         guard isShowing, screenLockTimeout == nil else { return }
         breakStartDate = nil
         onComplete?()
+        if isShowing, screenLockTimeout == nil { dismissOverlay() }
     }
 
     private func handleEscape() {

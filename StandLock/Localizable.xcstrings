@@ -8389,18 +8389,18 @@
         }
       }
     },
-    "Shows the macOS Lock Screen when a break ends without any keyboard or mouse activity." : {
+    "Shows the macOS Lock Screen if there is no keyboard or mouse activity in the final 30 seconds, or throughout a shorter break." : {
       "localizations" : {
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mola boyunca klavye veya fare kullanılmazsa mola sonunda macOS kilit ekranını gösterir."
+            "value" : "Molanın son 30 saniyesinde, daha kısa molalarda ise mola boyunca klavye veya fare kullanılmazsa macOS kilit ekranını gösterir."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "如果休息期间没有键盘或鼠标操作，休息结束时会显示 macOS 锁定屏幕。"
+            "value" : "如果休息结束前 30 秒内没有键盘或鼠标操作，休息结束时会显示 macOS 锁定屏幕。休息不足 30 秒时，检查整个休息期间。"
           }
         }
       }
