@@ -143,6 +143,9 @@ public final class BreakCoordinator {
     /// `scheduleNextBreak` after `start`. Kept apart from `pendingBreakDate` so it can re-arm
     /// once and only once: a slot left in play would pin every later break to the same date.
     private var restoredPendingBreaks: [UUID: Date] = [:]
+    /// The slot a pause interrupted and the time it had left, given back on resume: a pause just
+    /// before a break must not buy a whole new interval. Dropped by time away and by a session.
+    private var pausedSlot: (id: UUID, remaining: TimeInterval)?
     /// Carried slots of schedules this coordinator was not given, handed on untouched by
     /// `captureEnforcementState` so they are still there when the schedule is switched back on.
     private var dormantPendingBreaks: [UUID: Date] = [:]
@@ -229,6 +232,10 @@ public final class BreakCoordinator {
         if let id = pendingBreakScheduleID, let date = pendingBreakDate {
             pendingBreakDates[id] = date
         }
+        // A rebuild during a pause re-applies the pause, which takes this slot's time left again.
+        if let slot = pausedSlot, let date = pausedSlotDate() {
+            pendingBreakDates[slot.id] = date
+        }
         return EnforcementState(
             dailyBreakCounts: dailyBreakCounts,
             escalationTiers: escalationTiers,
@@ -258,6 +265,9 @@ public final class BreakCoordinator {
         guard pomodoro == nil else { return }
         breakTimer?.cancel()
         breakTimer = nil
+        if let id = pendingBreakScheduleID, let date = pendingBreakDate {
+            pausedSlot = (id, date.timeIntervalSinceNow)
+        }
         clearPendingBreak()
         isPaused = true
         let until = Date().addingTimeInterval(duration)
@@ -269,8 +279,21 @@ public final class BreakCoordinator {
         }
     }
 
+    /// The paused slot moved by the pause's length, at least a minute out. Nil once that lands
+    /// outside the schedule's hours: the slot came from inside them, the shifted date may not.
+    private func pausedSlotDate() -> Date? {
+        guard let slot = pausedSlot,
+              let schedule = activeSchedules.first(where: { $0.id == slot.id }) else { return nil }
+        let date = Date().addingTimeInterval(max(slot.remaining, Self.minimumLeadTime))
+        return scheduler.isWithinActiveWindow(schedule, at: date) ? date : nil
+    }
+
     public func resume() {
         isPaused = false
+        if let slot = pausedSlot, let date = pausedSlotDate() {
+            restoredPendingBreaks[slot.id] = date
+        }
+        pausedSlot = nil
         eventContinuation.yield(.scheduleResumed)
         rearm()
     }
@@ -327,6 +350,8 @@ public final class BreakCoordinator {
 
     private func beginSuspension(now: Date) {
         isSuspended = true
+        // Time away is rest: the return starts a fresh interval, paused or not.
+        pausedSlot = nil
         // A covered phase that is waiting (deferred, postponed) has not run yet: it is owed in
         // full from here, so only time away can credit it.
         if suspendedAt == nil, var session = pomodoro, session.isCovered, !locker.isShowing {
@@ -521,6 +546,7 @@ public final class BreakCoordinator {
         guard pomodoro == nil, currentBreak == nil else { return }
         if isPaused {
             isPaused = false
+            pausedSlot = nil
             eventContinuation.yield(.scheduleResumed)
         }
         breakTimer?.cancel()
