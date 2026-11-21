@@ -77,6 +77,7 @@ Or [download the DMG](https://github.com/yagizdo/StandLock/releases/latest) and 
 - Completions, skips, Pomodoro rounds, streaks and a year heatmap
 - Your own break screen colours and message
 - Pauses your media during a break, with optional sounds before and after
+- Lock your Mac when a break ends if you walked away during it
 - System, Light or Dark, in English, Turkish or Simplified Chinese
 - Launch at login, and updates through Sparkle (automatic checks off by default) or Homebrew (hourly check, one click)
 - Export your settings and schedules to a file and import them on another Mac, or reset StandLock to start over
