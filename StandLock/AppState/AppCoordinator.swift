@@ -586,6 +586,8 @@ final class AppCoordinator: ObservableObject {
         case .scheduleResumed:
             isPaused = false
             pausedUntil = nil
+            // A Start while paused sends its next break first, which the pause kept from the ring.
+            recalculateProgress()
             updateMenuBarTimer()
 
         case .breakCue(let cue):
@@ -600,7 +602,13 @@ final class AppCoordinator: ObservableObject {
                 nextBreakTime = nil
                 breakScheduledAt = nil
                 breakProgress = 0
-                updateMenuBarTimer()
+                // Applied now: the event comes a turn later, and the frame between drew
+                // "No active schedules" and animated the menu scene to it.
+                if let date = coordinator?.armedBreakDate {
+                    handleEvent(.nextBreakScheduled(date))
+                } else {
+                    updateMenuBarTimer()
+                }
             }
 
         case .statisticsUpdated(let stats):

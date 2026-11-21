@@ -128,6 +128,9 @@ public final class BreakCoordinator {
         session.phaseEnd = Date().addingTimeInterval(postponedExternal?.duration ?? session.duration(of: session.phase))
         return session
     }
+    /// The slot the next `.nextBreakScheduled` reports. The app reads it when a session ends:
+    /// that event is handled a run loop turn later.
+    public var armedBreakDate: Date? { pendingBreakDate }
     private var statistics: BreakStatistics = BreakStatistics()
     private var dailyBreakCounts: [UUID: Int] = [:]
     private var escalationTiers: [UUID: Int] = [:]
@@ -551,11 +554,9 @@ public final class BreakCoordinator {
     /// one: a zero-length phase would loop. Ends an active pause, which shares the timer slot.
     public func startPomodoro(_ configuration: PomodoroConfiguration, level: DisciplineLevel, now: Date = Date()) {
         guard pomodoro == nil, currentBreak == nil else { return }
-        if isPaused {
-            isPaused = false
-            pausedSlot = nil
-            eventContinuation.yield(.scheduleResumed)
-        }
+        let wasPaused = isPaused
+        isPaused = false
+        pausedSlot = nil
         breakTimer?.cancel()
         breakTimer = nil
         clearPendingBreak()
@@ -564,6 +565,9 @@ public final class BreakCoordinator {
         pomodoroLevel = Self.sessionLevel(level, for: configuration)
         pomodoro = .start(at: now, configuration: configuration)
         enterPomodoroPhase()
+        // After the session, not before: each event draws a frame, and a resume first drew the
+        // schedule's stale countdown between Paused and the focus.
+        if wasPaused { eventContinuation.yield(.scheduleResumed) }
     }
 
     /// Ends the session as abandoned; no skip is counted. Refused while its break is on screen:
