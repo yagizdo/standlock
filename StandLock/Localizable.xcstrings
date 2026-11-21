@@ -8373,34 +8373,34 @@
         }
       }
     },
-    "Lock screen after an unattended break" : {
+    "Lock your Mac if you walk away during a break" : {
       "localizations" : {
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mola boyunca etkileşim olmazsa ekranı kilitle"
+            "value" : "Molada masadan kalkarsan Mac'i kilitle"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "无人操作时在休息结束后锁屏"
+            "value" : "休息时离开就锁定 Mac"
           }
         }
       }
     },
-    "Shows the macOS Lock Screen if there is no keyboard or mouse activity in the final 30 seconds, or throughout a shorter break." : {
+    "If nobody touches the keyboard or mouse in the last 30 seconds of a break, your Mac locks when the break ends. Skipping or postponing a break does not lock it." : {
       "localizations" : {
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Molanın son 30 saniyesinde, daha kısa molalarda ise mola boyunca klavye veya fare kullanılmazsa macOS kilit ekranını gösterir."
+            "value" : "Molanın son 30 saniyesinde klavyeye ve fareye dokunulmazsa mola bitince Mac kilitlenir. Molayı atlar ya da ertelersen kilitlenmez."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "如果休息结束前 30 秒内没有键盘或鼠标操作，休息结束时会显示 macOS 锁定屏幕。休息不足 30 秒时，检查整个休息期间。"
+            "value" : "如果休息的最后 30 秒内没有人使用键盘和鼠标，休息结束时 Mac 会锁定。跳过或推迟休息不会锁定。"
           }
         }
       }
