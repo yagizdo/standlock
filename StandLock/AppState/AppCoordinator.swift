@@ -586,8 +586,6 @@ final class AppCoordinator: ObservableObject {
         case .scheduleResumed:
             isPaused = false
             pausedUntil = nil
-            // A Start while paused sends its next break first, which the pause kept from the ring.
-            recalculateProgress()
             updateMenuBarTimer()
 
         case .breakCue(let cue):
@@ -595,6 +593,11 @@ final class AppCoordinator: ObservableObject {
 
         case .pomodoroChanged(let status):
             pomodoroStatus = status
+            // Kit refuses a pause while a session runs, and a Start sends its resume after these.
+            if status != nil {
+                isPaused = false
+                pausedUntil = nil
+            }
             savePomodoroSession()
             if status == nil {
                 // The countdown pointed at the session; the schedules send their own next break
