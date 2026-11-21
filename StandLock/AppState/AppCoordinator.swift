@@ -690,6 +690,11 @@ final class AppCoordinator: ObservableObject {
         nextBreakTime = nil
         if let coordinator {
             coordinator.resume()
+            // Applied now: the event comes a turn later, and the frame between drew
+            // "No active schedules" and animated the menu scene to it.
+            if let date = coordinator.armedBreakDate {
+                handleEvent(.nextBreakScheduled(date))
+            }
         } else if !schedules.filter(\.isEnabled).isEmpty {
             startCoordinator(restoring: carriedStateForToday())
         }
