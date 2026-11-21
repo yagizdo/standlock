@@ -57,6 +57,7 @@ struct SettingsExportTests {
             pauseMediaDuringBreak: false,
             soundBeforeBreak: true,
             soundAfterBreak: true,
+            lockScreenAfterUnattendedBreak: true,
             resetIntervalOnSkip: false,
             showFullWorkTimer: true,
             menuBarCountdownMinutes: 3,

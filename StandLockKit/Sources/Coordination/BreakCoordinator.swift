@@ -73,6 +73,8 @@ public final class BreakCoordinator {
     private let scheduler: any SchedulingEngine
     private let detector: any ContextDetecting
     private let locker: any LockPresenting
+    private let inputIdleDuration: () -> TimeInterval
+    private let uptime: () -> TimeInterval
 
     private var activeSchedules: [Schedule] = []
     private var preferences: AppPreferences = AppPreferences()
@@ -84,6 +86,7 @@ public final class BreakCoordinator {
     private var isSuspended: Bool = false
     /// When the first of sleep or lock arrived; a session's catch-up measures time away from it.
     private var suspendedAt: Date?
+    private var breakStartedAtUptime: TimeInterval = 0
     /// Every break that comes on screen is set here (`presentBreak`) and every end clears it, so
     /// the marker below sees all of them, whatever the source.
     private var currentBreak: BreakEvent? {
@@ -166,7 +169,9 @@ public final class BreakCoordinator {
 
     public init(scheduler: any SchedulingEngine, detector: any ContextDetecting,
                 locker: any LockPresenting, deferralPollingInterval: TimeInterval = 10,
-                cueLead: TimeInterval = 60) {
+                cueLead: TimeInterval = 60,
+                inputIdleDuration: @escaping () -> TimeInterval = { IdleDetector().inputIdleDuration() },
+                uptime: @escaping () -> TimeInterval = { ProcessInfo.processInfo.systemUptime }) {
         var continuation: AsyncStream<CoordinatorEvent>.Continuation!
         self.events = AsyncStream { continuation = $0 }
         self.eventContinuation = continuation
@@ -175,6 +180,8 @@ public final class BreakCoordinator {
         self.locker = locker
         self.deferralPollingInterval = deferralPollingInterval
         self.cueLead = cueLead
+        self.inputIdleDuration = inputIdleDuration
+        self.uptime = uptime
     }
 
     /// Pass previously persisted `statistics` so a relaunch during the day keeps today's
@@ -842,6 +849,7 @@ public final class BreakCoordinator {
         }
 
         eventContinuation.yield(.breakStarted(breakEvent))
+        breakStartedAtUptime = uptime()
         locker.showOverlay(level: effectiveLevel, duration: duration,
                            exercise: exercise, preferences: overlayPreferences,
                            statistics: statistics, escalationTier: tier,
@@ -907,7 +915,10 @@ public final class BreakCoordinator {
                 repetitionTrackers[schedule.id] = tracker
             }
         }
-        locker.dismissOverlay()
+        // Check the last 30 seconds, or the whole time the overlay was up for a shorter break.
+        let elapsed = uptime() - breakStartedAtUptime
+        let shouldLock = preferences.lockScreenAfterUnattendedBreak && inputIdleDuration() >= min(elapsed, 30)
+        locker.completeOverlay(lockScreen: shouldLock)
         eventContinuation.yield(.breakCompleted(event))
         if preferences.soundAfterBreak { eventContinuation.yield(.breakCue(.ended)) }
         countCompletedBreak()

@@ -29,6 +29,7 @@ public struct AppPreferences: Codable, Sendable, Equatable {
     public var pauseMediaDuringBreak: Bool
     public var soundBeforeBreak: Bool
     public var soundAfterBreak: Bool
+    public var lockScreenAfterUnattendedBreak: Bool
 
     public var resetIntervalOnSkip: Bool
 
@@ -59,6 +60,7 @@ public struct AppPreferences: Codable, Sendable, Equatable {
         pauseMediaDuringBreak: Bool = true,
         soundBeforeBreak: Bool = false,
         soundAfterBreak: Bool = false,
+        lockScreenAfterUnattendedBreak: Bool = false,
         resetIntervalOnSkip: Bool = true,
         showFullWorkTimer: Bool = false,
         menuBarCountdownMinutes: Int = 1,
@@ -84,6 +86,7 @@ public struct AppPreferences: Codable, Sendable, Equatable {
         self.pauseMediaDuringBreak = pauseMediaDuringBreak
         self.soundBeforeBreak = soundBeforeBreak
         self.soundAfterBreak = soundAfterBreak
+        self.lockScreenAfterUnattendedBreak = lockScreenAfterUnattendedBreak
         self.resetIntervalOnSkip = resetIntervalOnSkip
         self.showFullWorkTimer = showFullWorkTimer
         self.menuBarCountdownMinutes = menuBarCountdownMinutes
@@ -102,6 +105,7 @@ public struct AppPreferences: Codable, Sendable, Equatable {
         case postponeReturnDelay
         case idleDetectionEnabled
         case pauseMediaDuringBreak, soundBeforeBreak, soundAfterBreak
+        case lockScreenAfterUnattendedBreak
         case resetIntervalOnSkip
         case showFullWorkTimer, menuBarCountdownMinutes, menuScene
         case breakScreen
@@ -128,6 +132,7 @@ public struct AppPreferences: Codable, Sendable, Equatable {
         pauseMediaDuringBreak = try c.decodeIfPresent(Bool.self, forKey: .pauseMediaDuringBreak) ?? true
         soundBeforeBreak = try c.decodeIfPresent(Bool.self, forKey: .soundBeforeBreak) ?? false
         soundAfterBreak = try c.decodeIfPresent(Bool.self, forKey: .soundAfterBreak) ?? false
+        lockScreenAfterUnattendedBreak = try c.decodeIfPresent(Bool.self, forKey: .lockScreenAfterUnattendedBreak) ?? false
         resetIntervalOnSkip = try c.decodeIfPresent(Bool.self, forKey: .resetIntervalOnSkip) ?? true
         showFullWorkTimer = try c.decodeIfPresent(Bool.self, forKey: .showFullWorkTimer) ?? false
         menuBarCountdownMinutes = try c.decodeIfPresent(Int.self, forKey: .menuBarCountdownMinutes) ?? 1

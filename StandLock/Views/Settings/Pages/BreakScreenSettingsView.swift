@@ -101,6 +101,15 @@ struct BreakScreenSettingsView: View {
                     description: "Plays one minute before a break",
                     isOn: $coordinator.preferences.soundBeforeBreak
                 )
+
+                SettingsRowDivider()
+
+                SettingsToggleRow(
+                    "Lock screen after an unattended break",
+                    symbol: "lock",
+                    description: "Shows the macOS Lock Screen if there is no keyboard or mouse activity in the final 30 seconds, or throughout a shorter break.",
+                    isOn: $coordinator.preferences.lockScreenAfterUnattendedBreak
+                )
             }
         }
     }
