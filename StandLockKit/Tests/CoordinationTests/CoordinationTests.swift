@@ -14,6 +14,7 @@ final class MockScheduler: SchedulingEngine, @unchecked Sendable {
     var receivedAfterDates: [Date] = []
     /// Answers by the search date, for a test that needs two searches to land apart.
     var nextBreakAfter: ((Date) -> Date?)?
+    var isWithinWindow = true
 
     func nextBreakTime(for schedule: Schedule, after date: Date, cycleIndex: Int) -> Date? {
         receivedCycleIndices.append((scheduleID: schedule.id, index: cycleIndex))
@@ -22,7 +23,7 @@ final class MockScheduler: SchedulingEngine, @unchecked Sendable {
         return nextBreakTimes[schedule.id] ?? nextBreakTimeToReturn
     }
     func breakDuration(for schedule: Schedule, breakIndex: Int) -> TimeInterval { breakDurationToReturn }
-    func isWithinActiveWindow(_ schedule: Schedule, at date: Date) -> Bool { true }
+    func isWithinActiveWindow(_ schedule: Schedule, at date: Date) -> Bool { isWithinWindow }
 }
 
 final class MockDetector: ContextDetecting, @unchecked Sendable {
@@ -344,6 +345,41 @@ struct BreakCoordinatorTests {
         try? await Task.sleep(for: .milliseconds(100))
 
         #expect(resumeEvent != nil)
+
+        coordinator.stop()
+        listener.cancel()
+    }
+
+    /// Pause then Resume two minutes before a break used to arm a full new interval, a way out
+    /// of the break that no skip counted. A slot the pause pushed past the schedule's hours is
+    /// dropped instead of opening a break after hours.
+    @Test(arguments: [true, false]) @MainActor
+    func resumeKeepsTheTimeLeftBeforeThePause(stillInHours: Bool) async {
+        let scheduler = MockScheduler()
+        let slot = Date().addingTimeInterval(120)
+        var searches = 0
+        scheduler.nextBreakAfter = { date in
+            searches += 1
+            return searches == 1 ? slot : date.addingTimeInterval(2700)
+        }
+        let coordinator = BreakCoordinator(scheduler: scheduler, detector: MockDetector(), locker: MockLocker())
+
+        var scheduled: [Date] = []
+        let listener = Task {
+            for await event in coordinator.events {
+                if case .nextBreakScheduled(let date) = event { scheduled.append(date) }
+            }
+        }
+
+        coordinator.start(with: [makeSchedule()], preferences: AppPreferences())
+        try? await Task.sleep(for: .milliseconds(50))
+        coordinator.pause(for: 3600)
+        scheduler.isWithinWindow = stillInHours
+        coordinator.resume()
+        try? await Task.sleep(for: .milliseconds(50))
+
+        #expect(scheduled.count == 2)
+        #expect((abs((scheduled.last ?? .distantFuture).timeIntervalSince(slot)) < 1) == stillInHours)
 
         coordinator.stop()
         listener.cancel()
