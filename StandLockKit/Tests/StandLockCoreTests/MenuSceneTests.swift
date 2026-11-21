@@ -50,7 +50,11 @@ struct MenuSceneTests {
     @Test func sessionFocusIsWorkingAndBreakIsTimeToStand() {
         let focus = session(.focus(round: 2))
         #expect(MenuSceneLook(state: .countingDown(to: now.addingTimeInterval(600)), pomodoro: focus, now: now) == .working)
-        #expect(MenuSceneLook(state: .countingDown(to: now.addingTimeInterval(30)), pomodoro: focus, now: now) == .breakSoon)
+        // The state's date trails Start and Skip phase by an event: a stale last minute is not this focus's.
+        #expect(MenuSceneLook(state: .countingDown(to: now.addingTimeInterval(30)), pomodoro: focus, now: now) == .working)
+        var lastMinute = focus
+        lastMinute.phaseEnd = now.addingTimeInterval(30)
+        #expect(MenuSceneLook(state: .countingDown(to: now.addingTimeInterval(600)), pomodoro: lastMinute, now: now) == .breakSoon)
         #expect(MenuSceneLook(state: .breakActive, pomodoro: session(.shortBreak(afterRound: 2)), now: now) == .timeToStand)
         #expect(MenuSceneLook(state: .breakActive, pomodoro: session(.longBreak), now: now) == .timeToStand)
     }

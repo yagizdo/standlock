@@ -593,6 +593,11 @@ final class AppCoordinator: ObservableObject {
 
         case .pomodoroChanged(let status):
             pomodoroStatus = status
+            // Kit refuses a pause while a session runs, and a Start sends its resume after these.
+            if status != nil {
+                isPaused = false
+                pausedUntil = nil
+            }
             savePomodoroSession()
             if status == nil {
                 // The countdown pointed at the session; the schedules send their own next break
@@ -600,7 +605,13 @@ final class AppCoordinator: ObservableObject {
                 nextBreakTime = nil
                 breakScheduledAt = nil
                 breakProgress = 0
-                updateMenuBarTimer()
+                // Applied now: the event comes a turn later, and the frame between drew
+                // "No active schedules" and animated the menu scene to it.
+                if let date = coordinator?.armedBreakDate {
+                    handleEvent(.nextBreakScheduled(date))
+                } else {
+                    updateMenuBarTimer()
+                }
             }
 
         case .statisticsUpdated(let stats):
@@ -679,6 +690,11 @@ final class AppCoordinator: ObservableObject {
         nextBreakTime = nil
         if let coordinator {
             coordinator.resume()
+            // Applied now: the event comes a turn later, and the frame between drew
+            // "No active schedules" and animated the menu scene to it.
+            if let date = coordinator.armedBreakDate {
+                handleEvent(.nextBreakScheduled(date))
+            }
         } else if !schedules.filter(\.isEnabled).isEmpty {
             startCoordinator(restoring: carriedStateForToday())
         }

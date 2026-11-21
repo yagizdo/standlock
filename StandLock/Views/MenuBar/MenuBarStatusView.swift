@@ -106,7 +106,8 @@ struct MenuBarStatusView: View {
 
     @ViewBuilder
     private var subtitle: some View {
-        if case .deferred(let reason) = state {
+        // An open phase never defers; a deferral beside one is the event-late leftover of a Start.
+        if case .deferred(let reason) = state, pomodoro?.isCovered != false {
             Text(LocalizedStringKey(reason.displayName))
         } else if let pomodoro {
             HStack(spacing: 4) {
