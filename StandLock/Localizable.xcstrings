@@ -111,7 +111,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "因通话而推迟的休息，会在麦克风和摄像头都关闭后这么多分钟到来。"
+            "value" : "点击「推迟」后，等麦克风和摄像头都停止使用才开始计时，达到设定的分钟数后再次提醒休息。"
           }
         }
       }
@@ -2258,7 +2258,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "通话结束后返回"
+            "value" : "推迟后再次提醒"
           }
         }
       }
