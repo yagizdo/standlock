@@ -41,16 +41,21 @@ public struct Schedule: Codable, Sendable, Identifiable, Equatable {
 
     public init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
+        let lenient = decoder.readsStoredData
         id = try c.decode(UUID.self, forKey: .id)
         name = try c.decode(String.self, forKey: .name)
         isEnabled = try c.decodeIfPresent(Bool.self, forKey: .isEnabled) ?? true
-        days = try c.decode(DaySelection.self, forKey: .days)
+        // A stored value this build cannot read gives more breaks, never fewer, and always a way out:
+        // every day, Gentle (the user's choice).
+        days = lenient
+            ? (try? c.decode(DaySelection.self, forKey: .days)) ?? .everyDay
+            : try c.decode(DaySelection.self, forKey: .days)
         windows = try c.decode([TimeWindow].self, forKey: .windows)
         breakInterval = try c.decode(TimeInterval.self, forKey: .breakInterval)
         breakDuration = try c.decode(TimeInterval.self, forKey: .breakDuration)
         intervalCycle = try c.decodeIfPresent([IntervalStep].self, forKey: .intervalCycle)
         repetitionRule = try c.decodeIfPresent(RepetitionRule.self, forKey: .repetitionRule)
-        disciplineLevel = try c.decodeIfPresent(DisciplineLevel.self, forKey: .disciplineLevel) ?? .gentle
+        disciplineLevel = try c.decode(DisciplineLevel.self, forKey: .disciplineLevel, fallback: .gentle, lenient: lenient)
         dailyBreakCap = try c.decodeIfPresent(Int.self, forKey: .dailyBreakCap)
         progressiveEnforcement = try c.decodeIfPresent(Bool.self, forKey: .progressiveEnforcement) ?? false
     }
