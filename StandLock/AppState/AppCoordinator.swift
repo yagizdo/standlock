@@ -164,15 +164,14 @@ final class AppCoordinator: ObservableObject {
     private func loadData() {
         hasCompletedOnboarding = UserDefaults.standard.bool(forKey: "hasCompletedOnboarding")
 
-        if let data = UserDefaults.standard.data(forKey: "schedules"),
-           let decoded = try? JSONDecoder().decode([Schedule].self, from: data) {
+        // StoredData copies a blob that does not read cleanly before any save below can write over it.
+        if let decoded = StoredData.loadEach(Schedule.self, forKey: "schedules", in: .standard) {
             // An older build let two schedules run together; the one stored first stays on.
             schedules = decoded.turningOffOverlaps()
             if schedules != decoded { saveSchedules() }
         }
 
-        if let data = UserDefaults.standard.data(forKey: "preferences"),
-           let decoded = try? JSONDecoder().decode(AppPreferences.self, from: data) {
+        if let decoded = StoredData.load(AppPreferences.self, forKey: "preferences", in: .standard) {
             preferences = decoded
         }
 
@@ -200,8 +199,7 @@ final class AppCoordinator: ObservableObject {
             }
         }
 
-        if let data = UserDefaults.standard.data(forKey: "breakHistory"),
-           let decoded = try? JSONDecoder().decode(BreakHistory.self, from: data) {
+        if let decoded = StoredData.load(BreakHistory.self, forKey: "breakHistory", in: .standard) {
             breakHistory = decoded
         }
         syncScheduledWeekdays()

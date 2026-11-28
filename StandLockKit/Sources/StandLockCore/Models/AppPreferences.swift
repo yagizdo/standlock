@@ -114,19 +114,20 @@ public struct AppPreferences: Codable, Sendable, Equatable {
 
     public init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
+        let lenient = decoder.readsStoredData
         gentleDailySkipLimit = try c.decodeIfPresent(Int.self, forKey: .gentleDailySkipLimit) ?? 5
         firmSkipDelay = try c.decodeIfPresent(TimeInterval.self, forKey: .firmSkipDelay) ?? 10
         firmEscapePhrase = try c.decodeIfPresent(String.self, forKey: .firmEscapePhrase) ?? AppPreferences.defaultFirmEscapePhrase
         firmDailySkipLimit = try c.decodeIfPresent(Int.self, forKey: .firmDailySkipLimit) ?? 5
         strictEscapeHoldDuration = try c.decodeIfPresent(TimeInterval.self, forKey: .strictEscapeHoldDuration) ?? 10
-        cameraDetection = try c.decodeIfPresent(DetectionBehavior.self, forKey: .cameraDetection) ?? .deferBreak
-        microphoneDetection = try c.decodeIfPresent(DetectionBehavior.self, forKey: .microphoneDetection) ?? .deferBreak
+        cameraDetection = try c.decode(DetectionBehavior.self, forKey: .cameraDetection, fallback: .deferBreak, lenient: lenient)
+        microphoneDetection = try c.decode(DetectionBehavior.self, forKey: .microphoneDetection, fallback: .deferBreak, lenient: lenient)
         calendarDetectionEnabled = try c.decodeIfPresent(Bool.self, forKey: .calendarDetectionEnabled) ?? true
         calendarLookAheadMinutes = try c.decodeIfPresent(Int.self, forKey: .calendarLookAheadMinutes) ?? 5
-        calendarSelectionMode = try c.decodeIfPresent(CalendarSelectionMode.self, forKey: .calendarSelectionMode) ?? .all
+        calendarSelectionMode = try c.decode(CalendarSelectionMode.self, forKey: .calendarSelectionMode, fallback: .all, lenient: lenient)
         selectedCalendarIdentifiers = try c.decodeIfPresent([String].self, forKey: .selectedCalendarIdentifiers) ?? []
         screenSharingDetectionEnabled = try c.decodeIfPresent(Bool.self, forKey: .screenSharingDetectionEnabled) ?? true
-        screenSharingPostDeferral = try c.decodeIfPresent(PostDeferralBehavior.self, forKey: .screenSharingPostDeferral) ?? .triggerBreak
+        screenSharingPostDeferral = try c.decode(PostDeferralBehavior.self, forKey: .screenSharingPostDeferral, fallback: .triggerBreak, lenient: lenient)
         postponeReturnDelay = try c.decodeIfPresent(TimeInterval.self, forKey: .postponeReturnDelay) ?? 120
         idleDetectionEnabled = try c.decodeIfPresent(Bool.self, forKey: .idleDetectionEnabled) ?? true
         pauseMediaDuringBreak = try c.decodeIfPresent(Bool.self, forKey: .pauseMediaDuringBreak) ?? true
@@ -136,8 +137,8 @@ public struct AppPreferences: Codable, Sendable, Equatable {
         resetIntervalOnSkip = try c.decodeIfPresent(Bool.self, forKey: .resetIntervalOnSkip) ?? true
         showFullWorkTimer = try c.decodeIfPresent(Bool.self, forKey: .showFullWorkTimer) ?? false
         menuBarCountdownMinutes = try c.decodeIfPresent(Int.self, forKey: .menuBarCountdownMinutes) ?? 1
-        // A string, not the enum: the load drops every preference on one failed field, and a scene
-        // from a newer version would fail here.
+        // A string, not the enum, so a scene from a newer version falls back even in an import: it
+        // changes nothing a break does, unlike the fields an import refuses.
         menuScene = try c.decodeIfPresent(String.self, forKey: .menuScene).flatMap(MenuScene.init(rawValue:)) ?? .hourglass
         breakScreen = try c.decodeIfPresent(BreakScreenPreferences.self, forKey: .breakScreen) ?? BreakScreenPreferences()
         pomodoro = try c.decodeIfPresent(PomodoroConfiguration.self, forKey: .pomodoro) ?? .standard
